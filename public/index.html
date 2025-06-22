@@ -93,7 +93,7 @@
     <div id="page-content">
         <header id="main-header" class="sticky top-0 left-0 right-0 z-40">
             <nav class="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center">
-                <a href="index.html" class="h-12 w-auto flex items-center justify-center text-white font-bold">
+                <a href="#" class="h-12 w-auto flex items-center justify-center text-white font-bold">
                     <img src="https://i.ibb.co/L5TjL4q/IMG-20250620-WA0020.jpg" alt="Runa Coffee" class="h-12">
                 </a>
                 <div class="hidden md:flex items-center space-x-6 text-sm font-semibold">
@@ -153,9 +153,9 @@
                         Interactúa con nuestro árbol místico. Si estás en un celular, presiona el botón de RA para traer la magia de Runa a tu propio espacio.
                     </p>
                     
-                    <!-- CORRECT PATH: The 'src' attribute now correctly points to the 3D model inside the 'public' folder. -->
+                    <!-- FINAL CHANGE: The 'src' attribute now uses a relative path, without the leading slash. -->
                     <model-viewer
-                        src="/assets/3D/arbol3D.glb"
+                        src="assets/3D/arbol3D.glb"
                         ar
                         ar-modes="webxr scene-viewer quick-look"
                         camera-controls
