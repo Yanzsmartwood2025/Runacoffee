@@ -153,8 +153,7 @@
                         Interactúa con nuestro árbol místico. Si estás en un celular, presiona el botón de RA para traer la magia de Runa a tu propio espacio.
                     </p>
                     
-                    <!-- 3D MODEL UPDATED with iOS support and other attributes -->
-                    <model-viewer
+                    <model-viewer id="ar-viewer"
                         src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
                         ios-src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
                         ar
@@ -168,6 +167,11 @@
                             Ver en tu espacio
                         </button>
                     </model-viewer>
+                    
+                    <!-- NEW: This message will appear if AR is not supported -->
+                    <div id="ar-failure-message" class="hidden mt-4 text-center text-red-500 bg-red-100 dark:bg-red-900 dark:text-red-300 p-3 rounded-lg">
+                        Lo sentimos, tu dispositivo no es compatible con la Realidad Aumentada.
+                    </div>
                 </div>
             </section>
 
@@ -522,6 +526,15 @@
                     const button = e.target;
                     const item = { id: button.dataset.itemId, name: button.dataset.itemName };
                     window.addToCart(item);
+                }
+            });
+
+            // NEW: AR Compatibility Check
+            const arViewer = document.getElementById('ar-viewer');
+            arViewer.addEventListener('ar-status', (event) => {
+                if(event.detail.status === 'failed'){
+                    const arFailureMessage = document.getElementById("ar-failure-message");
+                    arFailureMessage.classList.remove('hidden');
                 }
             });
 
