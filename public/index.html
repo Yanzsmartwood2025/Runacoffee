@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>RUNA COFFEE - El Alma del Eje Cafetero</title>
     
     <meta name="description" content="Descubre el café de especialidad de Manizales, Colombia. Granos seleccionados que cuentan la historia de nuestra tierra.">
     <meta property="og:title" content="RUNA COFFEE - Origen Manizales">
-    <meta property="og:description" content="Descubre el café de especialidad de Manizales, Colombia. Granos seleccionados que cuentan la historia de nuestra tierra.">
-    <!-- AJUSTADO: Se actualizó la imagen para la vista previa de enlaces -->
+    <meta property="og:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
     <meta property="og:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
     <meta property="og:url" content="https://runacoffee.vercel.app">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="RUNA COFFEE - Origen Manizales">
-    <meta name="twitter:description" content="Descubre el café de especialidad de Manizales, Colombia.">
-    <!-- AJUSTADO: Se actualizó la imagen para la vista previa de enlaces en Twitter -->
+    <meta name="twitter:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
     <meta name="twitter:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
     <link rel="icon" href="https://i.ibb.co/L5TjL4q/IMG-20250620-WA0020.jpg" type="image/jpeg">
     <meta name="theme-color" content="#3a2e2a">
@@ -67,7 +63,7 @@
             border-bottom: 1px solid var(--runa-border);
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        #mobile-menu { 
+        #mobile-menu, #mixer-panel { 
             background-color: var(--runa-bg); 
             transition: background-color 0.3s ease;
         }
@@ -75,55 +71,73 @@
             position: relative;
         }
         #cart-counter {
-            position: absolute;
-            top: 0;
-            right: 0;
+            position: absolute; top: 0; right: 0;
             transform: translate(25%, -25%);
-            width: 1.25rem;
-            height: 1.25rem;
-            background-color: #DC2626;
-            color: white;
-            font-size: 0.75rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 1.25rem; height: 1.25rem;
+            background-color: #DC2626; color: white;
+            font-size: 0.75rem; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
             border-radius: 0.25rem;
         }
 
         /* Styles for Video Intro and Page Load */
         #video-intro {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; inset: 0;
+            width: 100%; height: 100%;
             z-index: 10000;
             transition: opacity 0.75s ease-out;
         }
-        #video-intro.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
+        #video-intro.hidden { opacity: 0; pointer-events: none; }
         #page-content { 
             opacity: 0; 
             transition: opacity 0.75s ease-in;
             transition-delay: 0.2s;
-            visibility: hidden; /* Start as hidden */
+            visibility: hidden;
         }
-        #page-content.loaded { 
-            opacity: 1; 
-            visibility: visible; /* Become visible when loaded */
-        }
+        #page-content.loaded { opacity: 1; visibility: visible; }
         
         .modal-enter { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
         model-viewer {
-            width: 100%;
-            height: 450px;
+            width: 100%; height: 450px;
             border-radius: 0.75rem;
             background-color: transparent;
+        }
+        
+        /* Custom styles for range input (volume sliders) */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: var(--runa-border);
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+        html.dark input[type="range"] {
+             background: #4A5568; /* A darker gray for dark mode */
+        }
+        input[type="range"]:hover { opacity: 1; }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--runa-primary);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid var(--runa-bg);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--runa-primary);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid var(--runa-bg);
         }
     </style>
 </head>
@@ -132,7 +146,6 @@
 
     <!-- Video Intro Section -->
     <div id="video-intro">
-        <!-- AJUSTADO: Se cambió bg-black por bg-white para que las franjas sean blancas. -->
         <video id="intro-video" class="fixed inset-0 w-full h-full object-contain bg-white" autoplay muted playsinline>
             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-intro.mp4" type="video/mp4">
             Tu navegador no soporta el elemento de video.
@@ -158,7 +171,6 @@
                 <!-- Center Container: Logo -->
                 <div class="flex-shrink-0">
                     <a href="#" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
-                        <!-- AJUSTADO: Se usa 'object-contain' para que el logo se muestre completo y centrado sin un zoom excesivo. -->
                         <video autoplay loop muted playsinline class="w-full h-full object-contain">
                             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-logo-animado.mp4" type="video/mp4">
                             Tu navegador no soporta la etiqueta de video.
@@ -166,13 +178,15 @@
                     </a>
                 </div>
 
-
-                <!-- Right Container: Theme & Cart -->
+                <!-- Right Container: Theme, Mixer & Cart -->
                 <div class="flex-1 flex justify-end items-center space-x-2 sm:space-x-4">
-                    <!-- === THEME TOGGLE BUTTON (MOVED FROM MENU) === -->
                     <button id="theme-toggle" class="p-2 rounded-full text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)]" aria-label="Cambiar tema de color">
                         <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
                         <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
+                     <!-- Mixer Toggle Button -->
+                    <button id="mixer-toggle-button" class="p-2 rounded-full text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)]" aria-label="Abrir mezclador de ambiente">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" transform="rotate(90 12 12)"></path><circle cx="6" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="15" cy="18" r="2"></circle></svg>
                     </button>
                     <div id="cart-icon-wrapper">
                         <button id="open-cart-button" class="relative p-1 text-[var(--runa-text)]">
@@ -183,29 +197,29 @@
                 </div>
             </nav>
             
+            <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t border-[var(--runa-border)]">
                 <div class="container mx-auto px-6 py-4 space-y-3">
-                     <a href="#filosofia" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Nuestra Filosofía</a>
-                     <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
-                     <a href="#tienda" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Tienda</a>
-                     <a href="#contacto" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
-                     <div class="border-t border-[var(--runa-border)] pt-4 flex items-center justify-between">
-                         <span class="text-sm font-semibold text-[var(--runa-text-alt)]">Opciones:</span>
-                         <div class="flex items-center space-x-2">
-                             <!-- === AJUSTADO: Se cambiaron los íconos de audio por unos de audífonos === -->
-                             <button id="sound-toggle" class="p-2 rounded-full text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)]" aria-label="Activar/Desactivar sonido">
-                                <svg id="sound-icon-on" class="h-6 w-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                                </svg>
-                                <svg id="sound-icon-off" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                     <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                                     <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                                     <line x1="4" y1="20" x2="20" y2="4"></line>
-                                </svg>
-                             </button>
-                         </div>
-                     </div>
+                      <a href="#filosofia" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Nuestra Filosofía</a>
+                      <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
+                      <a href="#tienda" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Tienda</a>
+                      <a href="#contacto" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
+                </div>
+            </div>
+
+            <!-- Ambience Mixer Panel -->
+            <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t border-[var(--runa-border)]">
+                <div class="container mx-auto px-6 py-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold text-lg text-[var(--runa-heading)]">Mezclador de Ambiente</h3>
+                        <button id="master-sound-toggle" class="p-2 rounded-full text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)]" aria-label="Reproducir/Pausar todo">
+                            <svg id="master-play-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>
+                            <svg id="master-pause-icon" class="h-6 w-6 hidden" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        </button>
+                    </div>
+                    <div id="sound-controls" class="space-y-4 opacity-50 transition-opacity duration-300">
+                        <!-- Sound controls will be injected here -->
+                    </div>
                 </div>
             </div>
         </header>
@@ -223,8 +237,7 @@
                 <div class="container mx-auto px-6 text-center">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">El Corazón de Manizales</h2>
                     <p class="max-w-3xl mx-auto text-[var(--runa-text-alt)]">
-                        [CONTENIDO PENDIENTE DE APROBACIÓN POR LA DUEÑA] <br>
-                        Aquí se contará la historia de RUNA COFFEE, su conexión con los caficultores del Eje Cafetero, el respeto por la tierra y el compromiso con la calidad que nace en las montañas de Manizales.
+                        En RUNA COFFEE, cada grano cuenta una historia. Nacimos en las montañas de Manizales, corazón del Eje Cafetero, con un propósito: honrar la herencia de nuestros caficultores. Creemos en un comercio justo, en el respeto por la tierra que nos nutre y en procesos meticulosos que garantizan una calidad excepcional. RUNA no es solo café, es el alma de nuestra gente, una conexión mística entre la naturaleza y tu taza.
                     </p>
                 </div>
             </section>
@@ -239,14 +252,10 @@
                     <model-viewer id="ar-viewer"
                         src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
                         ios-src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
-                        ar
-                        ar-modes="webxr scene-viewer quick-look"
-                        ar-scale="auto"
-                        camera-controls
-                        auto-rotate
+                        ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto"
+                        camera-controls auto-rotate
                         alt="Un modelo 3D de un árbol estilizado"
-                        preload
-                        reveal="auto">
+                        preload reveal="auto">
                         
                         <button slot="ar-button" class="absolute bottom-4 right-4 bg-white rounded-full px-4 py-2 font-semibold shadow-lg text-gray-800 transition-transform transform hover:scale-105">
                             Ver en tu espacio
@@ -265,34 +274,24 @@
                     <div class="flex flex-col md:flex-row gap-10">
                         <aside class="w-full md:w-1/4 lg:w-1/5">
                             <h3 class="text-xl font-bold mb-4 border-b border-[var(--runa-border)] pb-2">Filtrar por</h3>
-                            <div class="space-y-6">
-                                <div>
-                                    <h4 class="font-semibold mb-2">Categoría</h4>
-                                    <label class="flex items-center cursor-pointer"><input type="radio" name="category" class="mr-2 accent-[var(--runa-primary)]">En Grano</label>
-                                    <label class="flex items-center cursor-pointer"><input type="radio" name="category" class="mr-2 accent-[var(--runa-primary)]">Molido</label>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold mb-2">Región</h4>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" class="mr-2 accent-[var(--runa-primary)]">Manizales, Caldas</label>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" class="mr-2 accent-[var(--runa-primary)]">Neira, Caldas</label>
-                                </div>
+                            <div id="filters-container" class="space-y-6">
                                 <div>
                                     <h4 class="font-semibold mb-2">Variedad</h4>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" class="mr-2 accent-[var(--runa-primary)]">Castillo</label>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" class="mr-2 accent-[var(--runa-primary)]">Caturra</label>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" class="mr-2 accent-[var(--runa-primary)]">Geisha</label>
+                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="variety" value="Castillo" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Castillo</label>
+                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="variety" value="Caturra" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Caturra</label>
+                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="variety" value="Geisha" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Geisha</label>
                                 </div>
                                 <div>
                                     <h4 class="font-semibold mb-2">Proceso</h4>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" class="mr-2 accent-[var(--runa-primary)]">Lavado</label>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" class="mr-2 accent-[var(--runa-primary)]">Natural</label>
+                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="process" value="Lavado" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Lavado</label>
+                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="process" value="Natural" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Natural</label>
                                 </div>
                                 <div>
                                     <h4 class="font-semibold mb-2">Tueste</h4>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" class="mr-2 accent-[var(--runa-primary)]">Claro</label>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" class="mr-2 accent-[var(--runa-primary)]">Medio</label>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" class="mr-2 accent-[var(--runa-primary)]">Oscuro</label>
+                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="roast" value="Claro" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Claro</label>
+                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="roast" value="Medio" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Medio</label>
                                 </div>
+                                 <button id="clear-filters-btn" class="w-full text-sm text-[var(--runa-text-alt)] hover:text-[var(--runa-primary)] transition-colors pt-2 border-t border-[var(--runa-border)]">Limpiar filtros</button>
                             </div>
                         </aside>
 
@@ -316,8 +315,8 @@
                     <div>
                         <h3 class="text-2xl font-bold text-white mb-4">Síguenos</h3>
                         <div class="flex justify-center md:justify-start space-x-4">
-                            <a href="#" target="_blank" class="transition-transform hover:scale-110"><img src="https://placehold.co/24x24/FFFFFF/000000?text=F" alt="Logo de Facebook" class="h-6 w-auto rounded"></a>
-                            <a href="#" target="_blank" class="transition-transform hover:scale-110"><img src="https://placehold.co/24x24/FFFFFF/000000?text=I" alt="Logo de Instagram" class="h-6 w-auto rounded"></a>
+                           <a href="https://www.instagram.com/runa.coffee/" target="_blank" class="transition-transform hover:scale-110"><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"></path></svg></a>
+                           <a href="#" target="_blank" class="transition-transform hover:scale-110"><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"></path></svg></a>
                         </div>
                     </div>
                     <div>
@@ -342,11 +341,15 @@
         <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.916-.539-5.574-1.54L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.267.655 4.398 1.908 6.166l-1.138 4.167 4.274-1.12z"/></svg>
     </a>
 
-    <audio id="background-audio" loop>
-        <source src="https://cdn.pixabay.com/audio/2022/10/24/audio_5b13856b46.mp3" type="audio/mpeg">
-        Tu navegador no soporta el elemento de audio.
-    </audio>
-    
+    <!-- Audio elements for the mixer -->
+    <!-- IMPORTANTE: Reemplaza la fuente de 'runa-main-audio' con tu archivo final. -->
+    <audio id="runa-main-audio" loop><source src="https://cdn.pixabay.com/audio/2022/10/24/audio_5b13856b46.mp3" type="audio/mpeg"></audio>
+    <audio id="river-audio" loop><source src="https://cdn.pixabay.com/audio/2022/01/18/audio_1809de4b74.mp3" type="audio/mpeg"></audio>
+    <audio id="birds-audio" loop><source src="https://cdn.pixabay.com/audio/2022/04/19/audio_82c97c126a.mp3" type="audio/mpeg"></audio>
+    <audio id="rain-audio" loop><source src="https://cdn.pixabay.com/audio/2023/07/19/audio_24a010a21a.mp3" type="audio/mpeg"></audio>
+    <audio id="fire-audio" loop><source src="https://cdn.pixabay.com/audio/2021/09/06/audio_23588a82d1.mp3" type="audio/mpeg"></audio>
+
+    <!-- Modals -->
     <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-4 bg-black/70 backdrop-blur-sm hidden"></div>
     <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
        <div class="w-full max-w-xs bg-[var(--runa-header-bg)] rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
@@ -365,51 +368,112 @@
     <script type="module">
         // Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, collection, getDocs, writeBatch, onSnapshot, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, collection, getDocs, writeBatch, onSnapshot, addDoc, deleteDoc, updateDoc, query, where, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // IMPORTANT: Replace with your Firebase config
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
+        // --- SAFE FIREBASE INITIALIZATION ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        let app, auth, db;
+        try {
+            const firebaseConfig = JSON.parse(firebaseConfigStr);
+            if (Object.keys(firebaseConfig).length > 0) {
+                 app = initializeApp(firebaseConfig);
+                 auth = getAuth(app);
+                 db = getFirestore(app);
+            } else {
+                console.warn("Firebase config is empty. App will run in offline mode.");
+            }
+        } catch (e) {
+            console.error("Error initializing Firebase:", e);
+        }
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Product data
+        // Product data with prices
         const coffeeProducts = [
-            { id: 'Runa01', name: 'Runa Origen Manizales', region: 'Manizales, Caldas', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', image: 'https://placehold.co/400x400/3a2e2a/FFFFFF?text=Runa+01' },
-            { id: 'Runa02', name: 'Finca El Mirador', region: 'Manizales, Caldas', variety: 'Caturra', process: 'Lavado', roast: 'Medio', notes: 'Cuerpo balanceado, acidez cítrica y dulzor residual.', image: 'https://placehold.co/400x400/3a2e2a/FFFFFF?text=Runa+02' },
-            { id: 'Runa03', name: 'Microlote Natural', region: 'Neira, Caldas', variety: 'Castillo', process: 'Natural', roast: 'Claro', notes: 'Sabor intenso a frutos rojos, vino y canela.', image: 'https://placehold.co/400x400/3a2e2a/FFFFFF?text=Runa+03' },
-            { id: 'Runa04', name: 'Tesoro Geisha', region: 'Manizales, Caldas', variety: 'Geisha', process: 'Lavado', roast: 'Claro', notes: 'Perfil complejo y elegante, con notas a jazmín y bergamota.', image: 'https://placehold.co/400x400/3a2e2a/FFFFFF?text=Runa+04' }
+            { id: 'Runa01', name: 'Runa Origen Manizales', region: 'Manizales, Caldas', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', price: 45000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-1.jpg' },
+            { id: 'Runa02', name: 'Finca El Mirador', region: 'Manizales, Caldas', variety: 'Caturra', process: 'Lavado', roast: 'Medio', notes: 'Cuerpo balanceado, acidez cítrica y dulzor residual.', price: 52000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-2.jpg' },
+            { id: 'Runa03', name: 'Microlote Natural', region: 'Neira, Caldas', variety: 'Castillo', process: 'Natural', roast: 'Claro', notes: 'Sabor intenso a frutos rojos, vino y canela.', price: 58000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-3.jpg' },
+            { id: 'Runa04', name: 'Tesoro Geisha', region: 'Manizales, Caldas', variety: 'Geisha', process: 'Lavado', roast: 'Claro', notes: 'Perfil complejo y elegante, con notas a jazmín y bergamota.', price: 85000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-4.jpg' }
         ];
 
         const productGrid = document.getElementById('product-grid');
         
+        // --- AMBIENCE MIXER ---
+        const ambienceSounds = [
+            { id: 'runa-main-audio', name: 'Música Runa', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M235.1,91.31a8,8,0,0,0-9.17-2.38L184,101.08V40a16,16,0,0,0-16-16H80a16,16,0,0,0-16,16V164.26A40,40,0,1,0,96,200V88a8,8,0,0,1,16,0v88.26a40,40,0,1,0,32,36V123.75l41.93-12.1a8,8,0,0,0,5.24-9.34Z"></path></svg>` },
+            { id: 'river-audio', name: 'Río', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M240,112c-15.35,0-29.08-9.15-38.37-23.34-11-16.89-28.18-29.33-47.8-33.4-22.34-4.63-44.5,1.59-62.2,16.51C76.2,84,62.65,96,48,96a40,40,0,0,1,0-80c15.35,0,29.08,9.15,38.37,23.34,11,16.89,28.18,29.33,47.8,33.4,22.34,4.63,44.5-1.59,62.2-16.51C211.8,44,225.35,32,240,32a8,8,0,0,1,0,16c-12.65,0-26.2,12-41.63,24.66-14.7,12-32,16.48-49.83,12.87-15.33-3.1-29.42-12.63-39.17-27.18C99.08,49.15,85.35,40,72,40a24,24,0,0,0,0,48c12.65,0,26.2-12,41.63-24.66,14.7-12,32-16.48,49.83-12.87,15.33,3.1,29.42,12.63,39.17,27.18C212.92,130.85,226.65,144,240,144a40,40,0,0,1,0,80c-15.35,0-29.08-9.15-38.37-23.34-11-16.89-28.18-29.33-47.8-33.4-22.34-4.63-44.5,1.59-62.2,16.51C76.2,196,62.65,208,48,208a8,8,0,0,1,0-16c12.65,0,26.2-12,41.63-24.66,14.7-12,32-16.48,49.83-12.87,15.33,3.1,29.42,12.63,39.17,27.18C188.92,201.15,202.65,216,216,216a24,24,0,0,0,0-48c-12.65,0-26.2,12-41.63,24.66-14.7,12-32,16.48-49.83,12.87-15.33-3.1-29.42-12.63-39.17-27.18C75.08,170.85,61.35,152,48,152a8,8,0,0,1,0-16c14.65,0,28.2,12,43.63,24.66,17.7,14.92,39.86,21.13,62.2,16.51,19.62-4.07,36.8-16.51,47.8-33.4C210.92,121.15,224.65,112,240,112Z"></path></svg>` },
+            { id: 'birds-audio', name: 'Pájaros', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M240,136v64a8,8,0,0,1-16,0V177.38l-40-24V192a8,8,0,0,1-16,0V145.38l-48-28.8V176a8,8,0,0,1-16,0V108.62l-44.43-35.54A8,8,0,1,1,64.43,64.46L104,92.62,152,64l82.37,49.42A8,8,0,0,1,240,120v8a8,8,0,0,1-4.28,7.18l-51.72,31Z"></path></svg>` },
+            { id: 'rain-audio', name: 'Lluvia', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M120,224a8,8,0,0,1-8,8,64.07,64.07,0,0,1-64-64,8,8,0,0,1,16,0,48.05,48.05,0,0,0,48,48A8,8,0,0,1,120,224Zm88-128a8,8,0,0,0,8-8,72.08,72.08,0,0,0-72-72,8,8,0,0,0,0,16,56.06,56.06,0,0,1,56,56A8,8,0,0,0,208,96ZM88,144a8,8,0,1,0-8,8A8,8,0,0,0,88,144Zm48-16a8,8,0,1,0-8,8A8,8,0,0,0,136,128Zm0,48a8,8,0,1,0,8-8A8,8,0,0,0,136,176Zm56-48a8,8,0,1,0-8,8A8,8,0,0,0,192,128Zm-48-72a8,8,0,0,0,8-8V40a8,8,0,0,0-16,0V56A8,8,0,0,0,144,64Zm96.72-4.3.17-.1a8,8,0,0,0-11.18-11.4l-.17.1a72.06,72.06,0,0,0-99.8,99.8l.1.17a8,8,0,1,0,11.4,11.18l-.1-.17A56,56,0,0,1,240.72,59.7Z"></path></svg>` },
+            { id: 'fire-audio', name: 'Fuego', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M208,204a8,8,0,0,1-1.18,15.93,120.3,120.3,0,0,0-36.43-22.18c-13-4.88-26.88-8.2-41.28-9.84a120.57,120.57,0,0,0-58.22,16.1,8,8,0,1,1-8.78-13.1,136.6,136.6,0,0,1,66.1-18.15c15.82,1.77,31.22,5.5,45.52,10.87A136.1,136.1,0,0,1,206.82,203.93,8,8,0,0,1,208,204Zm-88-68a8,8,0,0,0,8-8,40,40,0,0,1,40-40,8,8,0,0,0,0-16,56.06,56.06,0,0,0-56,56A8,8,0,0,0,120,136Zm0-112a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-8A8,8,0,0,0,120,24Zm95.16,35.43a8,8,0,0,0-10.32,5.29,64.09,64.09,0,0,1-40,50.66,8,8,0,0,0,5.32,14.84,80.11,80.11,0,0,0,50.1-63.32A8,8,0,0,0,215.16,59.43Z"></path></svg>` },
+        ];
+        let audioElements = {};
+        let isMixerPlaying = false;
+        
+        function initializeMixer() {
+            const soundControlsContainer = document.getElementById('sound-controls');
+            ambienceSounds.forEach(sound => {
+                const audioEl = document.getElementById(sound.id);
+                if (!audioEl) return;
+                audioElements[sound.id] = audioEl;
+
+                const controlHtml = `
+                    <div class="flex items-center gap-3 text-sm text-[var(--runa-text-alt)]">
+                        <span class="w-8 text-center">${sound.icon}</span>
+                        <span class="flex-1 font-medium text-[var(--runa-text)] w-16 truncate">${sound.name}</span>
+                        <input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="${sound.id === 'runa-main-audio' ? 0.5 : 0}" class="flex-grow">
+                    </div>`;
+                soundControlsContainer.innerHTML += controlHtml;
+            });
+
+            // Set initial volumes and add listeners
+            Object.keys(audioElements).forEach(id => {
+                const slider = document.getElementById(`volume-${id}`);
+                audioElements[id].volume = slider.value;
+                slider.addEventListener('input', (e) => {
+                    audioElements[id].volume = e.target.value;
+                });
+            });
+        }
+
+        function toggleMasterSound() {
+            isMixerPlaying = !isMixerPlaying;
+            document.getElementById('sound-controls').classList.toggle('opacity-50', !isMixerPlaying);
+            document.getElementById('master-play-icon').classList.toggle('hidden', isMixerPlaying);
+            document.getElementById('master-pause-icon').classList.toggle('hidden', !isMixerPlaying);
+            
+            Object.values(audioElements).forEach(audio => {
+                if (isMixerPlaying) {
+                    audio.play().catch(e => console.error("Audio play failed:", e));
+                } else {
+                    audio.pause();
+                }
+            });
+        }
+        
         function renderProducts(products) {
             if (!productGrid) return;
             productGrid.innerHTML = '';
+            if (products.length === 0) {
+                 productGrid.innerHTML = `<p class="col-span-full text-center text-[var(--runa-text-alt)]">No se encontraron productos con esos filtros.</p>`;
+                 return;
+            }
             products.forEach(prod => {
                 const card = document.createElement('div');
                 card.className = "block bg-[var(--runa-bg)] rounded-lg overflow-hidden border border-[var(--runa-border)] shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col group hover:-translate-y-2";
                 card.innerHTML = `
-                    <div class="overflow-hidden h-48 bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-500">
-                        <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x400/cccccc/ffffff?text=Imagen+no+disponible';">
+                    <div class="overflow-hidden h-56 bg-gray-300 dark:bg-gray-700">
+                        <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/cccccc/ffffff?text=Imagen+no+disponible';">
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
                         <div class="flex-grow">
                             <h3 class="text-xl font-bold mb-2">${prod.name}</h3>
+                            <p class="text-[var(--runa-primary)] font-semibold text-lg mb-2">${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(prod.price)}</p>
                             <p class="text-sm text-[var(--runa-text-alt)] mb-1"><strong>Origen:</strong> ${prod.region}</p>
                             <p class="text-sm text-[var(--runa-text-alt)]">${prod.notes}</p>
                         </div>
-                        <button data-item-id="${prod.id}" data-item-name="${prod.name}" class="add-to-cart-btn mt-6 w-full text-center bg-[var(--runa-primary)] text-white text-sm font-semibold py-2 px-4 rounded-full group-hover:bg-[var(--runa-secondary)] transition-colors">Añadir al Carrito</button>
+                        <button data-item-id='${JSON.stringify(prod)}' class="add-to-cart-btn mt-6 w-full text-center bg-[var(--runa-primary)] text-white text-sm font-semibold py-2 px-4 rounded-full group-hover:bg-[var(--runa-secondary)] transition-colors">Añadir al Carrito</button>
                     </div>
                 `;
                 productGrid.appendChild(card);
@@ -418,98 +482,100 @@
         
         // App state and DOM elements
         let currentUser = null;
+        let userId = null;
         let cartUnsubscribe = null;
         const authContainer = document.getElementById('auth-container');
         const authModal = document.getElementById('auth-modal');
-        const closeAuthModalButton = document.getElementById('close-auth-modal-button');
-        const googleLoginButtonModal = document.getElementById('google-login-button-modal');
-        const cartModalContainer = document.getElementById('cart-modal');
-        const openCartButton = document.getElementById('open-cart-button');
+        const cartModal = document.getElementById('cart-modal');
         
-        // Auth state change handler
-        onAuthStateChanged(auth, async (user) => {
+        // --- AUTHENTICATION ---
+        async function authStateObserver(user) {
             currentUser = user;
-            if (user) {
+            if (user && !user.isAnonymous) {
+                userId = user.uid;
                 renderUserUI(user);
                 await mergeLocalCartWithFirestore();
                 setupCartListener();
             } else {
-                renderGuestUI();
-                if (cartUnsubscribe) {
-                    cartUnsubscribe();
-                    cartUnsubscribe = null;
+                userId = localStorage.getItem('anonymousUserId') || `anon_${crypto.randomUUID()}`;
+                if (!localStorage.getItem('anonymousUserId')) {
+                    localStorage.setItem('anonymousUserId', userId);
                 }
+                renderGuestUI();
+                if (cartUnsubscribe) cartUnsubscribe();
                 updateCartFromLocal();
             }
-        });
-
-        // Auth functions
+        }
+        
         const loginWithGoogle = () => {
+             if (!auth) return;
             const provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
             signInWithPopup(auth, provider)
                 .then(() => authModal.classList.add('hidden'))
                 .catch((error) => console.error("Google Sign-In Error:", error));
         };
-        const logout = () => signOut(auth).catch((error) => console.error("Sign-Out Error:", error));
+        const logout = () => { if(auth) signOut(auth).catch((error) => console.error("Sign-Out Error:", error)); };
         
-        // Local cart functions
-        const getLocalCart = () => JSON.parse(localStorage.getItem("runa_cart_local")) || [];
-        const saveLocalCart = (cart) => localStorage.setItem("runa_cart_local", JSON.stringify(cart));
-        const clearLocalCart = () => localStorage.removeItem("runa_cart_local");
-
         // Cart logic
+        const getCartRef = () => collection(db, "carts", userId, "items");
+        const getLocalCart = () => JSON.parse(localStorage.getItem(`runa_cart_${userId}`)) || [];
+        const saveLocalCart = (cart) => localStorage.setItem(`runa_cart_${userId}`, JSON.stringify(cart));
+
         async function mergeLocalCartWithFirestore() {
-            const localCart = getLocalCart();
-            if (localCart.length === 0 || !currentUser) return;
-            const cartRef = collection(db, "carts", currentUser.uid, "items");
+            if (!currentUser || !db) return;
+            const anonUserId = localStorage.getItem('anonymousUserId');
+            if (!anonUserId) return;
+
+            const localCart = JSON.parse(localStorage.getItem(`runa_cart_${anonUserId}`)) || [];
+            if (localCart.length === 0) return;
+
+            const cartRef = getCartRef();
             const firestoreCartSnapshot = await getDocs(cartRef);
-            const firestoreItems = new Map(firestoreCartSnapshot.docs.map(d => [d.data().name, {id: d.id, ...d.data()}]));
+            const firestoreItems = new Map(firestoreCartSnapshot.docs.map(d => [d.data().id, {docId: d.id, ...d.data()}]));
+            
             const batch = writeBatch(db);
             localCart.forEach(localItem => {
-                const firestoreItem = firestoreItems.get(localItem.name);
+                const firestoreItem = firestoreItems.get(localItem.id);
                 if (firestoreItem) {
-                    const itemDocRef = doc(db, "carts", currentUser.uid, "items", firestoreItem.id);
+                    const itemDocRef = doc(db, "carts", userId, "items", firestoreItem.docId);
                     batch.update(itemDocRef, { quantity: firestoreItem.quantity + localItem.quantity });
                 } else {
-                    const newItemDocRef = doc(collection(db, "carts", currentUser.uid, "items"));
+                    const newItemDocRef = doc(cartRef);
                     batch.set(newItemDocRef, localItem);
                 }
             });
             await batch.commit();
-            clearLocalCart();
+            localStorage.removeItem(`runa_cart_${anonUserId}`);
         }
 
         function setupCartListener() {
-            if (!currentUser) return;
-            const cartRef = collection(db, "carts", currentUser.uid, "items");
-            cartUnsubscribe = onSnapshot(cartRef, (snapshot) => {
-                const cart = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            if (!currentUser || !db || currentUser.isAnonymous) return;
+            cartUnsubscribe = onSnapshot(getCartRef(), (snapshot) => {
+                const cart = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
                 updateCartUI(cart);
-                if (!cartModalContainer.classList.contains('hidden')) {
-                    renderCartModal(cart);
-                }
+                if (!cartModal.classList.contains('hidden')) renderCartModal(cart);
             });
         }
         
         function updateCartFromLocal() {
-            const cart = getLocalCart();
-            updateCartUI(cart);
+            updateCartUI(getLocalCart());
         }
 
         window.addToCart = async (item) => {
-            if (currentUser) {
-                const cartRef = collection(db, "carts", currentUser.uid, "items");
-                const q = await getDocs(collection(db, "carts", currentUser.uid, "items"));
-                const existingItemDoc = q.docs.find(d => d.data().name === item.name);
-                if (existingItemDoc) {
-                    await updateDoc(existingItemDoc.ref, { quantity: existingItemDoc.data().quantity + 1 });
+            if (currentUser && !currentUser.isAnonymous && db) {
+                const cartRef = getCartRef();
+                const q = query(cartRef, where("id", "==", item.id));
+                const snapshot = await getDocs(q);
+                if (!snapshot.empty) {
+                    const existingDoc = snapshot.docs[0];
+                    await updateDoc(existingDoc.ref, { quantity: existingDoc.data().quantity + 1 });
                 } else {
                     await addDoc(cartRef, { ...item, quantity: 1 });
                 }
             } else {
                 let cart = getLocalCart();
-                const existingItem = cart.find(i => i.name === item.name);
+                const existingItem = cart.find(i => i.id === item.id);
                 if (existingItem) {
                     existingItem.quantity++;
                 } else {
@@ -520,15 +586,19 @@
             }
         };
 
-        window.updateItemQuantity = async (itemId, newQuantity) => {
+        window.updateItemQuantity = async (itemIdentifier, newQuantity) => {
+             const isFirestore = currentUser && !currentUser.isAnonymous && db;
+             
             if (newQuantity < 1) {
-                await window.removeItemFromCart(itemId);
+                await window.removeItemFromCart(itemIdentifier);
                 return;
             }
-            if (currentUser) {
-                const itemRef = doc(db, "carts", currentUser.uid, "items", itemId);
+
+            if (isFirestore) {
+                const itemRef = doc(db, "carts", userId, "items", itemIdentifier);
                 await updateDoc(itemRef, { quantity: newQuantity });
             } else {
+                const itemId = JSON.parse(decodeURIComponent(itemIdentifier)).id;
                 let cart = getLocalCart();
                 const itemToUpdate = cart.find(i => i.id === itemId);
                 if (itemToUpdate) itemToUpdate.quantity = newQuantity;
@@ -538,10 +608,11 @@
             }
         };
 
-        window.removeItemFromCart = async (itemId) => {
-            if (currentUser) {
-                await deleteDoc(doc(db, "carts", currentUser.uid, "items", itemId));
+        window.removeItemFromCart = async (itemIdentifier) => {
+            if (currentUser && !currentUser.isAnonymous && db) {
+                await deleteDoc(doc(db, "carts", userId, "items", itemIdentifier));
             } else {
+                const itemId = JSON.parse(decodeURIComponent(itemIdentifier)).id;
                 let cart = getLocalCart().filter(i => i.id !== itemId);
                 saveLocalCart(cart);
                 updateCartFromLocal();
@@ -575,14 +646,54 @@
         };
 
         function renderCartModal(cart) {
-            const actionButtonHtml = cart.length > 0 ? `<a href="#" class="w-full inline-flex items-center justify-center gap-3 px-5 py-3 text-base font-semibold text-white bg-green-500 rounded-lg shadow-sm hover:bg-green-600 transition-all"><span>Proceder al Pago</span></a>` : '<a href="#tienda" class="w-full block text-center bg-[var(--runa-primary)] text-white font-bold py-3 px-5 rounded-lg" onclick="closeCartModal()">Volver a la tienda</a>';
-            const cartItemsHtml = cart.length === 0 ? `<p class="text-gray-400 py-8 text-center">Tu carrito está vacío.</p>` : cart.map(item => `<div class="flex justify-between items-center py-3"><span class="text-gray-300 pr-2 flex-grow">${item.name}</span><div class="flex items-center gap-2 text-white"><button onclick="updateItemQuantity('${item.id}', ${item.quantity - 1})" class="w-7 h-7 rounded-full bg-gray-600 hover:bg-gray-500 transition-colors">-</button><span class="w-8 text-center">${item.quantity}</span><button onclick="updateItemQuantity('${item.id}', ${item.quantity + 1})" class="w-7 h-7 rounded-full bg-gray-600 hover:bg-gray-500 transition-colors">+</button><button onclick="removeItemFromCart('${item.id}')" class="ml-2 text-red-400 hover:text-red-300 transition-colors" aria-label="Eliminar item"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button></div></div>`).join("");
-            cartModalContainer.innerHTML=`<div class="w-full max-w-md bg-[var(--runa-header-bg)] rounded-2xl shadow-2xl p-6 flex flex-col modal-enter"><div class="text-center mb-6"><h2 class="text-2xl font-bold text-white">Tu Carrito de Café</h2></div><div class="border-t border-gray-700 pt-4 flex-grow overflow-y-auto" style="max-height: 40vh;"><div id="cart-items" class="divide-y divide-gray-700 text-left">${cartItemsHtml}</div></div><div class="mt-auto pt-4 space-y-3">${actionButtonHtml}<button class="mt-2 text-sm text-gray-400 hover:text-white w-full" onclick="closeCartModal()">Cerrar</button></div></div>`;
+            const isFirestore = currentUser && !currentUser.isAnonymous && db;
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const formattedTotal = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(total);
+
+            const actionButtonHtml = cart.length > 0 
+                ? `<div class="border-t border-gray-600 pt-4 mt-4 text-right">
+                        <p class="text-lg text-white">Total: <span class="font-bold">${formattedTotal}</span></p>
+                        <a href="#" class="w-full mt-4 inline-flex items-center justify-center gap-3 px-5 py-3 text-base font-semibold text-white bg-green-500 rounded-lg shadow-sm hover:bg-green-600 transition-all"><span>Proceder al Pago</span></a>
+                   </div>` 
+                : '<a href="#tienda" class="w-full block text-center bg-[var(--runa-primary)] text-white font-bold py-3 px-5 rounded-lg" onclick="closeCartModal()">Volver a la tienda</a>';
+            
+            const cartItemsHtml = cart.length === 0 
+                ? `<p class="text-gray-400 py-8 text-center">Tu carrito está vacío.</p>` 
+                : cart.map(item => {
+                    const itemIdentifier = isFirestore ? item.docId : encodeURIComponent(JSON.stringify(item));
+                    return `<div class="flex justify-between items-center py-3">
+                                <span class="text-gray-300 pr-2 flex-grow">${item.name}</span>
+                                <div class="flex items-center gap-2 text-white">
+                                    <button onclick="updateItemQuantity('${itemIdentifier}', ${item.quantity - 1})" class="w-7 h-7 rounded-full bg-gray-600 hover:bg-gray-500 transition-colors">-</button>
+                                    <span class="w-8 text-center">${item.quantity}</span>
+                                    <button onclick="updateItemQuantity('${itemIdentifier}', ${item.quantity + 1})" class="w-7 h-7 rounded-full bg-gray-600 hover:bg-gray-500 transition-colors">+</button>
+                                    <button onclick="removeItemFromCart('${itemIdentifier}')" class="ml-2 text-red-400 hover:text-red-300 transition-colors" aria-label="Eliminar item"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                                </div>
+                            </div>`;
+                }).join("");
+
+            cartModal.innerHTML=`<div class="w-full max-w-md bg-[var(--runa-header-bg)] rounded-2xl shadow-2xl p-6 flex flex-col modal-enter"><div class="text-center mb-6"><h2 class="text-2xl font-bold text-white">Tu Carrito de Café</h2></div><div class="flex-grow overflow-y-auto" style="max-height: 40vh;"><div id="cart-items" class="divide-y divide-gray-700 text-left">${cartItemsHtml}</div></div><div class="mt-auto pt-4">${actionButtonHtml}<button class="mt-2 text-sm text-gray-400 hover:text-white w-full" onclick="closeCartModal()">Cerrar</button></div></div>`;
         }
-        window.closeCartModal = () => cartModalContainer.classList.add('hidden');
+        window.closeCartModal = () => cartModal.classList.add('hidden');
         
         // --- Main DOMContentLoaded event listener ---
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            const openCartButton = document.getElementById('open-cart-button');
+
+            if (auth) {
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else if (!auth.currentUser){
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Auth initialization error:", error);
+                }
+                onAuthStateChanged(auth, authStateObserver);
+            } else {
+                authStateObserver(null);
+            }
             
             // --- Robust Video Intro Logic ---
             const videoIntro = document.getElementById('video-intro');
@@ -591,45 +702,63 @@
             let introFinished = false;
 
             const endIntro = () => {
-                if (introFinished) return; // Prevent running multiple times
+                if (introFinished) return;
                 introFinished = true;
-
                 videoIntro.classList.add('hidden');
-                
-                // Use a short delay to ensure the video div is hidden before fading in content
                 setTimeout(() => {
                     pageContent.classList.add('loaded');
                 }, 100);
             };
 
-            // 1. Event listener for when the video ends
             introVideo.addEventListener('ended', endIntro);
-            
-            // 2. Event listener for errors
             introVideo.addEventListener('error', endIntro);
-
-            // 3. Safety net timer: if nothing happens after 5.5s, force the content to show
-            const safetyTimer = setTimeout(endIntro, 5500);
-
-            // Try to play the video, catching potential errors for silent failure
+            setTimeout(endIntro, 5500);
             introVideo.play().catch(error => {
                 console.warn("Video autoplay was prevented. Showing content immediately.", error);
-                endIntro(); // If play fails, just end the intro.
+                endIntro();
             });
 
-            // --- END: Video Intro Logic ---
+            // --- Product Filters Logic ---
+            const clearFiltersBtn = document.getElementById('clear-filters-btn');
 
-
+            function applyFilters() {
+                const activeFilters = {};
+                document.querySelectorAll('.filter-checkbox:checked').forEach(cb => {
+                    if (!activeFilters[cb.dataset.filter]) activeFilters[cb.dataset.filter] = [];
+                    activeFilters[cb.dataset.filter].push(cb.value);
+                });
+                
+                const filteredProducts = coffeeProducts.filter(product => {
+                    return Object.keys(activeFilters).every(filterKey => {
+                        return activeFilters[filterKey].includes(product[filterKey]);
+                    });
+                });
+                renderProducts(filteredProducts);
+            }
+            document.querySelectorAll('.filter-checkbox').forEach(cb => cb.addEventListener('change', applyFilters));
+            clearFiltersBtn.addEventListener('click', () => {
+                 document.querySelectorAll('.filter-checkbox').forEach(cb => cb.checked = false);
+                 applyFilters();
+            });
             renderProducts(coffeeProducts);
 
             authContainer.innerHTML = `<div class="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>`;
-            googleLoginButtonModal.addEventListener('click', loginWithGoogle);
-            closeAuthModalButton.addEventListener('click', () => authModal.classList.add('hidden'));
+            document.getElementById('google-login-button-modal').addEventListener('click', loginWithGoogle);
+            document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
             authModal.addEventListener('click', (event) => { if (event.target === authModal) authModal.classList.add('hidden'); });
 
-            const menuButton = document.getElementById('menu-button'); const mobileMenu = document.getElementById('mobile-menu'); const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-            menuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-            mobileNavLinks.forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+            // Menu and Mixer Panel Logic
+            const menuButton = document.getElementById('menu-button'); const mobileMenu = document.getElementById('mobile-menu');
+            const mixerButton = document.getElementById('mixer-toggle-button'); const mixerPanel = document.getElementById('mixer-panel');
+            menuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                mixerPanel.classList.add('hidden');
+            });
+            mixerButton.addEventListener('click', () => {
+                mixerPanel.classList.toggle('hidden');
+                mobileMenu.classList.add('hidden');
+            });
+            document.querySelectorAll('.mobile-nav-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
             
             // Theme Controls
             const themeToggle = document.getElementById('theme-toggle'); 
@@ -645,54 +774,40 @@
                 localStorage.setItem('theme', newTheme); 
                 applyTheme(newTheme); 
             });
-            const savedTheme = localStorage.getItem('theme') || 'light'; 
-            applyTheme(savedTheme);
+            applyTheme(localStorage.getItem('theme') || 'light');
 
-            // Audio Controls
-            const audio = document.getElementById('background-audio');
-            const soundToggle = document.getElementById('sound-toggle');
-            const soundIconOn = document.getElementById('sound-icon-on');
-            const soundIconOff = document.getElementById('sound-icon-off');
-
-            const toggleSound = () => {
-                if (audio.paused) {
-                    audio.play().catch(e => console.error("Error playing audio:", e));
-                    soundIconOff.classList.add('hidden');
-                    soundIconOn.classList.remove('hidden');
-                } else {
-                    audio.pause();
-                    soundIconOn.classList.add('hidden');
-                    soundIconOff.classList.remove('hidden');
-                }
-            };
-            soundToggle.addEventListener('click', toggleSound);
-            soundIconOff.classList.remove('hidden'); // Initial state
+            // Initialize Ambience Mixer
+            initializeMixer();
+            document.getElementById('master-sound-toggle').addEventListener('click', toggleMasterSound);
             
-            // Footer setup
             const paymentLogosContainer = document.getElementById('payment-logos');
             if(paymentLogosContainer) {
                 const paymentMethods = [ 'Mastercard', 'Visa', 'Amex', 'PayPal' ];
-                paymentLogosContainer.innerHTML = ''; 
-                paymentMethods.forEach(m => { paymentLogosContainer.innerHTML += `<img src="https://placehold.co/48x32/FFFFFF/000000?text=${m}" alt="${m}" title="${m}" class="h-8 bg-white rounded-md p-1">`; });
+                paymentLogosContainer.innerHTML = paymentMethods.map(m => `<img src="https://placehold.co/48x32/FFFFFF/000000?text=${m}" alt="${m}" title="${m}" class="h-8 bg-white rounded-md p-1">`).join('');
             }
             document.getElementById('year').textContent = new Date().getFullYear();
             
             // Cart events
             openCartButton.addEventListener('click', async () => {
-                const cart = currentUser ? (await getDocs(collection(db, "carts", currentUser.uid, "items"))).docs.map(d => ({id: d.id, ...d.data()})) : getLocalCart();
+                let cart;
+                if (currentUser && !currentUser.isAnonymous && db) {
+                    const snapshot = await getDocs(getCartRef());
+                    cart = snapshot.docs.map(d => ({ docId: d.id, ...d.data() }));
+                } else {
+                    cart = getLocalCart();
+                }
                 renderCartModal(cart);
-                cartModalContainer.classList.remove('hidden');
+                cartModal.classList.remove('hidden');
             });
             
             document.body.addEventListener('click', (e) => {
-                if (e.target.closest('.add-to-cart-btn')) {
-                    const button = e.target.closest('.add-to-cart-btn');
-                    const item = { id: button.dataset.itemId, name: button.dataset.itemName };
+                const button = e.target.closest('.add-to-cart-btn');
+                if (button) {
+                    const item = JSON.parse(button.dataset.itemId);
                     window.addToCart(item);
                 }
             });
 
-            // AR Compatibility Check
             const arViewer = document.getElementById('ar-viewer');
             if(arViewer) {
                 arViewer.addEventListener('ar-status', (event) => {
@@ -702,9 +817,6 @@
                 });
             }
         });
-
     </script>
-
 </body>
-
 </html>
