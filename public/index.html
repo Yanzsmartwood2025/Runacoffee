@@ -140,12 +140,12 @@
             border: 2px solid var(--runa-bg);
         }
 
-        /* Styles for Video Icon Buttons in Mixer */
-        .video-icon-button {
+        /* Styles for Icon Buttons in Mixer */
+        .icon-button {
             border: 2px solid transparent;
             transition: border-color 0.3s ease;
         }
-        .video-icon-button.active {
+        .icon-button.active {
             border-color: var(--runa-primary);
         }
     </style>
@@ -193,9 +193,9 @@
                         <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
                         <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
-                     <!-- Mixer Toggle Button -->
+                    <!-- Mixer Toggle Button -->
                     <button id="mixer-toggle-button" class="p-2 rounded-full text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)]" aria-label="Abrir mezclador de ambiente">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" transform="rotate(90 12 12)"></path><circle cx="6" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="15" cy="18" r="2"></circle></svg>
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z"></path></svg>
                     </button>
                     <div id="cart-icon-wrapper">
                         <button id="open-cart-button" class="relative p-1 text-[var(--runa-text)]">
@@ -359,7 +359,6 @@
     <audio id="wind-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
     <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
     
-
     <!-- Modals -->
     <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-4 bg-black/70 backdrop-blur-sm hidden"></div>
     <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
@@ -377,12 +376,10 @@
     </div>
     
     <script type="module">
-        // Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, collection, getDocs, writeBatch, onSnapshot, addDoc, deleteDoc, updateDoc, query, where, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- SAFE FIREBASE INITIALIZATION ---
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
@@ -401,7 +398,6 @@
             console.error("Error initializing Firebase:", e);
         }
 
-        // Product data with prices
         const coffeeProducts = [
             { id: 'Runa01', name: 'Runa Origen Manizales', region: 'Manizales, Caldas', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', price: 45000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-1.jpg' },
             { id: 'Runa02', name: 'Finca El Mirador', region: 'Manizales, Caldas', variety: 'Caturra', process: 'Lavado', roast: 'Medio', notes: 'Cuerpo balanceado, acidez cítrica y dulzor residual.', price: 52000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-2.jpg' },
@@ -411,15 +407,14 @@
 
         const productGrid = document.getElementById('product-grid');
         
-        // --- AMBIENCE MIXER ---
         const ambienceSounds = [
-            { id: 'runa-main-audio', name: 'Música Runa', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-a-disc-jockey-is-adjusting-the-sound-on-his-mixer-4122-large.mp4' },
-            { id: 'river-audio', name: 'Río', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-water-stream-in-the-forest-2735-large.mp4' },
-            { id: 'birds-audio', name: 'Pájaros', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-two-birds-in-a-cage-4145-large.mp4' },
-            { id: 'rain-audio', name: 'Lluvia', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-heavy-rain-on-the-road-1635-large.mp4' },
-            { id: 'fire-audio', name: 'Fuego', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-burning-incense-4676-large.mp4' },
-            { id: 'wind-audio', name: 'Viento', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-field-of-reeds-in-the-wind-8 reeds-in-the-wind-4481-large.mp4' },
-            { id: 'storm-audio', name: 'Tormenta', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-lightning-over-a-city-88-large.mp4' },
+            { id: 'runa-main-audio', name: 'Música Runa', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/runa-main-audio.mp4' },
+            { id: 'river-audio', name: 'Río', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/river-audio.mp4' },
+            { id: 'birds-audio', name: 'Pájaros', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/birds-audio.mp4' },
+            { id: 'rain-audio', name: 'Lluvia', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/rain-audio.mp4' },
+            { id: 'fire-audio', name: 'Fuego', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/8d03fb9b973ae03274128b4c61e088a7c8947ab7/public/assets%20/VIDEOS/fire-audio.mp4' },
+            { id: 'wind-audio', name: 'Viento', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/wind-audio.mp4' },
+            { id: 'storm-audio', name: 'Tormenta', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/storm-audio.mp4' },
         ];
         let audioElements = {};
         let isMixerPlaying = false;
@@ -433,12 +428,14 @@
                 if (!audioEl) return;
                 audioElements[sound.id] = audioEl;
 
+                const mediaElement = `<video autoplay loop muted playsinline class="absolute top-1/2 left-1/2 w-auto h-auto min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover">
+                                          <source src="${sound.videoSrc}" type="video/mp4">
+                                      </video>`;
+
                 const controlHtml = `
                     <div class="flex items-center gap-4 text-sm text-[var(--runa-text-alt)]">
-                        <button id="btn-${sound.id}" class="video-icon-button relative w-10 h-10 rounded-full overflow-hidden shadow-md flex-shrink-0">
-                           <video autoplay loop muted playsinline class="absolute top-1/2 left-1/2 w-auto h-auto min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover">
-                               <source src="${sound.videoSrc}" type="video/mp4">
-                           </video>
+                        <button id="btn-${sound.id}" class="icon-button relative w-10 h-10 rounded-full overflow-hidden shadow-md flex-shrink-0 bg-gray-200 dark:bg-gray-700">
+                           ${mediaElement}
                         </button>
                         <span class="font-medium text-[var(--runa-text)] w-20 truncate">${sound.name}</span>
                         <input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="${sound.id === 'runa-main-audio' ? 0.5 : 0}" class="flex-grow">
@@ -446,7 +443,6 @@
                 soundControlsContainer.innerHTML += controlHtml;
             });
 
-            // Set initial volumes and add listeners
             Object.keys(audioElements).forEach(id => {
                 const slider = document.getElementById(`volume-${id}`);
                 const button = document.getElementById(`btn-${id}`);
@@ -468,7 +464,6 @@
                     } else {
                         slider.value = slider.dataset.lastValue || 0.5;
                     }
-                    // Trigger input event to update volume and UI
                     slider.dispatchEvent(new Event('input'));
                 });
             });
@@ -517,7 +512,6 @@
             });
         }
         
-        // App state and DOM elements
         let currentUser = null;
         let userId = null;
         let cartUnsubscribe = null;
@@ -525,7 +519,6 @@
         const authModal = document.getElementById('auth-modal');
         const cartModal = document.getElementById('cart-modal');
         
-        // --- AUTHENTICATION ---
         async function authStateObserver(user) {
             currentUser = user;
             if (user && !user.isAnonymous) {
@@ -554,7 +547,6 @@
         };
         const logout = () => { if(auth) signOut(auth).catch((error) => console.error("Sign-Out Error:", error)); };
         
-        // Cart logic
         const getCartRef = () => collection(db, "carts", userId, "items");
         const getLocalCart = () => JSON.parse(localStorage.getItem(`runa_cart_${userId}`)) || [];
         const saveLocalCart = (cart) => localStorage.setItem(`runa_cart_${userId}`, JSON.stringify(cart));
@@ -657,7 +649,6 @@
             }
         };
 
-        // UI Rendering functions
         const renderUserUI = (user) => {
             const userImage = user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" class="w-full h-full object-cover">` : `<span class="text-[var(--runa-text)] dark:text-white font-bold text-xl">${user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}</span>`;
             authContainer.innerHTML = `<div class="relative"><button id="user-menu-button" title="Mi Cuenta" class="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:border-[var(--runa-primary)] bg-gray-200 dark:bg-gray-700">${userImage}</button><div id="user-menu-dropdown" class="hidden absolute top-full left-0 mt-2 w-56 bg-[var(--runa-bg)] border border-[var(--runa-border)] rounded-lg shadow-xl z-50"><div class="px-4 py-3 border-b border-[var(--runa-border)]"><p class="text-sm font-semibold text-[var(--runa-heading)] truncate">${user.displayName || 'Usuario'}</p><p class="text-xs text-[var(--runa-text-alt)] truncate">${user.email || 'Sin email'}</p></div><div class="py-1"><a href="#" id="logout-button-menu" class="flex items-center w-full text-left px-4 py-2 text-sm text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)] hover:text-[var(--runa-primary)] transition-colors">Cerrar Sesión</a></div></div></div>`;
@@ -713,7 +704,6 @@
         }
         window.closeCartModal = () => cartModal.classList.add('hidden');
         
-        // --- Main DOMContentLoaded event listener ---
         document.addEventListener('DOMContentLoaded', async () => {
             const openCartButton = document.getElementById('open-cart-button');
 
@@ -732,7 +722,6 @@
                 authStateObserver(null);
             }
             
-            // --- Robust Video Intro Logic ---
             const videoIntro = document.getElementById('video-intro');
             const introVideo = document.getElementById('intro-video');
             const pageContent = document.getElementById('page-content');
@@ -755,7 +744,6 @@
                 endIntro();
             });
 
-            // --- Product Filters Logic ---
             const clearFiltersBtn = document.getElementById('clear-filters-btn');
 
             function applyFilters() {
@@ -784,7 +772,6 @@
             document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
             authModal.addEventListener('click', (event) => { if (event.target === authModal) authModal.classList.add('hidden'); });
 
-            // Menu and Mixer Panel Logic
             const menuButton = document.getElementById('menu-button'); const mobileMenu = document.getElementById('mobile-menu');
             const mixerButton = document.getElementById('mixer-toggle-button'); const mixerPanel = document.getElementById('mixer-panel');
             menuButton.addEventListener('click', () => {
@@ -797,7 +784,6 @@
             });
             document.querySelectorAll('.mobile-nav-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
             
-            // Theme Controls
             const themeToggle = document.getElementById('theme-toggle'); 
             const sunIcon = document.getElementById('theme-icon-sun'); 
             const moonIcon = document.getElementById('theme-icon-moon'); 
@@ -813,7 +799,6 @@
             });
             applyTheme(localStorage.getItem('theme') || 'light');
 
-            // Initialize Ambience Mixer
             initializeMixer();
             document.getElementById('master-sound-toggle').addEventListener('click', toggleMasterSound);
             
@@ -824,7 +809,6 @@
             }
             document.getElementById('year').textContent = new Date().getFullYear();
             
-            // Cart events
             openCartButton.addEventListener('click', async () => {
                 let cart;
                 if (currentUser && !currentUser.isAnonymous && db) {
