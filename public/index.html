@@ -112,6 +112,13 @@
                         </div>
                         <span id="cart-counter" class="text-2xl font-bold text-white hidden">0</span>
                     </div>
+                    
+                    <!-- NEW: Sound toggle button -->
+                    <button id="sound-toggle" class="p-2 rounded-full text-gray-300 hover:bg-gray-700">
+                        <svg id="sound-icon-on" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M5.071 8.042a.75.75 0 01.95.405A5.002 5.002 0 0010 13a5 5 0 003.979-4.553.75.75 0 011.352.49A6.5 6.5 0 0110 14.5a6.5 6.5 0 01-5.18-10.27.75.75 0 01.251-1.188z"></path><path d="M10 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zm0-1.5a2 2 0 100-4 2 2 0 000 4z"></path></svg>
+                        <svg id="sound-icon-off" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9.965 2.023a.75.75 0 01.07 1.057l-6.86 8.328a.75.75 0 01-1.168-.942l6.86-8.328a.75.75 0 011.098-.115z" clip-rule="evenodd"></path><path d="M8.5 6.385a3.502 3.502 0 013.313-1.362.75.75 0 11.458-1.442 5.002 5.002 0 00-4.733 1.95l-1.34 1.638A.75.75 0 015.03 6.01L6.23 4.81a.75.75 0 111.06 1.06L6.105 7.057c.05-.054.1-.107.151-.16a3.5 3.5 0 012.244-.512z"></path><path d="M13.979 12.553a.75.75 0 011.06 1.06l-1.339 1.34a5.001 5.001 0 01-4.734-1.95l-1.34-1.638a.75.75 0 111.168-.942l1.34 1.638a3.501 3.501 0 004.845.492z"></path></svg>
+                    </button>
+                    
                     <button id="theme-toggle" class="p-2 rounded-full text-gray-300 hover:bg-gray-700">
                         <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
                         <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
@@ -260,6 +267,12 @@
     <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." class="fixed bottom-6 right-6 z-50 bg-green-500 rounded-full w-16 h-16 shadow-lg hover:bg-green-600 transition-transform hover:scale-110 flex items-center justify-center overflow-hidden" target="_blank">
         <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.916-.539-5.574-1.54L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.267.655 4.398 1.908 6.166l-1.138 4.167 4.274-1.12z"/></svg>
     </a>
+
+    <!-- Background Audio -->
+    <audio id="background-audio" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/10/24/audio_5b13856b46.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
     
     <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-4 bg-black/70 backdrop-blur-sm hidden"></div>
     <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
@@ -507,6 +520,28 @@
             
             const themeToggle = document.getElementById('theme-toggle'); const sunIcon = document.getElementById('theme-icon-sun'); const moonIcon = document.getElementById('theme-icon-moon'); const applyTheme = (theme) => { document.documentElement.classList.toggle('dark', theme === 'dark'); sunIcon.classList.toggle('hidden', theme !== 'dark'); moonIcon.classList.toggle('hidden', theme === 'dark'); }; themeToggle.addEventListener('click', () => { const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'; localStorage.setItem('theme', newTheme); applyTheme(newTheme); });
             const savedTheme = localStorage.getItem('theme') || 'light'; applyTheme(savedTheme);
+
+            // Audio Controls
+            const audio = document.getElementById('background-audio');
+            const soundToggle = document.getElementById('sound-toggle');
+            const soundIconOn = document.getElementById('sound-icon-on');
+            const soundIconOff = document.getElementById('sound-icon-off');
+
+            const toggleSound = () => {
+                if (audio.paused) {
+                    audio.play().catch(e => console.error("Error playing audio:", e));
+                    soundIconOff.classList.add('hidden');
+                    soundIconOn.classList.remove('hidden');
+                } else {
+                    audio.pause();
+                    soundIconOn.classList.add('hidden');
+                    soundIconOff.classList.remove('hidden');
+                }
+            };
+            soundToggle.addEventListener('click', toggleSound);
+
+            // Initial sound icon state
+            soundIconOff.classList.remove('hidden');
             
             const paymentLogosContainer = document.getElementById('payment-logos');
             if(paymentLogosContainer) {
