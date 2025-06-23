@@ -130,7 +130,8 @@
 
     <!-- Video Intro Section -->
     <div id="video-intro">
-        <video id="intro-video" class="fixed inset-0 w-full h-full object-cover bg-black" autoplay muted playsinline>
+        <!-- AJUSTADO: Se cambió bg-black por bg-white para que las franjas sean blancas. -->
+        <video id="intro-video" class="fixed inset-0 w-full h-full object-contain bg-white" autoplay muted playsinline>
             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-intro.mp4" type="video/mp4">
             Tu navegador no soporta el elemento de video.
         </video>
@@ -155,7 +156,8 @@
                 <!-- Center Container: Logo -->
                 <div class="flex-shrink-0">
                     <a href="#" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
-                        <video autoplay loop muted playsinline class="h-full w-full object-cover">
+                        <!-- AJUSTADO: Se usa 'object-contain' para que el logo se muestre completo y centrado sin un zoom excesivo. -->
+                        <video autoplay loop muted playsinline class="w-full h-full object-contain">
                             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-logo-animado.mp4" type="video/mp4">
                             Tu navegador no soporta la etiqueta de video.
                         </video>
