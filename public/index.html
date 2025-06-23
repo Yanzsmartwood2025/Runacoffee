@@ -161,14 +161,16 @@
                         ar-scale="auto"
                         camera-controls
                         auto-rotate
-                        alt="Un modelo 3D de un árbol estilizado">
+                        alt="Un modelo 3D de un árbol estilizado"
+                        preload
+                        reveal="auto">
                         
                         <button slot="ar-button" class="absolute bottom-4 right-4 bg-white rounded-full px-4 py-2 font-semibold shadow-lg text-gray-800 transition-transform transform hover:scale-105">
                             Ver en tu espacio
                         </button>
                     </model-viewer>
                     
-                    <!-- NEW: This message will appear if AR is not supported -->
+                    <!-- This message will appear if AR is not supported -->
                     <div id="ar-failure-message" class="hidden mt-4 text-center text-red-500 bg-red-100 dark:bg-red-900 dark:text-red-300 p-3 rounded-lg">
                         Lo sentimos, tu dispositivo no es compatible con la Realidad Aumentada.
                     </div>
@@ -529,7 +531,7 @@
                 }
             });
 
-            // NEW: AR Compatibility Check
+            // AR Compatibility Check
             const arViewer = document.getElementById('ar-viewer');
             arViewer.addEventListener('ar-status', (event) => {
                 if(event.detail.status === 'failed'){
