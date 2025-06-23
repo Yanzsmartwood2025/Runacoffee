@@ -118,7 +118,7 @@
             transition: opacity .2s;
         }
         html.dark input[type="range"] {
-             background: #4A5568; /* A darker gray for dark mode */
+             background: #4A5568;
         }
         input[type="range"]:hover { opacity: 1; }
         input[type="range"]::-webkit-slider-thumb {
@@ -138,6 +138,15 @@
             cursor: pointer;
             border-radius: 50%;
             border: 2px solid var(--runa-bg);
+        }
+
+        /* Styles for Video Icon Buttons in Mixer */
+        .video-icon-button {
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        .video-icon-button.active {
+            border-color: var(--runa-primary);
         }
     </style>
 </head>
@@ -404,13 +413,13 @@
         
         // --- AMBIENCE MIXER ---
         const ambienceSounds = [
-            { id: 'runa-main-audio', name: 'Música Runa', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M235.1,91.31a8,8,0,0,0-9.17-2.38L184,101.08V40a16,16,0,0,0-16-16H80a16,16,0,0,0-16,16V164.26A40,40,0,1,0,96,200V88a8,8,0,0,1,16,0v88.26a40,40,0,1,0,32,36V123.75l41.93-12.1a8,8,0,0,0,5.24-9.34Z"></path></svg>` },
-            { id: 'river-audio', name: 'Río', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M240,112c-15.35,0-29.08-9.15-38.37-23.34-11-16.89-28.18-29.33-47.8-33.4-22.34-4.63-44.5,1.59-62.2,16.51C76.2,84,62.65,96,48,96a40,40,0,0,1,0-80c15.35,0,29.08,9.15,38.37,23.34,11,16.89,28.18,29.33,47.8,33.4,22.34,4.63,44.5-1.59,62.2-16.51C211.8,44,225.35,32,240,32a8,8,0,0,1,0,16c-12.65,0-26.2,12-41.63,24.66-14.7,12-32,16.48-49.83,12.87-15.33-3.1-29.42-12.63-39.17-27.18C99.08,49.15,85.35,40,72,40a24,24,0,0,0,0,48c12.65,0,26.2-12,41.63-24.66,14.7-12,32-16.48,49.83-12.87,15.33,3.1,29.42,12.63,39.17,27.18C212.92,130.85,226.65,144,240,144a40,40,0,0,1,0,80c-15.35,0-29.08-9.15-38.37-23.34-11-16.89-28.18-29.33-47.8-33.4-22.34-4.63-44.5,1.59-62.2,16.51C76.2,196,62.65,208,48,208a8,8,0,0,1,0-16c12.65,0,26.2-12,41.63-24.66,14.7-12,32-16.48,49.83-12.87,15.33,3.1,29.42,12.63,39.17,27.18C188.92,201.15,202.65,216,216,216a24,24,0,0,0,0-48c-12.65,0-26.2,12-41.63,24.66-14.7-12,32-16.48-49.83,12.87-15.33-3.1-29.42-12.63-39.17-27.18C75.08,170.85,61.35,152,48,152a8,8,0,0,1,0-16c14.65,0,28.2,12,43.63,24.66,17.7,14.92,39.86,21.13,62.2,16.51,19.62-4.07,36.8-16.51,47.8-33.4C210.92,121.15,224.65,112,240,112Z"></path></svg>` },
-            { id: 'birds-audio', name: 'Pájaros', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M240,136v64a8,8,0,0,1-16,0V177.38l-40-24V192a8,8,0,0,1-16,0V145.38l-48-28.8V176a8,8,0,0,1-16,0V108.62l-44.43-35.54A8,8,0,1,1,64.43,64.46L104,92.62,152,64l82.37,49.42A8,8,0,0,1,240,120v8a8,8,0,0,1-4.28,7.18l-51.72,31Z"></path></svg>` },
-            { id: 'rain-audio', name: 'Lluvia', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M120,224a8,8,0,0,1-8,8,64.07,64.07,0,0,1-64-64,8,8,0,0,1,16,0,48.05,48.05,0,0,0,48,48A8,8,0,0,1,120,224Zm88-128a8,8,0,0,0,8-8,72.08,72.08,0,0,0-72-72,8,8,0,0,0,0,16,56.06,56.06,0,0,1,56,56A8,8,0,0,0,208,96ZM88,144a8,8,0,1,0-8,8A8,8,0,0,0,88,144Zm48-16a8,8,0,1,0-8,8A8,8,0,0,0,136,128Zm0,48a8,8,0,1,0,8-8A8,8,0,0,0,136,176Zm56-48a8,8,0,1,0-8,8A8,8,0,0,0,192,128Zm-48-72a8,8,0,0,0,8-8V40a8,8,0,0,0-16,0V56A8,8,0,0,0,144,64Zm96.72-4.3.17-.1a8,8,0,0,0-11.18-11.4l-.17.1a72.06,72.06,0,0,0-99.8,99.8l.1.17a8,8,0,1,0,11.4,11.18l-.1-.17A56,56,0,0,1,240.72,59.7Z"></path></svg>` },
-            { id: 'fire-audio', name: 'Fuego', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M208,204a8,8,0,0,1-1.18,15.93,120.3,120.3,0,0,0-36.43-22.18c-13-4.88-26.88-8.2-41.28-9.84a120.57,120.57,0,0,0-58.22,16.1,8,8,0,1,1-8.78-13.1,136.6,136.6,0,0,1,66.1-18.15c15.82,1.77,31.22,5.5,45.52,10.87A136.1,136.1,0,0,1,206.82,203.93,8,8,0,0,1,208,204Zm-88-68a8,8,0,0,0,8-8,40,40,0,0,1,40-40,8,8,0,0,0,0-16,56.06,56.06,0,0,0-56,56A8,8,0,0,0,120,136Zm0-112a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-8A8,8,0,0,0,120,24Zm95.16,35.43a8,8,0,0,0-10.32,5.29,64.09,64.09,0,0,1-40,50.66,8,8,0,0,0,5.32,14.84,80.11,80.11,0,0,0,50.1-63.32A8,8,0,0,0,215.16,59.43Z"></path></svg>` },
-            { id: 'wind-audio', name: 'Viento', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M208,88H72a8,8,0,0,1,0-16H208a8,8,0,0,1,0,16ZM48,152a8,8,0,0,0,8,8H176a8,8,0,0,0,0-16H56A8,8,0,0,0,48,152Zm8-80a8,8,0,0,0,8,8H152a8,8,0,0,0,0-16H64A8,8,0,0,0,56,80Zm168,88H16a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16Z"></path></svg>` },
-            { id: 'storm-audio', name: 'Tormenta', icon: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256"><path d="M160,24a8,8,0,0,1-7.06,4,72.12,72.12,0,0,0-63.6,36.54,8,8,0,1,1-14.28-7.08,88.13,88.13,0,0,1,77.88-44.94A8,8,0,0,1,160,24Zm76.24,99.91-48-32A8,8,0,1,0,177,136.09l25.84,17.22L176,176H104a8,8,0,0,0-7.52,5.25,80.09,80.09,0,0,1-137-53.5,8,8,0,0,0-15.89,1.72,96.1,96.1,0,0,0,163.85,64.53H176a8,8,0,0,0,7.9-6.43l32.55-97.66a8,8,0,0,0-3.21-8.58Z"></path></svg>` },
+            { id: 'runa-main-audio', name: 'Música Runa', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-a-disc-jockey-is-adjusting-the-sound-on-his-mixer-4122-large.mp4' },
+            { id: 'river-audio', name: 'Río', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-water-stream-in-the-forest-2735-large.mp4' },
+            { id: 'birds-audio', name: 'Pájaros', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-two-birds-in-a-cage-4145-large.mp4' },
+            { id: 'rain-audio', name: 'Lluvia', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-heavy-rain-on-the-road-1635-large.mp4' },
+            { id: 'fire-audio', name: 'Fuego', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-burning-incense-4676-large.mp4' },
+            { id: 'wind-audio', name: 'Viento', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-field-of-reeds-in-the-wind-8 reeds-in-the-wind-4481-large.mp4' },
+            { id: 'storm-audio', name: 'Tormenta', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-lightning-over-a-city-88-large.mp4' },
         ];
         let audioElements = {};
         let isMixerPlaying = false;
@@ -418,16 +427,20 @@
         function initializeMixer() {
             const soundControlsContainer = document.getElementById('sound-controls');
             if(!soundControlsContainer) return;
-            soundControlsContainer.innerHTML = ''; // Clear previous
+            soundControlsContainer.innerHTML = ''; 
             ambienceSounds.forEach(sound => {
                 const audioEl = document.getElementById(sound.id);
                 if (!audioEl) return;
                 audioElements[sound.id] = audioEl;
 
                 const controlHtml = `
-                    <div class="flex items-center gap-3 text-sm text-[var(--runa-text-alt)]">
-                        <span class="w-8 text-center">${sound.icon}</span>
-                        <span class="flex-1 font-medium text-[var(--runa-text)] w-20 truncate">${sound.name}</span>
+                    <div class="flex items-center gap-4 text-sm text-[var(--runa-text-alt)]">
+                        <button id="btn-${sound.id}" class="video-icon-button relative w-10 h-10 rounded-full overflow-hidden shadow-md flex-shrink-0">
+                           <video autoplay loop muted playsinline class="absolute top-1/2 left-1/2 w-auto h-auto min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover">
+                               <source src="${sound.videoSrc}" type="video/mp4">
+                           </video>
+                        </button>
+                        <span class="font-medium text-[var(--runa-text)] w-20 truncate">${sound.name}</span>
                         <input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="${sound.id === 'runa-main-audio' ? 0.5 : 0}" class="flex-grow">
                     </div>`;
                 soundControlsContainer.innerHTML += controlHtml;
@@ -436,10 +449,27 @@
             // Set initial volumes and add listeners
             Object.keys(audioElements).forEach(id => {
                 const slider = document.getElementById(`volume-${id}`);
-                if(!slider) return;
-                audioElements[id].volume = slider.value;
+                const button = document.getElementById(`btn-${id}`);
+                if(!slider || !button) return;
+
+                const audio = audioElements[id];
+                audio.volume = slider.value;
+                button.classList.toggle('active', audio.volume > 0);
+
                 slider.addEventListener('input', (e) => {
-                    audioElements[id].volume = e.target.value;
+                    audio.volume = e.target.value;
+                    button.classList.toggle('active', audio.volume > 0);
+                });
+                
+                button.addEventListener('click', () => {
+                    if (slider.value > 0) {
+                        slider.dataset.lastValue = slider.value;
+                        slider.value = 0;
+                    } else {
+                        slider.value = slider.dataset.lastValue || 0.5;
+                    }
+                    // Trigger input event to update volume and UI
+                    slider.dispatchEvent(new Event('input'));
                 });
             });
         }
