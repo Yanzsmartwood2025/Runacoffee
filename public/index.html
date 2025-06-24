@@ -157,7 +157,7 @@
     <!-- Video Intro Section -->
     <div id="video-intro">
         <video id="intro-video" class="fixed inset-0 w-full h-full object-contain bg-white" autoplay muted playsinline>
-            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-intro.mp4" type="video/mp4">
+            <source src="/assets/videos/runa-intro.mp4" type="video/mp4">
             Tu navegador no soporta el elemento de video.
         </video>
     </div>
@@ -182,7 +182,7 @@
                 <div class="flex-shrink-0">
                     <a href="#" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
                         <video autoplay loop muted playsinline class="w-full h-full object-contain">
-                            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-logo-animado.mp4" type="video/mp4">
+                            <source src="/assets/videos/runa-logo-animado.mp4" type="video/mp4">
                             Tu navegador no soporta la etiqueta de video.
                         </video>
                     </a>
@@ -260,8 +260,8 @@
                     </p>
                     
                     <model-viewer id="ar-viewer"
-                        src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
-                        ios-src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
+                        src="/assets/3D/arbol_final.glb"
+                        ios-src="/assets/3D/arbol_final.glb"
                         ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto"
                         camera-controls auto-rotate
                         alt="Un modelo 3D de un árbol estilizado"
@@ -352,13 +352,13 @@
     </a>
 
     <!-- Audio elements for the mixer -->
-    <audio id="runa-main-audio" loop><source src="https://github.com/Yanzsmartwood2025/Runacoffee/raw/main/public/assets%20/MP3/runa-main-theme-placeholder.mp3" type="audio/mpeg"></audio>
-    <audio id="river-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
-    <audio id="birds-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
-    <audio id="rain-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Lluvia.mp3" type="audio/mpeg"></audio>
-    <audio id="fire-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Sonido%20del%20Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
-    <audio id="wind-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
-    <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
+    <audio id="runa-main-audio" loop><source src="/assets/audios/runa-main-theme-placeholder.mp3" type="audio/mpeg"></audio>
+    <audio id="river-audio" loop><source src="/assets/audios/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
+    <audio id="birds-audio" loop><source src="/assets/audios/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
+    <audio id="rain-audio" loop><source src="/assets/audios/Lluvia.mp3" type="audio/mpeg"></audio>
+    <audio id="fire-audio" loop><source src="/assets/audios/Sonido del Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
+    <audio id="wind-audio" loop><source src="/assets/audios/sonido_de_viento.mp3" type="audio/mpeg"></audio>
+    <audio id="storm-audio" loop><source src="/assets/audios/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
     
 
     <!-- Modals -->
@@ -404,10 +404,10 @@
 
         // Product data with prices
         const coffeeProducts = [
-            { id: 'Runa01', name: 'Runa Origen Manizales', region: 'Manizales, Caldas', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', price: 45000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-1.jpg' },
-            { id: 'Runa02', name: 'Finca El Mirador', region: 'Manizales, Caldas', variety: 'Caturra', process: 'Lavado', roast: 'Medio', notes: 'Cuerpo balanceado, acidez cítrica y dulzor residual.', price: 52000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-2.jpg' },
-            { id: 'Runa03', name: 'Microlote Natural', region: 'Neira, Caldas', variety: 'Castillo', process: 'Natural', roast: 'Claro', notes: 'Sabor intenso a frutos rojos, vino y canela.', price: 58000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-3.jpg' },
-            { id: 'Runa04', name: 'Tesoro Geisha', region: 'Manizales, Caldas', variety: 'Geisha', process: 'Lavado', roast: 'Claro', notes: 'Perfil complejo y elegante, con notas a jazmín y bergamota.', price: 85000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-4.jpg' }
+            { id: 'Runa01', name: 'Runa Origen Manizales', region: 'Manizales, Caldas', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', price: 45000, image: '/assets/imagenes/producto-1.jpg' },
+            { id: 'Runa02', name: 'Finca El Mirador', region: 'Manizales, Caldas', variety: 'Caturra', process: 'Lavado', roast: 'Medio', notes: 'Cuerpo balanceado, acidez cítrica y dulzor residual.', price: 52000, image: '/assets/imagenes/producto-2.jpg' },
+            { id: 'Runa03', name: 'Microlote Natural', region: 'Neira, Caldas', variety: 'Castillo', process: 'Natural', roast: 'Claro', notes: 'Sabor intenso a frutos rojos, vino y canela.', price: 58000, image: '/assets/imagenes/producto-3.jpg' },
+            { id: 'Runa04', name: 'Tesoro Geisha', region: 'Manizales, Caldas', variety: 'Geisha', process: 'Lavado', roast: 'Claro', notes: 'Perfil complejo y elegante, con notas a jazmín y bergamota.', price: 85000, image: '/assets/imagenes/producto-4.jpg' }
         ];
 
         const productGrid = document.getElementById('product-grid');
