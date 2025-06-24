@@ -8,13 +8,13 @@
     <meta name="description" content="Descubre el café de especialidad de Manizales, Colombia. Granos seleccionados que cuentan la historia de nuestra tierra.">
     <meta property="og:title" content="RUNA COFFEE - Origen Manizales">
     <meta property="og:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
-    <meta property="og:image" content="/assets/imagenes/logo_de_etiqueta.jpg">
+    <meta property="og:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
     <meta property="og:url" content="https://runacoffee.vercel.app">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="RUNA COFFEE - Origen Manizales">
     <meta name="twitter:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
-    <meta name="twitter:image" content="/assets/imagenes/logo_de_etiqueta.jpg">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
     <link rel="icon" href="https://i.ibb.co/L5TjL4q/IMG-20250620-WA0020.jpg" type="image/jpeg">
     <meta name="theme-color" content="#3a2e2a">
 
@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
     
-    <!-- Google's <model-viewer> component for 3D and AR -->
+    <!-- Google's <model-viewer> component for 3D and AR (NO TOCAR ESTE ENLACE) -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 
     <!-- Custom Styles and Theme -->
@@ -144,7 +144,6 @@
         .video-icon-button {
             border: 2px solid transparent;
             transition: border-color 0.3s ease;
-            background-color: var(--runa-primary); /* Fallback color */
         }
         .video-icon-button.active {
             border-color: var(--runa-primary);
@@ -157,7 +156,7 @@
     <!-- Video Intro Section -->
     <div id="video-intro">
         <video id="intro-video" class="fixed inset-0 w-full h-full object-contain bg-white" autoplay muted playsinline>
-            <source src="/assets/videos/runa-intro.mp4" type="video/mp4">
+            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-intro.mp4" type="video/mp4">
             Tu navegador no soporta el elemento de video.
         </video>
     </div>
@@ -182,7 +181,7 @@
                 <div class="flex-shrink-0">
                     <a href="#" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
                         <video autoplay loop muted playsinline class="w-full h-full object-contain">
-                            <source src="/assets/videos/runa-logo-animado.mp4" type="video/mp4">
+                            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-logo-animado.mp4" type="video/mp4">
                             Tu navegador no soporta la etiqueta de video.
                         </video>
                     </a>
@@ -259,9 +258,10 @@
                         Interactúa con nuestro árbol místico. Si estás en un celular, presiona el botón de RA para traer la magia de Runa a tu propio espacio.
                     </p>
                     
+                    <!-- NO TOCAR ESTE BLOQUE: Es el modelo 3D con enlace externo -->
                     <model-viewer id="ar-viewer"
-                        src="/assets/3D/arbol_final.glb"
-                        ios-src="/assets/3D/arbol_final.glb"
+                        src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
+                        ios-src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
                         ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto"
                         camera-controls auto-rotate
                         alt="Un modelo 3D de un árbol estilizado"
@@ -351,14 +351,14 @@
         <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.916-.539-5.574-1.54L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.267.655 4.398 1.908 6.166l-1.138 4.167 4.274-1.12z"/></svg>
     </a>
 
-    <!-- Audio elements for the mixer -->
-    <audio id="runa-main-audio" loop><source src="/assets/mp3/runa-main-theme-placeholder.mp3" type="audio/mpeg"></audio>
-    <audio id="river-audio" loop><source src="/assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
-    <audio id="birds-audio" loop><source src="/assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
-    <audio id="rain-audio" loop><source src="/assets/mp3/Lluvia.mp3" type="audio/mpeg"></audio>
-    <audio id="fire-audio" loop><source src="/assets/mp3/Sonido%20del%20Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
-    <audio id="wind-audio" loop><source src="/assets/mp3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
-    <audio id="storm-audio" loop><source src="/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
+    <!-- CAMBIOS AQUÍ: Audio elements for the mixer now point to local files -->
+    <audio id="runa-main-audio" loop><source src="assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
+    <audio id="river-audio" loop><source src="assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
+    <audio id="birds-audio" loop><source src="assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
+    <audio id="rain-audio" loop><source src="assets/mp3/Lluvia.mp3" type="audio/mpeg"></audio>
+    <audio id="fire-audio" loop><source src="assets/mp3/Sonido_del_Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
+    <audio id="wind-audio" loop><source src="assets/mp3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
+    <audio id="storm-audio" loop><source src="assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
     
 
     <!-- Modals -->
@@ -404,24 +404,24 @@
 
         // Product data with prices
         const coffeeProducts = [
-            { id: 'Runa01', name: 'Runa Origen Manizales', region: 'Manizales, Caldas', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', price: 45000, image: '/assets/imagenes/producto-1.jpg' },
-            { id: 'Runa02', name: 'Finca El Mirador', region: 'Manizales, Caldas', variety: 'Caturra', process: 'Lavado', roast: 'Medio', notes: 'Cuerpo balanceado, acidez cítrica y dulzor residual.', price: 52000, image: '/assets/imagenes/producto-2.jpg' },
-            { id: 'Runa03', name: 'Microlote Natural', region: 'Neira, Caldas', variety: 'Castillo', process: 'Natural', roast: 'Claro', notes: 'Sabor intenso a frutos rojos, vino y canela.', price: 58000, image: '/assets/imagenes/producto-3.jpg' },
-            { id: 'Runa04', name: 'Tesoro Geisha', region: 'Manizales, Caldas', variety: 'Geisha', process: 'Lavado', roast: 'Claro', notes: 'Perfil complejo y elegante, con notas a jazmín y bergamota.', price: 85000, image: '/assets/imagenes/producto-4.jpg' }
+            { id: 'Runa01', name: 'Runa Origen Manizales', region: 'Manizales, Caldas', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', price: 45000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-1.jpg' },
+            { id: 'Runa02', name: 'Finca El Mirador', region: 'Manizales, Caldas', variety: 'Caturra', process: 'Lavado', roast: 'Medio', notes: 'Cuerpo balanceado, acidez cítrica y dulzor residual.', price: 52000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-2.jpg' },
+            { id: 'Runa03', name: 'Microlote Natural', region: 'Neira, Caldas', variety: 'Castillo', process: 'Natural', roast: 'Claro', notes: 'Sabor intenso a frutos rojos, vino y canela.', price: 58000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-3.jpg' },
+            { id: 'Runa04', name: 'Tesoro Geisha', region: 'Manizales, Caldas', variety: 'Geisha', process: 'Lavado', roast: 'Claro', notes: 'Perfil complejo y elegante, con notas a jazmín y bergamota.', price: 85000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-4.jpg' }
         ];
 
         const productGrid = document.getElementById('product-grid');
         
-        // --- AMBIENCE MIXER (FINAL) ---
-        // Using clean, standard local paths after renaming folders.
+        // --- AMBIENCE MIXER ---
+        // CAMBIOS AQUÍ: Las rutas de video ahora apuntan a archivos locales en assets/videos/
         const ambienceSounds = [
-            { id: 'runa-main-audio', name: 'Música Runa', videoSrc: '/assets/videos/runa-main-audio.mp4' },
-            { id: 'river-audio', name: 'Río', videoSrc: '/assets/videos/river-audio.mp4' },
-            { id: 'birds-audio', name: 'Pájaros', videoSrc: '/assets/videos/birds-audio.mp4' },
-            { id: 'rain-audio', name: 'Lluvia', videoSrc: '/assets/videos/rain-audio.mp4' },
-            { id: 'fire-audio', name: 'Fuego', videoSrc: '/assets/videos/fire-audio.mp4' },
-            { id: 'wind-audio', name: 'Viento', videoSrc: '/assets/videos/wind-audio.mp4' },
-            { id: 'storm-audio', name: 'Tormenta', videoSrc: '/assets/videos/storm-audio.mp4' },
+            { id: 'runa-main-audio', name: 'Música Runa', videoSrc: 'assets/videos/runa-main-audio.mp4' },
+            { id: 'river-audio', name: 'Río', videoSrc: 'assets/videos/river-audio.mp4' },
+            { id: 'birds-audio', name: 'Pájaros', videoSrc: 'assets/videos/birds-audio.mp4' },
+            { id: 'rain-audio', name: 'Lluvia', videoSrc: 'assets/videos/rain-audio.mp4' },
+            { id: 'fire-audio', name: 'Fuego', videoSrc: 'assets/videos/fire-audio.mp4' },
+            { id: 'wind-audio', name: 'Viento', videoSrc: 'assets/videos/wind-audio.mp4' },
+            { id: 'storm-audio', name: 'Tormenta', videoSrc: 'assets/videos/storm-audio.mp4' },
         ];
         let audioElements = {};
         let isMixerPlaying = false;
@@ -439,7 +439,7 @@
                     <div class="flex items-center gap-4 text-sm text-[var(--runa-text-alt)]">
                         <button id="btn-${sound.id}" class="video-icon-button relative w-10 h-10 rounded-full overflow-hidden shadow-md flex-shrink-0">
                            <video autoplay loop muted playsinline class="absolute top-1/2 left-1/2 w-auto h-auto min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover">
-                                <source src="${sound.videoSrc}" type="video/mp4">
+                               <source src="${sound.videoSrc}" type="video/mp4">
                            </video>
                         </button>
                         <span class="font-medium text-[var(--runa-text)] w-20 truncate">${sound.name}</span>
@@ -626,25 +626,25 @@
         };
 
         window.updateItemQuantity = async (itemIdentifier, newQuantity) => {
-             const isFirestore = currentUser && !currentUser.isAnonymous && db;
-             
-            if (newQuantity < 1) {
-                await window.removeItemFromCart(itemIdentifier);
-                return;
-            }
+           const isFirestore = currentUser && !currentUser.isAnonymous && db;
+           
+           if (newQuantity < 1) {
+               await window.removeItemFromCart(itemIdentifier);
+               return;
+           }
 
-            if (isFirestore) {
-                const itemRef = doc(db, "carts", userId, "items", itemIdentifier);
-                await updateDoc(itemRef, { quantity: newQuantity });
-            } else {
-                const itemId = JSON.parse(decodeURIComponent(itemIdentifier)).id;
-                let cart = getLocalCart();
-                const itemToUpdate = cart.find(i => i.id === itemId);
-                if (itemToUpdate) itemToUpdate.quantity = newQuantity;
-                saveLocalCart(cart);
-                updateCartFromLocal();
-                renderCartModal(getLocalCart());
-            }
+           if (isFirestore) {
+               const itemRef = doc(db, "carts", userId, "items", itemIdentifier);
+               await updateDoc(itemRef, { quantity: newQuantity });
+           } else {
+               const itemId = JSON.parse(decodeURIComponent(itemIdentifier)).id;
+               let cart = getLocalCart();
+               const itemToUpdate = cart.find(i => i.id === itemId);
+               if (itemToUpdate) itemToUpdate.quantity = newQuantity;
+               saveLocalCart(cart);
+               updateCartFromLocal();
+               renderCartModal(getLocalCart());
+           }
         };
 
         window.removeItemFromCart = async (itemIdentifier) => {
