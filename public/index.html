@@ -178,8 +178,11 @@
                         <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
                         <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
-                    <button id="mixer-toggle-button" class="p-2 rounded-full text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)]" aria-label="Abrir mezclador de ambiente">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" transform="rotate(90 12 12)"></path><circle cx="6" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="15" cy="18" r="2"></circle></svg>
+                    <!-- BOTÓN DEL MEZCLADOR ACTUALIZADO CON VIDEO -->
+                    <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)]" aria-label="Abrir mezclador de ambiente">
+                        <video autoplay loop muted playsinline class="w-full h-full object-cover">
+                            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5ec8a9f9a44f0f1d347867a8b1293a1f8f5dae5e/public/assets/videos/runa-equalizer-video.mp4" type="video/mp4">
+                        </video>
                     </button>
                     <div id="cart-icon-wrapper">
                         <button id="open-cart-button" class="relative p-1 text-[var(--runa-text)]">
@@ -328,19 +331,17 @@
     </a>
 
     <!-- 
-      SECCIÓN DE AUDIO CORREGIDA
+      SECCIÓN DE AUDIO CON BUCLE PROGRAMADO
       - - - - - - - - - - - - - - - - - - - - - -
-      ¡Listo! Todos los enlaces han sido actualizados al formato "raw" correcto.
-      ¡ATENCIÓN! Todavía falta que subas el archivo "runa-main-audio.mp3" a tu repositorio
-      para que el sonido de "Música Runa" funcione.
+      Se ha quitado el atributo "loop" para que el JavaScript controle la repetición.
     -->
-    <audio id="runa-main-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
-    <audio id="river-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
-    <audio id="birds-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
-    <audio id="rain-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Lluvia.mp3" type="audio/mpeg"></audio>
-    <audio id="fire-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido%20del%20Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
-    <audio id="wind-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
-    <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
+    <audio id="runa-main-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
+    <audio id="river-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
+    <audio id="birds-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
+    <audio id="rain-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Lluvia.mp3" type="audio/mpeg"></audio>
+    <audio id="fire-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido%20del%20Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
+    <audio id="wind-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
+    <audio id="storm-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
     
 
     <!-- Modals -->
@@ -391,11 +392,6 @@
 
         const productGrid = document.getElementById('product-grid');
         
-        /*
-          LISTA DE SONIDOS CORREGIDA
-          - - - - - - - - - - - - - - - - - -
-          Todos los enlaces de video han sido actualizados al formato "raw" correcto.
-        */
         const ambienceSounds = [
             { id: 'runa-main-audio', name: 'Música Runa', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/videos/runa-main-audio.mp4' },
             { id: 'river-audio', name: 'Río', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/videos/river-audio.mp4' },
@@ -423,6 +419,17 @@
                     return;
                 }
                 audioElements[sound.id] = audioEl;
+
+                // **NUEVA LÓGICA DE BUCLE SUAVE**
+                // Se agrega un "escucha" que se activa mientras el audio se reproduce.
+                audioEl.addEventListener('timeupdate', function() {
+                    const loopBuffer = 2; // 2 segundos antes del final, como se solicitó
+                    // Si la duración es válida y el tiempo actual está cerca del final...
+                    if (this.duration && (this.currentTime > this.duration - loopBuffer)) {
+                        this.currentTime = 0; // ...reinicia el audio al principio.
+                        this.play(); // Asegura que continúe reproduciéndose.
+                    }
+                });
 
                 const controlContainer = document.createElement('div');
                 controlContainer.className = "flex items-center gap-4 text-sm text-[var(--runa-text-alt)]";
