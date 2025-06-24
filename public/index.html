@@ -156,7 +156,7 @@
     <!-- Video Intro Section -->
     <div id="video-intro">
         <video id="intro-video" class="fixed inset-0 w-full h-full object-contain bg-white" autoplay muted playsinline>
-            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-intro.mp4" type="video/mp4">
+            <source src="/assets/VIDEOS/runa-intro.mp4" type="video/mp4">
             Tu navegador no soporta el elemento de video.
         </video>
     </div>
@@ -181,7 +181,7 @@
                 <div class="flex-shrink-0">
                     <a href="#" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
                         <video autoplay loop muted playsinline class="w-full h-full object-contain">
-                            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-logo-animado.mp4" type="video/mp4">
+                            <source src="/assets/VIDEOS/runa-logo-animado.mp4" type="video/mp4">
                             Tu navegador no soporta la etiqueta de video.
                         </video>
                     </a>
@@ -209,10 +209,10 @@
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t border-[var(--runa-border)]">
                 <div class="container mx-auto px-6 py-4 space-y-3">
-                      <a href="#filosofia" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Nuestra Filosofía</a>
-                      <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
-                      <a href="#tienda" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Tienda</a>
-                      <a href="#contacto" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
+                        <a href="#filosofia" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Nuestra Filosofía</a>
+                        <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
+                        <a href="#tienda" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Tienda</a>
+                        <a href="#contacto" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
                 </div>
             </div>
 
@@ -221,10 +221,22 @@
                 <div class="container mx-auto px-6 py-4">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-semibold text-lg text-[var(--runa-heading)]">Mezclador de Ambiente</h3>
-                        <button id="master-sound-toggle" class="p-2 rounded-full text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)]" aria-label="Reproducir/Pausar todo">
-                            <svg id="master-play-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>
-                            <svg id="master-pause-icon" class="h-6 w-6 hidden" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        
+                        <!-- ========= CAMBIO #1: BOTÓN PRINCIPAL CON VIDEO DE FONDO ========= -->
+                        <button id="master-sound-toggle" class="relative w-12 h-12 p-2 rounded-full text-white hover:opacity-80 transition-opacity overflow-hidden flex items-center justify-center" aria-label="Reproducir/Pausar todo">
+                            <!-- Video de fondo -->
+                            <video autoplay loop muted playsinline class="absolute top-0 left-0 w-full h-full object-cover z-0">
+                                <!-- Asumo que 'runa-main-audio.mp4' es el video para el botón principal -->
+                                <source src="/assets/VIDEOS/runa-main-audio.mp4" type="video/mp4">
+                            </video>
+                            <!-- Iconos superpuestos -->
+                            <div class="relative z-10">
+                                <svg id="master-play-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>
+                                <svg id="master-pause-icon" class="h-6 w-6 hidden" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            </div>
                         </button>
+                        <!-- ===================== FIN DEL CAMBIO #1 ===================== -->
+
                     </div>
                     <div id="sound-controls" class="space-y-4 opacity-50 transition-opacity duration-300">
                         <!-- Sound controls will be injected here -->
@@ -350,14 +362,14 @@
         <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.916-.539-5.574-1.54L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.267.655 4.398 1.908 6.166l-1.138 4.167 4.274-1.12z"/></svg>
     </a>
 
-    <!-- Audio elements for the mixer -->
-    <audio id="runa-main-audio" loop><source src="https://github.com/Yanzsmartwood2025/Runacoffee/raw/main/public/assets%20/MP3/runa-main-theme-placeholder.mp3" type="audio/mpeg"></audio>
-    <audio id="river-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
-    <audio id="birds-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
-    <audio id="rain-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Lluvia.mp3" type="audio/mpeg"></audio>
-    <audio id="fire-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Sonido%20del%20Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
-    <audio id="wind-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
-    <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
+    <!-- Audio elements for the mixer (loop attribute removed) -->
+    <audio id="runa-main-audio"><source src="https://github.com/Yanzsmartwood2025/Runacoffee/raw/main/public/assets%20/MP3/runa-main-theme-placeholder.mp3" type="audio/mpeg"></audio>
+    <audio id="river-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
+    <audio id="birds-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
+    <audio id="rain-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Lluvia.mp3" type="audio/mpeg"></audio>
+    <audio id="fire-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Sonido%20del%20Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
+    <audio id="wind-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
+    <audio id="storm-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/07c291948172fb71e01eca900d6db699bae7624c/public/assets%20/MP3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
     
     <!-- Modals -->
     <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-4 bg-black/70 backdrop-blur-sm hidden"></div>
@@ -407,17 +419,32 @@
 
         const productGrid = document.getElementById('product-grid');
         
+        // ========= CAMBIO #2: RUTAS DE VIDEO CORREGIDAS =========
+        // Se cambiaron las URLs completas de GitHub por rutas locales relativas a la carpeta 'public'.
         const ambienceSounds = [
-            { id: 'runa-main-audio', name: 'Música Runa', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/runa-main-audio.mp4' },
-            { id: 'river-audio', name: 'Río', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/river-audio.mp4' },
-            { id: 'birds-audio', name: 'Pájaros', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/birds-audio.mp4' },
-            { id: 'rain-audio', name: 'Lluvia', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/rain-audio.mp4' },
-            { id: 'fire-audio', name: 'Fuego', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/8d03fb9b973ae03274128b4c61e088a7c8947ab7/public/assets%20/VIDEOS/fire-audio.mp4' },
-            { id: 'wind-audio', name: 'Viento', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/wind-audio.mp4' },
-            { id: 'storm-audio', name: 'Tormenta', videoSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6d4ec2d49797b7f6544a5df68e71501e9480c2f3/public/assets%20/VIDEOS/storm-audio.mp4' },
+            { id: 'runa-main-audio', name: 'Música Runa', videoSrc: '/assets/VIDEOS/runa-equalizer-video.mp4' },
+            { id: 'river-audio', name: 'Río', videoSrc: '/assets/VIDEOS/river-audio.mp4' },
+            { id: 'birds-audio', name: 'Pájaros', videoSrc: '/assets/VIDEOS/birds-audio.mp4' },
+            { id: 'rain-audio', name: 'Lluvia', videoSrc: '/assets/VIDEOS/rain-audio.mp4' },
+            { id: 'fire-audio', name: 'Fuego', videoSrc: '/assets/VIDEOS/fire-audio.mp4' },
+            { id: 'wind-audio', name: 'Viento', videoSrc: '/assets/VIDEOS/wind-audio.mp4' },
+            { id: 'storm-audio', name: 'Tormenta', videoSrc: '/assets/VIDEOS/storm-audio.mp4' },
         ];
+        // =================== FIN DEL CAMBIO #2 ===================
+
         let audioElements = {};
         let isMixerPlaying = false;
+
+        // --- FUNCIÓN PARA BUCLE SIN PAUSAS ---
+        const setupGaplessLoop = (audio) => {
+            audio.addEventListener('timeupdate', () => {
+                // Si al audio le quedan menos de 3 segundos, reinícialo
+                if (audio.duration - audio.currentTime < 3) {
+                    audio.currentTime = 0;
+                    audio.play();
+                }
+            });
+        };
         
         function initializeMixer() {
             const soundControlsContainer = document.getElementById('sound-controls');
@@ -427,7 +454,11 @@
                 const audioEl = document.getElementById(sound.id);
                 if (!audioEl) return;
                 audioElements[sound.id] = audioEl;
+                
+                // --- Aplicamos el bucle sin pausas a cada audio ---
+                setupGaplessLoop(audioEl);
 
+                // Se corrigió un error donde se buscaba `imgSrc`, ahora siempre crea un elemento de video.
                 const mediaElement = `<video autoplay loop muted playsinline class="absolute top-1/2 left-1/2 w-auto h-auto min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover">
                                           <source src="${sound.videoSrc}" type="video/mp4">
                                       </video>`;
@@ -435,7 +466,7 @@
                 const controlHtml = `
                     <div class="flex items-center gap-4 text-sm text-[var(--runa-text-alt)]">
                         <button id="btn-${sound.id}" class="icon-button relative w-10 h-10 rounded-full overflow-hidden shadow-md flex-shrink-0 bg-gray-200 dark:bg-gray-700">
-                           ${mediaElement}
+                            ${mediaElement}
                         </button>
                         <span class="font-medium text-[var(--runa-text)] w-20 truncate">${sound.name}</span>
                         <input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="${sound.id === 'runa-main-audio' ? 0.5 : 0}" class="flex-grow">
@@ -682,7 +713,7 @@
                 ? `<div class="border-t border-gray-600 pt-4 mt-4 text-right">
                         <p class="text-lg text-white">Total: <span class="font-bold">${formattedTotal}</span></p>
                         <a href="#" class="w-full mt-4 inline-flex items-center justify-center gap-3 px-5 py-3 text-base font-semibold text-white bg-green-500 rounded-lg shadow-sm hover:bg-green-600 transition-all"><span>Proceder al Pago</span></a>
-                   </div>` 
+                    </div>` 
                 : '<a href="#tienda" class="w-full block text-center bg-[var(--runa-primary)] text-white font-bold py-3 px-5 rounded-lg" onclick="closeCartModal()">Volver a la tienda</a>';
             
             const cartItemsHtml = cart.length === 0 
@@ -736,6 +767,18 @@
                 }, 100);
             };
 
+            // Fix video paths in HTML as well
+            if(introVideo.querySelector('source')) {
+                introVideo.querySelector('source').src = '/assets/VIDEOS/runa-intro.mp4';
+                introVideo.load();
+            }
+             const logoVideo = document.querySelector('header nav video');
+            if(logoVideo.querySelector('source')) {
+                logoVideo.querySelector('source').src = '/assets/VIDEOS/runa-logo-animado.mp4';
+                logoVideo.load();
+            }
+
+
             introVideo.addEventListener('ended', endIntro);
             introVideo.addEventListener('error', endIntro);
             setTimeout(endIntro, 5500);
@@ -755,7 +798,7 @@
                 
                 const filteredProducts = coffeeProducts.filter(product => {
                     return Object.keys(activeFilters).every(filterKey => {
-                        return activeFilters[filterKey].includes(product[filterKey]);
+                        return activeFilters[filterKey].length === 0 || activeFilters[filterKey].includes(product[filterKey]);
                     });
                 });
                 renderProducts(filteredProducts);
