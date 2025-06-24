@@ -144,6 +144,7 @@
         .video-icon-button {
             border: 2px solid transparent;
             transition: border-color 0.3s ease;
+            background-color: var(--runa-primary); /* Fallback color */
         }
         .video-icon-button.active {
             border-color: var(--runa-primary);
@@ -411,15 +412,16 @@
 
         const productGrid = document.getElementById('product-grid');
         
-        // --- AMBIENCE MIXER ---
+        // --- AMBIENCE MIXER (FINAL) ---
+        // Switched to local paths for reliable video serving from your project via Vercel.
         const ambienceSounds = [
-            { id: 'runa-main-audio', name: 'Música Runa', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-a-disc-jockey-is-adjusting-the-sound-on-his-mixer-4122-large.mp4' },
-            { id: 'river-audio', name: 'Río', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-water-stream-in-the-forest-2735-large.mp4' },
-            { id: 'birds-audio', name: 'Pájaros', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-two-birds-in-a-cage-4145-large.mp4' },
-            { id: 'rain-audio', name: 'Lluvia', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-heavy-rain-on-the-road-1635-large.mp4' },
-            { id: 'fire-audio', name: 'Fuego', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-burning-incense-4676-large.mp4' },
-            { id: 'wind-audio', name: 'Viento', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-field-of-reeds-in-the-wind-8 reeds-in-the-wind-4481-large.mp4' },
-            { id: 'storm-audio', name: 'Tormenta', videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-lightning-over-a-city-88-large.mp4' },
+            { id: 'runa-main-audio', name: 'Música Runa', videoSrc: '/videos/runa-main-audio.mp4' },
+            { id: 'river-audio', name: 'Río', videoSrc: '/videos/river-audio.mp4' },
+            { id: 'birds-audio', name: 'Pájaros', videoSrc: '/videos/birds-audio.mp4' },
+            { id: 'rain-audio', name: 'Lluvia', videoSrc: '/videos/rain-audio.mp4' },
+            { id: 'fire-audio', name: 'Fuego', videoSrc: '/videos/fire-audio.mp4' },
+            { id: 'wind-audio', name: 'Viento', videoSrc: '/videos/wind-audio.mp4' },
+            { id: 'storm-audio', name: 'Tormenta', videoSrc: '/videos/storm-audio.mp4' },
         ];
         let audioElements = {};
         let isMixerPlaying = false;
@@ -437,7 +439,7 @@
                     <div class="flex items-center gap-4 text-sm text-[var(--runa-text-alt)]">
                         <button id="btn-${sound.id}" class="video-icon-button relative w-10 h-10 rounded-full overflow-hidden shadow-md flex-shrink-0">
                            <video autoplay loop muted playsinline class="absolute top-1/2 left-1/2 w-auto h-auto min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover">
-                               <source src="${sound.videoSrc}" type="video/mp4">
+                                <source src="${sound.videoSrc}" type="video/mp4">
                            </video>
                         </button>
                         <span class="font-medium text-[var(--runa-text)] w-20 truncate">${sound.name}</span>
