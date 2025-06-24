@@ -115,7 +115,7 @@
             transition: opacity .2s;
         }
         html.dark input[type="range"] {
-             background: #4A5568;
+           background: #4A5568;
         }
         input[type="range"]:hover { opacity: 1; }
         input[type="range"]::-webkit-slider-thumb {
@@ -327,12 +327,23 @@
         <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.916-.539-5.574-1.54L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.267.655 4.398 1.908 6.166l-1.138 4.167 4.274-1.12z"/></svg>
     </a>
 
-    <!-- CORRECCIÓN: Rutas de audio con / al inicio para Vercel -->
+    <!-- 
+      SECCIÓN DE AUDIO CORREGIDA
+      - - - - - - - - - - - - - - - - - - - - - -
+      INSTRUCCIONES:
+      1. Renombra los siguientes archivos en tu carpeta /public/assets/mp3/ en GitHub:
+         - "Sonidos_de_Pajaros.mp3" -> "birds-sound.mp3"
+         - "Lluvia.mp3" -> "rain-sound.mp3"
+         - "Sonido_del_Fuego_de_la_chimenea.mp3" -> "fire-sound.mp3"
+      
+      2. ¡ATENCIÓN! El archivo "runa-main-audio.mp3" no existe en tu repositorio.
+         Debes subirlo a la carpeta /public/assets/mp3/ para que el audio de "Música Runa" funcione.
+    -->
     <audio id="runa-main-audio" loop><source src="/assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
     <audio id="river-audio" loop><source src="/assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
-    <audio id="birds-audio" loop><source src="/assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
-    <audio id="rain-audio" loop><source src="/assets/mp3/Lluvia.mp3" type="audio/mpeg"></audio>
-    <audio id="fire-audio" loop><source src="/assets/mp3/Sonido_del_Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
+    <audio id="birds-audio" loop><source src="/assets/mp3/birds-sound.mp3" type="audio/mpeg"></audio>
+    <audio id="rain-audio" loop><source src="/assets/mp3/rain-sound.mp3" type="audio/mpeg"></audio>
+    <audio id="fire-audio" loop><source src="/assets/mp3/fire-sound.mp3" type="audio/mpeg"></audio>
     <audio id="wind-audio" loop><source src="/assets/mp3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
     <audio id="storm-audio" loop><source src="/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
     
@@ -385,44 +396,87 @@
 
         const productGrid = document.getElementById('product-grid');
         
-        // CORRECCIÓN: Rutas de video con / al inicio para Vercel
+        /*
+          LISTA DE SONIDOS CORREGIDA
+          - - - - - - - - - - - - - - - - - -
+          INSTRUCCIONES:
+          Renombra los siguientes archivos en tu carpeta /public/assets/videos/ en GitHub:
+          - "birds-audio.mp4" -> "birds-sound.mp4"
+          - "rain-audio.mp4"  -> "rain-sound.mp4"
+          - "fire-audio.mp4"  -> "fire-sound.mp4"
+        */
         const ambienceSounds = [
             { id: 'runa-main-audio', name: 'Música Runa', videoSrc: '/assets/videos/runa-main-audio.mp4' },
             { id: 'river-audio', name: 'Río', videoSrc: '/assets/videos/river-audio.mp4' },
-            { id: 'birds-audio', name: 'Pájaros', videoSrc: '/assets/videos/birds-audio.mp4' },
-            { id: 'rain-audio', name: 'Lluvia', videoSrc: '/assets/videos/rain-audio.mp4' },
-            { id: 'fire-audio', name: 'Fuego', videoSrc: '/assets/videos/fire-audio.mp4' },
+            { id: 'birds-audio', name: 'Pájaros', videoSrc: '/assets/videos/birds-sound.mp4' },
+            { id: 'rain-audio', name: 'Lluvia', videoSrc: '/assets/videos/rain-sound.mp4' },
+            { id: 'fire-audio', name: 'Fuego', videoSrc: '/assets/videos/fire-sound.mp4' },
             { id: 'wind-audio', name: 'Viento', videoSrc: '/assets/videos/wind-audio.mp4' },
             { id: 'storm-audio', name: 'Tormenta', videoSrc: '/assets/videos/storm-audio.mp4' },
         ];
         let audioElements = {};
         let isMixerPlaying = false;
         
+        // FUNCIÓN MEJORADA para crear los controles del mezclador.
         function initializeMixer() {
             const soundControlsContainer = document.getElementById('sound-controls');
             if(!soundControlsContainer) return;
             soundControlsContainer.innerHTML = ''; 
+            
             ambienceSounds.forEach(sound => {
                 const audioEl = document.getElementById(sound.id);
                 if (!audioEl) {
-                    console.error(`Mixer Error: Audio element with id="${sound.id}" not found.`);
+                    console.error(`Error en Mezclador: No se encontró el elemento de audio con id="${sound.id}".`);
+                    // Si el audio que falta es el principal, muéstralo en la consola.
+                    if(sound.id === 'runa-main-audio') {
+                        console.warn('Recuerda subir el archivo "runa-main-audio.mp3" a /public/assets/mp3/');
+                    }
                     return;
                 }
                 audioElements[sound.id] = audioEl;
 
-                const controlHtml = `
-                    <div class="flex items-center gap-4 text-sm text-[var(--runa-text-alt)]">
-                        <button id="btn-${sound.id}" class="video-icon-button relative w-10 h-10 rounded-full overflow-hidden shadow-md flex-shrink-0 bg-gray-700">
-                           <video autoplay loop muted playsinline class="absolute top-1/2 left-1/2 w-auto h-auto min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover">
-                               <source src="${sound.videoSrc}" type="video/mp4">
-                           </video>
-                        </button>
-                        <span class="font-medium text-[var(--runa-text)] w-20 truncate">${sound.name}</span>
-                        <input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="${sound.id === 'runa-main-audio' ? 0.5 : 0}" class="flex-grow">
-                    </div>`;
-                soundControlsContainer.innerHTML += controlHtml;
+                // Creación de elementos con JavaScript para mayor robustez
+                const controlContainer = document.createElement('div');
+                controlContainer.className = "flex items-center gap-4 text-sm text-[var(--runa-text-alt)]";
+
+                const button = document.createElement('button');
+                button.id = `btn-${sound.id}`;
+                button.className = "video-icon-button relative w-10 h-10 rounded-full overflow-hidden shadow-md flex-shrink-0 bg-gray-700";
+                
+                const video = document.createElement('video');
+                video.autoplay = true;
+                video.loop = true;
+                video.muted = true;
+                video.playsInline = true;
+                video.className = "absolute top-1/2 left-1/2 w-auto h-auto min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover";
+                
+                const source = document.createElement('source');
+                source.src = sound.videoSrc;
+                source.type = "video/mp4";
+                
+                video.appendChild(source);
+                button.appendChild(video);
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = "font-medium text-[var(--runa-text)] w-20 truncate";
+                nameSpan.textContent = sound.name;
+
+                const slider = document.createElement('input');
+                slider.type = "range";
+                slider.id = `volume-${sound.id}`;
+                slider.min = "0";
+                slider.max = "1";
+                slider.step = "0.01";
+                slider.value = sound.id === 'runa-main-audio' ? 0.5 : 0;
+                slider.className = "flex-grow";
+                
+                controlContainer.appendChild(button);
+                controlContainer.appendChild(nameSpan);
+                controlContainer.appendChild(slider);
+                soundControlsContainer.appendChild(controlContainer);
             });
 
+            // Asignar eventos a los controles recién creados
             Object.keys(audioElements).forEach(id => {
                 const slider = document.getElementById(`volume-${id}`);
                 const button = document.getElementById(`btn-${id}`);
@@ -459,7 +513,7 @@
                 if (isMixerPlaying) {
                     const playPromise = audio.play();
                     if (playPromise !== undefined) {
-                        playPromise.catch(e => console.error(`Error playing ${audio.id}:`, e));
+                        playPromise.catch(e => console.error(`Error reproduciendo ${audio.id}:`, e));
                     }
                 } else {
                     audio.pause();
@@ -602,21 +656,21 @@
            const isFirestore = currentUser && !currentUser.isAnonymous && db;
            
            if (newQuantity < 1) {
-               await window.removeItemFromCart(itemIdentifier);
-               return;
+              await window.removeItemFromCart(itemIdentifier);
+              return;
            }
 
            if (isFirestore) {
-               const itemRef = doc(db, "carts", userId, "items", itemIdentifier);
-               await updateDoc(itemRef, { quantity: newQuantity });
+              const itemRef = doc(db, "carts", userId, "items", itemIdentifier);
+              await updateDoc(itemRef, { quantity: newQuantity });
            } else {
-               const itemId = JSON.parse(decodeURIComponent(itemIdentifier)).id;
-               let cart = getLocalCart();
-               const itemToUpdate = cart.find(i => i.id === itemId);
-               if (itemToUpdate) itemToUpdate.quantity = newQuantity;
-               saveLocalCart(cart);
-               updateCartFromLocal();
-               renderCartModal(getLocalCart());
+              const itemId = JSON.parse(decodeURIComponent(itemIdentifier)).id;
+              let cart = getLocalCart();
+              const itemToUpdate = cart.find(i => i.id === itemId);
+              if (itemToUpdate) itemToUpdate.quantity = newQuantity;
+              saveLocalCart(cart);
+              updateCartFromLocal();
+              renderCartModal(getLocalCart());
            }
         };
 
@@ -737,8 +791,15 @@
                 });
                 
                 const filteredProducts = coffeeProducts.filter(product => {
+                    // If no filters are selected for a category, it should pass.
+                    // This logic was incorrect, let's fix it.
                     return Object.keys(activeFilters).every(filterKey => {
-                        return activeFilters[filterKey].includes(product[filterKey]);
+                        // If a filter category has selections, the product must match one of them.
+                        if (activeFilters[filterKey].length > 0) {
+                            return activeFilters[filterKey].includes(product[filterKey]);
+                        }
+                        // If a filter category has no selections, it doesn't restrict the results.
+                        return true;
                     });
                 });
                 renderProducts(filteredProducts);
