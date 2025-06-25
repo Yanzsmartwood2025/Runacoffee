@@ -10,10 +10,11 @@
     <!-- PWA & Mobile App Settings -->
     <meta name="theme-color" content="#2c221f">
     <link rel="manifest" href="manifest.json">
+    <!-- THIS IS THE CRUCIAL LINE FOR THE iOS HOME SCREEN ICON -->
     <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Runa Coffee">
+    <meta name="apple-mobile-web-app-title" content="RUNA COFFEE">
 
     <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:title" content="RUNA COFFEE - Origen Manizales">
@@ -269,7 +270,7 @@
                     
                     <model-viewer id="ar-viewer"
                         src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
-                        ios-src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
+                        ios-src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/3D/arbol_final.usdz"
                         ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto"
                         camera-controls auto-rotate
                         alt="Un modelo 3D de un árbol estilizado"
@@ -329,14 +330,12 @@
                     </div>
                     <div>
                         <h3 class="text-2xl font-bold text-white mb-4">Síguenos</h3>
-                        <!-- Social media links have been removed. Add new ones here. -->
                         <div class="flex justify-center md:justify-start space-x-4">
                            <!-- Example: <a href="YOUR_NEW_LINK" target="_blank">Icon</a> -->
                         </div>
                     </div>
                     <div>
                         <h3 class="text-2xl font-bold text-white mb-4">Formas de Pago</h3>
-                        <!-- Payment method logos have been removed. -->
                         <div id="payment-logos" class="flex justify-center md:justify-start flex-wrap items-center gap-4 mb-2"></div>
                         <p class="text-xs text-gray-400">Pagos seguros a través de nuestra plataforma.</p>
                     </div>
@@ -763,7 +762,6 @@
         window.closeCartModal = () => cartModal.classList.add('hidden');
         
         document.addEventListener('DOMContentLoaded', async () => {
-            // --- PWA Service Worker Registration ---
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/service-worker.js').then(registration => {
