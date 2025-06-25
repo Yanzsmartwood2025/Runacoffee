@@ -6,6 +6,16 @@
     <title>RUNA COFFEE - El Alma del Eje Cafetero</title>
     
     <meta name="description" content="Descubre el café de especialidad de Manizales, Colombia. Granos seleccionados que cuentan la historia de nuestra tierra.">
+    
+    <!-- PWA & Mobile App Settings -->
+    <meta name="theme-color" content="#2c221f">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Runa Coffee">
+
+    <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:title" content="RUNA COFFEE - Origen Manizales">
     <meta property="og:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
     <meta property="og:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
@@ -16,7 +26,6 @@
     <meta name="twitter:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
     <meta name="twitter:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
     <link rel="icon" href="https://i.ibb.co/L5TjL4q/IMG-20250620-WA0020.jpg" type="image/jpeg">
-    <meta name="theme-color" content="#3a2e2a">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -320,13 +329,14 @@
                     </div>
                     <div>
                         <h3 class="text-2xl font-bold text-white mb-4">Síguenos</h3>
+                        <!-- Social media links have been removed. Add new ones here. -->
                         <div class="flex justify-center md:justify-start space-x-4">
-                           <a href="https://www.instagram.com/runa.coffee/" target="_blank" class="transition-transform hover:scale-110"><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"></path></svg></a>
-                           <a href="#" target="_blank" class="transition-transform hover:scale-110"><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"></path></svg></a>
+                           <!-- Example: <a href="YOUR_NEW_LINK" target="_blank">Icon</a> -->
                         </div>
                     </div>
                     <div>
                         <h3 class="text-2xl font-bold text-white mb-4">Formas de Pago</h3>
+                        <!-- Payment method logos have been removed. -->
                         <div id="payment-logos" class="flex justify-center md:justify-start flex-wrap items-center gap-4 mb-2"></div>
                         <p class="text-xs text-gray-400">Pagos seguros a través de nuestra plataforma.</p>
                     </div>
@@ -405,7 +415,6 @@
 
         const productGrid = document.getElementById('product-grid');
         
-        // --- CONFIGURACIÓN CON GIFs ---
         const ambienceSounds = [
             { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
             { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
@@ -432,26 +441,19 @@
                 }
                 audioElements[sound.id] = audioEl;
 
-                // --- CHANGE START ---
-                // Added specific looping logic for the rain audio.
                 audioEl.addEventListener('timeupdate', function() {
-                    // Special looping rule for rain sound as requested.
                     if (sound.id === 'rain-audio') {
-                        // When playback time reaches 19 seconds, reset to 0 to loop.
-                        if (this.currentTime >= 19) {
+                        if (this.currentTime >= 20) {
                             this.currentTime = 0;
                         }
                     } 
-                    // Default looping rule for all other sounds.
                     else {
                         const loopBuffer = 0.5; 
-                        // If the sound is near its end, reset to 0 to loop.
                         if (this.duration && (this.currentTime > this.duration - loopBuffer)) {
                             this.currentTime = 0;
                         }
                     }
                 });
-                // --- CHANGE END ---
 
                 const controlContainer = document.createElement('div');
                 controlContainer.className = "flex items-center gap-4 text-sm text-[var(--runa-text-alt)]";
@@ -761,6 +763,17 @@
         window.closeCartModal = () => cartModal.classList.add('hidden');
         
         document.addEventListener('DOMContentLoaded', async () => {
+            // --- PWA Service Worker Registration ---
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+                });
+            }
+
             const openCartButton = document.getElementById('open-cart-button');
 
             if (auth) {
@@ -861,11 +874,6 @@
             initializeMixer();
             document.getElementById('master-sound-toggle').addEventListener('click', toggleMasterSound);
             
-            const paymentLogosContainer = document.getElementById('payment-logos');
-            if(paymentLogosContainer) {
-                const paymentMethods = [ 'Mastercard', 'Visa', 'Amex', 'PayPal' ];
-                paymentLogosContainer.innerHTML = paymentMethods.map(m => `<img src="https://placehold.co/48x32/FFFFFF/000000?text=${m}" alt="${m}" title="${m}" class="h-8 bg-white rounded-md p-1">`).join('');
-            }
             document.getElementById('year').textContent = new Date().getFullYear();
             
             openCartButton.addEventListener('click', async () => {
