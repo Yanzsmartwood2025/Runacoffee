@@ -152,13 +152,9 @@
         .mixer-icon-button.active {
             border-color: var(--runa-primary);
         }
-        /* --- FIX START --- */
-        /* This rule was added to ensure the active border color works correctly in dark mode. */
-        /* It has a higher specificity to override the default dark mode border style. */
         html.dark .mixer-icon-button.active {
             border-color: var(--runa-primary);
         }
-        /* --- FIX END --- */
         .mixer-icon-button img {
             width: 100%;
             height: 100%;
@@ -436,13 +432,26 @@
                 }
                 audioElements[sound.id] = audioEl;
 
+                // --- CHANGE START ---
+                // Added specific looping logic for the rain audio.
                 audioEl.addEventListener('timeupdate', function() {
-                    const loopBuffer = 0.5; 
-                    if (this.duration && (this.currentTime > this.duration - loopBuffer)) {
-                        this.currentTime = 0; 
-                        this.play(); 
+                    // Special looping rule for rain sound as requested.
+                    if (sound.id === 'rain-audio') {
+                        // When playback time reaches 19 seconds, reset to 0 to loop.
+                        if (this.currentTime >= 19) {
+                            this.currentTime = 0;
+                        }
+                    } 
+                    // Default looping rule for all other sounds.
+                    else {
+                        const loopBuffer = 0.5; 
+                        // If the sound is near its end, reset to 0 to loop.
+                        if (this.duration && (this.currentTime > this.duration - loopBuffer)) {
+                            this.currentTime = 0;
+                        }
                     }
                 });
+                // --- CHANGE END ---
 
                 const controlContainer = document.createElement('div');
                 controlContainer.className = "flex items-center gap-4 text-sm text-[var(--runa-text-alt)]";
