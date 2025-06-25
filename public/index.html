@@ -152,6 +152,13 @@
         .mixer-icon-button.active {
             border-color: var(--runa-primary);
         }
+        /* --- FIX START --- */
+        /* This rule was added to ensure the active border color works correctly in dark mode. */
+        /* It has a higher specificity to override the default dark mode border style. */
+        html.dark .mixer-icon-button.active {
+            border-color: var(--runa-primary);
+        }
+        /* --- FIX END --- */
         .mixer-icon-button img {
             width: 100%;
             height: 100%;
@@ -722,7 +729,7 @@
                 ? `<div class="border-t border-gray-600 pt-4 mt-4 text-right">
                         <p class="text-lg text-white">Total: <span class="font-bold">${formattedTotal}</span></p>
                         <a href="#" class="w-full mt-4 inline-flex items-center justify-center gap-3 px-5 py-3 text-base font-semibold text-white bg-green-500 rounded-lg shadow-sm hover:bg-green-600 transition-all"><span>Proceder al Pago</span></a>
-                  </div>` 
+                </div>` 
                 : '<a href="#tienda" class="w-full block text-center bg-[var(--runa-primary)] text-white font-bold py-3 px-5 rounded-lg" onclick="closeCartModal()">Volver a la tienda</a>';
             
             const cartItemsHtml = cart.length === 0 
