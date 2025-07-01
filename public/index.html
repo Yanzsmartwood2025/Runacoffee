@@ -66,13 +66,11 @@
         .section-bg { background-color: var(--runa-bg-alt); transition: background-color 0.3s ease; }
         html { scroll-behavior: smooth; }
         
-        /* UPDATED HEADER STYLE - Fully Transparent */
         #main-header nav { 
             background-color: transparent;
             border: none;
             box-shadow: none;
         }
-        /* Style for header icons to ensure visibility */
         #main-header .header-icon {
             filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
         }
@@ -104,14 +102,15 @@
             z-index: 10000;
             transition: opacity 0.75s ease-out;
         }
-        #video-intro.hidden { opacity: 0; pointer-events: none; }
         #page-content { 
             opacity: 0; 
             transition: opacity 0.75s ease-in;
-            transition-delay: 0.2s;
             visibility: hidden;
         }
-        #page-content.loaded { opacity: 1; visibility: visible; }
+        #page-content.loaded { 
+            opacity: 1; 
+            visibility: visible; 
+        }
         
         .modal-enter { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -193,6 +192,99 @@
         .video-card:hover .overlay {
             background: rgba(0,0,0,0.7);
         }
+        
+        #fab-container {
+            position: fixed;
+            bottom: 1.5rem; /* bottom-6 */
+            left: 1.5rem; /* left-6 */
+            z-index: 50;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 1rem; /* gap-4 */
+        }
+        .fab-secondary {
+            transform: scale(0) translateY(10px);
+            transform-origin: bottom center;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #fab-container.open .fab-secondary {
+            transform: scale(1) translateY(0);
+        }
+
+        #drawing-canvas {
+            touch-action: none;
+            cursor: crosshair;
+        }
+        .color-swatch {
+            width: 2rem; height: 2rem;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .color-swatch:hover {
+            transform: scale(1.1);
+        }
+        .color-swatch.active {
+            border-color: var(--runa-primary);
+            transform: scale(1.1);
+        }
+        .brush-size-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--runa-border);
+            background-color: var(--runa-bg-alt);
+            transition: all 0.2s;
+        }
+        .brush-size-btn.active, .brush-size-btn:hover {
+            background-color: var(--runa-primary);
+            color: white;
+            border-color: var(--runa-primary);
+        }
+        #calculator {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        #calc-display {
+            grid-column: 1 / -1;
+            background-color: #2D3748;
+            color: white;
+            text-align: right;
+            padding: 1rem;
+            font-size: 2rem;
+            border-radius: 0.5rem;
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+        #calculator button {
+            background-color: var(--runa-bg-alt);
+            border: 1px solid var(--runa-border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-size: 1.25rem;
+            transition: background-color 0.2s;
+        }
+        #calculator button:hover {
+            background-color: var(--runa-primary);
+            color: white;
+        }
+        html.dark #calculator button {
+            background-color: #2D3748;
+            border-color: #4A5568;
+        }
+        html.dark #calculator button:hover {
+            background-color: var(--runa-primary);
+        }
+        #calculator .operator {
+            background-color: var(--runa-secondary);
+            color: white;
+        }
+        #calculator .clear {
+            background-color: #E53E3E;
+            color: white;
+        }
 
     </style>
 </head>
@@ -264,7 +356,6 @@
         </header>
         
         <main>
-            <!-- HERO SECTION RESTORED -->
             <section id="hero" class="relative h-screen flex items-center justify-center text-white" style="background-image: url('https://images.unsplash.com/photo-1511920183353-3c9c9b062c19?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center;">
                 <div class="absolute inset-0 bg-black/60 z-10"></div>
                 <div class="relative z-20 text-center px-4">
@@ -448,9 +539,22 @@
     </div>
     
     <!-- Floating Action Buttons -->
-    <button id="open-ambience-panel-button" title="Cambiar Ambiente Visual" class="fixed bottom-6 left-6 z-50 bg-[var(--runa-primary)] rounded-full w-16 h-16 shadow-lg hover:bg-[var(--runa-secondary)] transition-all hover:scale-110 flex items-center justify-center">
-        <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402a3.75 3.75 0 00-.625-6.25l-6.402-6.401a3.75 3.75 0 00-5.304 5.304L7.586 12l-3.488 3.488a3.75 3.75 0 000 5.304z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12.75 12.75L19.5 6" /></svg>
-    </button>
+    <div id="fab-container" class="fixed bottom-6 left-6 z-50 flex flex-col-reverse items-center gap-4">
+        <!-- Secondary Buttons (Initially Hidden) -->
+        <button id="open-whiteboard-button" title="Abrir Pizarra" class="fab-secondary bg-blue-500 rounded-full w-14 h-14 shadow-lg hover:bg-blue-600 transition-all flex items-center justify-center">
+            <svg class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
+        </button>
+        <button id="open-calculator-button" title="Abrir Calculadora" class="fab-secondary bg-gray-700 rounded-full w-14 h-14 shadow-lg hover:bg-gray-800 transition-all flex items-center justify-center">
+            <svg class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 3h.008v.008H8.25v-.008zm0 3h.008v.008H8.25v-.008zm3-6h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm3-6h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zM4.5 6.75A.75.75 0 015.25 6h13.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V6.75z" /></svg>
+        </button>
+        <button id="open-ambience-panel-button" title="Cambiar Ambiente Visual" class="fab-secondary bg-teal-500 rounded-full w-14 h-14 shadow-lg hover:bg-teal-600 transition-all flex items-center justify-center">
+            <svg class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402a3.75 3.75 0 00-.625-6.25l-6.402-6.401a3.75 3.75 0 00-5.304 5.304L7.586 12l-3.488 3.488a3.75 3.75 0 000 5.304z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12.75 12.75L19.5 6" /></svg>
+        </button>
+        <!-- Main Button -->
+        <button id="main-fab" title="Herramientas" class="bg-[var(--runa-primary)] rounded-full w-16 h-16 shadow-lg hover:bg-[var(--runa-secondary)] transition-all hover:scale-110 flex items-center justify-center">
+            <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.438.995s.145.755.438.995l1.003.827c.48.398.668 1.03.26 1.431l-1.296 2.247a1.125 1.125 0 01-1.37.49l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.645-.87a6.52 6.52 0 01-.22-.127c-.324-.196-.72-.257-1.075-.124l-1.217.456a1.125 1.125 0 01-1.37-.49l-1.296-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.437-.995s-.145-.755-.437-.995l-1.004-.827a1.125 1.125 0 01-.26-1.431l1.296-2.247a1.125 1.125 0 011.37-.49l1.217.456c.355.133.75.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        </button>
+    </div>
     <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." class="fixed bottom-6 right-6 z-50 bg-green-500 rounded-full w-16 h-16 shadow-lg hover:bg-green-600 transition-transform hover:scale-110 flex items-center justify-center" target="_blank">
         <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.916-.539-5.574-1.54L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.267.655 4.398 1.908 6.166l-1.138 4.167 4.274-1.12z"/></svg>
     </a>
@@ -466,8 +570,8 @@
     
 
     <!-- Modals -->
-    <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-4 bg-black/70 backdrop-blur-sm hidden"></div>
-    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+    <div id="cart-modal" class="fixed inset-0 z-[60] flex items-end sm:items-center sm:justify-end p-4 bg-black/70 backdrop-blur-sm hidden"></div>
+    <div id="auth-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
        <div class="w-full max-w-xs bg-[var(--runa-header-bg)] rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
             <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -480,7 +584,7 @@
             </button>
        </div>
     </div>
-    <div id="ambience-panel" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+    <div id="ambience-panel" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
         <div class="w-full max-w-2xl bg-[var(--runa-bg)] rounded-2xl shadow-2xl p-6 modal-enter relative">
             <button id="close-ambience-panel-button" class="absolute top-3 right-3 text-gray-500 hover:text-[var(--runa-heading)] transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -491,7 +595,61 @@
             </div>
         </div>
     </div>
-    
+    <div id="whiteboard-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
+        <div class="w-full h-full max-w-6xl max-h-[90vh] bg-[var(--runa-bg)] rounded-2xl shadow-2xl p-4 flex flex-col modal-enter">
+            <div class="flex-shrink-0 flex flex-wrap items-center justify-between gap-4 mb-4 border-b border-[var(--runa-border)] pb-3">
+                <h3 class="font-semibold text-lg text-[var(--runa-heading)]">Pizarra de Dibujo</h3>
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <div id="color-palette" class="flex items-center gap-2">
+                         <span class="text-sm text-[var(--runa-text-alt)] mr-2">Color:</span>
+                         <!-- Color swatches will be injected here -->
+                    </div>
+                    <input type="color" id="brush-color" class="w-10 h-10 p-0 bg-transparent border-none rounded-md cursor-pointer">
+                    <div id="brush-sizes" class="flex items-center gap-2 border-l border-[var(--runa-border)] pl-4">
+                        <span class="text-sm text-[var(--runa-text-alt)] mr-2">Tamaño:</span>
+                        <!-- Brush size buttons will be injected here -->
+                    </div>
+                    <input type="range" id="brush-size" min="1" max="50" value="2" class="w-24 cursor-pointer">
+                    <button id="eraser-button" class="brush-size-btn">Borrador</button>
+                    <button id="clear-canvas-button" class="px-3 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">Limpiar</button>
+                    <button id="close-whiteboard-button" class="text-gray-500 hover:text-[var(--runa-heading)] transition-colors">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-grow bg-white rounded-lg overflow-hidden">
+                <canvas id="drawing-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+    <div id="calculator-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
+        <div class="w-full max-w-xs bg-[var(--runa-bg)] rounded-2xl shadow-2xl p-6 modal-enter relative">
+             <button id="close-calculator-button" class="absolute top-3 right-3 text-gray-500 hover:text-[var(--runa-heading)] transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div id="calculator">
+                <div id="calc-display">0</div>
+                <button class="clear">C</button>
+                <button class="operator" data-operator="/">÷</button>
+                <button class="operator" data-operator="*">×</button>
+                <button class="operator" data-operator="-">−</button>
+                <button data-number="7">7</button>
+                <button data-number="8">8</button>
+                <button data-number="9">9</button>
+                <button class="operator" data-operator="+">+</button>
+                <button data-number="4">4</button>
+                <button data-number="5">5</button>
+                <button data-number="6">6</button>
+                <button id="equals" class="operator row-span-2">=</button>
+                <button data-number="1">1</button>
+                <button data-number="2">2</button>
+                <button data-number="3">3</button>
+                <button data-number="0" class="col-span-2">0</button>
+                <button data-number=".">.</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -946,27 +1104,32 @@
                 authStateObserver(null);
             }
             
+            // CORRECTED: More robust intro logic
             const videoIntro = document.getElementById('video-intro');
-            const introVideo = document.getElementById('intro-video');
             const pageContent = document.getElementById('page-content');
             let introFinished = false;
 
             const endIntro = () => {
                 if (introFinished) return;
                 introFinished = true;
-                videoIntro.classList.add('hidden');
-                setTimeout(() => {
+                if(videoIntro) {
+                    videoIntro.style.display = 'none';
+                }
+                if(pageContent) {
                     pageContent.classList.add('loaded');
-                }, 100);
+                }
             };
 
-            introVideo.addEventListener('ended', endIntro);
-            introVideo.addEventListener('error', endIntro);
-            setTimeout(endIntro, 5500);
-            introVideo.play().catch(error => {
-                console.warn("Video autoplay was prevented. Showing content immediately.", error);
-                endIntro();
-            });
+            const introVideo = document.getElementById('intro-video');
+            if (introVideo) {
+                introVideo.addEventListener('ended', endIntro);
+                introVideo.addEventListener('error', endIntro); // Fallback if video fails to load
+                introVideo.play().catch(error => {
+                    console.warn("Video autoplay was prevented. Showing content immediately.", error);
+                    endIntro();
+                });
+            }
+            setTimeout(endIntro, 5500); // Hard fallback
 
             const clearFiltersBtn = document.getElementById('clear-filters-btn');
 
@@ -1030,10 +1193,13 @@
             const themeToggle = document.getElementById('theme-toggle'); 
             const sunIcon = document.getElementById('theme-icon-sun'); 
             const moonIcon = document.getElementById('theme-icon-moon'); 
+            const fabContainer = document.getElementById('fab-container');
+
             const applyTheme = (theme) => { 
                 document.documentElement.classList.toggle('dark', theme === 'dark'); 
                 sunIcon.classList.toggle('hidden', theme !== 'dark'); 
                 moonIcon.classList.toggle('hidden', theme === 'dark'); 
+                fabContainer.classList.toggle('hidden', theme === 'dark');
             }; 
             themeToggle.addEventListener('click', () => { 
                 const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'; 
@@ -1047,24 +1213,175 @@
             applyAmbience(localStorage.getItem('runa_ambience') || 'default');
             document.getElementById('master-sound-toggle').addEventListener('click', toggleMasterSound);
             
-            const openAmbienceBtn = document.getElementById('open-ambience-panel-button');
+            const mainFab = document.getElementById('main-fab');
+            mainFab.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fabContainer.classList.toggle('open');
+            });
+            
             const ambiencePanel = document.getElementById('ambience-panel');
             const closeAmbienceBtn = document.getElementById('close-ambience-panel-button');
-            
-            openAmbienceBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                ambiencePanel.classList.remove('hidden');
-            });
+            document.getElementById('open-ambience-panel-button').addEventListener('click', (e) => { e.stopPropagation(); ambiencePanel.classList.remove('hidden'); });
             closeAmbienceBtn.addEventListener('click', () => ambiencePanel.classList.add('hidden'));
-            ambiencePanel.addEventListener('click', (e) => {
-                if (e.target === ambiencePanel) {
-                    ambiencePanel.classList.add('hidden');
+            ambiencePanel.addEventListener('click', (e) => { if (e.target === ambiencePanel) { ambiencePanel.classList.add('hidden'); } });
+            document.getElementById('video-card-ambience-btn').addEventListener('click', (e) => { e.stopPropagation(); ambiencePanel.classList.remove('hidden'); });
+
+            try {
+                // --- Whiteboard Logic ---
+                const whiteboardModal = document.getElementById('whiteboard-modal');
+                const openWhiteboardBtn = document.getElementById('open-whiteboard-button');
+                const closeWhiteboardBtn = document.getElementById('close-whiteboard-button');
+                const canvas = document.getElementById('drawing-canvas');
+                const ctx = canvas.getContext('2d');
+                let drawing = false;
+                let currentBrushColor = '#000000';
+                let currentBrushSize = 2;
+                let isErasing = false;
+
+                const colors = ['#000000', '#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#FFFFFF'];
+                const sizes = [{name: 'Fino', size: 2}, {name: 'Normal', size: 5}, {name: 'Medio', size: 15}, {name: 'Grueso', size: 30}];
+
+                function setupWhiteboardControls() {
+                    const colorPalette = document.getElementById('color-palette');
+                    colors.forEach(color => {
+                        const swatch = document.createElement('button');
+                        swatch.className = 'color-swatch';
+                        swatch.style.backgroundColor = color;
+                        swatch.dataset.color = color;
+                        if (color === '#FFFFFF') swatch.style.border = '1px solid #ccc';
+                        if (color === currentBrushColor) swatch.classList.add('active');
+                        swatch.addEventListener('click', () => {
+                            currentBrushColor = color;
+                            isErasing = false;
+                            document.getElementById('brush-color').value = color;
+                            updateActiveSwatch();
+                        });
+                        colorPalette.appendChild(swatch);
+                    });
+
+                    const brushSizes = document.getElementById('brush-sizes');
+                    sizes.forEach(brush => {
+                        const btn = document.createElement('button');
+                        btn.className = 'brush-size-btn';
+                        btn.textContent = brush.name;
+                        btn.dataset.size = brush.size;
+                        if (brush.size === currentBrushSize) btn.classList.add('active');
+                        btn.addEventListener('click', () => {
+                            currentBrushSize = brush.size;
+                            document.getElementById('brush-size').value = brush.size;
+                            updateActiveBrushSize();
+                        });
+                        brushSizes.appendChild(btn);
+                    });
                 }
-            });
-            document.getElementById('video-card-ambience-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                ambiencePanel.classList.remove('hidden');
-            });
+                function updateActiveSwatch() {
+                    document.querySelectorAll('.color-swatch').forEach(s => {
+                        s.classList.toggle('active', s.dataset.color === currentBrushColor && !isErasing);
+                    });
+                    document.getElementById('eraser-button').classList.remove('active');
+                }
+                function updateActiveBrushSize() {
+                     document.querySelectorAll('.brush-size-btn').forEach(b => {
+                        b.classList.toggle('active', parseInt(b.dataset.size) === currentBrushSize);
+                    });
+                }
+
+                function resizeCanvas() {
+                    const parent = canvas.parentElement;
+                    canvas.width = parent.offsetWidth;
+                    canvas.height = parent.offsetHeight;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                }
+
+                function startDrawing(e) { drawing = true; draw(e); }
+                function stopDrawing() { drawing = false; ctx.beginPath(); }
+                function draw(e) {
+                    if (!drawing) return;
+                    e.preventDefault();
+                    const rect = canvas.getBoundingClientRect();
+                    const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                    const y = (e.clientY || e.touches[0].clientY) - rect.top;
+                    
+                    ctx.lineWidth = currentBrushSize;
+                    ctx.strokeStyle = isErasing ? '#FFFFFF' : currentBrushColor;
+                    
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                }
+                
+                openWhiteboardBtn.addEventListener('click', (e) => { e.stopPropagation(); whiteboardModal.classList.remove('hidden'); resizeCanvas(); });
+                closeWhiteboardBtn.addEventListener('click', () => whiteboardModal.classList.add('hidden'));
+                document.getElementById('clear-canvas-button').addEventListener('click', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+                document.getElementById('brush-color').addEventListener('input', (e) => { currentBrushColor = e.target.value; isErasing = false; updateActiveSwatch(); });
+                document.getElementById('brush-size').addEventListener('input', (e) => { currentBrushSize = e.target.value; updateActiveBrushSize(); });
+                document.getElementById('eraser-button').addEventListener('click', (e) => { 
+                    isErasing = true; 
+                    e.target.classList.add('active');
+                    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+                });
+                
+                canvas.addEventListener('mousedown', startDrawing);
+                canvas.addEventListener('mouseup', stopDrawing);
+                canvas.addEventListener('mousemove', draw);
+                canvas.addEventListener('mouseleave', stopDrawing);
+                canvas.addEventListener('touchstart', startDrawing);
+                canvas.addEventListener('touchend', stopDrawing);
+                canvas.addEventListener('touchmove', draw);
+                window.addEventListener('resize', resizeCanvas);
+                setupWhiteboardControls();
+            } catch (e) { console.error("Error initializing whiteboard:", e); }
+
+            try {
+                // --- Calculator Logic ---
+                const calculatorModal = document.getElementById('calculator-modal');
+                const openCalculatorBtn = document.getElementById('open-calculator-button');
+                const closeCalculatorBtn = document.getElementById('close-calculator-button');
+                const calcDisplay = document.getElementById('calc-display');
+                const calcButtons = document.getElementById('calculator');
+                let displayValue = '0'; let firstOperand = null; let operator = null; let waitingForSecondOperand = false;
+
+                function updateDisplay() { calcDisplay.textContent = displayValue; }
+                function inputDigit(digit) {
+                    if (waitingForSecondOperand) { displayValue = digit; waitingForSecondOperand = false; } 
+                    else { displayValue = displayValue === '0' ? digit : displayValue + digit; }
+                }
+                function inputDecimal() { if (!displayValue.includes('.')) { displayValue += '.'; } }
+                function handleOperator(nextOperator) {
+                    const inputValue = parseFloat(displayValue);
+                    if (operator && waitingForSecondOperand) { operator = nextOperator; return; }
+                    if (firstOperand == null) { firstOperand = inputValue; } 
+                    else if (operator) {
+                        const result = performCalculation[operator](firstOperand, inputValue);
+                        displayValue = `${parseFloat(result.toFixed(7))}`;
+                        firstOperand = result;
+                    }
+                    waitingForSecondOperand = true;
+                    operator = nextOperator;
+                }
+                const performCalculation = {
+                    '/': (first, second) => first / second, '*': (first, second) => first * second,
+                    '+': (first, second) => first + second, '-': (first, second) => first - second,
+                    '=': (first, second) => second
+                };
+                function resetCalculator() { displayValue = '0'; firstOperand = null; operator = null; waitingForSecondOperand = false; }
+
+                calcButtons.addEventListener('click', (event) => {
+                    const { target } = event;
+                    if (!target.matches('button')) return;
+                    if (target.dataset.operator) { handleOperator(target.dataset.operator); updateDisplay(); return; }
+                    if (target.dataset.number === '.') { inputDecimal(); updateDisplay(); return; }
+                    if (target.id === 'equals') { handleOperator('='); updateDisplay(); return; }
+                    if (target.classList.contains('clear')) { resetCalculator(); updateDisplay(); return; }
+                    inputDigit(target.dataset.number);
+                    updateDisplay();
+                });
+
+                openCalculatorBtn.addEventListener('click', (e) => { e.stopPropagation(); calculatorModal.classList.remove('hidden'); });
+                closeCalculatorBtn.addEventListener('click', () => calculatorModal.classList.add('hidden'));
+            } catch(e) { console.error("Error initializing calculator:", e); }
 
             document.getElementById('year').textContent = new Date().getFullYear();
             
