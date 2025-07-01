@@ -43,34 +43,42 @@
         :root {
             --runa-header-bg-solid: #1a1310;
         }
+        html:not(.dark) body {
+            background-color: #FDFBF8;
+            color: #3a2e2a;
+        }
+        html.dark body {
+            background-color: #111;
+            color: #E2E8F0;
+        }
         body { 
             font-family: 'Poppins', sans-serif; 
-            background-color: #111; /* Fallback color */
-            color: #E2E8F0; /* Default light text color */
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
         h1, h2, h3 { 
             font-family: 'Roboto Slab', serif; 
             color: #FFFFFF; 
         }
+        html:not(.dark) h1, html:not(.dark) h2, html:not(.dark) h3 {
+            color: #2c221f;
+        }
         
-        /* Fullscreen Video Background */
         #video-background {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover;
             z-index: -2;
+            transition: opacity 0.5s ease;
         }
         #video-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(17, 10, 7, 0.7); /* Dark coffee-toned overlay */
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(17, 10, 7, 0.7);
             z-index: -1;
+            transition: background-color 0.5s ease;
+        }
+        html:not(.dark) #video-overlay {
+             background-color: rgba(253, 251, 248, 0.7);
         }
 
         #main-header {
@@ -81,23 +89,36 @@
             background-color: var(--runa-header-bg-solid);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
+        html:not(.dark) #main-header.scrolled {
+            background-color: #ffffff;
+        }
 
         #mobile-menu, #mixer-panel { 
             background-color: var(--runa-header-bg-solid);
         }
+        html:not(.dark) #mobile-menu, html:not(.dark) #mixer-panel {
+             background-color: #ffffff;
+        }
 
         .section-bg {
-            background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent background for sections */
+            background-color: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
+        html:not(.dark) .section-bg {
+            background-color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(0,0,0,0.1);
+        }
         
         footer {
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for footer */
-             backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
+        }
+        html:not(.dark) footer {
+            background-color: #F4F1ED;
         }
         
         #video-intro {
@@ -138,7 +159,7 @@
     <!-- Fullscreen Video Background & Overlay -->
     <div id="video-background-wrapper">
         <video id="video-background" autoplay loop muted playsinline>
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-coffee-beans-in-a-bag-3359-large.mp4" type="video/mp4">
+            <source src="assets/videos/runa-fondo-video.mp4" type="video/mp4">
         </video>
         <div id="video-overlay"></div>
     </div>
@@ -157,7 +178,7 @@
         <header id="main-header" class="sticky top-0 left-0 right-0 z-40">
             <nav class="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center h-20">
                 <div class="flex-1 flex justify-start items-center space-x-2 sm:space-x-4">
-                    <button class="text-white p-2" id="menu-button" aria-label="Abrir menú">
+                    <button class="text-inherit p-2" id="menu-button" aria-label="Abrir menú">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <div id="auth-container" class="flex items-center"></div>
@@ -170,27 +191,37 @@
                     </a>
                 </div>
                 <div class="flex-1 flex justify-end items-center space-x-2 sm:space-x-4">
+                    <button id="theme-toggle" class="p-2 rounded-full text-inherit" aria-label="Cambiar tema de color">
+                        <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
+                        <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
                     <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D47500]" aria-label="Abrir mezclador de ambiente">
                         <video autoplay loop muted playsinline class="w-full h-full object-cover">
                             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5ec8a9f9a44f0f1d347867a8b1293a1f8f5dae5e/public/assets/videos/runa-equalizer-video.mp4" type="video/mp4">
                         </video>
                     </button>
+                     <div id="cart-icon-wrapper">
+                        <button id="open-cart-button" class="relative p-1 text-inherit">
+                           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                           <span id="cart-counter" class="hidden">0</span>
+                        </button>
+                    </div>
                 </div>
             </nav>
             
-            <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t border-gray-800">
+            <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t border-gray-800 dark:border-gray-700">
                 <div class="container mx-auto px-6 py-4 space-y-3">
-                      <a href="#filosofia" class="mobile-nav-link block text-sm text-gray-200 hover:text-[#D47500] transition-colors">Nuestra Filosofía</a>
-                      <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-gray-200 hover:text-[#D47500] transition-colors">Experiencia 3D</a>
-                      <a href="#contacto" class="mobile-nav-link block text-sm text-gray-200 hover:text-[#D47500] transition-colors">Contacto</a>
+                      <a href="#filosofia" class="mobile-nav-link block text-sm text-inherit hover:text-[#D47500] transition-colors">Nuestra Filosofía</a>
+                      <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-inherit hover:text-[#D47500] transition-colors">Experiencia 3D</a>
+                      <a href="#contacto" class="mobile-nav-link block text-sm text-inherit hover:text-[#D47500] transition-colors">Contacto</a>
                 </div>
             </div>
 
-            <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t border-gray-800">
+            <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t border-gray-800 dark:border-gray-700">
                 <div class="container mx-auto px-6 py-4">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-lg text-white">Mezclador de Ambiente</h3>
-                        <button id="master-sound-toggle" class="p-2 rounded-full text-white hover:bg-gray-800" aria-label="Reproducir/Pausar todo">
+                        <h3 class="font-semibold text-lg">Mezclador de Ambiente</h3>
+                        <button id="master-sound-toggle" class="p-2 rounded-full text-inherit hover:bg-gray-200 dark:hover:bg-gray-800" aria-label="Reproducir/Pausar todo">
                             <svg id="master-play-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>
                             <svg id="master-pause-icon" class="h-6 w-6 hidden" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                         </button>
@@ -203,15 +234,15 @@
         <main>
             <section id="hero" class="h-screen flex items-center justify-center text-center text-white">
                  <div>
-                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-4">RUNA COFFEE</h1>
-                    <p class="max-w-2xl mx-auto text-lg md:text-xl opacity-90">El alma del Eje Cafetero en tu taza.</p>
+                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-4 text-white">RUNA COFFEE</h1>
+                    <p class="max-w-2xl mx-auto text-lg md:text-xl text-gray-200 opacity-90">El alma del Eje Cafetero en tu taza.</p>
                 </div>
             </section>
 
             <section id="filosofia" class="py-20 section-bg">
                 <div class="container mx-auto px-6 text-center">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">El Corazón del Café</h2>
-                    <p class="max-w-3xl mx-auto text-gray-300">
+                    <p class="max-w-3xl mx-auto text-inherit">
                         En RUNA COFFEE, cada grano cuenta una historia. Nacimos en las montañas del Eje Cafetero de Colombia, con un propósito: honrar la herencia de nuestros caficultores. Creemos en un comercio justo, en el respeto por la tierra que nos nutre y en procesos meticulosos que garantizan una calidad excepcional. RUNA no es solo café, es el alma de nuestra gente, una conexión mística entre la naturaleza y tu taza.
                     </p>
                 </div>
@@ -220,7 +251,7 @@
             <section id="experiencia-3d" class="py-20">
                 <div class="container mx-auto px-6 text-center">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">Vive la Experiencia 3D</h2>
-                    <p class="max-w-3xl mx-auto text-gray-300 mb-12">
+                    <p class="max-w-3xl mx-auto text-inherit mb-12">
                         Interactúa con nuestro árbol místico. Si estás en un celular, presiona el botón de RA para traer la magia de Runa a tu propio espacio.
                     </p>
                     
@@ -286,6 +317,21 @@
         <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.916-.539-5.574-1.54L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.267.655 4.398 1.908 6.166l-1.138 4.167 4.274-1.12z"/></svg>
     </a>
     
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+       <div class="w-full max-w-xs bg-[#1a1310] rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
+            <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-white mb-2">Bienvenido a Runa</h2>
+            <p class="text-gray-400 mb-6">Inicia sesión o crea una cuenta</p>
+            <button id="google-login-button-modal" class="w-full inline-flex items-center justify-center gap-3 px-4 py-2 text-base font-semibold text-gray-700 bg-white border border-transparent rounded-lg shadow-sm hover:bg-gray-200 transition-all">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,34.783,44,29.865,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+                <span>Iniciar sesión con Google</span>
+            </button>
+       </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -321,7 +367,7 @@
 
             // --- Authentication Logic ---
             const authContainer = document.getElementById('auth-container');
-            const authModal = document.getElementById('auth-modal'); // Assuming auth-modal exists for login
+            const authModal = document.getElementById('auth-modal'); 
 
             const renderUserUI = (user) => {
                 const userImage = user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" class="w-full h-full object-cover">` : `<span class="text-white font-bold text-xl">${user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}</span>`;
@@ -334,8 +380,7 @@
             };
 
             const renderGuestUI = () => {
-                authContainer.innerHTML = `<button id="open-auth-modal-button" title="Acceder o Registrarse" class="w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>`;
-                // This part needs the auth modal to be present in the HTML to work
+                authContainer.innerHTML = `<button id="open-auth-modal-button" title="Acceder o Registrarse" class="w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm text-inherit"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>`;
                 const openAuthBtn = document.getElementById('open-auth-modal-button');
                 if(openAuthBtn && authModal) {
                     openAuthBtn.addEventListener('click', () => authModal.classList.remove('hidden'));
@@ -364,7 +409,26 @@
 
             authContainer.innerHTML = `<div class="w-9 h-9 rounded-full bg-gray-700 animate-pulse"></div>`;
             
-            // --- Intro Video Logic (Corrected) ---
+            const googleLoginButton = document.getElementById('google-login-button-modal');
+            if (googleLoginButton) {
+                googleLoginButton.addEventListener('click', () => {
+                    if (!auth) return;
+                    const provider = new GoogleAuthProvider();
+                    signInWithPopup(auth, provider)
+                        .then(() => authModal.classList.add('hidden'))
+                        .catch((error) => console.error("Google Sign-In Error:", error));
+                });
+            }
+            
+            const closeAuthButton = document.getElementById('close-auth-modal-button');
+            if(closeAuthButton) {
+                closeAuthButton.addEventListener('click', () => authModal.classList.add('hidden'));
+            }
+            if(authModal) {
+                authModal.addEventListener('click', (event) => { if (event.target === authModal) authModal.classList.add('hidden'); });
+            }
+
+            // --- Intro Video Logic ---
             const videoIntro = document.getElementById('video-intro');
             const introVideo = document.getElementById('intro-video');
             const pageContent = document.getElementById('page-content');
@@ -397,6 +461,29 @@
             });
             document.querySelectorAll('.mobile-nav-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
             
+            // --- Theme Toggle Logic ---
+            const themeToggle = document.getElementById('theme-toggle'); 
+            const sunIcon = document.getElementById('theme-icon-sun'); 
+            const moonIcon = document.getElementById('theme-icon-moon'); 
+            const applyTheme = (theme) => { 
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    sunIcon.classList.remove('hidden');
+                    moonIcon.classList.add('hidden');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    sunIcon.classList.add('hidden');
+                    moonIcon.classList.remove('hidden');
+                }
+            }; 
+            themeToggle.addEventListener('click', () => { 
+                const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'; 
+                localStorage.setItem('theme', newTheme); 
+                applyTheme(newTheme); 
+            });
+            applyTheme(localStorage.getItem('theme') || 'dark'); // Default to dark theme
+
+
             document.getElementById('year').textContent = new Date().getFullYear();
 
             const arViewer = document.getElementById('ar-viewer');
