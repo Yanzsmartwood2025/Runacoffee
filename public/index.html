@@ -10,7 +10,6 @@
     <!-- PWA & Mobile App Settings -->
     <meta name="theme-color" content="#2c221f">
     <link rel="manifest" href="manifest.json">
-    <!-- THIS IS THE CRUCIAL LINE FOR THE iOS HOME SCREEN ICON -->
     <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -62,20 +61,30 @@
             --runa-primary: #D47500;
             --runa-secondary: #38B2AC;
         }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--runa-bg); color: var(--runa-text); transition: background-color 0.3s ease, color 0.3s ease; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--runa-bg); color: var(--runa-text); transition: background-color 0.5s ease, color 0.5s ease, background-image 0.5s ease; background-size: cover; background-position: center; background-attachment: fixed; }
         h1, h2, h3 { font-family: 'Roboto Slab', serif; color: var(--runa-heading); transition: color 0.3s ease; }
         .section-bg { background-color: var(--runa-bg-alt); transition: background-color 0.3s ease; }
         html { scroll-behavior: smooth; }
         
-        #main-header { 
-            background-color: var(--runa-bg); 
-            box-shadow: 0 1px 3px var(--runa-shadow);
-            border-bottom: 1px solid var(--runa-border);
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+        /* UPDATED HEADER STYLE - Fully Transparent */
+        #main-header nav { 
+            background-color: transparent;
+            border: none;
+            box-shadow: none;
+        }
+        /* Style for header icons to ensure visibility */
+        #main-header .header-icon {
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
         }
         #mobile-menu, #mixer-panel { 
             background-color: var(--runa-bg); 
             transition: background-color 0.3s ease;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--runa-border);
+        }
+        html.dark #mobile-menu, html.dark #mixer-panel {
+            border-color: rgba(74, 85, 104, 0.5);
         }
         #cart-icon-wrapper { 
             position: relative;
@@ -114,61 +123,75 @@
         }
         
         input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 8px;
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 8px;
             background: var(--runa-border);
-            border-radius: 5px;
-            outline: none;
-            opacity: 0.7;
-            transition: opacity .2s;
+            border-radius: 5px; outline: none;
+            opacity: 0.7; transition: opacity .2s;
         }
-        html.dark input[type="range"] {
-           background: #4A5568;
-        }
+        html.dark input[type="range"] { background: #4A5568; }
         input[type="range"]:hover { opacity: 1; }
         input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
+            -webkit-appearance: none; appearance: none;
+            width: 20px; height: 20px;
             background: var(--runa-primary);
-            cursor: pointer;
-            border-radius: 50%;
+            cursor: pointer; border-radius: 50%;
             border: 2px solid var(--runa-bg);
         }
         input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
+            width: 20px; height: 20px;
             background: var(--runa-primary);
-            cursor: pointer;
-            border-radius: 50%;
+            cursor: pointer; border-radius: 50%;
             border: 2px solid var(--runa-bg);
         }
 
         .mixer-icon-button {
             border: 2px solid var(--runa-border);
             transition: border-color 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             background-color: var(--runa-bg-alt);
         }
-        html.dark .mixer-icon-button {
-            background-color: #2D3748;
-            border-color: #4A5568;
+        html.dark .mixer-icon-button { background-color: #2D3748; border-color: #4A5568; }
+        .mixer-icon-button.active { border-color: var(--runa-primary); }
+        html.dark .mixer-icon-button.active { border-color: var(--runa-primary); }
+        .mixer-icon-button img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .ambience-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
-        .mixer-icon-button.active {
+        .ambience-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+        .ambience-card.active {
             border-color: var(--runa-primary);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 0 0 3px var(--runa-primary);
         }
-        html.dark .mixer-icon-button.active {
-            border-color: var(--runa-primary);
+        
+        .video-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            height: 16rem; /* 256px */
         }
-        .mixer-icon-button img {
-            width: 100%;
-            height: 100%;
+        .video-card video {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100%; height: 100%;
             object-fit: cover;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            transition: filter 0.3s ease;
+        }
+        .video-card .overlay {
+            position: relative;
+            z-index: 2;
+            background: rgba(0,0,0,0.5);
+            transition: background 0.3s ease;
+        }
+        .video-card:hover .overlay {
+            background: rgba(0,0,0,0.7);
         }
 
     </style>
@@ -188,8 +211,8 @@
         <header id="main-header" class="sticky top-0 left-0 right-0 z-40">
             <nav class="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center h-20">
                 <div class="flex-1 flex justify-start items-center space-x-2 sm:space-x-4">
-                    <button class="text-[var(--runa-text)] p-2" id="menu-button" aria-label="Abrir menú">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <button class="text-white p-2 transition-opacity hover:opacity-75" id="menu-button" aria-label="Abrir menú">
+                        <svg class="h-6 w-6 header-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <div id="auth-container" class="flex items-center"></div>
                 </div>
@@ -202,37 +225,34 @@
                     </a>
                 </div>
                 <div class="flex-1 flex justify-end items-center space-x-2 sm:space-x-4">
-                    <button id="theme-toggle" class="p-2 rounded-full text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)]" aria-label="Cambiar tema de color">
-                        <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
-                        <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <button id="theme-toggle" class="p-2 text-white transition-opacity hover:opacity-75" aria-label="Cambiar tema de color">
+                        <svg id="theme-icon-sun" class="h-6 w-6 header-icon hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
+                        <svg id="theme-icon-moon" class="h-6 w-6 header-icon hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
-                    <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)]" aria-label="Abrir mezclador de ambiente">
+                    <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)]" aria-label="Abrir mezclador de sonidos">
                         <video autoplay loop muted playsinline class="w-full h-full object-cover">
                             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5ec8a9f9a44f0f1d347867a8b1293a1f8f5dae5e/public/assets/videos/runa-equalizer-video.mp4" type="video/mp4">
                         </video>
                     </button>
                     <div id="cart-icon-wrapper">
-                        <button id="open-cart-button" class="relative p-1 text-[var(--runa-text)]">
-                           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <button id="open-cart-button" class="relative p-1 text-white transition-opacity hover:opacity-75">
+                           <svg class="w-8 h-8 header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                            <span id="cart-counter" class="hidden">0</span>
                         </button>
                     </div>
                 </div>
             </nav>
-            
-            <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t border-[var(--runa-border)]">
-                <div class="container mx-auto px-6 py-4 space-y-3">
-                      <a href="#filosofia" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Nuestra Filosofía</a>
-                      <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
-                      <a href="#tienda" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Tienda</a>
-                      <a href="#contacto" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
+            <div class="relative container mx-auto">
+                <div id="mobile-menu" class="hidden absolute top-0 left-4 w-auto mt-2 p-4">
+                    <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors py-2">Árbol 3D</a>
+                    <a href="#explora" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors py-2">Explora Runa</a>
+                    <a href="#filosofia" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors py-2">Nuestra Filosofía</a>
+                    <a href="#tienda" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors py-2">Tienda</a>
+                    <a href="#contacto" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors py-2">Contacto</a>
                 </div>
-            </div>
-
-            <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t border-[var(--runa-border)]">
-                <div class="container mx-auto px-6 py-4">
+                <div id="mixer-panel" class="hidden absolute top-0 right-4 w-full max-w-sm mt-2 p-4">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-lg text-[var(--runa-heading)]">Mezclador de Ambiente</h3>
+                        <h3 class="font-semibold text-lg text-[var(--runa-heading)]">Mezclador de Sonidos</h3>
                         <button id="master-sound-toggle" class="p-2 rounded-full text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)]" aria-label="Reproducir/Pausar todo">
                             <svg id="master-play-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>
                             <svg id="master-pause-icon" class="h-6 w-6 hidden" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -244,24 +264,16 @@
         </header>
         
         <main>
+            <!-- HERO SECTION RESTORED -->
             <section id="hero" class="relative h-screen flex items-center justify-center text-white" style="background-image: url('https://images.unsplash.com/photo-1511920183353-3c9c9b062c19?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center;">
                 <div class="absolute inset-0 bg-black/60 z-10"></div>
                 <div class="relative z-20 text-center px-4">
-                    <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4">RUNA COFFEE</h1>
-                    <p class="max-w-2xl mx-auto text-lg md:text-xl opacity-90">El alma del Eje Cafetero en tu taza.</p>
+                    <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">RUNA COFFEE</h1>
+                    <p class="max-w-2xl mx-auto text-lg md:text-xl opacity-90" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.7);">El alma del Eje Cafetero en tu taza.</p>
                 </div>
             </section>
 
-            <section id="filosofia" class="py-20 section-bg">
-                <div class="container mx-auto px-6 text-center">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">El Corazón de Manizales</h2>
-                    <p class="max-w-3xl mx-auto text-[var(--runa-text-alt)]">
-                        En RUNA COFFEE, cada grano cuenta una historia. Nacimos en las montañas de Manizales, corazón del Eje Cafetero, con un propósito: honrar la herencia de nuestros caficultores. Creemos en un comercio justo, en el respeto por la tierra que nos nutre y en procesos meticulosos que garantizan una calidad excepcional. RUNA no es solo café, es el alma de nuestra gente, una conexión mística entre la naturaleza y tu taza.
-                    </p>
-                </div>
-            </section>
-            
-            <section id="experiencia-3d" class="py-20">
+            <section id="experiencia-3d" class="py-20 section-bg">
                 <div class="container mx-auto px-6 text-center">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">Vive la Experiencia 3D</h2>
                     <p class="max-w-3xl mx-auto text-[var(--runa-text-alt)] mb-12">
@@ -286,7 +298,54 @@
                 </div>
             </section>
 
-            <section id="tienda" class="py-20 section-bg">
+            <section id="explora" class="py-20">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Una Experiencia para Cada Sentido</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="video-card group">
+                            <video src="https://assets.mixkit.co/videos/preview/mixkit-rain-falling-on-the-leaves-of-a-tree-4029-large.mp4" autoplay loop muted playsinline></video>
+                            <div class="overlay h-full flex flex-col justify-center items-center text-white p-6 text-center">
+                                <h3 class="text-2xl font-bold mb-2">Runa Digital</h3>
+                                <p class="mb-4">Crea tu propio ambiente visual y sonoro.</p>
+                                <button id="video-card-ambience-btn" class="mt-auto bg-[var(--runa-primary)] text-white font-bold py-2 px-6 rounded-full hover:bg-[var(--runa-secondary)] transition-all transform hover:scale-105 z-10 relative">
+                                    Explorar Ambientes
+                                </button>
+                            </div>
+                        </div>
+                        <div class="video-card group">
+                            <video src="https://assets.mixkit.co/videos/preview/mixkit-top-down-view-of-a-coffee-plantation-42202-large.mp4" autoplay loop muted playsinline></video>
+                            <div class="overlay h-full flex flex-col justify-center items-center text-white p-6 text-center">
+                                <h3 class="text-2xl font-bold mb-2">La Leyenda del Grano Dorado</h3>
+                                <p class="mb-4">Juega, diviértete y gana Puntos Runa.</p>
+                                <a href="juego.html" class="mt-auto bg-[var(--runa-primary)] text-white font-bold py-2 px-6 rounded-full hover:bg-[var(--runa-secondary)] transition-all transform hover:scale-105 z-10 relative">
+                                    Ir al Juego
+                                </a>
+                            </div>
+                        </div>
+                        <div class="video-card group">
+                             <video src="https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-man-using-a-laptop-328-large.mp4" autoplay loop muted playsinline></video>
+                             <div class="overlay h-full flex flex-col justify-center items-center text-white p-6 text-center">
+                                <h3 class="text-2xl font-bold mb-2">Club de Recompensas</h3>
+                                <p class="mb-4">Canjea tus puntos por beneficios exclusivos.</p>
+                                <a href="recompensas.html" class="mt-auto bg-[var(--runa-primary)] text-white font-bold py-2 px-6 rounded-full hover:bg-[var(--runa-secondary)] transition-all transform hover:scale-105 z-10 relative">
+                                    Ver Recompensas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="filosofia" class="py-20 section-bg">
+                <div class="container mx-auto px-6 text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">El Corazón de Manizales</h2>
+                    <p class="max-w-3xl mx-auto text-[var(--runa-text-alt)]">
+                        En RUNA COFFEE, cada grano cuenta una historia. Nacimos en las montañas de Manizales, corazón del Eje Cafetero, con un propósito: honrar la herencia de nuestros caficultores. Creemos en un comercio justo, en el respeto por la tierra que nos nutre y en procesos meticulosos que garantizan una calidad excepcional. RUNA no es solo café, es el alma de nuestra gente, una conexión mística entre la naturaleza y tu taza.
+                    </p>
+                </div>
+            </section>
+            
+            <section id="tienda" class="py-20">
                 <div class="container mx-auto px-6">
                     <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Nuestra Selección de Café</h2>
                     <div class="flex flex-col md:flex-row gap-10">
@@ -317,6 +376,42 @@
                     </div>
                 </div>
             </section>
+
+            <section id="juego" class="py-20 section-bg">
+                <div class="container mx-auto px-6 text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">La Leyenda del Grano Dorado</h2>
+                    <p class="max-w-3xl mx-auto text-[var(--runa-text-alt)] mb-8">
+                        ¡Próximamente! Embárcate en una aventura a través del Eje Cafetero. Supera desafíos, aprende sobre el proceso del café y acumula Puntos Runa para desbloquear grandes recompensas.
+                    </p>
+                    <a href="juego.html" class="bg-[var(--runa-primary)] text-white font-bold py-3 px-8 rounded-full hover:bg-[var(--runa-secondary)] transition-all transform hover:scale-105 inline-block">
+                        Notificarme del Lanzamiento
+                    </a>
+                </div>
+            </section>
+
+            <section id="recompensas" class="py-20">
+                <div class="container mx-auto px-6 text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Club de Recompensas Runa</h2>
+                    <p class="max-w-3xl mx-auto text-[var(--runa-text-alt)] mb-12">
+                        Tus Puntos Runa son la llave a un mundo de beneficios. Canjéalos por descuentos, avatares exclusivos para tu perfil y nuevos Paquetes de Ambiente para personalizar tu experiencia.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                        <div class="bg-[var(--runa-bg-alt)] p-6 rounded-lg shadow-md border border-[var(--runa-border)]">
+                            <h3 class="text-xl font-bold mb-2">Descuentos Exclusivos</h3>
+                            <p class="text-[var(--runa-text-alt)]">Usa tus puntos para obtener rebajas en tus compras de café.</p>
+                        </div>
+                        <div class="bg-[var(--runa-bg-alt)] p-6 rounded-lg shadow-md border border-[var(--runa-border)]">
+                            <h3 class="text-xl font-bold mb-2">Avatares de Perfil</h3>
+                            <p class="text-[var(--runa-text-alt)]">Personaliza tu cuenta con íconos únicos del universo Runa.</p>
+                        </div>
+                        <div class="bg-[var(--runa-bg-alt)] p-6 rounded-lg shadow-md border border-[var(--runa-border)]">
+                            <h3 class="text-xl font-bold mb-2">Paquetes de Ambiente</h3>
+                            <p class="text-[var(--runa-text-alt)]">Desbloquea nuevos temas visuales y sonoros para la página.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </main>
         
         <footer id="contacto" class="bg-gray-800 dark:bg-black text-gray-300 pt-16 pb-8">
@@ -352,7 +447,11 @@
         </footer>
     </div>
     
-    <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." class="fixed bottom-6 right-6 z-50 bg-green-500 rounded-full w-16 h-16 shadow-lg hover:bg-green-600 transition-transform hover:scale-110 flex items-center justify-center overflow-hidden" target="_blank">
+    <!-- Floating Action Buttons -->
+    <button id="open-ambience-panel-button" title="Cambiar Ambiente Visual" class="fixed bottom-6 left-6 z-50 bg-[var(--runa-primary)] rounded-full w-16 h-16 shadow-lg hover:bg-[var(--runa-secondary)] transition-all hover:scale-110 flex items-center justify-center">
+        <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402a3.75 3.75 0 00-.625-6.25l-6.402-6.401a3.75 3.75 0 00-5.304 5.304L7.586 12l-3.488 3.488a3.75 3.75 0 000 5.304z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12.75 12.75L19.5 6" /></svg>
+    </button>
+    <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." class="fixed bottom-6 right-6 z-50 bg-green-500 rounded-full w-16 h-16 shadow-lg hover:bg-green-600 transition-transform hover:scale-110 flex items-center justify-center" target="_blank">
         <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.916-.539-5.574-1.54L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.267.655 4.398 1.908 6.166l-1.138 4.167 4.274-1.12z"/></svg>
     </a>
 
@@ -381,6 +480,17 @@
             </button>
        </div>
     </div>
+    <div id="ambience-panel" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+        <div class="w-full max-w-2xl bg-[var(--runa-bg)] rounded-2xl shadow-2xl p-6 modal-enter relative">
+            <button id="close-ambience-panel-button" class="absolute top-3 right-3 text-gray-500 hover:text-[var(--runa-heading)] transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="font-semibold text-lg text-[var(--runa-heading)] mb-4 text-center">Elige tu Ambiente Visual</h3>
+            <div id="ambience-selector-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                <!-- Ambience cards will be injected here by JS -->
+            </div>
+        </div>
+    </div>
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -399,7 +509,7 @@
                  auth = getAuth(app);
                  db = getFirestore(app);
             } else {
-                console.warn("Firebase config is empty. App will run in offline mode.");
+                 console.warn("Firebase config is empty. App will run in offline mode.");
             }
         } catch (e) {
             console.error("Error initializing Firebase:", e);
@@ -423,6 +533,19 @@
             { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif' },
             { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
         ];
+        
+        const ambiences = {
+            'default': { name: 'Por Defecto', icon: '☀️', bg: '' },
+            'selva': { name: 'Corazón de la Selva', icon: '🌳', bg: 'url(https://images.unsplash.com/photo-1542396493-8716a57a8a25?q=80&w=2070&auto=format&fit=crop)' },
+            'finca': { name: 'Noche de Finca', icon: '🏡', bg: 'url(https://images.unsplash.com/photo-1559494316-a15a8a1599a8?q=80&w=1974&auto=format&fit=crop)' },
+            'lluvia': { name: 'Tarde Lluviosa', icon: '🌧️', bg: 'url(https://images.unsplash.com/photo-1515694346937-94d85e41e622?q=80&w=1974&auto=format&fit=crop)' },
+            'playa': { name: 'Amanecer en la Playa', icon: '🏖️', bg: 'url(https://images.unsplash.com/photo-1439405326854-014607f694d7?q=80&w=2070&auto=format&fit=crop)' },
+            'bosque': { name: 'Paseo por el Bosque', icon: '🌲', bg: 'url(https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop)' },
+            'nevado': { name: 'Cima del Nevado', icon: '🏔️', bg: 'url(https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop)' },
+            'meditacion': { name: 'Meditación Zen', icon: '🧘', bg: 'url(https://images.unsplash.com/photo-1544204288-342f7b83141f?q=80&w=1964&auto=format&fit=crop)' },
+            'cafetal': { name: 'Cafetal al Alba', icon: '🌿', bg: 'url(https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1974&auto=format&fit=crop)' },
+            'ciudad': { name: 'Café en la Ciudad', icon: '🏙️', bg: 'url(https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2144&auto=format&fit=crop)' }
+        };
 
         let audioElements = {};
         let isMixerPlaying = false;
@@ -441,16 +564,10 @@
                 audioElements[sound.id] = audioEl;
 
                 audioEl.addEventListener('timeupdate', function() {
-                    if (sound.id === 'rain-audio') {
-                        if (this.currentTime >= 20) {
-                            this.currentTime = 0;
-                        }
-                    } 
-                    else {
-                        const loopBuffer = 0.5; 
-                        if (this.duration && (this.currentTime > this.duration - loopBuffer)) {
-                            this.currentTime = 0;
-                        }
+                    const loopBuffer = 0.5; 
+                    if (this.duration && (this.currentTime > this.duration - loopBuffer)) {
+                        this.currentTime = 0;
+                        this.play();
                     }
                 });
 
@@ -473,10 +590,7 @@
                 const slider = document.createElement('input');
                 slider.type = "range";
                 slider.id = `volume-${sound.id}`;
-                slider.min = "0";
-                slider.max = "1";
-                slider.step = "0.01";
-                slider.value = 0;
+                slider.min = "0"; slider.max = "1"; slider.step = "0.01"; slider.value = 0;
                 slider.className = "flex-grow";
                 
                 controlContainer.appendChild(button);
@@ -510,6 +624,49 @@
                 });
             });
         }
+        
+        function initializeAmbienceSelector() {
+            const grid = document.getElementById('ambience-selector-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            for (const key in ambiences) {
+                const ambience = ambiences[key];
+                const card = document.createElement('button');
+                card.className = 'ambience-card cursor-pointer p-3 rounded-lg border-2 border-transparent text-center bg-[var(--runa-bg-alt)]';
+                card.dataset.ambienceKey = key;
+                card.innerHTML = `
+                    <div class="text-3xl mb-1">${ambience.icon}</div>
+                    <div class="text-xs font-semibold text-[var(--runa-text)]">${ambience.name}</div>
+                `;
+                card.addEventListener('click', () => applyAmbience(key));
+                grid.appendChild(card);
+            }
+        }
+        
+        function applyAmbience(key) {
+            const ambience = ambiences[key];
+            if (!ambience) return;
+
+            document.body.style.backgroundImage = ambience.bg;
+            
+            if (ambience.bg) {
+                 document.getElementById('hero').style.display = 'none';
+            } else {
+                 document.getElementById('hero').style.display = 'flex';
+            }
+
+            document.querySelectorAll('.ambience-card').forEach(c => c.classList.remove('active'));
+            const activeCard = document.querySelector(`.ambience-card[data-ambience-key="${key}"]`);
+            if (activeCard) {
+                activeCard.classList.add('active');
+            }
+            
+            localStorage.setItem('runa_ambience', key);
+            
+            document.getElementById('ambience-panel').classList.add('hidden');
+        }
+
 
         function toggleMasterSound() {
             isMixerPlaying = !isMixerPlaying;
@@ -521,7 +678,7 @@
                 if (isMixerPlaying) {
                     const playPromise = audio.play();
                     if (playPromise !== undefined) {
-                        playPromise.catch(e => console.error(`Error reproduciendo ${audio.id}:`, e));
+                        playPromise.catch(e => {});
                     }
                 } else {
                     audio.pause();
@@ -717,7 +874,7 @@
         };
 
         const renderGuestUI = () => {
-            authContainer.innerHTML = `<button id="open-auth-modal-button" title="Acceder o Registrarse" class="w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm overflow-hidden text-[var(--runa-text)]"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>`;
+            authContainer.innerHTML = `<button id="open-auth-modal-button" title="Acceder o Registrarse" class="w-9 h-9 rounded-full flex items-center justify-center transition-opacity text-white hover:opacity-75"><svg class="w-6 h-6 header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>`;
             document.getElementById('open-auth-modal-button').addEventListener('click', () => authModal.classList.remove('hidden'));
         };
 
@@ -739,7 +896,7 @@
                 ? `<div class="border-t border-gray-600 pt-4 mt-4 text-right">
                         <p class="text-lg text-white">Total: <span class="font-bold">${formattedTotal}</span></p>
                         <a href="#" class="w-full mt-4 inline-flex items-center justify-center gap-3 px-5 py-3 text-base font-semibold text-white bg-green-500 rounded-lg shadow-sm hover:bg-green-600 transition-all"><span>Proceder al Pago</span></a>
-                </div>` 
+                   </div>` 
                 : '<a href="#tienda" class="w-full block text-center bg-[var(--runa-primary)] text-white font-bold py-3 px-5 rounded-lg" onclick="closeCartModal()">Volver a la tienda</a>';
             
             const cartItemsHtml = cart.length === 0 
@@ -842,16 +999,32 @@
             document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
             authModal.addEventListener('click', (event) => { if (event.target === authModal) authModal.classList.add('hidden'); });
 
-            const menuButton = document.getElementById('menu-button'); const mobileMenu = document.getElementById('mobile-menu');
-            const mixerButton = document.getElementById('mixer-toggle-button'); const mixerPanel = document.getElementById('mixer-panel');
-            menuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-                mixerPanel.classList.add('hidden');
-            });
-            mixerButton.addEventListener('click', () => {
-                mixerPanel.classList.toggle('hidden');
+            const menuButton = document.getElementById('menu-button'); 
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mixerButton = document.getElementById('mixer-toggle-button'); 
+            const mixerPanel = document.getElementById('mixer-panel');
+            
+            const closeAllHeaderPanels = () => {
                 mobileMenu.classList.add('hidden');
-            });
+                mixerPanel.classList.add('hidden');
+            }
+
+            const toggleHeaderPanel = (panel) => {
+                const isAlreadyOpen = !panel.classList.contains('hidden');
+                closeAllHeaderPanels();
+                if (!isAlreadyOpen) {
+                    panel.classList.remove('hidden');
+                }
+            };
+
+            menuButton.addEventListener('click', (e) => { e.stopPropagation(); toggleHeaderPanel(mobileMenu); });
+            mixerButton.addEventListener('click', (e) => { e.stopPropagation(); toggleHeaderPanel(mixerPanel); });
+            
+            mobileMenu.addEventListener('click', e => e.stopPropagation());
+            mixerPanel.addEventListener('click', e => e.stopPropagation());
+            
+            window.addEventListener('click', () => { closeAllHeaderPanels(); });
+
             document.querySelectorAll('.mobile-nav-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
             
             const themeToggle = document.getElementById('theme-toggle'); 
@@ -870,8 +1043,29 @@
             applyTheme(localStorage.getItem('theme') || 'light');
 
             initializeMixer();
+            initializeAmbienceSelector();
+            applyAmbience(localStorage.getItem('runa_ambience') || 'default');
             document.getElementById('master-sound-toggle').addEventListener('click', toggleMasterSound);
             
+            const openAmbienceBtn = document.getElementById('open-ambience-panel-button');
+            const ambiencePanel = document.getElementById('ambience-panel');
+            const closeAmbienceBtn = document.getElementById('close-ambience-panel-button');
+            
+            openAmbienceBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                ambiencePanel.classList.remove('hidden');
+            });
+            closeAmbienceBtn.addEventListener('click', () => ambiencePanel.classList.add('hidden'));
+            ambiencePanel.addEventListener('click', (e) => {
+                if (e.target === ambiencePanel) {
+                    ambiencePanel.classList.add('hidden');
+                }
+            });
+            document.getElementById('video-card-ambience-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                ambiencePanel.classList.remove('hidden');
+            });
+
             document.getElementById('year').textContent = new Date().getFullYear();
             
             openCartButton.addEventListener('click', async () => {
