@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUNA COFFEE - El Alma del Eje Cafetero</title>
+    <title>RUNA COFFEE - El Alma del Café</title>
     
-    <meta name="description" content="Descubre el café de especialidad de Manizales, Colombia. Granos seleccionados que cuentan la historia de nuestra tierra.">
+    <meta name="description" content="Descubre el café de especialidad de Colombia. Granos seleccionados que cuentan la historia de nuestra tierra.">
     
     <!-- PWA & Mobile App Settings -->
     <meta name="theme-color" content="#2c221f">
@@ -16,13 +16,13 @@
     <meta name="apple-mobile-web-app-title" content="RUNA COFFEE">
 
     <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:title" content="RUNA COFFEE - Origen Manizales">
+    <meta property="og:title" content="RUNA COFFEE - Origen Colombia">
     <meta property="og:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
     <meta property="og:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
     <meta property="og:url" content="https://runacoffee.vercel.app">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="RUNA COFFEE - Origen Manizales">
+    <meta name="twitter:title" content="RUNA COFFEE - Origen Colombia">
     <meta name="twitter:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
     <meta name="twitter:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
     <link rel="icon" href="https://i.ibb.co/L5TjL4q/IMG-20250620-WA0020.jpg" type="image/jpeg">
@@ -41,70 +41,80 @@
     <!-- Custom Styles and Theme -->
     <style>
         :root {
-            --runa-bg: #FDFBF8; 
-            --runa-bg-alt: #F4F1ED; 
-            --runa-text: #3a2e2a;
-            --runa-text-alt: #786A65; 
-            --runa-heading: #2c221f; 
-            --runa-primary: #D47500;
-            --runa-secondary: #0072CE;
-            --runa-border: #E2E8F0; 
-            --runa-shadow: rgba(0,0,0,0.05);
-            --runa-header-bg: #2c221f;
+            --runa-header-bg-solid: #1a1310;
         }
-        html.dark {
-            --runa-bg: #1A1A1A; 
-            --runa-bg-alt: #2c221f; 
-            --runa-text: #E2E8F0;
-            --runa-text-alt: #A0AEC0; 
-            --runa-heading: #FFFFFF; 
-            --runa-primary: #D47500;
-            --runa-secondary: #38B2AC;
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #111; /* Fallback color */
+            color: #E2E8F0; /* Default light text color */
         }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--runa-bg); color: var(--runa-text); transition: background-color 0.5s ease, color 0.5s ease, background-image 0.5s ease; background-size: cover; background-position: center; background-attachment: fixed; }
-        h1, h2, h3 { font-family: 'Roboto Slab', serif; color: var(--runa-heading); transition: color 0.3s ease; }
-        .section-bg { background-color: var(--runa-bg-alt); transition: background-color 0.3s ease; }
-        html { scroll-behavior: smooth; }
+        h1, h2, h3 { 
+            font-family: 'Roboto Slab', serif; 
+            color: #FFFFFF; 
+        }
         
-        #main-header nav { 
+        /* Fullscreen Video Background */
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+        #video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(17, 10, 7, 0.7); /* Dark coffee-toned overlay */
+            z-index: -1;
+        }
+
+        #main-header {
             background-color: transparent;
-            border: none;
-            box-shadow: none;
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
         }
-        #main-header .header-icon {
-            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+        #main-header.scrolled {
+            background-color: var(--runa-header-bg-solid);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
+
         #mobile-menu, #mixer-panel { 
-            background-color: var(--runa-bg); 
-            transition: background-color 0.3s ease;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--runa-border);
+            background-color: var(--runa-header-bg-solid);
         }
-        html.dark #mobile-menu, html.dark #mixer-panel {
-            border-color: rgba(74, 85, 104, 0.5);
+
+        .section-bg {
+            background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent background for sections */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        #cart-icon-wrapper { 
-            position: relative;
+        
+        footer {
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for footer */
+             backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
-        #cart-counter {
-            position: absolute; top: 0; right: 0;
-            transform: translate(25%, -25%);
-            width: 1.25rem; height: 1.25rem;
-            background-color: #DC2626; color: white;
-            font-size: 0.75rem; font-weight: bold;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 0.25rem;
-        }
+        
         #video-intro {
             position: fixed; inset: 0;
             width: 100%; height: 100%;
             z-index: 10000;
-            transition: opacity 0.75s ease-out;
+            transition: opacity 0.75s ease-out, visibility 0.75s;
+        }
+        #video-intro.hidden { 
+            opacity: 0; 
+            visibility: hidden;
+            pointer-events: none; 
         }
         #page-content { 
             opacity: 0; 
             transition: opacity 0.75s ease-in;
+            transition-delay: 0.2s;
             visibility: hidden;
         }
         #page-content.loaded { 
@@ -120,177 +130,20 @@
             border-radius: 0.75rem;
             background-color: transparent;
         }
-        
-        input[type="range"] {
-            -webkit-appearance: none; appearance: none;
-            width: 100%; height: 8px;
-            background: var(--runa-border);
-            border-radius: 5px; outline: none;
-            opacity: 0.7; transition: opacity .2s;
-        }
-        html.dark input[type="range"] { background: #4A5568; }
-        input[type="range"]:hover { opacity: 1; }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none;
-            width: 20px; height: 20px;
-            background: var(--runa-primary);
-            cursor: pointer; border-radius: 50%;
-            border: 2px solid var(--runa-bg);
-        }
-        input[type="range"]::-moz-range-thumb {
-            width: 20px; height: 20px;
-            background: var(--runa-primary);
-            cursor: pointer; border-radius: 50%;
-            border: 2px solid var(--runa-bg);
-        }
-
-        .mixer-icon-button {
-            border: 2px solid var(--runa-border);
-            transition: border-color 0.3s ease;
-            display: flex; align-items: center; justify-content: center;
-            background-color: var(--runa-bg-alt);
-        }
-        html.dark .mixer-icon-button { background-color: #2D3748; border-color: #4A5568; }
-        .mixer-icon-button.active { border-color: var(--runa-primary); }
-        html.dark .mixer-icon-button.active { border-color: var(--runa-primary); }
-        .mixer-icon-button img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .ambience-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-        .ambience-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-        }
-        .ambience-card.active {
-            border-color: var(--runa-primary);
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 0 0 3px var(--runa-primary);
-        }
-        
-        .video-card {
-            position: relative;
-            overflow: hidden;
-            border-radius: 0.75rem;
-            height: 16rem; /* 256px */
-        }
-        .video-card video {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-            transition: filter 0.3s ease;
-        }
-        .video-card .overlay {
-            position: relative;
-            z-index: 2;
-            background: rgba(0,0,0,0.5);
-            transition: background 0.3s ease;
-        }
-        .video-card:hover .overlay {
-            background: rgba(0,0,0,0.7);
-        }
-        
-        #fab-container {
-            position: fixed;
-            bottom: 1.5rem; /* bottom-6 */
-            left: 1.5rem; /* left-6 */
-            z-index: 50;
-            display: flex;
-            flex-direction: column-reverse;
-            align-items: center;
-            gap: 1rem; /* gap-4 */
-        }
-        .fab-secondary {
-            transform: scale(0) translateY(10px);
-            transform-origin: bottom center;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        #fab-container.open .fab-secondary {
-            transform: scale(1) translateY(0);
-        }
-
-        #drawing-canvas {
-            touch-action: none;
-            cursor: crosshair;
-        }
-        .color-swatch {
-            width: 2rem; height: 2rem;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        .color-swatch:hover {
-            transform: scale(1.1);
-        }
-        .color-swatch.active {
-            border-color: var(--runa-primary);
-            transform: scale(1.1);
-        }
-        .brush-size-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--runa-border);
-            background-color: var(--runa-bg-alt);
-            transition: all 0.2s;
-        }
-        .brush-size-btn.active, .brush-size-btn:hover {
-            background-color: var(--runa-primary);
-            color: white;
-            border-color: var(--runa-primary);
-        }
-        #calculator {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.5rem;
-        }
-        #calc-display {
-            grid-column: 1 / -1;
-            background-color: #2D3748;
-            color: white;
-            text-align: right;
-            padding: 1rem;
-            font-size: 2rem;
-            border-radius: 0.5rem;
-            word-wrap: break-word;
-            word-break: break-all;
-        }
-        #calculator button {
-            background-color: var(--runa-bg-alt);
-            border: 1px solid var(--runa-border);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            font-size: 1.25rem;
-            transition: background-color 0.2s;
-        }
-        #calculator button:hover {
-            background-color: var(--runa-primary);
-            color: white;
-        }
-        html.dark #calculator button {
-            background-color: #2D3748;
-            border-color: #4A5568;
-        }
-        html.dark #calculator button:hover {
-            background-color: var(--runa-primary);
-        }
-        #calculator .operator {
-            background-color: var(--runa-secondary);
-            color: white;
-        }
-        #calculator .clear {
-            background-color: #E53E3E;
-            color: white;
-        }
-
     </style>
 </head>
 
 <body class="antialiased">
 
+    <!-- Fullscreen Video Background & Overlay -->
+    <div id="video-background-wrapper">
+        <video id="video-background" autoplay loop muted playsinline>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-coffee-beans-in-a-bag-3359-large.mp4" type="video/mp4">
+        </video>
+        <div id="video-overlay"></div>
+    </div>
+
+    <!-- Intro Video -->
     <div id="video-intro">
         <video id="intro-video" class="fixed inset-0 w-full h-full object-contain bg-white" autoplay muted playsinline>
             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-intro.mp4" type="video/mp4">
@@ -298,13 +151,14 @@
         </video>
     </div>
 
-    <div id="page-content">
+    <!-- Page Content Wrapper -->
+    <div id="page-content" class="relative z-10">
         
         <header id="main-header" class="sticky top-0 left-0 right-0 z-40">
             <nav class="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center h-20">
                 <div class="flex-1 flex justify-start items-center space-x-2 sm:space-x-4">
-                    <button class="text-white p-2 transition-opacity hover:opacity-75" id="menu-button" aria-label="Abrir menú">
-                        <svg class="h-6 w-6 header-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <button class="text-white p-2" id="menu-button" aria-label="Abrir menú">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <div id="auth-container" class="flex items-center"></div>
                 </div>
@@ -312,40 +166,31 @@
                     <a href="#" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
                         <video autoplay loop muted playsinline class="w-full h-full object-contain">
                             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-logo-animado.mp4" type="video/mp4">
-                            Tu navegador no soporta la etiqueta de video.
                         </video>
                     </a>
                 </div>
                 <div class="flex-1 flex justify-end items-center space-x-2 sm:space-x-4">
-                    <button id="theme-toggle" class="p-2 text-white transition-opacity hover:opacity-75" aria-label="Cambiar tema de color">
-                        <svg id="theme-icon-sun" class="h-6 w-6 header-icon hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
-                        <svg id="theme-icon-moon" class="h-6 w-6 header-icon hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                    </button>
-                    <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)]" aria-label="Abrir mezclador de sonidos">
+                    <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D47500]" aria-label="Abrir mezclador de ambiente">
                         <video autoplay loop muted playsinline class="w-full h-full object-cover">
                             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5ec8a9f9a44f0f1d347867a8b1293a1f8f5dae5e/public/assets/videos/runa-equalizer-video.mp4" type="video/mp4">
                         </video>
                     </button>
-                    <div id="cart-icon-wrapper">
-                        <button id="open-cart-button" class="relative p-1 text-white transition-opacity hover:opacity-75">
-                           <svg class="w-8 h-8 header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                           <span id="cart-counter" class="hidden">0</span>
-                        </button>
-                    </div>
                 </div>
             </nav>
-            <div class="relative container mx-auto">
-                <div id="mobile-menu" class="hidden absolute top-0 left-4 w-auto mt-2 p-4">
-                    <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors py-2">Árbol 3D</a>
-                    <a href="#explora" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors py-2">Explora Runa</a>
-                    <a href="#filosofia" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors py-2">Nuestra Filosofía</a>
-                    <a href="#tienda" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors py-2">Tienda</a>
-                    <a href="#contacto" class="mobile-nav-link block text-sm text-[var(--runa-text)] hover:text-[var(--runa-primary)] transition-colors py-2">Contacto</a>
+            
+            <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t border-gray-800">
+                <div class="container mx-auto px-6 py-4 space-y-3">
+                      <a href="#filosofia" class="mobile-nav-link block text-sm text-gray-200 hover:text-[#D47500] transition-colors">Nuestra Filosofía</a>
+                      <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-gray-200 hover:text-[#D47500] transition-colors">Experiencia 3D</a>
+                      <a href="#contacto" class="mobile-nav-link block text-sm text-gray-200 hover:text-[#D47500] transition-colors">Contacto</a>
                 </div>
-                <div id="mixer-panel" class="hidden absolute top-0 right-4 w-full max-w-sm mt-2 p-4">
+            </div>
+
+            <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t border-gray-800">
+                <div class="container mx-auto px-6 py-4">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-lg text-[var(--runa-heading)]">Mezclador de Sonidos</h3>
-                        <button id="master-sound-toggle" class="p-2 rounded-full text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)]" aria-label="Reproducir/Pausar todo">
+                        <h3 class="font-semibold text-lg text-white">Mezclador de Ambiente</h3>
+                        <button id="master-sound-toggle" class="p-2 rounded-full text-white hover:bg-gray-800" aria-label="Reproducir/Pausar todo">
                             <svg id="master-play-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>
                             <svg id="master-pause-icon" class="h-6 w-6 hidden" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                         </button>
@@ -356,18 +201,26 @@
         </header>
         
         <main>
-            <section id="hero" class="relative h-screen flex items-center justify-center text-white" style="background-image: url('https://images.unsplash.com/photo-1511920183353-3c9c9b062c19?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center;">
-                <div class="absolute inset-0 bg-black/60 z-10"></div>
-                <div class="relative z-20 text-center px-4">
-                    <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">RUNA COFFEE</h1>
-                    <p class="max-w-2xl mx-auto text-lg md:text-xl opacity-90" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.7);">El alma del Eje Cafetero en tu taza.</p>
+            <section id="hero" class="h-screen flex items-center justify-center text-center text-white">
+                 <div>
+                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-4">RUNA COFFEE</h1>
+                    <p class="max-w-2xl mx-auto text-lg md:text-xl opacity-90">El alma del Eje Cafetero en tu taza.</p>
                 </div>
             </section>
 
-            <section id="experiencia-3d" class="py-20 section-bg">
+            <section id="filosofia" class="py-20 section-bg">
+                <div class="container mx-auto px-6 text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">El Corazón del Café</h2>
+                    <p class="max-w-3xl mx-auto text-gray-300">
+                        En RUNA COFFEE, cada grano cuenta una historia. Nacimos en las montañas del Eje Cafetero de Colombia, con un propósito: honrar la herencia de nuestros caficultores. Creemos en un comercio justo, en el respeto por la tierra que nos nutre y en procesos meticulosos que garantizan una calidad excepcional. RUNA no es solo café, es el alma de nuestra gente, una conexión mística entre la naturaleza y tu taza.
+                    </p>
+                </div>
+            </section>
+            
+            <section id="experiencia-3d" class="py-20">
                 <div class="container mx-auto px-6 text-center">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">Vive la Experiencia 3D</h2>
-                    <p class="max-w-3xl mx-auto text-[var(--runa-text-alt)] mb-12">
+                    <p class="max-w-3xl mx-auto text-gray-300 mb-12">
                         Interactúa con nuestro árbol místico. Si estás en un celular, presiona el botón de RA para traer la magia de Runa a tu propio espacio.
                     </p>
                     
@@ -383,134 +236,20 @@
                         </button>
                     </model-viewer>
                     
-                    <div id="ar-failure-message" class="hidden mt-4 text-center text-red-500 bg-red-100 dark:bg-red-900 dark:text-red-300 p-3 rounded-lg">
+                    <div id="ar-failure-message" class="hidden mt-4 text-center text-red-500 bg-red-900/50 p-3 rounded-lg">
                         Lo sentimos, tu dispositivo no es compatible con la Realidad Aumentada o el modelo 3D no se pudo cargar.
-                    </div>
-                </div>
-            </section>
-
-            <section id="explora" class="py-20">
-                <div class="container mx-auto px-6">
-                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Una Experiencia para Cada Sentido</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="video-card group">
-                            <video src="https://assets.mixkit.co/videos/preview/mixkit-rain-falling-on-the-leaves-of-a-tree-4029-large.mp4" autoplay loop muted playsinline></video>
-                            <div class="overlay h-full flex flex-col justify-center items-center text-white p-6 text-center">
-                                <h3 class="text-2xl font-bold mb-2">Runa Digital</h3>
-                                <p class="mb-4">Crea tu propio ambiente visual y sonoro.</p>
-                                <button id="video-card-ambience-btn" class="mt-auto bg-[var(--runa-primary)] text-white font-bold py-2 px-6 rounded-full hover:bg-[var(--runa-secondary)] transition-all transform hover:scale-105 z-10 relative">
-                                    Explorar Ambientes
-                                </button>
-                            </div>
-                        </div>
-                        <div class="video-card group">
-                            <video src="https://assets.mixkit.co/videos/preview/mixkit-top-down-view-of-a-coffee-plantation-42202-large.mp4" autoplay loop muted playsinline></video>
-                            <div class="overlay h-full flex flex-col justify-center items-center text-white p-6 text-center">
-                                <h3 class="text-2xl font-bold mb-2">La Leyenda del Grano Dorado</h3>
-                                <p class="mb-4">Juega, diviértete y gana Puntos Runa.</p>
-                                <a href="juego.html" class="mt-auto bg-[var(--runa-primary)] text-white font-bold py-2 px-6 rounded-full hover:bg-[var(--runa-secondary)] transition-all transform hover:scale-105 z-10 relative">
-                                    Ir al Juego
-                                </a>
-                            </div>
-                        </div>
-                        <div class="video-card group">
-                             <video src="https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-man-using-a-laptop-328-large.mp4" autoplay loop muted playsinline></video>
-                             <div class="overlay h-full flex flex-col justify-center items-center text-white p-6 text-center">
-                                <h3 class="text-2xl font-bold mb-2">Club de Recompensas</h3>
-                                <p class="mb-4">Canjea tus puntos por beneficios exclusivos.</p>
-                                <a href="recompensas.html" class="mt-auto bg-[var(--runa-primary)] text-white font-bold py-2 px-6 rounded-full hover:bg-[var(--runa-secondary)] transition-all transform hover:scale-105 z-10 relative">
-                                    Ver Recompensas
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="filosofia" class="py-20 section-bg">
-                <div class="container mx-auto px-6 text-center">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">El Corazón de Manizales</h2>
-                    <p class="max-w-3xl mx-auto text-[var(--runa-text-alt)]">
-                        En RUNA COFFEE, cada grano cuenta una historia. Nacimos en las montañas de Manizales, corazón del Eje Cafetero, con un propósito: honrar la herencia de nuestros caficultores. Creemos en un comercio justo, en el respeto por la tierra que nos nutre y en procesos meticulosos que garantizan una calidad excepcional. RUNA no es solo café, es el alma de nuestra gente, una conexión mística entre la naturaleza y tu taza.
-                    </p>
-                </div>
-            </section>
-            
-            <section id="tienda" class="py-20">
-                <div class="container mx-auto px-6">
-                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Nuestra Selección de Café</h2>
-                    <div class="flex flex-col md:flex-row gap-10">
-                        <aside class="w-full md:w-1/4 lg:w-1/5">
-                            <h3 class="text-xl font-bold mb-4 border-b border-[var(--runa-border)] pb-2">Filtrar por</h3>
-                            <div id="filters-container" class="space-y-6">
-                                <div>
-                                    <h4 class="font-semibold mb-2">Variedad</h4>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="variety" value="Castillo" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Castillo</label>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="variety" value="Caturra" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Caturra</label>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="variety" value="Geisha" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Geisha</label>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold mb-2">Proceso</h4>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="process" value="Lavado" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Lavado</label>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="process" value="Natural" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Natural</label>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold mb-2">Tueste</h4>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="roast" value="Claro" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Claro</label>
-                                    <label class="flex items-center cursor-pointer"><input type="checkbox" data-filter="roast" value="Medio" class="filter-checkbox mr-2 accent-[var(--runa-primary)]">Medio</label>
-                                </div>
-                                 <button id="clear-filters-btn" class="w-full text-sm text-[var(--runa-text-alt)] hover:text-[var(--runa-primary)] transition-colors pt-2 border-t border-[var(--runa-border)]">Limpiar filtros</button>
-                            </div>
-                        </aside>
-
-                        <div id="product-grid" class="w-full md:w-3/4 lg:w-4/5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="juego" class="py-20 section-bg">
-                <div class="container mx-auto px-6 text-center">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">La Leyenda del Grano Dorado</h2>
-                    <p class="max-w-3xl mx-auto text-[var(--runa-text-alt)] mb-8">
-                        ¡Próximamente! Embárcate en una aventura a través del Eje Cafetero. Supera desafíos, aprende sobre el proceso del café y acumula Puntos Runa para desbloquear grandes recompensas.
-                    </p>
-                    <a href="juego.html" class="bg-[var(--runa-primary)] text-white font-bold py-3 px-8 rounded-full hover:bg-[var(--runa-secondary)] transition-all transform hover:scale-105 inline-block">
-                        Notificarme del Lanzamiento
-                    </a>
-                </div>
-            </section>
-
-            <section id="recompensas" class="py-20">
-                <div class="container mx-auto px-6 text-center">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Club de Recompensas Runa</h2>
-                    <p class="max-w-3xl mx-auto text-[var(--runa-text-alt)] mb-12">
-                        Tus Puntos Runa son la llave a un mundo de beneficios. Canjéalos por descuentos, avatares exclusivos para tu perfil y nuevos Paquetes de Ambiente para personalizar tu experiencia.
-                    </p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                        <div class="bg-[var(--runa-bg-alt)] p-6 rounded-lg shadow-md border border-[var(--runa-border)]">
-                            <h3 class="text-xl font-bold mb-2">Descuentos Exclusivos</h3>
-                            <p class="text-[var(--runa-text-alt)]">Usa tus puntos para obtener rebajas en tus compras de café.</p>
-                        </div>
-                        <div class="bg-[var(--runa-bg-alt)] p-6 rounded-lg shadow-md border border-[var(--runa-border)]">
-                            <h3 class="text-xl font-bold mb-2">Avatares de Perfil</h3>
-                            <p class="text-[var(--runa-text-alt)]">Personaliza tu cuenta con íconos únicos del universo Runa.</p>
-                        </div>
-                        <div class="bg-[var(--runa-bg-alt)] p-6 rounded-lg shadow-md border border-[var(--runa-border)]">
-                            <h3 class="text-xl font-bold mb-2">Paquetes de Ambiente</h3>
-                            <p class="text-[var(--runa-text-alt)]">Desbloquea nuevos temas visuales y sonoros para la página.</p>
-                        </div>
                     </div>
                 </div>
             </section>
 
         </main>
         
-        <footer id="contacto" class="bg-gray-800 dark:bg-black text-gray-300 pt-16 pb-8">
+        <footer id="contacto" class="pt-16 pb-8">
             <div class="container mx-auto px-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">
                     <div>
                         <h3 class="text-2xl font-bold text-white mb-4">Contáctanos</h3>
-                        <p class="text-gray-400">Manizales, Caldas, Colombia</p>
+                        <p class="text-gray-400">Caldas, Colombia</p>
                         <p class="mt-2"><strong>Email:</strong> <a href="mailto:runacoffee25@gmail.com" class="text-teal-400 hover:underline">runacoffee25@gmail.com</a></p>
                         <p><strong>WhatsApp:</strong> <a href="https://wa.me/573001627532" target="_blank" class="text-teal-400 hover:underline">+57 300 162 7532</a></p>
                     </div>
@@ -522,7 +261,12 @@
                     </div>
                     <div>
                         <h3 class="text-2xl font-bold text-white mb-4">Formas de Pago</h3>
-                        <div id="payment-logos" class="flex justify-center md:justify-start flex-wrap items-center gap-4 mb-2"></div>
+                        <div id="payment-logos" class="flex justify-center md:justify-start flex-wrap items-center gap-x-4 gap-y-2 mb-2">
+                            <span class="bg-gray-700 text-gray-200 text-sm font-semibold px-3 py-1 rounded-full">Nequi</span>
+                            <span class="bg-gray-700 text-gray-200 text-sm font-semibold px-3 py-1 rounded-full">Bancolombia</span>
+                            <span class="bg-gray-700 text-gray-200 text-sm font-semibold px-3 py-1 rounded-full">Binance Pay</span>
+                            <span class="bg-gray-700 text-gray-200 text-sm font-semibold px-3 py-1 rounded-full">PayPal</span>
+                        </div>
                         <p class="text-xs text-gray-400">Pagos seguros a través de nuestra plataforma.</p>
                     </div>
                 </div>
@@ -538,564 +282,78 @@
         </footer>
     </div>
     
-    <!-- Floating Action Buttons -->
-    <div id="fab-container" class="fixed bottom-6 left-6 z-50 flex flex-col-reverse items-center gap-4">
-        <!-- Secondary Buttons (Initially Hidden) -->
-        <button id="open-whiteboard-button" title="Abrir Pizarra" class="fab-secondary bg-blue-500 rounded-full w-14 h-14 shadow-lg hover:bg-blue-600 transition-all flex items-center justify-center">
-            <svg class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
-        </button>
-        <button id="open-calculator-button" title="Abrir Calculadora" class="fab-secondary bg-gray-700 rounded-full w-14 h-14 shadow-lg hover:bg-gray-800 transition-all flex items-center justify-center">
-            <svg class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 3h.008v.008H8.25v-.008zm0 3h.008v.008H8.25v-.008zm3-6h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm3-6h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zM4.5 6.75A.75.75 0 015.25 6h13.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V6.75z" /></svg>
-        </button>
-        <button id="open-ambience-panel-button" title="Cambiar Ambiente Visual" class="fab-secondary bg-teal-500 rounded-full w-14 h-14 shadow-lg hover:bg-teal-600 transition-all flex items-center justify-center">
-            <svg class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402a3.75 3.75 0 00-.625-6.25l-6.402-6.401a3.75 3.75 0 00-5.304 5.304L7.586 12l-3.488 3.488a3.75 3.75 0 000 5.304z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12.75 12.75L19.5 6" /></svg>
-        </button>
-        <!-- Main Button -->
-        <button id="main-fab" title="Herramientas" class="bg-[var(--runa-primary)] rounded-full w-16 h-16 shadow-lg hover:bg-[var(--runa-secondary)] transition-all hover:scale-110 flex items-center justify-center">
-            <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.438.995s.145.755.438.995l1.003.827c.48.398.668 1.03.26 1.431l-1.296 2.247a1.125 1.125 0 01-1.37.49l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.645-.87a6.52 6.52 0 01-.22-.127c-.324-.196-.72-.257-1.075-.124l-1.217.456a1.125 1.125 0 01-1.37-.49l-1.296-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.437-.995s-.145-.755-.437-.995l-1.004-.827a1.125 1.125 0 01-.26-1.431l1.296-2.247a1.125 1.125 0 011.37-.49l1.217.456c.355.133.75.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-        </button>
-    </div>
-    <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." class="fixed bottom-6 right-6 z-50 bg-green-500 rounded-full w-16 h-16 shadow-lg hover:bg-green-600 transition-transform hover:scale-110 flex items-center justify-center" target="_blank">
+    <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." class="fixed bottom-6 right-6 z-50 bg-green-500 rounded-full w-16 h-16 shadow-lg hover:bg-green-600 transition-transform hover:scale-110 flex items-center justify-center overflow-hidden" target="_blank">
         <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.916-.539-5.574-1.54L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.267.655 4.398 1.908 6.166l-1.138 4.167 4.274-1.12z"/></svg>
     </a>
-
-    <!-- SECCIÓN DE AUDIO -->
-    <audio id="music-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
-    <audio id="river-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
-    <audio id="birds-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
-    <audio id="rain-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Lluvia.mp3" type="audio/mpeg"></audio>
-    <audio id="fire-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido%20del%20Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
-    <audio id="wind-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
-    <audio id="storm-audio"><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
     
-
-    <!-- Modals -->
-    <div id="cart-modal" class="fixed inset-0 z-[60] flex items-end sm:items-center sm:justify-end p-4 bg-black/70 backdrop-blur-sm hidden"></div>
-    <div id="auth-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
-       <div class="w-full max-w-xs bg-[var(--runa-header-bg)] rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
-            <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <h2 class="text-2xl font-bold text-white mb-2">Bienvenido a Runa</h2>
-            <p class="text-gray-400 mb-6">Inicia sesión o crea una cuenta</p>
-            <button id="google-login-button-modal" class="w-full inline-flex items-center justify-center gap-3 px-4 py-2 text-base font-semibold text-gray-700 bg-white border border-transparent rounded-lg shadow-sm hover:bg-gray-200 transition-all">
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,34.783,44,29.865,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
-                <span>Iniciar sesión con Google</span>
-            </button>
-       </div>
-    </div>
-    <div id="ambience-panel" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
-        <div class="w-full max-w-2xl bg-[var(--runa-bg)] rounded-2xl shadow-2xl p-6 modal-enter relative">
-            <button id="close-ambience-panel-button" class="absolute top-3 right-3 text-gray-500 hover:text-[var(--runa-heading)] transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <h3 class="font-semibold text-lg text-[var(--runa-heading)] mb-4 text-center">Elige tu Ambiente Visual</h3>
-            <div id="ambience-selector-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                <!-- Ambience cards will be injected here by JS -->
-            </div>
-        </div>
-    </div>
-    <div id="whiteboard-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
-        <div class="w-full h-full max-w-6xl max-h-[90vh] bg-[var(--runa-bg)] rounded-2xl shadow-2xl p-4 flex flex-col modal-enter">
-            <div class="flex-shrink-0 flex flex-wrap items-center justify-between gap-4 mb-4 border-b border-[var(--runa-border)] pb-3">
-                <h3 class="font-semibold text-lg text-[var(--runa-heading)]">Pizarra de Dibujo</h3>
-                <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-                    <div id="color-palette" class="flex items-center gap-2">
-                         <span class="text-sm text-[var(--runa-text-alt)] mr-2">Color:</span>
-                         <!-- Color swatches will be injected here -->
-                    </div>
-                    <input type="color" id="brush-color" class="w-10 h-10 p-0 bg-transparent border-none rounded-md cursor-pointer">
-                    <div id="brush-sizes" class="flex items-center gap-2 border-l border-[var(--runa-border)] pl-4">
-                        <span class="text-sm text-[var(--runa-text-alt)] mr-2">Tamaño:</span>
-                        <!-- Brush size buttons will be injected here -->
-                    </div>
-                    <input type="range" id="brush-size" min="1" max="50" value="2" class="w-24 cursor-pointer">
-                    <button id="eraser-button" class="brush-size-btn">Borrador</button>
-                    <button id="clear-canvas-button" class="px-3 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">Limpiar</button>
-                    <button id="close-whiteboard-button" class="text-gray-500 hover:text-[var(--runa-heading)] transition-colors">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-            </div>
-            <div class="flex-grow bg-white rounded-lg overflow-hidden">
-                <canvas id="drawing-canvas"></canvas>
-            </div>
-        </div>
-    </div>
-    <div id="calculator-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
-        <div class="w-full max-w-xs bg-[var(--runa-bg)] rounded-2xl shadow-2xl p-6 modal-enter relative">
-             <button id="close-calculator-button" class="absolute top-3 right-3 text-gray-500 hover:text-[var(--runa-heading)] transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <div id="calculator">
-                <div id="calc-display">0</div>
-                <button class="clear">C</button>
-                <button class="operator" data-operator="/">÷</button>
-                <button class="operator" data-operator="*">×</button>
-                <button class="operator" data-operator="-">−</button>
-                <button data-number="7">7</button>
-                <button data-number="8">8</button>
-                <button data-number="9">9</button>
-                <button class="operator" data-operator="+">+</button>
-                <button data-number="4">4</button>
-                <button data-number="5">5</button>
-                <button data-number="6">6</button>
-                <button id="equals" class="operator row-span-2">=</button>
-                <button data-number="1">1</button>
-                <button data-number="2">2</button>
-                <button data-number="3">3</button>
-                <button data-number="0" class="col-span-2">0</button>
-                <button data-number=".">.</button>
-            </div>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, collection, getDocs, writeBatch, onSnapshot, addDoc, deleteDoc, updateDoc, query, where, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        
-        let app, auth, db;
-        try {
-            const firebaseConfig = JSON.parse(firebaseConfigStr);
-            if (Object.keys(firebaseConfig).length > 0) {
-                 app = initializeApp(firebaseConfig);
-                 auth = getAuth(app);
-                 db = getFirestore(app);
-            } else {
-                 console.warn("Firebase config is empty. App will run in offline mode.");
-            }
-        } catch (e) {
-            console.error("Error initializing Firebase:", e);
-        }
-
-        const coffeeProducts = [
-            { id: 'Runa01', name: 'Runa Origen Manizales', region: 'Manizales, Caldas', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', price: 45000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-1.jpg' },
-            { id: 'Runa02', name: 'Finca El Mirador', region: 'Manizales, Caldas', variety: 'Caturra', process: 'Lavado', roast: 'Medio', notes: 'Cuerpo balanceado, acidez cítrica y dulzor residual.', price: 52000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-2.jpg' },
-            { id: 'Runa03', name: 'Microlote Natural', region: 'Neira, Caldas', variety: 'Castillo', process: 'Natural', roast: 'Claro', notes: 'Sabor intenso a frutos rojos, vino y canela.', price: 58000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-3.jpg' },
-            { id: 'Runa04', name: 'Tesoro Geisha', region: 'Manizales, Caldas', variety: 'Geisha', process: 'Lavado', roast: 'Claro', notes: 'Perfil complejo y elegante, con notas a jazmín y bergamota.', price: 85000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-4.jpg' }
-        ];
-
-        const productGrid = document.getElementById('product-grid');
-        
-        const ambienceSounds = [
-            { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
-            { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
-            { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
-            { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif' },
-            { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif' },
-            { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif' },
-            { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
-        ];
-        
-        const ambiences = {
-            'default': { name: 'Por Defecto', icon: '☀️', bg: '' },
-            'selva': { name: 'Corazón de la Selva', icon: '🌳', bg: 'url(https://images.unsplash.com/photo-1542396493-8716a57a8a25?q=80&w=2070&auto=format&fit=crop)' },
-            'finca': { name: 'Noche de Finca', icon: '🏡', bg: 'url(https://images.unsplash.com/photo-1559494316-a15a8a1599a8?q=80&w=1974&auto=format&fit=crop)' },
-            'lluvia': { name: 'Tarde Lluviosa', icon: '🌧️', bg: 'url(https://images.unsplash.com/photo-1515694346937-94d85e41e622?q=80&w=1974&auto=format&fit=crop)' },
-            'playa': { name: 'Amanecer en la Playa', icon: '🏖️', bg: 'url(https://images.unsplash.com/photo-1439405326854-014607f694d7?q=80&w=2070&auto=format&fit=crop)' },
-            'bosque': { name: 'Paseo por el Bosque', icon: '🌲', bg: 'url(https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop)' },
-            'nevado': { name: 'Cima del Nevado', icon: '🏔️', bg: 'url(https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop)' },
-            'meditacion': { name: 'Meditación Zen', icon: '🧘', bg: 'url(https://images.unsplash.com/photo-1544204288-342f7b83141f?q=80&w=1964&auto=format&fit=crop)' },
-            'cafetal': { name: 'Cafetal al Alba', icon: '🌿', bg: 'url(https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1974&auto=format&fit=crop)' },
-            'ciudad': { name: 'Café en la Ciudad', icon: '🏙️', bg: 'url(https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2144&auto=format&fit=crop)' }
-        };
-
-        let audioElements = {};
-        let isMixerPlaying = false;
-        
-        function initializeMixer() {
-            const soundControlsContainer = document.getElementById('sound-controls');
-            if(!soundControlsContainer) return;
-            soundControlsContainer.innerHTML = ''; 
-            
-            ambienceSounds.forEach(sound => {
-                const audioEl = document.getElementById(sound.id);
-                if (!audioEl || audioEl.querySelector('source').getAttribute('src').includes('null')) {
-                    console.error(`Error en Mezclador: No se encontró el elemento de audio con id="${sound.id}" o la fuente es nula.`);
-                    return;
-                }
-                audioElements[sound.id] = audioEl;
-
-                audioEl.addEventListener('timeupdate', function() {
-                    const loopBuffer = 0.5; 
-                    if (this.duration && (this.currentTime > this.duration - loopBuffer)) {
-                        this.currentTime = 0;
-                        this.play();
-                    }
-                });
-
-                const controlContainer = document.createElement('div');
-                controlContainer.className = "flex items-center gap-4 text-sm text-[var(--runa-text-alt)]";
-
-                const button = document.createElement('button');
-                button.id = `btn-${sound.id}`;
-                button.className = "mixer-icon-button relative w-10 h-10 rounded-full shadow-md flex-shrink-0 overflow-hidden";
-                
-                const gifImage = document.createElement('img');
-                gifImage.src = sound.gifSrc;
-                gifImage.alt = sound.name;
-                button.appendChild(gifImage);
-
-                const nameSpan = document.createElement('span');
-                nameSpan.className = "font-medium text-[var(--runa-text)] w-20 truncate";
-                nameSpan.textContent = sound.name;
-
-                const slider = document.createElement('input');
-                slider.type = "range";
-                slider.id = `volume-${sound.id}`;
-                slider.min = "0"; slider.max = "1"; slider.step = "0.01"; slider.value = 0;
-                slider.className = "flex-grow";
-                
-                controlContainer.appendChild(button);
-                controlContainer.appendChild(nameSpan);
-                controlContainer.appendChild(slider);
-                soundControlsContainer.appendChild(controlContainer);
-            });
-
-            Object.keys(audioElements).forEach(id => {
-                const slider = document.getElementById(`volume-${id}`);
-                const button = document.getElementById(`btn-${id}`);
-                if(!slider || !button) return;
-
-                const audio = audioElements[id];
-                audio.volume = slider.value;
-                button.classList.toggle('active', audio.volume > 0);
-
-                slider.addEventListener('input', (e) => {
-                    audio.volume = e.target.value;
-                    button.classList.toggle('active', audio.volume > 0);
-                });
-                
-                button.addEventListener('click', () => {
-                    if (slider.value > 0) {
-                        slider.dataset.lastValue = slider.value;
-                        slider.value = 0;
-                    } else {
-                        slider.value = slider.dataset.lastValue || 0.5;
-                    }
-                    slider.dispatchEvent(new Event('input'));
-                });
-            });
-        }
-        
-        function initializeAmbienceSelector() {
-            const grid = document.getElementById('ambience-selector-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
-            
-            for (const key in ambiences) {
-                const ambience = ambiences[key];
-                const card = document.createElement('button');
-                card.className = 'ambience-card cursor-pointer p-3 rounded-lg border-2 border-transparent text-center bg-[var(--runa-bg-alt)]';
-                card.dataset.ambienceKey = key;
-                card.innerHTML = `
-                    <div class="text-3xl mb-1">${ambience.icon}</div>
-                    <div class="text-xs font-semibold text-[var(--runa-text)]">${ambience.name}</div>
-                `;
-                card.addEventListener('click', () => applyAmbience(key));
-                grid.appendChild(card);
-            }
-        }
-        
-        function applyAmbience(key) {
-            const ambience = ambiences[key];
-            if (!ambience) return;
-
-            document.body.style.backgroundImage = ambience.bg;
-            
-            if (ambience.bg) {
-                 document.getElementById('hero').style.display = 'none';
-            } else {
-                 document.getElementById('hero').style.display = 'flex';
-            }
-
-            document.querySelectorAll('.ambience-card').forEach(c => c.classList.remove('active'));
-            const activeCard = document.querySelector(`.ambience-card[data-ambience-key="${key}"]`);
-            if (activeCard) {
-                activeCard.classList.add('active');
-            }
-            
-            localStorage.setItem('runa_ambience', key);
-            
-            document.getElementById('ambience-panel').classList.add('hidden');
-        }
-
-
-        function toggleMasterSound() {
-            isMixerPlaying = !isMixerPlaying;
-            document.getElementById('sound-controls').classList.toggle('opacity-50', !isMixerPlaying);
-            document.getElementById('master-play-icon').classList.toggle('hidden', isMixerPlaying);
-            document.getElementById('master-pause-icon').classList.toggle('hidden', !isMixerPlaying);
-            
-            Object.values(audioElements).forEach(audio => {
-                if (isMixerPlaying) {
-                    const playPromise = audio.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(e => {});
-                    }
-                } else {
-                    audio.pause();
-                }
-            });
-        }
-        
-        function renderProducts(products) {
-            if (!productGrid) return;
-            productGrid.innerHTML = '';
-            if (products.length === 0) {
-                 productGrid.innerHTML = `<p class="col-span-full text-center text-[var(--runa-text-alt)]">No se encontraron productos con esos filtros.</p>`;
-                 return;
-            }
-            products.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = "block bg-[var(--runa-bg)] rounded-lg overflow-hidden border border-[var(--runa-border)] shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col group hover:-translate-y-2";
-                card.innerHTML = `
-                    <div class="overflow-hidden h-56 bg-gray-300 dark:bg-gray-700">
-                        <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/cccccc/ffffff?text=Imagen+no+disponible';">
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="flex-grow">
-                            <h3 class="text-xl font-bold mb-2">${prod.name}</h3>
-                            <p class="text-[var(--runa-primary)] font-semibold text-lg mb-2">${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(prod.price)}</p>
-                            <p class="text-sm text-[var(--runa-text-alt)] mb-1"><strong>Origen:</strong> ${prod.region}</p>
-                            <p class="text-sm text-[var(--runa-text-alt)]">${prod.notes}</p>
-                        </div>
-                        <button data-item-id='${JSON.stringify(prod)}' class="add-to-cart-btn mt-6 w-full text-center bg-[var(--runa-primary)] text-white text-sm font-semibold py-2 px-4 rounded-full group-hover:bg-[var(--runa-secondary)] transition-colors">Añadir al Carrito</button>
-                    </div>
-                `;
-                productGrid.appendChild(card);
-            });
-        }
-        
-        let currentUser = null;
-        let userId = null;
-        let cartUnsubscribe = null;
-        const authContainer = document.getElementById('auth-container');
-        const authModal = document.getElementById('auth-modal');
-        const cartModal = document.getElementById('cart-modal');
-        
-        async function authStateObserver(user) {
-            currentUser = user;
-            if (user && !user.isAnonymous) {
-                userId = user.uid;
-                renderUserUI(user);
-                await mergeLocalCartWithFirestore();
-                setupCartListener();
-            } else {
-                userId = localStorage.getItem('anonymousUserId') || `anon_${crypto.randomUUID()}`;
-                if (!localStorage.getItem('anonymousUserId')) {
-                    localStorage.setItem('anonymousUserId', userId);
-                }
-                renderGuestUI();
-                if (cartUnsubscribe) cartUnsubscribe();
-                updateCartFromLocal();
-            }
-        }
-        
-        const loginWithGoogle = () => {
-             if (!auth) return;
-            const provider = new GoogleAuthProvider();
-            provider.setCustomParameters({ prompt: 'select_account' });
-            signInWithPopup(auth, provider)
-                .then(() => authModal.classList.add('hidden'))
-                .catch((error) => console.error("Google Sign-In Error:", error));
-        };
-        const logout = () => { if(auth) signOut(auth).catch((error) => console.error("Sign-Out Error:", error)); };
-        
-        const getCartRef = () => {
-            if (!db || !appId || !userId) {
-                console.error("Firestore not initialized or missing IDs for cart reference.");
-                return null;
-            }
-            return collection(db, "artifacts", appId, "users", userId, "cart");
-        }
-
-        const getLocalCart = () => JSON.parse(localStorage.getItem(`runa_cart_${userId}`)) || [];
-        const saveLocalCart = (cart) => localStorage.setItem(`runa_cart_${userId}`, JSON.stringify(cart));
-
-        async function mergeLocalCartWithFirestore() {
-            if (!currentUser || currentUser.isAnonymous || !db) return;
-            const anonUserId = localStorage.getItem('anonymousUserId');
-            if (!anonUserId) return;
-
-            const localCart = JSON.parse(localStorage.getItem(`runa_cart_${anonUserId}`)) || [];
-            if (localCart.length === 0) return;
-
-            const cartRef = getCartRef();
-            if (!cartRef) return; 
-            const firestoreCartSnapshot = await getDocs(cartRef);
-            const firestoreItems = new Map(firestoreCartSnapshot.docs.map(d => [d.data().id, {docId: d.id, ...d.data()}]));
-            
-            const batch = writeBatch(db);
-            localCart.forEach(localItem => {
-                const firestoreItem = firestoreItems.get(localItem.id);
-                if (firestoreItem) {
-                    const itemDocRef = doc(cartRef, firestoreItem.docId);
-                    batch.update(itemDocRef, { quantity: firestoreItem.quantity + localItem.quantity });
-                } else {
-                    const newItemDocRef = doc(cartRef);
-                    batch.set(newItemDocRef, localItem);
-                }
-            });
-            await batch.commit();
-            localStorage.removeItem(`runa_cart_${anonUserId}`);
-            localStorage.removeItem('anonymousUserId'); 
-        }
-
-        function setupCartListener() {
-            if (!currentUser || !db || currentUser.isAnonymous) return;
-            const cartRef = getCartRef();
-            if(!cartRef) return;
-
-            cartUnsubscribe = onSnapshot(cartRef, (snapshot) => {
-                const cart = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
-                updateCartUI(cart);
-                if (!cartModal.classList.contains('hidden')) renderCartModal(cart);
-            });
-        }
-        
-        function updateCartFromLocal() {
-            updateCartUI(getLocalCart());
-        }
-
-        window.addToCart = async (item) => {
-            if (currentUser && !currentUser.isAnonymous && db) {
-                const cartRef = getCartRef();
-                if (!cartRef) return;
-                const q = query(cartRef, where("id", "==", item.id));
-                const snapshot = await getDocs(q);
-                if (!snapshot.empty) {
-                    const existingDoc = snapshot.docs[0];
-                    await updateDoc(existingDoc.ref, { quantity: existingDoc.data().quantity + 1 });
-                } else {
-                    await addDoc(cartRef, { ...item, quantity: 1 });
-                }
-            } else {
-                let cart = getLocalCart();
-                const existingItem = cart.find(i => i.id === item.id);
-                if (existingItem) {
-                    existingItem.quantity++;
-                } else {
-                    cart.push({ ...item, quantity: 1 });
-                }
-                saveLocalCart(cart);
-                updateCartFromLocal();
-            }
-        };
-
-        window.updateItemQuantity = async (identifier, newQuantity) => {
-            const isFirestore = currentUser && !currentUser.isAnonymous && db;
-            
-            if (newQuantity < 1) {
-              await window.removeItemFromCart(identifier);
-              return;
-            }
-
-            if (isFirestore) {
-                const itemRef = doc(getCartRef(), identifier); 
-                await updateDoc(itemRef, { quantity: newQuantity });
-            } else {
-                let cart = getLocalCart();
-                const itemToUpdate = cart.find(i => i.id === identifier); 
-                if (itemToUpdate) itemToUpdate.quantity = newQuantity;
-                saveLocalCart(cart);
-                updateCartFromLocal();
-                renderCartModal(getLocalCart()); 
-            }
-        };
-
-        window.removeItemFromCart = async (identifier) => {
-            const isFirestore = currentUser && !currentUser.isAnonymous && db;
-            if (isFirestore) {
-                await deleteDoc(doc(getCartRef(), identifier)); 
-            } else {
-                let cart = getLocalCart().filter(i => i.id !== identifier); 
-                saveLocalCart(cart);
-                updateCartFromLocal();
-                renderCartModal(cart); 
-            }
-        };
-
-        const renderUserUI = (user) => {
-            const userImage = user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" class="w-full h-full object-cover">` : `<span class="text-[var(--runa-text)] dark:text-white font-bold text-xl">${user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}</span>`;
-            authContainer.innerHTML = `<div class="relative"><button id="user-menu-button" title="Mi Cuenta" class="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:border-[var(--runa-primary)] bg-gray-200 dark:bg-gray-700">${userImage}</button><div id="user-menu-dropdown" class="hidden absolute top-full left-0 mt-2 w-56 bg-[var(--runa-bg)] border border-[var(--runa-border)] rounded-lg shadow-xl z-50"><div class="px-4 py-3 border-b border-[var(--runa-border)]"><p class="text-sm font-semibold text-[var(--runa-heading)] truncate">${user.displayName || 'Usuario'}</p><p class="text-xs text-[var(--runa-text-alt)] truncate">${user.email || 'Sin email'}</p></div><div class="py-1"><a href="#" id="logout-button-menu" class="flex items-center w-full text-left px-4 py-2 text-sm text-[var(--runa-text)] hover:bg-[var(--runa-bg-alt)] hover:text-[var(--runa-primary)] transition-colors">Cerrar Sesión</a></div></div></div>`;
-            document.getElementById('logout-button-menu').addEventListener('click', (e) => { e.preventDefault(); logout(); });
-            const userMenuButton = document.getElementById('user-menu-button');
-            const userMenuDropdown = document.getElementById('user-menu-dropdown');
-            userMenuButton.addEventListener('click', (e) => { e.stopPropagation(); userMenuDropdown.classList.toggle('hidden'); });
-            window.addEventListener('click', () => { if (userMenuDropdown) userMenuDropdown.classList.add('hidden'); });
-        };
-
-        const renderGuestUI = () => {
-            authContainer.innerHTML = `<button id="open-auth-modal-button" title="Acceder o Registrarse" class="w-9 h-9 rounded-full flex items-center justify-center transition-opacity text-white hover:opacity-75"><svg class="w-6 h-6 header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>`;
-            document.getElementById('open-auth-modal-button').addEventListener('click', () => authModal.classList.remove('hidden'));
-        };
-
-        const updateCartUI = (cart) => {
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const cartCounter = document.getElementById('cart-counter');
-            if (cartCounter) {
-                cartCounter.textContent = totalItems;
-                cartCounter.classList.toggle('hidden', totalItems === 0);
-            }
-        };
-
-        function renderCartModal(cart) {
-            const isFirestore = currentUser && !currentUser.isAnonymous && db;
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const formattedTotal = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(total);
-
-            const actionButtonHtml = cart.length > 0 
-                ? `<div class="border-t border-gray-600 pt-4 mt-4 text-right">
-                        <p class="text-lg text-white">Total: <span class="font-bold">${formattedTotal}</span></p>
-                        <a href="#" class="w-full mt-4 inline-flex items-center justify-center gap-3 px-5 py-3 text-base font-semibold text-white bg-green-500 rounded-lg shadow-sm hover:bg-green-600 transition-all"><span>Proceder al Pago</span></a>
-                   </div>` 
-                : '<a href="#tienda" class="w-full block text-center bg-[var(--runa-primary)] text-white font-bold py-3 px-5 rounded-lg" onclick="closeCartModal()">Volver a la tienda</a>';
-            
-            const cartItemsHtml = cart.length === 0 
-                ? `<p class="text-gray-400 py-8 text-center">Tu carrito está vacío.</p>` 
-                : cart.map(item => {
-                    const itemIdentifier = isFirestore ? item.docId : item.id;
-                    return `<div class="flex justify-between items-center py-3">
-                                <span class="text-gray-300 pr-2 flex-grow">${item.name}</span>
-                                <div class="flex items-center gap-2 text-white">
-                                    <button onclick="updateItemQuantity('${itemIdentifier}', ${item.quantity - 1})" class="w-7 h-7 rounded-full bg-gray-600 hover:bg-gray-500 transition-colors">-</button>
-                                    <span class="w-8 text-center">${item.quantity}</span>
-                                    <button onclick="updateItemQuantity('${itemIdentifier}', ${item.quantity + 1})" class="w-7 h-7 rounded-full bg-gray-600 hover:bg-gray-500 transition-colors">+</button>
-                                    <button onclick="removeItemFromCart('${itemIdentifier}')" class="ml-2 text-red-400 hover:text-red-300 transition-colors" aria-label="Eliminar item"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
-                                </div>
-                            </div>`;
-                }).join("");
-
-            cartModal.innerHTML=`<div class="w-full max-w-md bg-[var(--runa-header-bg)] rounded-2xl shadow-2xl p-6 flex flex-col modal-enter"><div class="text-center mb-6"><h2 class="text-2xl font-bold text-white">Tu Carrito de Café</h2></div><div class="flex-grow overflow-y-auto" style="max-height: 40vh;"><div id="cart-items" class="divide-y divide-gray-700 text-left">${cartItemsHtml}</div></div><div class="mt-auto pt-4">${actionButtonHtml}<button class="mt-2 text-sm text-gray-400 hover:text-white w-full" onclick="closeCartModal()">Cerrar</button></div></div>`;
-        }
-        window.closeCartModal = () => cartModal.classList.add('hidden');
         
         document.addEventListener('DOMContentLoaded', async () => {
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js').then(registration => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, err => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-                });
+            // --- Firebase Initialization ---
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
+            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+            
+            let auth;
+            try {
+                const firebaseConfig = JSON.parse(firebaseConfigStr);
+                if (Object.keys(firebaseConfig).length > 0) {
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                } else {
+                    console.warn("Firebase config is empty. App will run in offline mode.");
+                }
+            } catch (e) {
+                console.error("Error initializing Firebase:", e);
             }
 
-            const openCartButton = document.getElementById('open-cart-button');
+            // --- Header Scroll Effect ---
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
 
+            // --- Authentication Logic ---
+            const authContainer = document.getElementById('auth-container');
+            const authModal = document.getElementById('auth-modal'); // Assuming auth-modal exists for login
+
+            const renderUserUI = (user) => {
+                const userImage = user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" class="w-full h-full object-cover">` : `<span class="text-white font-bold text-xl">${user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}</span>`;
+                authContainer.innerHTML = `<div class="relative"><button id="user-menu-button" title="Mi Cuenta" class="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm overflow-hidden border-2 border-gray-600 hover:border-[#D47500] bg-gray-700">${userImage}</button><div id="user-menu-dropdown" class="hidden absolute top-full left-0 mt-2 w-56 bg-[#1a1310] border border-gray-700 rounded-lg shadow-xl z-50"><div class="px-4 py-3 border-b border-gray-700"><p class="text-sm font-semibold text-white truncate">${user.displayName || 'Usuario'}</p><p class="text-xs text-gray-400 truncate">${user.email || 'Sin email'}</p></div><div class="py-1"><a href="#" id="logout-button-menu" class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-[#D47500] transition-colors">Cerrar Sesión</a></div></div></div>`;
+                document.getElementById('logout-button-menu').addEventListener('click', (e) => { e.preventDefault(); if(auth) signOut(auth); });
+                const userMenuButton = document.getElementById('user-menu-button');
+                const userMenuDropdown = document.getElementById('user-menu-dropdown');
+                userMenuButton.addEventListener('click', (e) => { e.stopPropagation(); userMenuDropdown.classList.toggle('hidden'); });
+                window.addEventListener('click', () => { if (userMenuDropdown) userMenuDropdown.classList.add('hidden'); });
+            };
+
+            const renderGuestUI = () => {
+                authContainer.innerHTML = `<button id="open-auth-modal-button" title="Acceder o Registrarse" class="w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>`;
+                // This part needs the auth modal to be present in the HTML to work
+                const openAuthBtn = document.getElementById('open-auth-modal-button');
+                if(openAuthBtn && authModal) {
+                    openAuthBtn.addEventListener('click', () => authModal.classList.remove('hidden'));
+                }
+            };
+
+            const authStateObserver = (user) => {
+                if (user && !user.isAnonymous) {
+                    renderUserUI(user);
+                } else {
+                    renderGuestUI();
+                }
+            };
+            
             if (auth) {
                 try {
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                    } else if (!auth.currentUser){
-                        await signInAnonymously(auth);
-                    }
+                    if (initialAuthToken) await signInWithCustomToken(auth, initialAuthToken);
+                    else if (!auth.currentUser) await signInAnonymously(auth);
                 } catch (error) {
                     console.error("Auth initialization error:", error);
                 }
@@ -1103,309 +361,43 @@
             } else {
                 authStateObserver(null);
             }
+
+            authContainer.innerHTML = `<div class="w-9 h-9 rounded-full bg-gray-700 animate-pulse"></div>`;
             
-            // CORRECTED: More robust intro logic
+            // --- Intro Video Logic (Corrected) ---
             const videoIntro = document.getElementById('video-intro');
+            const introVideo = document.getElementById('intro-video');
             const pageContent = document.getElementById('page-content');
             let introFinished = false;
 
             const endIntro = () => {
                 if (introFinished) return;
                 introFinished = true;
-                if(videoIntro) {
-                    videoIntro.style.display = 'none';
-                }
-                if(pageContent) {
-                    pageContent.classList.add('loaded');
-                }
+                videoIntro.classList.add('hidden');
+                pageContent.classList.add('loaded');
             };
 
-            const introVideo = document.getElementById('intro-video');
-            if (introVideo) {
-                introVideo.addEventListener('ended', endIntro);
-                introVideo.addEventListener('error', endIntro); // Fallback if video fails to load
-                introVideo.play().catch(error => {
-                    console.warn("Video autoplay was prevented. Showing content immediately.", error);
-                    endIntro();
-                });
-            }
-            setTimeout(endIntro, 5500); // Hard fallback
+            introVideo.addEventListener('ended', endIntro);
+            introVideo.addEventListener('error', endIntro);
+            setTimeout(endIntro, 5500);
+            introVideo.play().catch(endIntro);
 
-            const clearFiltersBtn = document.getElementById('clear-filters-btn');
-
-            function applyFilters() {
-                const activeFilters = {};
-                document.querySelectorAll('.filter-checkbox:checked').forEach(cb => {
-                    if (!activeFilters[cb.dataset.filter]) activeFilters[cb.dataset.filter] = [];
-                    activeFilters[cb.dataset.filter].push(cb.value);
-                });
-                
-                const filteredProducts = coffeeProducts.filter(product => {
-                    return Object.keys(activeFilters).every(filterKey => {
-                        if (activeFilters[filterKey].length > 0) {
-                            return activeFilters[filterKey].includes(product[filterKey]);
-                        }
-                        return true;
-                    });
-                });
-                renderProducts(filteredProducts);
-            }
-            document.querySelectorAll('.filter-checkbox').forEach(cb => cb.addEventListener('change', applyFilters));
-            clearFiltersBtn.addEventListener('click', () => {
-                 document.querySelectorAll('.filter-checkbox').forEach(cb => cb.checked = false);
-                 applyFilters();
-            });
-            renderProducts(coffeeProducts);
-
-            authContainer.innerHTML = `<div class="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>`;
-            document.getElementById('google-login-button-modal').addEventListener('click', loginWithGoogle);
-            document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
-            authModal.addEventListener('click', (event) => { if (event.target === authModal) authModal.classList.add('hidden'); });
-
+            // --- General UI ---
             const menuButton = document.getElementById('menu-button'); 
             const mobileMenu = document.getElementById('mobile-menu');
             const mixerButton = document.getElementById('mixer-toggle-button'); 
             const mixerPanel = document.getElementById('mixer-panel');
-            
-            const closeAllHeaderPanels = () => {
-                mobileMenu.classList.add('hidden');
+            menuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
                 mixerPanel.classList.add('hidden');
-            }
-
-            const toggleHeaderPanel = (panel) => {
-                const isAlreadyOpen = !panel.classList.contains('hidden');
-                closeAllHeaderPanels();
-                if (!isAlreadyOpen) {
-                    panel.classList.remove('hidden');
-                }
-            };
-
-            menuButton.addEventListener('click', (e) => { e.stopPropagation(); toggleHeaderPanel(mobileMenu); });
-            mixerButton.addEventListener('click', (e) => { e.stopPropagation(); toggleHeaderPanel(mixerPanel); });
-            
-            mobileMenu.addEventListener('click', e => e.stopPropagation());
-            mixerPanel.addEventListener('click', e => e.stopPropagation());
-            
-            window.addEventListener('click', () => { closeAllHeaderPanels(); });
-
+            });
+            mixerButton.addEventListener('click', () => {
+                mixerPanel.classList.toggle('hidden');
+                mobileMenu.classList.add('hidden');
+            });
             document.querySelectorAll('.mobile-nav-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
             
-            const themeToggle = document.getElementById('theme-toggle'); 
-            const sunIcon = document.getElementById('theme-icon-sun'); 
-            const moonIcon = document.getElementById('theme-icon-moon'); 
-            const fabContainer = document.getElementById('fab-container');
-
-            const applyTheme = (theme) => { 
-                document.documentElement.classList.toggle('dark', theme === 'dark'); 
-                sunIcon.classList.toggle('hidden', theme !== 'dark'); 
-                moonIcon.classList.toggle('hidden', theme === 'dark'); 
-                fabContainer.classList.toggle('hidden', theme === 'dark');
-            }; 
-            themeToggle.addEventListener('click', () => { 
-                const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'; 
-                localStorage.setItem('theme', newTheme); 
-                applyTheme(newTheme); 
-            });
-            applyTheme(localStorage.getItem('theme') || 'light');
-
-            initializeMixer();
-            initializeAmbienceSelector();
-            applyAmbience(localStorage.getItem('runa_ambience') || 'default');
-            document.getElementById('master-sound-toggle').addEventListener('click', toggleMasterSound);
-            
-            const mainFab = document.getElementById('main-fab');
-            mainFab.addEventListener('click', (e) => {
-                e.stopPropagation();
-                fabContainer.classList.toggle('open');
-            });
-            
-            const ambiencePanel = document.getElementById('ambience-panel');
-            const closeAmbienceBtn = document.getElementById('close-ambience-panel-button');
-            document.getElementById('open-ambience-panel-button').addEventListener('click', (e) => { e.stopPropagation(); ambiencePanel.classList.remove('hidden'); });
-            closeAmbienceBtn.addEventListener('click', () => ambiencePanel.classList.add('hidden'));
-            ambiencePanel.addEventListener('click', (e) => { if (e.target === ambiencePanel) { ambiencePanel.classList.add('hidden'); } });
-            document.getElementById('video-card-ambience-btn').addEventListener('click', (e) => { e.stopPropagation(); ambiencePanel.classList.remove('hidden'); });
-
-            try {
-                // --- Whiteboard Logic ---
-                const whiteboardModal = document.getElementById('whiteboard-modal');
-                const openWhiteboardBtn = document.getElementById('open-whiteboard-button');
-                const closeWhiteboardBtn = document.getElementById('close-whiteboard-button');
-                const canvas = document.getElementById('drawing-canvas');
-                const ctx = canvas.getContext('2d');
-                let drawing = false;
-                let currentBrushColor = '#000000';
-                let currentBrushSize = 2;
-                let isErasing = false;
-
-                const colors = ['#000000', '#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#FFFFFF'];
-                const sizes = [{name: 'Fino', size: 2}, {name: 'Normal', size: 5}, {name: 'Medio', size: 15}, {name: 'Grueso', size: 30}];
-
-                function setupWhiteboardControls() {
-                    const colorPalette = document.getElementById('color-palette');
-                    colors.forEach(color => {
-                        const swatch = document.createElement('button');
-                        swatch.className = 'color-swatch';
-                        swatch.style.backgroundColor = color;
-                        swatch.dataset.color = color;
-                        if (color === '#FFFFFF') swatch.style.border = '1px solid #ccc';
-                        if (color === currentBrushColor) swatch.classList.add('active');
-                        swatch.addEventListener('click', () => {
-                            currentBrushColor = color;
-                            isErasing = false;
-                            document.getElementById('brush-color').value = color;
-                            updateActiveSwatch();
-                        });
-                        colorPalette.appendChild(swatch);
-                    });
-
-                    const brushSizes = document.getElementById('brush-sizes');
-                    sizes.forEach(brush => {
-                        const btn = document.createElement('button');
-                        btn.className = 'brush-size-btn';
-                        btn.textContent = brush.name;
-                        btn.dataset.size = brush.size;
-                        if (brush.size === currentBrushSize) btn.classList.add('active');
-                        btn.addEventListener('click', () => {
-                            currentBrushSize = brush.size;
-                            document.getElementById('brush-size').value = brush.size;
-                            updateActiveBrushSize();
-                        });
-                        brushSizes.appendChild(btn);
-                    });
-                }
-                function updateActiveSwatch() {
-                    document.querySelectorAll('.color-swatch').forEach(s => {
-                        s.classList.toggle('active', s.dataset.color === currentBrushColor && !isErasing);
-                    });
-                    document.getElementById('eraser-button').classList.remove('active');
-                }
-                function updateActiveBrushSize() {
-                     document.querySelectorAll('.brush-size-btn').forEach(b => {
-                        b.classList.toggle('active', parseInt(b.dataset.size) === currentBrushSize);
-                    });
-                }
-
-                function resizeCanvas() {
-                    const parent = canvas.parentElement;
-                    canvas.width = parent.offsetWidth;
-                    canvas.height = parent.offsetHeight;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                }
-
-                function startDrawing(e) { drawing = true; draw(e); }
-                function stopDrawing() { drawing = false; ctx.beginPath(); }
-                function draw(e) {
-                    if (!drawing) return;
-                    e.preventDefault();
-                    const rect = canvas.getBoundingClientRect();
-                    const x = (e.clientX || e.touches[0].clientX) - rect.left;
-                    const y = (e.clientY || e.touches[0].clientY) - rect.top;
-                    
-                    ctx.lineWidth = currentBrushSize;
-                    ctx.strokeStyle = isErasing ? '#FFFFFF' : currentBrushColor;
-                    
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.moveTo(x, y);
-                }
-                
-                openWhiteboardBtn.addEventListener('click', (e) => { e.stopPropagation(); whiteboardModal.classList.remove('hidden'); resizeCanvas(); });
-                closeWhiteboardBtn.addEventListener('click', () => whiteboardModal.classList.add('hidden'));
-                document.getElementById('clear-canvas-button').addEventListener('click', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
-                document.getElementById('brush-color').addEventListener('input', (e) => { currentBrushColor = e.target.value; isErasing = false; updateActiveSwatch(); });
-                document.getElementById('brush-size').addEventListener('input', (e) => { currentBrushSize = e.target.value; updateActiveBrushSize(); });
-                document.getElementById('eraser-button').addEventListener('click', (e) => { 
-                    isErasing = true; 
-                    e.target.classList.add('active');
-                    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
-                });
-                
-                canvas.addEventListener('mousedown', startDrawing);
-                canvas.addEventListener('mouseup', stopDrawing);
-                canvas.addEventListener('mousemove', draw);
-                canvas.addEventListener('mouseleave', stopDrawing);
-                canvas.addEventListener('touchstart', startDrawing);
-                canvas.addEventListener('touchend', stopDrawing);
-                canvas.addEventListener('touchmove', draw);
-                window.addEventListener('resize', resizeCanvas);
-                setupWhiteboardControls();
-            } catch (e) { console.error("Error initializing whiteboard:", e); }
-
-            try {
-                // --- Calculator Logic ---
-                const calculatorModal = document.getElementById('calculator-modal');
-                const openCalculatorBtn = document.getElementById('open-calculator-button');
-                const closeCalculatorBtn = document.getElementById('close-calculator-button');
-                const calcDisplay = document.getElementById('calc-display');
-                const calcButtons = document.getElementById('calculator');
-                let displayValue = '0'; let firstOperand = null; let operator = null; let waitingForSecondOperand = false;
-
-                function updateDisplay() { calcDisplay.textContent = displayValue; }
-                function inputDigit(digit) {
-                    if (waitingForSecondOperand) { displayValue = digit; waitingForSecondOperand = false; } 
-                    else { displayValue = displayValue === '0' ? digit : displayValue + digit; }
-                }
-                function inputDecimal() { if (!displayValue.includes('.')) { displayValue += '.'; } }
-                function handleOperator(nextOperator) {
-                    const inputValue = parseFloat(displayValue);
-                    if (operator && waitingForSecondOperand) { operator = nextOperator; return; }
-                    if (firstOperand == null) { firstOperand = inputValue; } 
-                    else if (operator) {
-                        const result = performCalculation[operator](firstOperand, inputValue);
-                        displayValue = `${parseFloat(result.toFixed(7))}`;
-                        firstOperand = result;
-                    }
-                    waitingForSecondOperand = true;
-                    operator = nextOperator;
-                }
-                const performCalculation = {
-                    '/': (first, second) => first / second, '*': (first, second) => first * second,
-                    '+': (first, second) => first + second, '-': (first, second) => first - second,
-                    '=': (first, second) => second
-                };
-                function resetCalculator() { displayValue = '0'; firstOperand = null; operator = null; waitingForSecondOperand = false; }
-
-                calcButtons.addEventListener('click', (event) => {
-                    const { target } = event;
-                    if (!target.matches('button')) return;
-                    if (target.dataset.operator) { handleOperator(target.dataset.operator); updateDisplay(); return; }
-                    if (target.dataset.number === '.') { inputDecimal(); updateDisplay(); return; }
-                    if (target.id === 'equals') { handleOperator('='); updateDisplay(); return; }
-                    if (target.classList.contains('clear')) { resetCalculator(); updateDisplay(); return; }
-                    inputDigit(target.dataset.number);
-                    updateDisplay();
-                });
-
-                openCalculatorBtn.addEventListener('click', (e) => { e.stopPropagation(); calculatorModal.classList.remove('hidden'); });
-                closeCalculatorBtn.addEventListener('click', () => calculatorModal.classList.add('hidden'));
-            } catch(e) { console.error("Error initializing calculator:", e); }
-
             document.getElementById('year').textContent = new Date().getFullYear();
-            
-            openCartButton.addEventListener('click', async () => {
-                let cart;
-                if (currentUser && !currentUser.isAnonymous && db) {
-                    const cartRef = getCartRef();
-                    if (!cartRef) return;
-                    const snapshot = await getDocs(cartRef);
-                    cart = snapshot.docs.map(d => ({ docId: d.id, ...d.data() }));
-                } else {
-                    cart = getLocalCart();
-                }
-                renderCartModal(cart);
-                cartModal.classList.remove('hidden');
-            });
-            
-            document.body.addEventListener('click', (e) => {
-                const button = e.target.closest('.add-to-cart-btn');
-                if (button) {
-                    const item = JSON.parse(button.dataset.itemId);
-                    window.addToCart(item);
-                }
-            });
 
             const arViewer = document.getElementById('ar-viewer');
             if(arViewer) {
