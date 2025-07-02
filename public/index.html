@@ -1,3 +1,5 @@
+RUNA COFFEE V5
+
 <!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
@@ -43,17 +45,17 @@
         :root {
             --runa-primary: #D47500;
             --runa-secondary: #0072CE;
-            --runa-header-bg-solid: #1a1310;
         }
         html { scroll-behavior: smooth; }
         
         /* Light Theme */
         html:not(.dark) body { background-color: #FDFBF8; color: #3a2e2a; }
         html:not(.dark) h1, html:not(.dark) h2, html:not(.dark) h3, html:not(.dark) h4 { color: #2c221f; }
-        html:not(.dark) #main-header.scrolled { background-color: transparent; } /* MODIFICADO */
-        html:not(.dark) #mobile-menu, html:not(.dark) #mixer-panel { background-color: #ffffff; }
+        html:not(.dark) .translucent-menu { background-color: rgba(255, 255, 255, 0.5); border-color: rgba(0,0,0,0.1); }
         html:not(.dark) .section-bg { background-color: rgba(255, 255, 255, 0.5); border-color: rgba(0,0,0,0.1); }
         html:not(.dark) footer { background-color: #F4F1ED; }
+        html:not(.dark) .product-card { background-color: #FFFFFF; border-color: #E2E8F0; }
+        html:not(.dark) .filter-container { background-color: #F9FAFB; border-color: #E5E7EB; }
         html:not(.dark) .mixer-icon-button { background-color: #F4F1ED; border-color: #E2E8F0; }
         html:not(.dark) .mixer-icon-button.active { border-color: var(--runa-primary); }
         html:not(.dark) input[type="range"] { background: #E2E8F0; }
@@ -61,10 +63,11 @@
         /* Dark Theme */
         html.dark body { background-color: #111; color: #E2E8F0; }
         html.dark h1, html.dark h2, html.dark h3, html.dark h4 { color: #FFFFFF; }
-        html.dark #main-header.scrolled { background-color: transparent; } /* MODIFICADO */
-        html.dark #mobile-menu, html.dark #mixer-panel { background-color: var(--runa-header-bg-solid); }
+        html.dark .translucent-menu { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.1); }
         html.dark .section-bg { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.1); }
         html.dark footer { background-color: rgba(0, 0, 0, 0.5); }
+        html.dark .product-card { background-color: #1f2937; border-color: #374151; }
+        html.dark .filter-container { background-color: #1f2937; border-color: #374151; }
         html.dark .mixer-icon-button { background-color: #2D3748; border-color: #4A5568; }
         html.dark .mixer-icon-button.active { border-color: var(--runa-primary); }
         html.dark input[type="range"] { background: #4A5568; }
@@ -74,9 +77,12 @@
         #video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
         
         #main-header { background-color: transparent; transition: background-color 0.4s ease, box-shadow 0.4s ease; }
-        #main-header.scrolled { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-
-        .section-bg, footer { backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+        
+        /* Efecto de vidrio para menús, secciones y footer */
+        .translucent-menu, .section-bg, footer { 
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px); 
+        }
         
         #video-intro { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 10000; transition: opacity 0.75s ease-out, visibility 0.75s; }
         #video-intro.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
@@ -88,6 +94,9 @@
 
         model-viewer { width: 100%; height: 450px; border-radius: 0.75rem; background-color: transparent; }
         
+        #cart-icon-wrapper { position: relative; }
+        #cart-counter { position: absolute; top: 0; right: 0; transform: translate(25%, -25%); width: 1.25rem; height: 1.25rem; background-color: #DC2626; color: white; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 0.25rem; }
+
         input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 5px; outline: none; opacity: 0.7; transition: opacity .2s; }
         input[type="range"]:hover { opacity: 1; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--runa-primary); cursor: pointer; border-radius: 50%; border: 2px solid; border-color: #FDFBF8; }
@@ -146,18 +155,25 @@
                             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5ec8a9f9a44f0f1d347867a8b1293a1f8f5dae5e/public/assets/videos/runa-equalizer-video.mp4" type="video/mp4">
                         </video>
                     </button>
+                    <div id="cart-icon-wrapper">
+                        <button id="open-cart-button" class="relative p-1 text-inherit">
+                           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                           <span id="cart-counter" class="hidden">0</span>
+                        </button>
+                    </div>
                 </div>
             </nav>
             
-            <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t border-gray-700 dark:border-gray-800">
+            <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t translucent-menu">
                 <div class="container mx-auto px-6 py-4 space-y-3">
                       <a href="#filosofia" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Nuestra Filosofía</a>
+                      <a href="#tienda" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Tienda</a>
                       <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
                       <a href="#contacto" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
                 </div>
             </div>
 
-            <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t border-gray-700 dark:border-gray-800">
+            <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t translucent-menu">
                 <div class="container mx-auto px-6 py-4">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-semibold text-lg">Mezclador de Ambiente</h3>
@@ -188,6 +204,13 @@
                 </div>
             </section>
             
+            <section id="tienda" class="py-20 section-bg">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Nuestra Selección de Café</h2>
+                    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 justify-center"></div>
+                </div>
+            </section>
+
             <section id="experiencia-3d" class="py-20 section-bg">
                 <div class="container mx-auto px-6 text-center">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">Vive la Experiencia 3D</h2>
@@ -267,6 +290,7 @@
     <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
 
     <!-- Modals -->
+    <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-4 bg-black/70 backdrop-blur-sm hidden"></div>
     <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
        <div class="w-full max-w-xs bg-[#1a1310] rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
             <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors">
@@ -284,9 +308,18 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, collection, getDocs, writeBatch, onSnapshot, addDoc, deleteDoc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- GLOBAL VARIABLES & CONFIG ---
-        let auth;
+        let app, auth, db;
+        let currentUser = null;
+        let userId = null;
+        let cartUnsubscribe = null;
+
+        const coffeeProducts = [
+            { id: 'Runa01', name: 'Runa Origen', region: 'Caldas, Colombia', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', price: 45000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-1.jpg' },
+            { id: 'Runa03', name: 'Microlote Natural', region: 'Neira, Caldas', variety: 'Castillo', process: 'Natural', roast: 'Claro', notes: 'Sabor intenso a frutos rojos, vino y canela.', price: 58000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-3.jpg' }
+        ];
 
         const ambienceSounds = [
             { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
@@ -301,19 +334,31 @@
         // --- DOM ELEMENTS ---
         const authContainer = document.getElementById('auth-container');
         const authModal = document.getElementById('auth-modal');
+        const cartModal = document.getElementById('cart-modal');
+        const productGrid = document.getElementById('product-grid');
 
         // --- AUTHENTICATION FUNCTIONS ---
-        const authStateObserver = (user) => {
+        const authStateObserver = async (user) => {
+            currentUser = user;
             if (user && !user.isAnonymous) {
+                userId = user.uid;
                 renderUserUI(user);
+                await mergeLocalCartWithFirestore();
+                setupCartListener();
             } else {
+                userId = localStorage.getItem('anonymousUserId') || `anon_${crypto.randomUUID()}`;
+                if (!localStorage.getItem('anonymousUserId')) {
+                    localStorage.setItem('anonymousUserId', userId);
+                }
                 renderGuestUI();
+                if (cartUnsubscribe) cartUnsubscribe();
+                updateCartFromLocal();
             }
         };
 
         const renderUserUI = (user) => {
             const userImage = user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" class="w-full h-full object-cover">` : `<span class="text-white font-bold text-xl">${user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}</span>`;
-            authContainer.innerHTML = `<div class="relative"><button id="user-menu-button" title="Mi Cuenta" class="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm overflow-hidden border-2 border-gray-600 hover:border-[var(--runa-primary)] bg-gray-700">${userImage}</button><div id="user-menu-dropdown" class="hidden absolute top-full left-0 mt-2 w-56 bg-[#1a1310] border border-gray-700 rounded-lg shadow-xl z-50"><div class="px-4 py-3 border-b border-gray-700"><p class="text-sm font-semibold text-white truncate">${user.displayName || 'Usuario'}</p><p class="text-xs text-gray-400 truncate">${user.email || 'Sin email'}</p></div><div class="py-1"><a href="#" id="logout-button-menu" class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-[var(--runa-primary)] transition-colors">Cerrar Sesión</a></div></div></div>`;
+            authContainer.innerHTML = `<div class="relative"><button id="user-menu-button" title="Mi Cuenta" class="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm overflow-hidden border-2 border-gray-600 hover:border-[var(--runa-primary)] bg-gray-700">${userImage}</button><div id="user-menu-dropdown" class="hidden absolute top-full left-0 mt-2 w-56 translucent-menu border rounded-lg shadow-xl z-50"><div class="px-4 py-3 border-b"><p class="text-sm font-semibold truncate">${user.displayName || 'Usuario'}</p><p class="text-xs truncate">${user.email || 'Sin email'}</p></div><div class="py-1"><a href="#" id="logout-button-menu" class="flex items-center w-full text-left px-4 py-2 text-sm hover:text-[var(--runa-primary)] transition-colors">Cerrar Sesión</a></div></div></div>`;
             document.getElementById('logout-button-menu').addEventListener('click', (e) => { e.preventDefault(); if(auth) signOut(auth); });
             const userMenuButton = document.getElementById('user-menu-button');
             const userMenuDropdown = document.getElementById('user-menu-dropdown');
@@ -325,6 +370,184 @@
             authContainer.innerHTML = `<button id="open-auth-modal-button" title="Acceder o Registrarse" class="w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm text-inherit"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>`;
             document.getElementById('open-auth-modal-button').addEventListener('click', () => authModal.classList.remove('hidden'));
         };
+
+        // --- SHOPPING CART FUNCTIONS ---
+        const getCartRef = () => {
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            if (!db || !appId || !userId) return null;
+            return collection(db, "artifacts", appId, "users", userId, "cart");
+        }
+
+        const getLocalCart = () => JSON.parse(localStorage.getItem(`runa_cart_${userId}`)) || [];
+        const saveLocalCart = (cart) => localStorage.setItem(`runa_cart_${userId}`, JSON.stringify(cart));
+
+        const mergeLocalCartWithFirestore = async () => {
+            if (!currentUser || currentUser.isAnonymous || !db) return;
+            const anonUserId = localStorage.getItem('anonymousUserId');
+            if (!anonUserId) return;
+
+            const localCart = JSON.parse(localStorage.getItem(`runa_cart_${anonUserId}`)) || [];
+            if (localCart.length === 0) return;
+
+            const cartRef = getCartRef();
+            if (!cartRef) return;
+            const firestoreCartSnapshot = await getDocs(cartRef);
+            const firestoreItems = new Map(firestoreCartSnapshot.docs.map(d => [d.data().id, {docId: d.id, ...d.data()}]));
+            
+            const batch = writeBatch(db);
+            localCart.forEach(localItem => {
+                const firestoreItem = firestoreItems.get(localItem.id);
+                if (firestoreItem) {
+                    const itemDocRef = doc(cartRef, firestoreItem.docId);
+                    batch.update(itemDocRef, { quantity: firestoreItem.quantity + localItem.quantity });
+                } else {
+                    const newItemDocRef = doc(cartRef);
+                    batch.set(newItemDocRef, localItem);
+                }
+            });
+            await batch.commit();
+            localStorage.removeItem(`runa_cart_${anonUserId}`);
+            localStorage.removeItem('anonymousUserId');
+        }
+
+        const setupCartListener = () => {
+            if (!currentUser || !db || currentUser.isAnonymous) return;
+            const cartRef = getCartRef();
+            if(!cartRef) return;
+
+            cartUnsubscribe = onSnapshot(cartRef, (snapshot) => {
+                const cart = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+                updateCartUI(cart);
+                if (!cartModal.classList.contains('hidden')) renderCartModal(cart);
+            });
+        }
+        
+        const updateCartFromLocal = () => updateCartUI(getLocalCart());
+
+        window.addToCart = async (item) => {
+            if (currentUser && !currentUser.isAnonymous && db) {
+                const cartRef = getCartRef();
+                if (!cartRef) return;
+                const q = query(cartRef, where("id", "==", item.id));
+                const snapshot = await getDocs(q);
+                if (!snapshot.empty) {
+                    const existingDoc = snapshot.docs[0];
+                    await updateDoc(existingDoc.ref, { quantity: existingDoc.data().quantity + 1 });
+                } else {
+                    await addDoc(cartRef, { ...item, quantity: 1 });
+                }
+            } else {
+                let cart = getLocalCart();
+                const existingItem = cart.find(i => i.id === item.id);
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.push({ ...item, quantity: 1 });
+                }
+                saveLocalCart(cart);
+                updateCartFromLocal();
+            }
+        };
+
+        window.updateItemQuantity = async (identifier, newQuantity) => {
+            const isFirestore = currentUser && !currentUser.isAnonymous && db;
+            if (newQuantity < 1) {
+                await window.removeItemFromCart(identifier);
+                return;
+            }
+            if (isFirestore) {
+                const itemRef = doc(getCartRef(), identifier);
+                await updateDoc(itemRef, { quantity: newQuantity });
+            } else {
+                let cart = getLocalCart();
+                const itemToUpdate = cart.find(i => i.id === identifier);
+                if (itemToUpdate) itemToUpdate.quantity = newQuantity;
+                saveLocalCart(cart);
+                updateCartFromLocal();
+                renderCartModal(getLocalCart());
+            }
+        };
+
+        window.removeItemFromCart = async (identifier) => {
+            const isFirestore = currentUser && !currentUser.isAnonymous && db;
+            if (isFirestore) {
+                await deleteDoc(doc(getCartRef(), identifier));
+            } else {
+                let cart = getLocalCart().filter(i => i.id !== identifier);
+                saveLocalCart(cart);
+                updateCartFromLocal();
+                renderCartModal(cart);
+            }
+        };
+
+        const updateCartUI = (cart) => {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCounter = document.getElementById('cart-counter');
+            if (cartCounter) {
+                cartCounter.textContent = totalItems;
+                cartCounter.classList.toggle('hidden', totalItems === 0);
+            }
+        };
+
+        const renderCartModal = (cart) => {
+            const isFirestore = currentUser && !currentUser.isAnonymous && db;
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const formattedTotal = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(total);
+
+            const actionButtonHtml = cart.length > 0 
+                ? `<div class="border-t border-gray-600 pt-4 mt-4 text-right">
+                       <p class="text-lg">Total: <span class="font-bold">${formattedTotal}</span></p>
+                       <a href="#" class="w-full mt-4 inline-flex items-center justify-center gap-3 px-5 py-3 text-base font-semibold text-white bg-green-500 rounded-lg shadow-sm hover:bg-green-600 transition-all"><span>Proceder al Pago</span></a>
+                   </div>` 
+                : '<a href="#tienda" class="w-full block text-center bg-[var(--runa-primary)] text-white font-bold py-3 px-5 rounded-lg" onclick="closeCartModal()">Volver a la tienda</a>';
+            
+            const cartItemsHtml = cart.length === 0 
+                ? `<p class="py-8 text-center">Tu carrito está vacío.</p>` 
+                : cart.map(item => {
+                    const itemIdentifier = isFirestore ? item.docId : item.id;
+                    return `<div class="flex justify-between items-center py-3">
+                                <span class="pr-2 flex-grow">${item.name}</span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="updateItemQuantity('${itemIdentifier}', ${item.quantity - 1})" class="w-7 h-7 rounded-full bg-gray-600 hover:bg-gray-500 transition-colors">-</button>
+                                    <span class="w-8 text-center">${item.quantity}</span>
+                                    <button onclick="updateItemQuantity('${itemIdentifier}', ${item.quantity + 1})" class="w-7 h-7 rounded-full bg-gray-600 hover:bg-gray-500 transition-colors">+</button>
+                                    <button onclick="removeItemFromCart('${itemIdentifier}')" class="ml-2 text-red-400 hover:text-red-300 transition-colors" aria-label="Eliminar item"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                                </div>
+                            </div>`;
+                }).join("");
+
+            cartModal.innerHTML=`<div class="w-full max-w-md translucent-menu rounded-2xl shadow-2xl p-6 flex flex-col modal-enter"><div class="text-center mb-6"><h2 class="text-2xl font-bold">Tu Carrito de Café</h2></div><div class="flex-grow overflow-y-auto" style="max-height: 40vh;"><div id="cart-items" class="divide-y divide-gray-700 text-left">${cartItemsHtml}</div></div><div class="mt-auto pt-4">${actionButtonHtml}<button class="mt-2 text-sm w-full" onclick="closeCartModal()">Cerrar</button></div></div>`;
+        }
+        window.closeCartModal = () => cartModal.classList.add('hidden');
+
+        // --- PRODUCT FUNCTIONS ---
+        const renderProducts = (products) => {
+            if (!productGrid) return;
+            productGrid.innerHTML = '';
+            if (products.length === 0) {
+                productGrid.innerHTML = `<p class="col-span-full text-center">No se encontraron productos.</p>`;
+                return;
+            }
+            products.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = "product-card block rounded-lg overflow-hidden border shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col group hover:-translate-y-2";
+                card.innerHTML = `
+                    <div class="overflow-hidden h-56 bg-gray-300 dark:bg-gray-700">
+                        <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/cccccc/ffffff?text=Imagen+no+disponible';">
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <div class="flex-grow">
+                            <h3 class="text-xl font-bold mb-2">${prod.name}</h3>
+                            <p class="text-[var(--runa-primary)] font-semibold text-lg mb-2">${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(prod.price)}</p>
+                            <p class="text-sm mb-1"><strong>Origen:</strong> ${prod.region}</p>
+                            <p class="text-sm">${prod.notes}</p>
+                        </div>
+                        <button data-item-id='${JSON.stringify(prod)}' class="add-to-cart-btn mt-6 w-full text-center bg-[var(--runa-primary)] text-white text-sm font-semibold py-2 px-4 rounded-full group-hover:bg-[var(--runa-secondary)] transition-colors">Añadir al Carrito</button>
+                    </div>
+                `;
+                productGrid.appendChild(card);
+            });
+        }
 
         // --- SOUND MIXER FUNCTIONS ---
         let audioElements = {};
@@ -419,10 +642,11 @@
             try {
                 const firebaseConfig = JSON.parse(firebaseConfigStr);
                 if (Object.keys(firebaseConfig).length > 0) {
-                    const app = initializeApp(firebaseConfig);
+                    app = initializeApp(firebaseConfig);
                     auth = getAuth(app);
+                    db = getFirestore(app);
                 } else {
-                    console.warn("Firebase config is empty. Auth will be disabled.");
+                    console.warn("Firebase config is empty. App will run in offline mode.");
                 }
             } catch (e) {
                 console.error("Error initializing Firebase:", e);
@@ -459,9 +683,6 @@
             introVideo.play().catch(endIntro);
 
             // --- UI Event Listeners ---
-            const header = document.getElementById('main-header');
-            window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 50));
-
             const menuButton = document.getElementById('menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             const mixerButton = document.getElementById('mixer-toggle-button');
@@ -492,7 +713,7 @@
             });
             applyTheme(localStorage.getItem('theme') || 'dark');
 
-            // --- Modal Listeners ---
+            // --- Modal & Cart Listeners ---
             document.getElementById('google-login-button-modal').addEventListener('click', () => {
                 if (!auth) return;
                 const provider = new GoogleAuthProvider();
@@ -502,8 +723,32 @@
             });
             document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
             authModal.addEventListener('click', (event) => { if (event.target === authModal) authModal.classList.add('hidden'); });
+
+            document.getElementById('open-cart-button').addEventListener('click', async () => {
+                let cart;
+                if (currentUser && !currentUser.isAnonymous && db) {
+                    const cartRef = getCartRef();
+                    if (!cartRef) return;
+                    const snapshot = await getDocs(cartRef);
+                    cart = snapshot.docs.map(d => ({ docId: d.id, ...d.data() }));
+                } else {
+                    cart = getLocalCart();
+                }
+                renderCartModal(cart);
+                cartModal.classList.remove('hidden');
+            });
+            cartModal.addEventListener('click', (event) => { if (event.target === cartModal) closeCartModal(); });
+
+            document.body.addEventListener('click', (e) => {
+                const button = e.target.closest('.add-to-cart-btn');
+                if (button) {
+                    const item = JSON.parse(button.dataset.itemId);
+                    window.addToCart(item);
+                }
+            });
             
             // --- Initializations ---
+            renderProducts(coffeeProducts);
             initializeMixer();
             document.getElementById('master-sound-toggle').addEventListener('click', toggleMasterSound);
 
