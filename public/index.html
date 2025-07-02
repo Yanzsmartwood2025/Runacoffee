@@ -38,6 +38,10 @@
     <!-- Google's <model-viewer> component for 3D and AR -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 
+    <!-- jQuery & Turn.js for Flipbook -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
+
     <!-- Custom Styles and Theme -->
     <style>
         :root {
@@ -60,7 +64,6 @@
         html:not(.dark) input[type="range"] { --track-background: #E2E8F0; }
         html:not(.dark) .cart-modal-content { background-color: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.1); }
         html:not(.dark) .video-list-button.active { background-color: rgba(0,0,0,0.1); }
-
 
         
         /* Dark Theme */
@@ -158,6 +161,37 @@
         .mixer-icon-button { border: 2px solid; transition: border-color 0.3s ease; display: flex; align-items: center; justify-content: center; }
         .mixer-icon-button img { width: 100%; height: 100%; object-fit: cover; }
 
+        /* --- Flipbook Styles --- */
+        #flipbook-container {
+            perspective: 2500px;
+            -webkit-perspective: 2500px;
+        }
+
+        #flipbook {
+            width: 90vw; /* Responsive width */
+            height: 60vw; /* Maintain aspect ratio */
+            max-width: 900px; /* Max size for desktop */
+            max-height: 600px;
+        }
+        
+        #flipbook .page img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Hace que la imagen cubra el espacio sin deformarse */
+        }
+
+        #flipbook .hard {
+            background-image: linear-gradient(to right, #4a2e1e, #6d442a);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        
+        /* On mobile, the book is taller */
+        @media (max-width: 767px) {
+            #flipbook {
+                width: 90vw;
+                height: 130vw;
+            }
+        }
     </style>
 </head>
 
@@ -220,7 +254,7 @@
             
             <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t translucent-menu">
                 <div class="container mx-auto px-6 py-4 space-y-3">
-                        <a href="#filosofia" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Nuestra Filosofía</a>
+                        <a href="#runa-book" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Libro de Origen</a>
                         <!-- <a href="#tienda" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Tienda</a> -->
                         <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
                         <a href="#contacto" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
@@ -245,17 +279,40 @@
         <main>
             <section id="hero" class="h-screen flex items-center justify-center text-center text-white">
                 <div>
-                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-4" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">RUNA COFFEE</h1>
-                    <p class="max-w-2xl mx-auto text-lg md:text-xl text-gray-200 opacity-90" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.7);">El alma del Eje Cafetero en tu taza.</p>
+                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">RUNA COFFEE</h1>
                 </div>
             </section>
 
-            <section id="filosofia" class="py-20 section-bg">
+            <!-- *** SECCIÓN DEL LIBRO ACTUALIZADA *** -->
+            <section id="runa-book" class="py-20 section-bg">
                 <div class="container mx-auto px-6 text-center">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">El Corazón del Café</h2>
-                    <p class="max-w-3xl mx-auto text-inherit">
-                        En RUNA COFFEE, cada grano cuenta una historia. Nacimos en las montañas del Eje Cafetero de Colombia, con un propósito: honrar la herencia de nuestros caficultores. Creemos en un comercio justo, en el respeto por la tierra que nos nutre y en procesos meticulosos que garantizan una calidad excepcional. RUNA no es solo café, es el alma de nuestra gente, una conexión mística entre la naturaleza y tu taza.
-                    </p>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-12">Nuestro Libro de Origen</h2>
+                    <div id="flipbook-container" class="w-full flex justify-center items-center min-h-[65vw] md:min-h-[60vw]">
+                        <!-- El contenido del libro se inserta aquí -->
+                        <div id="flipbook" style="display:none;">
+                            <!-- Portada Dura (Tapa delantera) -->
+                            <div class="hard"></div>
+
+                            <!-- Página 1: Tu Portada -->
+                            <div class="page">
+                                <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/portada-libro.jpg" alt="Portada Runa Coffee">
+                            </div>
+
+                            <!-- Páginas 2 a 10: Hojas interiores -->
+                            <div class="page"><img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg" alt="Página de libro"></div>
+                            <div class="page"><img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg" alt="Página de libro"></div>
+                            <div class="page"><img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg" alt="Página de libro"></div>
+                            <div class="page"><img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg" alt="Página de libro"></div>
+                            <div class="page"><img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg" alt="Página de libro"></div>
+                            <div class="page"><img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg" alt="Página de libro"></div>
+                            <div class="page"><img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg" alt="Página de libro"></div>
+                            <div class="page"><img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg" alt="Página de libro"></div>
+                            <div class="page"><img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg" alt="Página de libro"></div>
+
+                            <!-- Contraportada Dura (Tapa trasera) -->
+                            <div class="hard"></div>
+                        </div>
+                    </div>
                 </div>
             </section>
             
@@ -266,7 +323,7 @@
                     <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 justify-center"></div>
                 </div>
             </section>
-            -->
+             -->
 
             <section id="experiencia-3d" class="py-20 section-bg">
                 <div class="container mx-auto px-6 text-center">
@@ -307,7 +364,12 @@
                     <div>
                         <h3 class="text-2xl font-bold mb-4">Síguenos</h3>
                         <div class="flex justify-center md:justify-start space-x-4">
-                            <!-- Social Icons Here -->
+                            <!-- *** BOTÓN DE INSTAGRAM AÑADIDO AQUÍ *** -->
+                            <a href="https://www.instagram.com/_runacoffee_?igsh=MW9tMG1zcmhvM3JyeQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram de Runa Coffee">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                            </a>
                         </div>
                     </div>
                     <div>
@@ -886,6 +948,45 @@
                     }
                 });
             }
+
+            // --- Turn.js Flipbook Initialization ---
+            const flipbook = $('#flipbook');
+            
+            function resizeFlipbook() {
+                const container = $('#flipbook-container');
+                let width = container.width();
+                let height = Math.round(width * 0.7); // Aspect ratio
+                let display = 'double';
+
+                // On smaller screens, use single page view and make it taller
+                if (window.innerWidth < 768) {
+                    width = container.width();
+                    height = Math.round(width * 1.4);
+                    display = 'single';
+                }
+                
+                // Set the new size and display
+                if (flipbook.turn('is')) {
+                    flipbook.turn('size', width, height);
+                    if (flipbook.turn('display') != display) {
+                        flipbook.turn('display', display);
+                    }
+                }
+            }
+
+            flipbook.turn({
+                elevation: 50,
+                autoCenter: true,
+                gradients: true,
+            });
+
+            // Show the book after initialization to prevent FOUC
+            flipbook.show();
+            
+            // Resize on load and on window resize
+            $(window).on('load resize', function() {
+                resizeFlipbook();
+            });
         });
     </script>
 </body>
