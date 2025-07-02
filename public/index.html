@@ -57,6 +57,8 @@
         html:not(.dark) .mixer-icon-button { background-color: #F4F1ED; border-color: #E2E8F0; }
         html:not(.dark) .mixer-icon-button.active { border-color: var(--runa-primary); }
         html:not(.dark) input[type="range"] { background: #E2E8F0; }
+        html:not(.dark) .cart-modal-content { background-color: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.1); }
+
         
         /* Dark Theme */
         html.dark body { background-color: #111; color: #E2E8F0; }
@@ -69,6 +71,8 @@
         html.dark .mixer-icon-button { background-color: #2D3748; border-color: #4A5568; }
         html.dark .mixer-icon-button.active { border-color: var(--runa-primary); }
         html.dark input[type="range"] { background: #4A5568; }
+        html.dark .cart-modal-content { background-color: rgba(31, 41, 55, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
+
 
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; }
         
@@ -164,10 +168,10 @@
             
             <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t translucent-menu">
                 <div class="container mx-auto px-6 py-4 space-y-3">
-                      <a href="#filosofia" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Nuestra Filosofía</a>
-                      <a href="#tienda" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Tienda</a>
-                      <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
-                      <a href="#contacto" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
+                        <a href="#filosofia" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Nuestra Filosofía</a>
+                        <!-- <a href="#tienda" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Tienda</a> -->
+                        <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
+                        <a href="#contacto" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
                 </div>
             </div>
 
@@ -202,12 +206,14 @@
                 </div>
             </section>
             
+            <!-- 
             <section id="tienda" class="py-20 section-bg">
                 <div class="container mx-auto px-6">
                     <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Nuestra Selección de Café</h2>
                     <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 justify-center"></div>
                 </div>
             </section>
+            -->
 
             <section id="experiencia-3d" class="py-20 section-bg">
                 <div class="container mx-auto px-6 text-center">
@@ -315,8 +321,8 @@
         let cartUnsubscribe = null;
 
         const coffeeProducts = [
-            { id: 'Runa01', name: 'Runa Origen', region: 'Caldas, Colombia', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', price: 45000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-1.jpg' },
-            { id: 'Runa03', name: 'Microlote Natural', region: 'Neira, Caldas', variety: 'Castillo', process: 'Natural', roast: 'Claro', notes: 'Sabor intenso a frutos rojos, vino y canela.', price: 58000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/IMAGENES/producto-3.jpg' }
+            // { id: 'Runa01', name: 'Runa Origen', region: 'Caldas, Colombia', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', price: 45000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/3371891507f3521b369528f1190473950f58d04a/public/assets/IMAGENES/producto-1.jpg' },
+            // { id: 'Runa03', name: 'Microlote Natural', region: 'Neira, Caldas', variety: 'Castillo', process: 'Natural', roast: 'Claro', notes: 'Sabor intenso a frutos rojos, vino y canela.', price: 58000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/3371891507f3521b369528f1190473950f58d04a/public/assets/IMAGENES/producto-3.jpg' }
         ];
 
         const ambienceSounds = [
@@ -493,10 +499,10 @@
             const formattedTotal = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(total);
 
             const actionButtonHtml = cart.length > 0 
-                ? `<div class="border-t border-gray-600 pt-4 mt-4 text-right">
-                       <p class="text-lg">Total: <span class="font-bold">${formattedTotal}</span></p>
-                       <a href="#" class="w-full mt-4 inline-flex items-center justify-center gap-3 px-5 py-3 text-base font-semibold text-white bg-green-500 rounded-lg shadow-sm hover:bg-green-600 transition-all"><span>Proceder al Pago</span></a>
-                   </div>` 
+                ? `<div class="border-t border-gray-700 pt-4 mt-4 text-right">
+                        <p class="text-lg">Total: <span class="font-bold">${formattedTotal}</span></p>
+                        <a href="#" class="w-full mt-4 inline-flex items-center justify-center gap-3 px-5 py-3 text-base font-semibold text-white bg-green-500 rounded-lg shadow-sm hover:bg-green-600 transition-all"><span>Proceder al Pago</span></a>
+                    </div>` 
                 : '<a href="#tienda" class="w-full block text-center bg-[var(--runa-primary)] text-white font-bold py-3 px-5 rounded-lg" onclick="closeCartModal()">Volver a la tienda</a>';
             
             const cartItemsHtml = cart.length === 0 
@@ -514,7 +520,7 @@
                             </div>`;
                 }).join("");
 
-            cartModal.innerHTML=`<div class="w-full max-w-md translucent-menu rounded-2xl shadow-2xl p-6 flex flex-col modal-enter"><div class="text-center mb-6"><h2 class="text-2xl font-bold">Tu Carrito de Café</h2></div><div class="flex-grow overflow-y-auto" style="max-height: 40vh;"><div id="cart-items" class="divide-y divide-gray-700 text-left">${cartItemsHtml}</div></div><div class="mt-auto pt-4">${actionButtonHtml}<button class="mt-2 text-sm w-full" onclick="closeCartModal()">Cerrar</button></div></div>`;
+            cartModal.innerHTML=`<div class="w-full max-w-md cart-modal-content rounded-2xl shadow-2xl p-6 flex flex-col modal-enter"><div class="text-center mb-6"><h2 class="text-2xl font-bold">Tu Carrito de Café</h2></div><div class="flex-grow overflow-y-auto" style="max-height: 40vh;"><div id="cart-items" class="divide-y divide-gray-700 text-left">${cartItemsHtml}</div></div><div class="mt-auto pt-4">${actionButtonHtml}<button class="mt-2 text-sm w-full" onclick="closeCartModal()">Cerrar</button></div></div>`;
         }
         window.closeCartModal = () => cartModal.classList.add('hidden');
 
@@ -523,7 +529,9 @@
             if (!productGrid) return;
             productGrid.innerHTML = '';
             if (products.length === 0) {
-                productGrid.innerHTML = `<p class="col-span-full text-center">No se encontraron productos.</p>`;
+                // If there are no products, we don't need to show the section.
+                const tiendaSection = document.getElementById('tienda');
+                if (tiendaSection) tiendaSection.style.display = 'none';
                 return;
             }
             products.forEach(prod => {
