@@ -43,6 +43,7 @@
         :root {
             --runa-primary: #D47500;
             --runa-secondary: #0072CE;
+            --slider-track-color: #25D366; /* Verde similar a WhatsApp */
         }
         html { scroll-behavior: smooth; }
         
@@ -56,7 +57,7 @@
         html:not(.dark) .filter-container { background-color: #F9FAFB; border-color: #E5E7EB; }
         html:not(.dark) .mixer-icon-button { background-color: #F4F1ED; border-color: #E2E8F0; }
         html:not(.dark) .mixer-icon-button.active { border-color: var(--runa-primary); }
-        html:not(.dark) input[type="range"] { background: #E2E8F0; }
+        html:not(.dark) input[type="range"] { --track-background: #E2E8F0; }
         html:not(.dark) .cart-modal-content { background-color: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.1); }
 
         
@@ -70,7 +71,7 @@
         html.dark .filter-container { background-color: #1f2937; border-color: #374151; }
         html.dark .mixer-icon-button { background-color: #2D3748; border-color: #4A5568; }
         html.dark .mixer-icon-button.active { border-color: var(--runa-primary); }
-        html.dark input[type="range"] { background: #4A5568; }
+        html.dark input[type="range"] { --track-background: #4A5568; }
         html.dark .cart-modal-content { background-color: rgba(31, 41, 55, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
 
 
@@ -99,12 +100,57 @@
         #cart-icon-wrapper { position: relative; }
         #cart-counter { position: absolute; top: 0; right: 0; transform: translate(25%, -25%); width: 1.25rem; height: 1.25rem; background-color: #DC2626; color: white; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 0.25rem; }
 
-        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 5px; outline: none; opacity: 0.7; transition: opacity .2s; }
-        input[type="range"]:hover { opacity: 1; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--runa-primary); cursor: pointer; border-radius: 50%; border: 2px solid; border-color: #FDFBF8; }
+        /* --- Slider Styles --- */
+        input[type="range"] { 
+            -webkit-appearance: none; 
+            appearance: none; 
+            width: 100%; 
+            height: 8px; 
+            border-radius: 5px; 
+            outline: none; 
+            background: transparent; /* Fondo transparente para que el track sea visible */
+        }
+        input[type="range"]::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            appearance: none; 
+            width: 20px; 
+            height: 20px; 
+            background: var(--runa-primary); 
+            cursor: pointer; 
+            border-radius: 50%; 
+            border: 2px solid; 
+            border-color: #FDFBF8; 
+            margin-top: -6px; /* Centrar el thumb verticalmente */
+        }
         html.dark input[type="range"]::-webkit-slider-thumb { border-color: #111; }
-        input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: var(--runa-primary); cursor: pointer; border-radius: 50%; border: 2px solid; border-color: #FDFBF8; }
+        
+        input[type="range"]::-moz-range-thumb { 
+            width: 20px; 
+            height: 20px; 
+            background: var(--runa-primary); 
+            cursor: pointer; 
+            border-radius: 50%; 
+            border: 2px solid;
+            border-color: #FDFBF8;
+        }
         html.dark input[type="range"]::-moz-range-thumb { border-color: #111; }
+
+        /* Estilo para la barra de progreso del slider */
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            border-radius: 5px;
+            background: linear-gradient(to right, var(--slider-track-color) var(--value-percent, 0%), var(--track-background) var(--value-percent, 0%));
+        }
+        input[type="range"]::-moz-range-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            border-radius: 5px;
+            background: linear-gradient(to right, var(--slider-track-color) var(--value-percent, 0%), var(--track-background) var(--value-percent, 0%));
+        }
+
 
         .mixer-icon-button { border: 2px solid; transition: border-color 0.3s ease; display: flex; align-items: center; justify-content: center; }
         .mixer-icon-button img { width: 100%; height: 100%; object-fit: cover; }
@@ -600,12 +646,15 @@
                 if(!slider || !button) return;
 
                 const audio = audioElements[id];
-                audio.volume = slider.value;
-                button.classList.toggle('active', audio.volume > 0);
+                const updateSliderStyle = (target) => {
+                    const percent = (target.value / target.max) * 100;
+                    target.style.setProperty('--value-percent', `${percent}%`);
+                };
 
                 slider.addEventListener('input', (e) => {
                     audio.volume = e.target.value;
-                    button.classList.toggle('active', audio.volume > 0);
+                    button.classList.toggle('active', e.target.value > 0);
+                    updateSliderStyle(e.target);
                 });
                 
                 button.addEventListener('click', () => {
@@ -617,6 +666,9 @@
                     }
                     slider.dispatchEvent(new Event('input'));
                 });
+                
+                // Set initial style
+                updateSliderStyle(slider);
             });
         }
 
