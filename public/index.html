@@ -59,6 +59,8 @@
         html:not(.dark) .mixer-icon-button.active { border-color: var(--runa-primary); }
         html:not(.dark) input[type="range"] { --track-background: #E2E8F0; }
         html:not(.dark) .cart-modal-content { background-color: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.1); }
+        html:not(.dark) .video-list-button.active { background-color: rgba(0,0,0,0.1); }
+
 
         
         /* Dark Theme */
@@ -73,11 +75,12 @@
         html.dark .mixer-icon-button.active { border-color: var(--runa-primary); }
         html.dark input[type="range"] { --track-background: #4A5568; }
         html.dark .cart-modal-content { background-color: rgba(31, 41, 55, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
+        html.dark .video-list-button.active { background-color: rgba(255,255,255,0.15); }
 
 
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; }
         
-        #video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+        #video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: opacity 0.5s ease-in-out; }
         
         #main-header { background-color: transparent; transition: background-color 0.4s ease, box-shadow 0.4s ease; }
         
@@ -163,7 +166,7 @@
     <!-- Fullscreen Video Background -->
     <div id="video-background-wrapper">
         <video id="video-background" autoplay loop muted playsinline>
-            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/a3de99a321f33e21822225fda04f372c7033aad0/public/assets/videos/runa_video_fondo_1.mp4" type="video/mp4">
+            <source id="video-source" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/a3de99a321f33e21822225fda04f372c7033aad0/public/assets/videos/runa_video_fondo_1.mp4" type="video/mp4">
         </video>
     </div>
 
@@ -198,6 +201,9 @@
                         <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
                         <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
+                    <button id="video-skin-toggle" class="p-2 rounded-full text-inherit" aria-label="Abrir selector de video">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    </button>
                     <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)]" aria-label="Abrir mezclador de ambiente">
                         <video autoplay loop muted playsinline class="w-full h-full object-cover">
                             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5ec8a9f9a44f0f1d347867a8b1293a1f8f5dae5e/public/assets/videos/runa-equalizer-video.mp4" type="video/mp4">
@@ -225,6 +231,13 @@
                 <div class="container mx-auto px-6 py-4">
                     <h3 class="font-semibold text-lg mb-4">Mezclador de Ambiente</h3>
                     <div id="sound-controls" class="space-y-4"></div>
+                </div>
+            </div>
+            
+            <div id="video-skin-panel" class="hidden absolute w-full shadow-lg border-t translucent-menu">
+                <div class="container mx-auto px-6 py-4">
+                    <h3 class="font-semibold text-lg mb-4">Selector de Video de Fondo</h3>
+                    <div id="video-list" class="space-y-2"></div>
                 </div>
             </div>
         </header>
@@ -359,6 +372,12 @@
         let currentUser = null;
         let userId = null;
         let cartUnsubscribe = null;
+
+        const videoSkins = [
+            { name: "Cosecha de Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/a3de99a321f33e21822225fda04f372c7033aad0/public/assets/videos/runa_video_fondo_1.mp4" },
+            { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" }
+        ];
+        let currentVideoIndex = 0;
 
         const coffeeProducts = [
             // { id: 'Runa01', name: 'Runa Origen', region: 'Caldas, Colombia', variety: 'Castillo', process: 'Lavado', roast: 'Medio', notes: 'Notas a panela, naranja y chocolate.', price: 45000, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/3371891507f3521b369528f1190473950f58d04a/public/assets/IMAGENES/producto-1.jpg' },
@@ -674,6 +693,49 @@
             });
         }
 
+        // --- VIDEO SKIN CHANGER ---
+        const setVideoSkin = (index) => {
+            const video = document.getElementById('video-background');
+            const source = document.getElementById('video-source');
+            if(video && source){
+                video.style.opacity = 0;
+                setTimeout(() => {
+                    currentVideoIndex = index;
+                    source.src = videoSkins[currentVideoIndex].url;
+                    video.load();
+                    video.play().catch(e => console.error("Error playing video:", e));
+                    video.style.opacity = 1;
+                    localStorage.setItem('runaVideoSkin', currentVideoIndex);
+                    updateVideoListUI();
+                }, 500); // Wait for fade out
+            }
+        }
+
+        const updateVideoListUI = () => {
+            const videoListContainer = document.getElementById('video-list');
+            const buttons = videoListContainer.querySelectorAll('button');
+            buttons.forEach((button, index) => {
+                button.classList.toggle('active', index === currentVideoIndex);
+            });
+        }
+        
+        const initializeVideoSelector = () => {
+            const videoListContainer = document.getElementById('video-list');
+            if(!videoListContainer) return;
+            videoListContainer.innerHTML = '';
+
+            videoSkins.forEach((skin, index) => {
+                const button = document.createElement('button');
+                button.textContent = skin.name;
+                button.className = 'video-list-button w-full text-left p-2 rounded-lg transition-colors duration-200';
+                button.addEventListener('click', () => {
+                    setVideoSkin(index);
+                });
+                videoListContainer.appendChild(button);
+            });
+            updateVideoListUI();
+        }
+
         // --- DOMContentLoaded EVENT LISTENER ---
         document.addEventListener('DOMContentLoaded', async () => {
             // --- Firebase Initialization ---
@@ -729,13 +791,23 @@
             const mobileMenu = document.getElementById('mobile-menu');
             const mixerButton = document.getElementById('mixer-toggle-button');
             const mixerPanel = document.getElementById('mixer-panel');
+            const videoSkinButton = document.getElementById('video-skin-toggle');
+            const videoSkinPanel = document.getElementById('video-skin-panel');
+
             menuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
                 mixerPanel.classList.add('hidden');
+                videoSkinPanel.classList.add('hidden');
             });
             mixerButton.addEventListener('click', () => {
                 mixerPanel.classList.toggle('hidden');
                 mobileMenu.classList.add('hidden');
+                videoSkinPanel.classList.add('hidden');
+            });
+            videoSkinButton.addEventListener('click', () => {
+                videoSkinPanel.classList.toggle('hidden');
+                mobileMenu.classList.add('hidden');
+                mixerPanel.classList.add('hidden');
             });
             document.querySelectorAll('.mobile-nav-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
 
@@ -754,6 +826,17 @@
                 applyTheme(newTheme);
             });
             applyTheme(localStorage.getItem('theme') || 'dark');
+
+            // --- Video Skin Logic ---
+            const savedSkinIndex = parseInt(localStorage.getItem('runaVideoSkin')) || 0;
+            currentVideoIndex = savedSkinIndex;
+            const video = document.getElementById('video-background');
+            const source = document.getElementById('video-source');
+            source.src = videoSkins[currentVideoIndex].url;
+            video.load();
+            
+            initializeVideoSelector();
+
 
             // --- Modal & Cart Listeners ---
             document.getElementById('google-login-button-modal').addEventListener('click', () => {
