@@ -118,8 +118,6 @@
             background-color: transparent;
             --poster-color: transparent;
         }
-        
-        /* All styles related to the book cover overlay have been removed */
 
     </style>
 </head>
@@ -223,12 +221,12 @@
                             src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/3adedbe4ef07bc660c9861b775d87dd04a0d6bbe/public/assets/3D/libro.glb"
                             alt="Un libro 3D interactivo de Runa Coffee"
                             camera-controls
+                            auto-rotate
                             disable-zoom
-                            camera-orbit="15deg 80deg 1.5m"
+                            camera-orbit="15deg 80deg 2.5m"
                             shadow-intensity="1"
                             exposure="1">
                         </model-viewer>
-                        <!-- The book cover overlay has been removed -->
                     </div>
 
                     <div class="mt-10">
@@ -640,8 +638,6 @@
                     }
                 });
             }
-            
-            // --- All book viewer JS has been removed as it's no longer needed ---
 
             // --- Final Initializations ---
             initializeMixer();
