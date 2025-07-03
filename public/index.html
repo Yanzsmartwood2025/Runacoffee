@@ -58,6 +58,8 @@
         html:not(.dark) input[type="range"] { --track-background: #E2E8F0; }
         html:not(.dark) .cart-modal-content { background-color: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.1); }
         html:not(.dark) .video-list-button.active { background-color: rgba(0,0,0,0.1); }
+        html:not(.dark) .ghost-button { border-color: var(--runa-primary); color: var(--runa-primary); }
+        html:not(.dark) .ghost-button:hover { background-color: var(--runa-primary); color: white; }
         
         /* Dark Theme */
         html.dark body { background-color: #111; color: #E2E8F0; }
@@ -68,13 +70,19 @@
         html.dark .mixer-icon-button { background-color: #2D3748; border-color: #4A5568; }
         html.dark .mixer-icon-button.active { border-color: var(--runa-primary); }
         html.dark input[type="range"] { --track-background: #4A5568; }
-        html.dark .cart-modal-content { background-color: rgba(31, 41, 55, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
+        html.dark .cart-modal-content { background-color: rgba(17, 17, 17, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
         html.dark .video-list-button.active { background-color: rgba(255,255,255,0.15); }
+        html.dark .ghost-button { border-color: rgba(255, 255, 255, 0.8); color: white; }
+        html.dark .ghost-button:hover { background-color: rgba(255, 255, 255, 0.9); color: #111; }
 
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; }
         #video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: opacity 0.5s ease-in-out; }
-        #main-header { background-color: transparent; transition: background-color 0.4s ease, box-shadow 0.4s ease; }
-        .translucent-menu, .section-bg, footer, .cart-modal-content, .modern-button { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        
+        .translucent-menu, .section-bg, footer, .cart-modal-content, .whatsapp-fab { 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px); 
+        }
+
         #video-intro { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 10000; transition: opacity 0.75s ease-out, visibility 0.75s; }
         #video-intro.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         #page-content { opacity: 0; transition: opacity 0.75s ease-in; transition-delay: 0.2s; visibility: hidden; }
@@ -94,7 +102,6 @@
         .mixer-icon-button { border: 2px solid; transition: border-color 0.3s ease; display: flex; align-items: center; justify-content: center; }
         .mixer-icon-button img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- 3D Model Viewer Styles --- */
         .book-viewer-container {
             position: relative;
             width: 100%;
@@ -104,13 +111,8 @@
             cursor: grab;
             transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .book-viewer-container:hover {
-            transform: scale(1.05);
-        }
-        .book-viewer-container:active {
-            cursor: grabbing;
-        }
-
+        .book-viewer-container:hover { transform: scale(1.05); }
+        .book-viewer-container:active { cursor: grabbing; }
         #book-viewer {
             width: 100%;
             height: 100%;
@@ -119,19 +121,61 @@
             --poster-color: transparent;
         }
 
+        html:not(.dark) .whatsapp-fab {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        html.dark .whatsapp-fab {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Styling for the default AR button to match the ghost-button */
+        #ar-viewer::part(ar-button) {
+            border-width: 2px;
+            border-radius: 0.5rem; /* rounded-lg */
+            background: transparent;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700; /* font-bold */
+            font-size: 1.125rem; /* text-lg */
+            padding: 0.75rem 2rem; /* py-3 px-8 */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-lg */
+            transition: all 0.3s ease;
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+        }
+        #ar-viewer::part(ar-button):hover {
+            transform: scale(1.05);
+        }
+        html.dark #ar-viewer::part(ar-button) {
+            border-color: rgba(255, 255, 255, 0.8);
+            color: white;
+        }
+        html.dark #ar-viewer::part(ar-button):hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #111;
+        }
+        html:not(.dark) #ar-viewer::part(ar-button) {
+            border-color: var(--runa-primary);
+            color: var(--runa-primary);
+        }
+        html:not(.dark) #ar-viewer::part(ar-button):hover {
+            background-color: var(--runa-primary);
+            color: white;
+        }
+
     </style>
 </head>
 
 <body class="antialiased">
 
-    <!-- Fullscreen Video Background -->
     <div id="video-background-wrapper">
         <video id="video-background" autoplay loop muted playsinline>
             <source id="video-source" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/a3de99a321f33e21822225fda04f372c7033aad0/public/assets/videos/runa_video_fondo_1.mp4" type="video/mp4">
         </video>
     </div>
 
-    <!-- Intro Video -->
     <div id="video-intro">
         <video id="intro-video" class="fixed inset-0 w-full h-full object-contain bg-white" autoplay muted playsinline>
             <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-intro.mp4" type="video/mp4">
@@ -139,10 +183,9 @@
         </video>
     </div>
 
-    <!-- Page Content Wrapper -->
     <div id="page-content" class="relative z-10">
         
-        <header id="main-header" class="sticky top-0 left-0 right-0 z-40">
+        <header id="main-header" class="sticky top-0 left-0 right-0 z-40 translucent-menu">
             <nav class="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center h-20">
                 <div class="flex-1 flex justify-start items-center space-x-2 sm:space-x-4">
                     <button class="text-inherit p-2" id="menu-button" aria-label="Open menu">
@@ -209,7 +252,6 @@
                 </div>
             </section>
             
-            <!-- *** 3D MODEL SECTION *** -->
             <section id="runa-book-interactive" class="py-20 section-bg">
                 <div class="container mx-auto px-6 text-center">
                     <h2 class="text-3xl md:text-4xl font-bold mb-8">Nuestra Historia en 3D</h2>
@@ -224,12 +266,13 @@
                             auto-rotate
                             camera-orbit="15deg 80deg 2.5m"
                             shadow-intensity="1"
-                            exposure="1">
+                            exposure="1"
+                            loading="lazy">
                         </model-viewer>
                     </div>
 
                     <div class="mt-10">
-                        <a href="libro.html" class="modern-button inline-block bg-black/20 text-white font-bold text-lg px-8 py-3 rounded-lg border border-white/30 hover:bg-white/30 transition-all duration-300 transform hover:scale-105">
+                        <a href="libro.html" class="ghost-button inline-block bg-transparent border-2 font-bold text-lg px-8 py-3 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
                             Abrir Libro
                         </a>
                     </div>
@@ -250,10 +293,8 @@
                         camera-controls auto-rotate
                         alt="A 3D model of a stylized tree"
                         class="w-full h-96 rounded-lg"
-                        preload reveal="auto">
-                        <button slot="ar-button" class="modern-button absolute bottom-4 right-4 bg-black/20 text-white font-semibold px-6 py-3 rounded-lg border border-white/30 hover:bg-white/30 transition-all duration-300">
-                            Ver en tu espacio
-                        </button>
+                        loading="lazy" reveal="auto">
+                        <!-- The default AR button is now styled via CSS in the <head> -->
                     </model-viewer>
                     
                     <div id="ar-failure-message" class="hidden mt-4 text-center text-red-500 bg-red-900/50 p-3 rounded-lg">
@@ -285,14 +326,13 @@
                     </div>
                     <div>
                         <h3 class="text-2xl font-bold mb-4">Formas de Pago</h3>
-                        <div class="grid grid-cols-3 gap-6 items-center max-w-xs mx-auto md:mx-0">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Logo de Visa" title="Visa" class="h-4 w-full object-contain">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" alt="Logo de Mastercard" title="Mastercard" class="h-7 w-full object-contain">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/paypal-logo.png" alt="Logo de PayPal" title="PayPal" class="h-6 w-full object-contain">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/nequi-logo.png" alt="Logo de Nequi" title="Nequi" class="h-6 w-full object-contain">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/bancolombia-logo.png" alt="Logo de Bancolombia" title="Bancolombia" class="h-8 w-full object-contain">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/binance-pay-logo.png" alt="Logo de Binance Pay" title="Binance Pay" class="h-8 w-full object-contain">
+                        <div id="payment-logos" class="flex justify-center md:justify-start flex-wrap items-center gap-x-6 gap-y-4">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/nequi-logo.png" alt="Logo de Nequi" class="h-6 object-contain">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/bancolombia-logo.png" alt="Logo de Bancolombia" class="h-9 object-contain">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/binance-pay-logo.png" alt="Logo de Binance Pay" class="h-10 object-contain">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/paypal-logo.png" alt="Logo de PayPal" class="h-7 object-contain">
                         </div>
+                        <p class="text-xs text-gray-400 mt-2">Pagos seguros a través de nuestra plataforma.</p>
                     </div>
                 </div>
                 <div class="border-t border-gray-700 py-6 mt-8 text-center text-xs text-gray-400">
@@ -307,8 +347,12 @@
         </footer>
     </div>
     
-    <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." class="fixed bottom-6 right-6 z-50 bg-green-500 rounded-full w-16 h-16 shadow-lg hover:bg-green-600 transition-transform hover:scale-110 flex items-center justify-center overflow-hidden" target="_blank">
-        <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.916-.539-5.574-1.54L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.267.655 4.398 1.908 6.166l-1.138 4.167 4.274-1.12z"/></svg>
+    <!-- WHATSAPP BUTTON: UPDATED with the image you provided -->
+    <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." 
+       class="whatsapp-fab fixed bottom-6 right-6 z-50 rounded-full w-16 h-16 shadow-lg flex items-center justify-center p-4 transition-all duration-300 transform hover:scale-110" 
+       target="_blank" 
+       aria-label="Contactar por WhatsApp">
+       <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/26548b0b3ba43b9b8337c561fd153a54b746325d/public/assets/imagenes/Icono-whatsapp.png" alt="WhatsApp" class="w-full h-full">
     </a>
     
     <!-- Audio Elements -->
@@ -321,7 +365,7 @@
     <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
 
     <!-- Modals -->
-    <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-4 bg-black/70 backdrop-blur-sm hidden"></div>
+    <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-0 sm:p-4 bg-black/70 backdrop-blur-sm hidden"></div>
     <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
        <div class="w-full max-w-xs bg-[#1a1310] rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
             <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors">
@@ -345,6 +389,7 @@
         let app, auth, db;
         let currentUser = null;
         let userId = null;
+        let cart = [];
 
         const videoSkins = [
             { name: "Cosecha de Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/a3de99a321f33e21822225fda04f372c7033aad0/public/assets/videos/runa_video_fondo_1.mp4" },
@@ -362,12 +407,78 @@
             { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
         ];
         
-        // --- DOM ELEMENTS ---
         const authContainer = document.getElementById('auth-container');
         const authModal = document.getElementById('auth-modal');
         const cartModal = document.getElementById('cart-modal');
+        const cartCounter = document.getElementById('cart-counter');
 
-        // --- AUTHENTICATION FUNCTIONS ---
+        const updateCartCounter = () => {
+            if (cart.length > 0) {
+                cartCounter.textContent = cart.length;
+                cartCounter.classList.remove('hidden');
+            } else {
+                cartCounter.classList.add('hidden');
+            }
+        };
+
+        const renderCartModal = () => {
+            if (cart.length === 0) {
+                cartModal.innerHTML = `
+                    <div class="cart-modal-content w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col modal-enter ml-auto">
+                        <header class="p-4 border-b border-white/10 flex justify-between items-center">
+                            <h2 class="text-xl font-bold">Tu Carrito</h2>
+                            <button id="close-cart-button" class="p-1 rounded-full hover:bg-white/10 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </header>
+                        <div class="p-8 flex-grow flex flex-col items-center justify-center text-center">
+                            <svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            <h3 class="font-semibold text-lg">Tu carrito está vacío</h3>
+                            <p class="text-sm text-gray-400">Añade productos para verlos aquí.</p>
+                        </div>
+                    </div>`;
+            } else {
+                const itemsHTML = cart.map(item => `
+                    <div class="flex items-center justify-between gap-4 py-3 border-b border-white/10">
+                        <span class="font-semibold truncate">${item.name}</span>
+                        <span class="flex-shrink-0">${item.price.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                    </div>
+                `).join('');
+
+                const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+                cartModal.innerHTML = `
+                    <div class="cart-modal-content w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col modal-enter ml-auto">
+                        <header class="p-4 border-b border-white/10 flex justify-between items-center">
+                            <h2 class="text-xl font-bold">Tu Carrito</h2>
+                            <button id="close-cart-button" class="p-1 rounded-full hover:bg-white/10 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </header>
+                        <div class="p-4 flex-grow overflow-y-auto">${itemsHTML}</div>
+                        <footer class="p-4 border-t border-white/10 space-y-4">
+                            <div class="flex justify-between font-bold text-lg">
+                                <span>Total:</span>
+                                <span>${total.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                            </div>
+                            <a href="productos.html" class="w-full text-center block bg-[var(--runa-primary)] text-white font-bold px-6 py-3 rounded-lg shadow-lg hover:bg-[var(--runa-secondary)] transition-colors duration-300">
+                                Proceder al Pago
+                            </a>
+                        </footer>
+                    </div>`;
+            }
+            document.getElementById('close-cart-button').addEventListener('click', closeCart);
+        };
+
+        const openCart = () => {
+            renderCartModal();
+            cartModal.classList.remove('hidden');
+        };
+
+        const closeCart = () => {
+            cartModal.classList.add('hidden');
+        };
+
         const authStateObserver = async (user) => {
             currentUser = user;
             if (user && !user.isAnonymous) {
@@ -397,7 +508,6 @@
             document.getElementById('open-auth-modal-button').addEventListener('click', () => authModal.classList.remove('hidden'));
         };
 
-        // --- SOUND MIXER FUNCTIONS ---
         let audioElements = {};
         
         const initializeMixer = () => {
@@ -475,7 +585,6 @@
             });
         }
 
-        // --- VIDEO SKIN CHANGER ---
         const setVideoSkin = (index) => {
             const video = document.getElementById('video-background');
             const source = document.getElementById('video-source');
@@ -519,9 +628,7 @@
             updateVideoListUI();
         }
 
-        // --- DOMContentLoaded EVENT LISTENER ---
         document.addEventListener('DOMContentLoaded', async () => {
-            // --- Firebase Initialization ---
             const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
             const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
             const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
@@ -539,7 +646,6 @@
                 console.error("Error initializing Firebase:", e);
             }
 
-            // --- Auth Initialization ---
             authContainer.innerHTML = `<div class="w-9 h-9 rounded-full bg-gray-700 animate-pulse"></div>`;
             if (auth) {
                 try {
@@ -553,7 +659,6 @@
                 authStateObserver(null);
             }
 
-            // --- Intro Video Logic ---
             const videoIntro = document.getElementById('video-intro');
             const introVideo = document.getElementById('intro-video');
             const pageContent = document.getElementById('page-content');
@@ -569,7 +674,6 @@
             setTimeout(endIntro, 5500);
             introVideo.play().catch(endIntro);
 
-            // --- UI Event Listeners ---
             const menuButton = document.getElementById('menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             const mixerButton = document.getElementById('mixer-toggle-button');
@@ -591,8 +695,6 @@
             document.querySelectorAll('.mobile-nav-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
             window.addEventListener('click', closeAllPanels);
 
-
-            // --- Theme Toggle Logic ---
             const themeToggle = document.getElementById('theme-toggle');
             const sunIcon = document.getElementById('theme-icon-sun');
             const moonIcon = document.getElementById('theme-icon-moon');
@@ -608,7 +710,6 @@
             });
             applyTheme(localStorage.getItem('theme') || 'dark');
 
-            // --- Video Skin Logic ---
             const savedSkinIndex = parseInt(localStorage.getItem('runaVideoSkin')) || 0;
             currentVideoIndex = savedSkinIndex;
             const video = document.getElementById('video-background');
@@ -618,7 +719,9 @@
                 video.load();
             }
             
-            // --- Modal Listeners ---
+            document.getElementById('open-cart-button').addEventListener('click', openCart);
+            cartModal.addEventListener('click', (event) => { if (event.target === cartModal) closeCart(); });
+            
             document.getElementById('google-login-button-modal').addEventListener('click', () => {
                 if (!auth) return;
                 const provider = new GoogleAuthProvider();
@@ -629,7 +732,6 @@
             document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
             authModal.addEventListener('click', (event) => { if (event.target === authModal) authModal.classList.add('hidden'); });
             
-            // --- 3D & AR Model Listeners ---
             const arViewer = document.getElementById('ar-viewer');
             if(arViewer) {
                 arViewer.addEventListener('ar-status', (event) => {
@@ -639,7 +741,6 @@
                 });
             }
 
-            // --- Final Initializations ---
             initializeMixer();
             initializeVideoSelector();
             document.getElementById('year').textContent = new Date().getFullYear();
