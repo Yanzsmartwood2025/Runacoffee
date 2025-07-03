@@ -50,13 +50,11 @@
         /* Light Theme */
         html:not(.dark) body { background-color: #FDFBF8; color: #3a2e2a; }
         html:not(.dark) h1, html:not(.dark) h2, html:not(.dark) h3, html:not(.dark) h4 { color: #2c221f; }
-        html:not(.dark) .translucent-menu { background-color: rgba(255, 255, 255, 0.5); border-color: rgba(0,0,0,0.1); }
-        html:not(.dark) .section-bg { background-color: rgba(255, 255, 255, 0.5); border-color: rgba(0,0,0,0.1); }
+        html:not(.dark) .translucent-bg { background-color: rgba(255, 255, 255, 0.5); border-color: rgba(0,0,0,0.1); }
         html:not(.dark) footer { background-color: #F4F1ED; }
         html:not(.dark) .mixer-icon-button { background-color: #F4F1ED; border-color: #E2E8F0; }
         html:not(.dark) .mixer-icon-button.active { border-color: var(--runa-primary); }
         html:not(.dark) input[type="range"] { --track-background: #E2E8F0; }
-        html:not(.dark) .cart-modal-content { background-color: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.1); }
         html:not(.dark) .video-list-button.active { background-color: rgba(0,0,0,0.1); }
         html:not(.dark) .ghost-button { border-color: var(--runa-primary); color: var(--runa-primary); }
         html:not(.dark) .ghost-button:hover { background-color: var(--runa-primary); color: white; }
@@ -64,13 +62,11 @@
         /* Dark Theme */
         html.dark body { background-color: #111; color: #E2E8F0; }
         html.dark h1, html.dark h2, html.dark h3, html.dark h4 { color: #FFFFFF; }
-        html.dark .translucent-menu { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.1); }
-        html.dark .section-bg { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.1); }
+        html.dark .translucent-bg { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.1); }
         html.dark footer { background-color: rgba(0, 0, 0, 0.5); }
         html.dark .mixer-icon-button { background-color: #2D3748; border-color: #4A5568; }
         html.dark .mixer-icon-button.active { border-color: var(--runa-primary); }
         html.dark input[type="range"] { --track-background: #4A5568; }
-        html.dark .cart-modal-content { background-color: rgba(17, 17, 17, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
         html.dark .video-list-button.active { background-color: rgba(255,255,255,0.15); }
         html.dark .ghost-button { border-color: rgba(255, 255, 255, 0.8); color: white; }
         html.dark .ghost-button:hover { background-color: rgba(255, 255, 255, 0.9); color: #111; }
@@ -78,7 +74,7 @@
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; }
         #video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: opacity 0.5s ease-in-out; }
         
-        .translucent-menu, .section-bg, footer, .cart-modal-content, .whatsapp-fab { 
+        .translucent-bg, footer, .whatsapp-fab { 
             backdrop-filter: blur(16px); 
             -webkit-backdrop-filter: blur(16px); 
         }
@@ -185,7 +181,7 @@
 
     <div id="page-content" class="relative z-10">
         
-        <header id="main-header" class="sticky top-0 left-0 right-0 z-40 translucent-menu">
+        <header id="main-header" class="sticky top-0 left-0 right-0 z-40 translucent-bg">
             <nav class="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center h-20">
                 <div class="flex-1 flex justify-start items-center space-x-2 sm:space-x-4">
                     <button class="text-inherit p-2" id="menu-button" aria-label="Open menu">
@@ -222,7 +218,7 @@
                 </div>
             </nav>
             
-            <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t translucent-menu">
+            <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t translucent-bg">
                 <div class="container mx-auto px-6 py-4 space-y-3">
                         <a href="#runa-book-interactive" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Libro de Origen</a>
                         <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
@@ -230,14 +226,14 @@
                 </div>
             </div>
 
-            <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t translucent-menu">
+            <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t translucent-bg">
                 <div class="container mx-auto px-6 py-4">
                     <h3 class="font-semibold text-lg mb-4">Mezclador de Ambiente</h3>
                     <div id="sound-controls" class="space-y-4"></div>
                 </div>
             </div>
             
-            <div id="video-skin-panel" class="hidden absolute w-full shadow-lg border-t translucent-menu">
+            <div id="video-skin-panel" class="hidden absolute w-full shadow-lg border-t translucent-bg">
                 <div class="container mx-auto px-6 py-4">
                     <h3 class="font-semibold text-lg mb-4">Selector de Video de Fondo</h3>
                     <div id="video-list" class="space-y-2"></div>
@@ -252,7 +248,7 @@
                 </div>
             </section>
             
-            <section id="runa-book-interactive" class="py-20 section-bg">
+            <section id="runa-book-interactive" class="py-20 translucent-bg">
                 <div class="container mx-auto px-6 text-center">
                     <h2 class="text-3xl md:text-4xl font-bold mb-8">Nuestra Historia en 3D</h2>
                     <p class="max-w-2xl mx-auto mb-10">Interactúa con nuestro libro. Haz clic en el botón para sumergirte en el mundo de Runa.</p>
@@ -264,7 +260,7 @@
                             alt="Un libro 3D interactivo de Runa Coffee"
                             camera-controls
                             auto-rotate
-                            camera-orbit="15deg 80deg 2.5m"
+                            camera-orbit="15deg 80deg 3.5m"
                             shadow-intensity="1"
                             exposure="1"
                             loading="lazy">
@@ -279,7 +275,7 @@
                 </div>
             </section>
             
-            <section id="experiencia-3d" class="py-20 section-bg">
+            <section id="experiencia-3d" class="py-20 translucent-bg">
                 <div class="container mx-auto px-6 text-center">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">Vive la Experiencia 3D</h2>
                     <p class="max-w-3xl mx-auto text-inherit mb-12">
@@ -365,10 +361,12 @@
     <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
 
     <!-- Modals -->
-    <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-0 sm:p-4 bg-black/70 backdrop-blur-sm hidden"></div>
-    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
-       <div class="w-full max-w-xs bg-[#1a1310] rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
-            <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors">
+    <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-0 sm:p-4 bg-black/60 hidden">
+        <!-- Content injected by JS -->
+    </div>
+    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
+       <div class="translucent-bg w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
+            <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             <h2 class="text-2xl font-bold text-white mb-2">Bienvenido a Runa</h2>
@@ -424,20 +422,13 @@
         };
 
         const renderCartModal = () => {
+            let contentHTML = '';
             if (cart.length === 0) {
-                cartModal.innerHTML = `
-                    <div class="cart-modal-content w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col modal-enter ml-auto">
-                        <header class="p-4 border-b border-white/10 flex justify-between items-center">
-                            <h2 class="text-xl font-bold">Tu Carrito</h2>
-                            <button id="close-cart-button" class="p-1 rounded-full hover:bg-white/10 transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
-                        </header>
-                        <div class="p-8 flex-grow flex flex-col items-center justify-center text-center">
-                            <svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                            <h3 class="font-semibold text-lg">Tu carrito está vacío</h3>
-                            <p class="text-sm text-gray-400">Añade productos para verlos aquí.</p>
-                        </div>
+                contentHTML = `
+                    <div class="p-8 flex-grow flex flex-col items-center justify-center text-center">
+                        <svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <h3 class="font-semibold text-lg">Tu carrito está vacío</h3>
+                        <p class="text-sm text-gray-400">Añade productos para verlos aquí.</p>
                     </div>`;
             } else {
                 const itemsHTML = cart.map(item => `
@@ -446,29 +437,31 @@
                         <span class="flex-shrink-0">${item.price.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
                     </div>
                 `).join('');
-
                 const total = cart.reduce((sum, item) => sum + item.price, 0);
-
-                cartModal.innerHTML = `
-                    <div class="cart-modal-content w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col modal-enter ml-auto">
-                        <header class="p-4 border-b border-white/10 flex justify-between items-center">
-                            <h2 class="text-xl font-bold">Tu Carrito</h2>
-                            <button id="close-cart-button" class="p-1 rounded-full hover:bg-white/10 transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
-                        </header>
-                        <div class="p-4 flex-grow overflow-y-auto">${itemsHTML}</div>
-                        <footer class="p-4 border-t border-white/10 space-y-4">
-                            <div class="flex justify-between font-bold text-lg">
-                                <span>Total:</span>
-                                <span>${total.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
-                            </div>
-                            <a href="productos.html" class="w-full text-center block bg-[var(--runa-primary)] text-white font-bold px-6 py-3 rounded-lg shadow-lg hover:bg-[var(--runa-secondary)] transition-colors duration-300">
-                                Proceder al Pago
-                            </a>
-                        </footer>
-                    </div>`;
+                contentHTML = `
+                    <div class="p-4 flex-grow overflow-y-auto">${itemsHTML}</div>
+                    <footer class="p-4 border-t border-white/10 space-y-4">
+                        <div class="flex justify-between font-bold text-lg">
+                            <span>Total:</span>
+                            <span>${total.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                        </div>
+                        <a href="productos.html" class="w-full text-center block bg-[var(--runa-primary)] text-white font-bold px-6 py-3 rounded-lg shadow-lg hover:bg-[var(--runa-secondary)] transition-colors duration-300">
+                            Proceder al Pago
+                        </a>
+                    </footer>`;
             }
+
+            cartModal.innerHTML = `
+                <div class="translucent-bg w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col modal-enter ml-auto">
+                    <header class="p-4 border-b border-white/10 flex justify-between items-center">
+                        <h2 class="text-xl font-bold">Tu Carrito</h2>
+                        <button id="close-cart-button" class="p-1 rounded-full hover:bg-white/10 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </header>
+                    ${contentHTML}
+                </div>`;
+
             document.getElementById('close-cart-button').addEventListener('click', closeCart);
         };
 
@@ -497,7 +490,7 @@
 
         const renderUserUI = (user) => {
             const userImage = user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" class="w-full h-full object-cover">` : `<span class="text-white font-bold text-xl">${user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}</span>`;
-            authContainer.innerHTML = `<div class="relative"><button id="user-menu-button" title="Mi Cuenta" class="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm overflow-hidden border-2 border-gray-600 hover:border-[var(--runa-primary)] bg-gray-700">${userImage}</button><div id="user-menu-dropdown" class="hidden absolute top-full left-0 mt-2 w-56 translucent-menu border rounded-lg shadow-xl z-50"><div class="px-4 py-3 border-b"><p class="text-sm font-semibold truncate">${user.displayName || 'Usuario'}</p><p class="text-xs truncate">${user.email || 'Sin email'}</p></div><div class="py-1"><a href="#" id="logout-button-menu" class="flex items-center w-full text-left px-4 py-2 text-sm hover:text-[var(--runa-primary)] transition-colors">Cerrar Sesión</a></div></div></div>`;
+            authContainer.innerHTML = `<div class="relative"><button id="user-menu-button" title="Mi Cuenta" class="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm overflow-hidden border-2 border-gray-600 hover:border-[var(--runa-primary)] bg-gray-700">${userImage}</button><div id="user-menu-dropdown" class="hidden absolute top-full left-0 mt-2 w-56 translucent-bg border rounded-lg shadow-xl z-50"><div class="px-4 py-3 border-b"><p class="text-sm font-semibold truncate">${user.displayName || 'Usuario'}</p><p class="text-xs truncate">${user.email || 'Sin email'}</p></div><div class="py-1"><a href="#" id="logout-button-menu" class="flex items-center w-full text-left px-4 py-2 text-sm hover:text-[var(--runa-primary)] transition-colors">Cerrar Sesión</a></div></div></div>`;
             document.getElementById('logout-button-menu').addEventListener('click', (e) => { e.preventDefault(); if(auth) signOut(auth); });
             const userMenuButton = document.getElementById('user-menu-button');
             const userMenuDropdown = document.getElementById('user-menu-dropdown');
