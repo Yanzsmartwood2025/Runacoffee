@@ -288,7 +288,7 @@
                     
                     <model-viewer id="ar-viewer"
                         src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
-                        ios-src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/3D/arbol_final.usdz"
+                        ios-src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets%20/3D/arbol_final.usdz"
                         ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto"
                         camera-controls auto-rotate
                         alt="A 3D model of a stylized tree"
@@ -392,12 +392,12 @@
         let cart = [];
 
         const videoSkins = [
+            { name: "Cascada Relajante", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6f62706564d388e3be21a789354687df8b6a7dcb/public/assets/videos/Skin3-cascada.mp4" },
             { name: "Cosecha de Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/a3de99a321f33e21822225fda04f372c7033aad0/public/assets/videos/runa_video_fondo_1.mp4" },
-            { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" },
-            { name: "Cascada Relajante", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/6f62706564d388e3be21a789354687df8b6a7dcb/public/assets/videos/Skin3-cascada.mp4" }
+            { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" }
         ];
-        // Set the default video index to 2 (Cascada Relajante)
-        let currentVideoIndex = 2;
+        
+        let currentVideoIndex = 0;
 
         const ambienceSounds = [
             { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
@@ -712,8 +712,8 @@
             });
             applyTheme(localStorage.getItem('theme') || 'dark');
 
-            // Check for a saved skin, but default to 2 (the waterfall) if none is found.
-            const savedSkinIndex = parseInt(localStorage.getItem('runaVideoSkin')) || 2;
+            // Check for a saved skin, but default to 0 (the new first video) if none is found.
+            const savedSkinIndex = parseInt(localStorage.getItem('runaVideoSkin')) || 0;
             currentVideoIndex = savedSkinIndex;
             const video = document.getElementById('video-background');
             const source = document.getElementById('video-source');
