@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Digital Interactivo</title>
+    
+    <!-- 1. Incluir jQuery, Turn.js y TailwindCSS -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- 2. Estilos CSS optimizados para página única -->
+    <style type="text/css">
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #2d2d2d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Contenedor optimizado para vista de retrato (móvil) */
+        .flipbook-container {
+            width: 95vw;
+            height: 90vh;
+            max-width: 500px; /* Ancho máximo para una sola página */
+            max-height: 800px;
+            position: relative;
+        }
+
+        .flipbook {
+            width: 100%;
+            height: 100%;
+        }
+
+        .flipbook .page {
+            background-color: white;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: relative;
+            color: white;
+            padding: 2em;
+            overflow: hidden;
+        }
+        
+        .flipbook .hard {
+            background-color: #1c1c1c;
+            box-shadow: inset 0 0 5px #666;
+        }
+
+        .cover-page {
+            background-image: url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/portada-libro.jpg);
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+        }
+
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            position: absolute;
+            bottom: 5%;
+            right: 8%;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: clamp(1.5rem, 4vw, 2.5rem); /* Ajustado para mejor visibilidad */
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+            transform: rotate(-5deg);
+        }
+
+        .page .content-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.65);
+            padding: 30px; /* Un poco menos de padding para más espacio */
+            box-sizing: border-box;
+            overflow-y: auto;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.7);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .video-page .content-overlay {
+            padding: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-button {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 20%; /* Área de clic ancha para móviles */
+            z-index: 10;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .flipbook-container:hover .nav-button {
+            opacity: 1;
+        }
+        .nav-button i {
+            color: white;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px rgba(0,0,0,0.7);
+        }
+        #prev-page { left: -10%; } /* Posicionado ligeramente fuera para no obstruir */
+        #next-page { right: -10%; }
+
+        /* Media query para pantallas más grandes */
+        @media (min-width: 640px) {
+            #prev-page { left: 0; }
+            #next-page { right: 0; }
+            .nav-button i { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="flipbook-container">
+    <div class="flipbook">
+        <!-- Contenido del libro (sin cambios en la estructura) -->
+        <!-- 1. Portada -->
+        <div class="hard cover-page">
+            <div class="signature">escrito por Josephine</div>
+        </div>
+        
+        <!-- 2. Página 2: Introducción -->
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
+            <div class="content-overlay">
+                <h2 class="text-3xl font-bold mb-4">Bienvenido</h2>
+                <p>Esta es la historia de Runa Coffee, una marca que fusiona la magia ancestral con la innovación del futuro.</p>
+            </div>
+            <div class="page-number">2</div>
+        </div>
+        
+        <!-- 3. Página 3: Orígenes -->
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
+            <div class="content-overlay">
+                <h2 class="text-3xl font-bold mb-4">Orígenes</h2>
+                <p>Nuestro café crece en tierras sagradas, nutrido por la naturaleza y el conocimiento de generaciones.</p>
+            </div>
+            <div class="page-number">3</div>
+        </div>
+        
+        <!-- 4. Página 4: Perfil de Sabor -->
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
+            <div class="content-overlay">
+                <h2 class="text-3xl font-bold mb-4">Sabor</h2>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>Aroma:</strong> Floral y cítrico.</li>
+                    <li><strong>Sabor:</strong> Panela, naranja y cacao.</li>
+                    <li><strong>Cuerpo:</strong> Sedoso y completo.</li>
+                </ul>
+            </div>
+            <div class="page-number">4</div>
+        </div>
+
+        <!-- 5. Página 5: Comunidad -->
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
+            <div class="content-overlay justify-center items-center text-center">
+                <h2 class="text-3xl font-bold mb-4">Comunidad</h2>
+                <p class="mb-6">Síguenos en nuestras redes.</p>
+                <div class="flex space-x-6 text-4xl">
+                    <a href="#" class="text-white hover:text-green-400"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-white hover:text-green-400"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-white hover:text-green-400"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="page-number">5</div>
+        </div>
+
+        <!-- 6. Página 6: Portal de Juegos -->
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
+            <div class="content-overlay justify-center items-center text-center">
+                <h2 class="text-5xl font-bold mb-4">Juegos</h2>
+                <p class="mb-8 text-xl">La aventura te espera.</p>
+                <a href="juegos.html" target="_blank" class="action-button bg-purple-600 hover:bg-purple-700">
+                    <i class="fas fa-gamepad mr-3"></i>Jugar
+                </a>
+            </div>
+            <div class="page-number">6</div>
+        </div>
+
+        <!-- 7. Página 7: Video Inmersivo -->
+        <div class="page video-page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
+            <div class="content-overlay">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=0&mute=1&loop=1&playlist=jfKfPfyJRdk&controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="page-number">7</div>
+        </div>
+
+        <!-- 8. Página 8: Tienda -->
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
+            <div class="content-overlay justify-center items-center space-y-4 text-center">
+                <h2 class="text-4xl font-bold mb-4">Tienda</h2>
+                <a href="#" class="action-button bg-red-500"><i class="fas fa-store mr-3"></i>Visitar</a>
+            </div>
+            <div class="page-number">8</div>
+        </div>
+        
+        <!-- 9. Página 9: IA -->
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
+            <div class="content-overlay justify-center items-center space-y-4 text-center">
+                <h2 class="text-4xl font-bold mb-4">IA</h2>
+                <a href="#" class="action-button bg-blue-500"><i class="fas fa-robot mr-3"></i>Explorar</a>
+            </div>
+            <div class="page-number">9</div>
+        </div>
+        
+        <!-- 10. Página 10: Contacto -->
+         <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
+            <div class="content-overlay">
+                <h2 class="text-3xl font-bold mb-4">Contacto</h2>
+                <p><strong>Email:</strong> <a href="mailto:hola@runacoffee.com" class="text-green-400 hover:underline">hola@runacoffee.com</a></p>
+                <p><strong>Teléfono:</strong> +123 456 7890</p>
+            </div>
+            <div class="page-number">10</div>
+        </div>
+
+        <!-- 11. Página 11: Página final en negro -->
+        <div class="page" style="background-color: #1c1c1c;">
+             <div class="page-number">11</div>
+        </div>
+
+        <!-- 12. Contraportada -->
+        <div class="hard"></div>
+    </div>
+
+    <!-- Botones de Navegación -->
+    <div id="prev-page" class="nav-button">
+        <i class="fas fa-chevron-left"></i>
+    </div>
+    <div id="next-page" class="nav-button">
+        <i class="fas fa-chevron-right"></i>
+    </div>
+</div>
+
+<!-- Script de Turn.js y Navegación -->
+<script type="text/javascript">
+    function loadApp() {
+        var flipbook = $('.flipbook');
+
+        // Inicializar Turn.js
+        flipbook.turn({
+            width: $('.flipbook-container').width(),
+            height: $('.flipbook-container').height(),
+            display: 'single', // <-- CAMBIO CLAVE: Muestra una página a la vez
+            elevation: 50,
+            gradients: true,
+            autoCenter: true,
+        });
+
+        // Ajustar tamaño en redimensionamiento de ventana
+        $(window).on('resize', function() {
+            var container = $('.flipbook-container');
+            // Recalcular el tamaño para la vista de página única
+            flipbook.turn('size', container.width(), container.height());
+        }).trigger('resize');
+
+        // Navegación con teclas de flecha
+        $(document).keydown(function(e){
+            if (e.keyCode == 37) { // Flecha izquierda
+                flipbook.turn('previous');
+            } else if (e.keyCode == 39) { // Flecha derecha
+                flipbook.turn('next');
+            }
+        });
+
+        // Navegación con clic en botones
+        $('#prev-page').on('click', function() {
+            flipbook.turn('previous');
+        });
+
+        $('#next-page').on('click', function() {
+            flipbook.turn('next');
+        });
+    }
+
+    $(window).on('load', loadApp);
+</script>
+
+</body>
+</html>
