@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Digital Interactivo</title>
+    <title>Cuaderno Digital Interactivo - RUNA Coffee</title>
     
     <!-- 1. Incluir jQuery, Turn.js y TailwindCSS -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- 2. Estilos CSS optimizados para página única -->
+    <!-- 2. Estilos CSS -->
     <style type="text/css">
         body {
             font-family: 'Inter', sans-serif;
@@ -30,11 +30,10 @@
             overflow: hidden;
         }
 
-        /* Contenedor optimizado para vista de retrato (móvil) */
         .flipbook-container {
             width: 95vw;
             height: 90vh;
-            max-width: 500px; /* Ancho máximo para una sola página */
+            max-width: 500px;
             max-height: 800px;
             position: relative;
         }
@@ -52,7 +51,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             position: relative;
             color: white;
-            padding: 2em;
             overflow: hidden;
         }
         
@@ -68,31 +66,13 @@
             background-position: center !important;
         }
 
-        .signature {
-            font-family: 'Dancing Script', cursive;
-            position: absolute;
-            bottom: 5%;
-            right: 8%;
-            color: rgba(255, 255, 255, 0.85);
-            font-size: clamp(1.5rem, 4vw, 2.5rem); /* Ajustado para mejor visibilidad */
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
-            transform: rotate(-5deg);
-        }
-
         .page .content-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.65);
-            padding: 30px; /* Un poco menos de padding para más espacio */
-            box-sizing: border-box;
+            inset: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 25px; 
             overflow-y: auto;
-            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
+            border-radius: 5px;
         }
 
         .page-number {
@@ -102,247 +82,449 @@
             transform: translateX(-50%);
             font-size: 0.9em;
             color: rgba(255, 255, 255, 0.7);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
-        
-        .action-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            cursor: pointer;
-        }
-        .action-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-        
-        .video-page .content-overlay {
-            padding: 20px;
-            justify-content: center;
-            align-items: center;
-        }
-        .video-container {
-            position: relative;
-            width: 100%;
-            height: 0;
-            padding-bottom: 56.25%;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
-        }
-        .video-container iframe {
+
+        /* --- Estilos para Herramientas Interactivas --- */
+        .drawing-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            cursor: crosshair;
+            touch-action: none;
         }
 
-        .nav-button {
-            position: absolute;
-            top: 0;
-            height: 100%;
-            width: 20%; /* Área de clic ancha para móviles */
-            z-index: 10;
-            cursor: pointer;
+        .top-toolbar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        #menu-toggle {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .flipbook-container:hover .nav-button {
-            opacity: 1;
-        }
-        .nav-button i {
             color: white;
-            font-size: 2.5rem;
-            text-shadow: 0 0 10px rgba(0,0,0,0.7);
+            font-size: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease;
         }
-        #prev-page { left: -10%; } /* Posicionado ligeramente fuera para no obstruir */
-        #next-page { right: -10%; }
 
-        /* Media query para pantallas más grandes */
-        @media (min-width: 640px) {
-            #prev-page { left: 0; }
-            #next-page { right: 0; }
-            .nav-button i { font-size: 3rem; }
+        .tools-sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background-color: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+            z-index: 999;
+            transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            color: white;
+            overflow-y: auto;
         }
+        .tools-sidebar.open {
+            right: 0;
+        }
+        
+        .tool-section { margin-bottom: 25px; }
+        .tool-section h3 {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 8px;
+        }
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 15px;
+        }
+        .tool-button {
+            width: 55px;
+            height: 55px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: 1px solid transparent;
+        }
+        .tool-button i { font-size: 20px; margin-bottom: 5px; }
+        .tool-button:hover { background-color: rgba(138, 43, 226, 0.5); }
+        .tool-button.active { background-color: #8a2be2; border-color: rgba(255,255,255,0.5); }
+        .tool-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        .tool-button:disabled:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .color-palette { display: flex; gap: 10px; margin-top: 15px; }
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.2s;
+        }
+        .color-swatch.active { border-color: white; }
+
+        /* --- Calculadora --- */
+        .calculator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            background: #222;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 20px;
+            z-index: 1001;
+            display: none;
+        }
+        .calc-header { cursor: move; padding-bottom: 10px; color: white; display:flex; justify-content:space-between; align-items:center; }
+        .calc-header .close-btn { cursor: pointer; font-size: 1.2rem; }
+        .calc-display { width: 100%; background: #333; color: white; border: none; border-radius: 8px; padding: 15px; text-align: right; font-size: 2.5rem; margin-bottom: 15px; }
+        .calc-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .calc-btn { background: #555; color: white; border: none; border-radius: 8px; padding: 20px; font-size: 1.2rem; cursor: pointer; transition: background-color 0.2s; }
+        .calc-btn.operator { background: #f9a825; }
+
+        /* Estilos de impresión */
+        @media print {
+            body * { visibility: hidden; }
+            .flipbook-container, .flipbook-container * { visibility: visible; }
+            .top-toolbar, .tools-sidebar { display: none; }
+        }
+
     </style>
 </head>
 <body>
 
+<!-- Elementos Ocultos -->
+<input type="file" id="image-uploader" accept="image/*" style="display: none;">
+
+<!-- Contenedor del Libro -->
 <div class="flipbook-container">
     <div class="flipbook">
-        <!-- Contenido del libro (sin cambios en la estructura) -->
-        <!-- 1. Portada -->
-        <div class="hard cover-page">
-            <div class="signature">escrito por Josephine</div>
-        </div>
-        
-        <!-- 2. Página 2: Introducción -->
-        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
-            <div class="content-overlay">
-                <h2 class="text-3xl font-bold mb-4">Bienvenido</h2>
-                <p>Esta es la historia de Runa Coffee, una marca que fusiona la magia ancestral con la innovación del futuro.</p>
-            </div>
-            <div class="page-number">2</div>
-        </div>
-        
-        <!-- 3. Página 3: Orígenes -->
-        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
-            <div class="content-overlay">
-                <h2 class="text-3xl font-bold mb-4">Orígenes</h2>
-                <p>Nuestro café crece en tierras sagradas, nutrido por la naturaleza y el conocimiento de generaciones.</p>
-            </div>
-            <div class="page-number">3</div>
-        </div>
-        
-        <!-- 4. Página 4: Perfil de Sabor -->
-        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
-            <div class="content-overlay">
-                <h2 class="text-3xl font-bold mb-4">Sabor</h2>
-                <ul class="list-disc list-inside space-y-2">
-                    <li><strong>Aroma:</strong> Floral y cítrico.</li>
-                    <li><strong>Sabor:</strong> Panela, naranja y cacao.</li>
-                    <li><strong>Cuerpo:</strong> Sedoso y completo.</li>
-                </ul>
-            </div>
-            <div class="page-number">4</div>
-        </div>
-
-        <!-- 5. Página 5: Comunidad -->
-        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
-            <div class="content-overlay justify-center items-center text-center">
-                <h2 class="text-3xl font-bold mb-4">Comunidad</h2>
-                <p class="mb-6">Síguenos en nuestras redes.</p>
-                <div class="flex space-x-6 text-4xl">
-                    <a href="#" class="text-white hover:text-green-400"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="text-white hover:text-green-400"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="text-white hover:text-green-400"><i class="fab fa-tiktok"></i></a>
-                </div>
-            </div>
-            <div class="page-number">5</div>
-        </div>
-
-        <!-- 6. Página 6: Portal de Juegos -->
-        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
-            <div class="content-overlay justify-center items-center text-center">
-                <h2 class="text-5xl font-bold mb-4">Juegos</h2>
-                <p class="mb-8 text-xl">La aventura te espera.</p>
-                <a href="juegos.html" target="_blank" class="action-button bg-purple-600 hover:bg-purple-700">
-                    <i class="fas fa-gamepad mr-3"></i>Jugar
-                </a>
-            </div>
-            <div class="page-number">6</div>
-        </div>
-
-        <!-- 7. Página 7: Video Inmersivo -->
-        <div class="page video-page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
-            <div class="content-overlay">
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=0&mute=1&loop=1&playlist=jfKfPfyJRdk&controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-            </div>
-            <div class="page-number">7</div>
-        </div>
-
-        <!-- 8. Página 8: Tienda -->
-        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
-            <div class="content-overlay justify-center items-center space-y-4 text-center">
-                <h2 class="text-4xl font-bold mb-4">Tienda</h2>
-                <a href="#" class="action-button bg-red-500"><i class="fas fa-store mr-3"></i>Visitar</a>
-            </div>
-            <div class="page-number">8</div>
-        </div>
-        
-        <!-- 9. Página 9: IA -->
-        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
-            <div class="content-overlay justify-center items-center space-y-4 text-center">
-                <h2 class="text-4xl font-bold mb-4">IA</h2>
-                <a href="#" class="action-button bg-blue-500"><i class="fas fa-robot mr-3"></i>Explorar</a>
-            </div>
-            <div class="page-number">9</div>
-        </div>
-        
-        <!-- 10. Página 10: Contacto -->
-         <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);">
-            <div class="content-overlay">
-                <h2 class="text-3xl font-bold mb-4">Contacto</h2>
-                <p><strong>Email:</strong> <a href="mailto:hola@runacoffee.com" class="text-green-400 hover:underline">hola@runacoffee.com</a></p>
-                <p><strong>Teléfono:</strong> +123 456 7890</p>
-            </div>
-            <div class="page-number">10</div>
-        </div>
-
-        <!-- 11. Página 11: Página final en negro -->
-        <div class="page" style="background-color: #1c1c1c;">
-             <div class="page-number">11</div>
-        </div>
-
-        <!-- 12. Contraportada -->
-        <div class="hard"></div>
-    </div>
-
-    <!-- Botones de Navegación -->
-    <div id="prev-page" class="nav-button">
-        <i class="fas fa-chevron-left"></i>
-    </div>
-    <div id="next-page" class="nav-button">
-        <i class="fas fa-chevron-right"></i>
+        <!-- Páginas del libro -->
+        <div class="page hard cover-page" data-drawing-enabled="false"></div>
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);" data-drawing-enabled="false"><div class="content-overlay"><h2 class="text-3xl font-bold mb-3">¡De la tierra, con conciencia!</h2></div><div class="page-number">2</div></div>
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);" data-drawing-enabled="false"><div class="content-overlay"><h2 class="text-3xl font-bold mb-4">Valores</h2></div><div class="page-number">3</div></div>
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);" data-drawing-enabled="false"><div class="content-overlay"><h2 class="text-3xl font-bold mb-4">Sabor</h2></div><div class="page-number">4</div></div>
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);" data-drawing-enabled="false"><div class="content-overlay justify-center items-center text-center"><h2 class="text-3xl font-bold mb-4">Comunidad</h2><a href="https://www.instagram.com/_runacoffee_"><i class="fab fa-instagram text-4xl"></i></a></div><div class="page-number">5</div></div>
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);" data-drawing-enabled="false"><div class="content-overlay justify-center items-center text-center"><h2 class="text-5xl font-bold mb-4">Juegos</h2><a href="juegos.html" class="text-xl">Jugar</a></div><div class="page-number">6</div></div>
+        <div class="page video-page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);" data-drawing-enabled="false"><div class="content-overlay"><div class="video-container"><iframe src="https://www.youtube.com/embed/Fnxc_n7Lkn4" allowfullscreen></iframe></div></div><div class="page-number">7</div></div>
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);" data-drawing-enabled="false"><div class="content-overlay justify-center items-center text-center"><h2 class="text-4xl font-bold mb-4">Tienda</h2><a href="#" class="text-xl">Visitar</a></div><div class="page-number">8</div></div>
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);" data-drawing-enabled="false"><div class="content-overlay justify-center items-center text-center"><h2 class="text-4xl font-bold mb-4">IA</h2><a href="#" class="text-xl">Explorar</a></div><div class="page-number">9</div></div>
+        <div class="page" style="background-image:url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/pagina-libro.jpg);" data-drawing-enabled="false"><div class="content-overlay"><h2 class="text-3xl font-bold mb-4">Contacto</h2><p>Email: runacoffee25@gmail.com</p><p>WhatsApp: +57 300 162 7532</p></div><div class="page-number">10</div></div>
+        <div class="page" style="background-color: #1c1c1c;" data-drawing-enabled="false"><div class="page-number">11</div></div>
+        <div class="page" style="background-color: #fdfbf7;"><div class="page-number">12</div></div>
+        <div class="page" style="background-color: #fdfbf7;"><div class="page-number">13</div></div>
+        <div class="hard" data-drawing-enabled="false"></div>
     </div>
 </div>
 
-<!-- Script de Turn.js y Navegación -->
+<!-- Barra de Herramientas Superior y Menú Lateral -->
+<div class="top-toolbar">
+    <div id="menu-toggle"><i class="fas fa-bars"></i></div>
+</div>
+<div class="tools-sidebar" id="tools-sidebar">
+    <div class="tool-section">
+        <h3>Herramientas Creativas</h3>
+        <div class="tool-grid">
+            <div class="tool-button" id="tool-pencil" title="Lápiz"><i class="fas fa-pencil-alt"></i><span>Lápiz</span></div>
+            <div class="tool-button" id="tool-eraser" title="Borrador"><i class="fas fa-eraser"></i><span>Borrador</span></div>
+            <div class="tool-button" id="tool-upload" title="Subir Imagen"><i class="fas fa-image"></i><span>Foto</span></div>
+            <div class="tool-button" id="tool-video" title="Subir Video (Próximamente)" disabled><i class="fas fa-video"></i><span>Video</span></div>
+            <div class="tool-button" id="tool-clear" title="Limpiar Página"><i class="fas fa-trash"></i><span>Limpiar</span></div>
+        </div>
+        <div class="color-palette">
+            <div class="color-swatch active" style="background-color: black;" data-color="black"></div>
+            <div class="color-swatch" style="background-color: #e74c3c;" data-color="#e74c3c"></div>
+            <div class="color-swatch" style="background-color: #3498db;" data-color="#3498db"></div>
+            <div class="color-swatch" style="background-color: #2ecc71;" data-color="#2ecc71"></div>
+            <div class="color-swatch" style="background-color: #f1c40f;" data-color="#f1c40f"></div>
+        </div>
+    </div>
+    <div class="tool-section">
+        <h3>Utilidades</h3>
+        <div class="tool-grid">
+            <div class="tool-button" id="tool-calc" title="Calculadora"><i class="fas fa-calculator"></i><span>Calc</span></div>
+            <div class="tool-button" id="tool-print" title="Imprimir"><i class="fas fa-print"></i><span>Imprimir</span></div>
+            <div class="tool-button" id="tool-share" title="Compartir"><i class="fas fa-share-alt"></i><span>Compartir</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- Calculadora -->
+<div class="calculator" id="calculator">
+    <div class="calc-header"><i class="fas fa-arrows-alt"></i><i class="fas fa-times close-btn" id="calc-close"></i></div>
+    <input type="text" class="calc-display" id="calc-display" readonly>
+    <div class="calc-keys">
+        <button class="calc-btn">C</button><button class="calc-btn">(</button><button class="calc-btn">)</button><button class="calc-btn operator">/</button>
+        <button class="calc-btn">7</button><button class="calc-btn">8</button><button class="calc-btn">9</button><button class="calc-btn operator">*</button>
+        <button class="calc-btn">4</button><button class="calc-btn">5</button><button class="calc-btn">6</button><button class="calc-btn operator">-</button>
+        <button class="calc-btn">1</button><button class="calc-btn">2</button><button class="calc-btn">3</button><button class="calc-btn operator">+</button>
+        <button class="calc-btn">0</button><button class="calc-btn">.</button><button class="calc-btn" id="calc-backspace"><i class="fas fa-backspace"></i></button><button class="calc-btn operator" id="calc-equals">=</button>
+    </div>
+</div>
+
 <script type="text/javascript">
-    function loadApp() {
-        var flipbook = $('.flipbook');
+$(document).ready(function () {
+    const flipbook = $('.flipbook');
+    const drawingStates = {};
+    let currentTool = 'none';
+    let currentColor = 'black';
+    let isDrawing = false;
+    let lastX = 0, lastY = 0;
+    let soundTimeout; // Variable to control the sound timer
 
-        // Inicializar Turn.js
-        flipbook.turn({
-            width: $('.flipbook-container').width(),
-            height: $('.flipbook-container').height(),
-            display: 'single', // <-- CAMBIO CLAVE: Muestra una página a la vez
-            elevation: 50,
-            gradients: true,
-            autoCenter: true,
-        });
+    // --- Page flip sound ---
+    const pageFlipSound = new Audio('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/c2acd6b2dd569ae8ee33f2441eaacb2386e7490d/public/assets/mp3/pasar-hoja-de-libro.mp3');
 
-        // Ajustar tamaño en redimensionamiento de ventana
-        $(window).on('resize', function() {
-            var container = $('.flipbook-container');
-            // Recalcular el tamaño para la vista de página única
-            flipbook.turn('size', container.width(), container.height());
-        }).trigger('resize');
+    // --- Book Initialization ---
+    flipbook.turn({
+        width: $('.flipbook-container').width(),
+        height: $('.flipbook-container').height(),
+        display: 'single',
+        elevation: 50,
+        gradients: true,
+        autoCenter: true,
+        when: {
+            turned: (event, page) => {
+                loadDrawingForPage(page);
 
-        // Navegación con teclas de flecha
-        $(document).keydown(function(e){
-            if (e.keyCode == 37) { // Flecha izquierda
-                flipbook.turn('previous');
-            } else if (e.keyCode == 39) { // Flecha derecha
-                flipbook.turn('next');
+                // --- Sound Logic ---
+                if (page > 1) {
+                    clearTimeout(soundTimeout);
+                    pageFlipSound.pause();
+                    
+                    // Set the start time to 2.2 seconds to skip the initial delay
+                    pageFlipSound.currentTime = 2.2; 
+                    
+                    pageFlipSound.play().catch(error => {
+                        console.error("Error playing sound:", error);
+                    });
+
+                    // Set a timer to stop the sound after 1 second (1000 ms)
+                    soundTimeout = setTimeout(() => {
+                        pageFlipSound.pause();
+                    }, 1000);
+                }
             }
-        });
+        }
+    });
 
-        // Navegación con clic en botones
-        $('#prev-page').on('click', function() {
-            flipbook.turn('previous');
-        });
-
-        $('#next-page').on('click', function() {
-            flipbook.turn('next');
-        });
+    // --- Drawing and Image Loading Logic ---
+    function getCanvasForPage(pageNumber) {
+        let canvas = $(`#canvas-page-${pageNumber}`);
+        if (canvas.length === 0) {
+            const pageElement = flipbook.find(`.page[page=${pageNumber}]`);
+            if (!pageElement.length || pageElement.data('drawing-enabled') === false) return null;
+            canvas = $('<canvas>').addClass('drawing-canvas').attr('id', `canvas-page-${pageNumber}`);
+            pageElement.append(canvas);
+            const canvasEl = canvas[0];
+            canvasEl.width = pageElement.width();
+            canvasEl.height = pageElement.height();
+            canvas.on('mousedown touchstart', startDrawing);
+            canvas.on('mousemove touchmove', draw);
+            $(window).on('mouseup touchend', stopDrawing);
+        }
+        return canvas[0];
     }
 
-    $(window).on('load', loadApp);
+    function startDrawing(e) {
+        if (currentTool === 'none') return;
+        isDrawing = true;
+        [lastX, lastY] = getCoords(e, $(e.target));
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const page = flipbook.turn('page');
+        const canvas = getCanvasForPage(page);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const [x, y] = getCoords(e, $(canvas));
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = (currentTool === 'eraser') ? '#fdfbf7' : currentColor;
+        ctx.lineWidth = (currentTool === 'eraser') ? 25 : 5;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        [lastX, lastY] = [x, y];
+    }
+
+    function stopDrawing() {
+        if(isDrawing) saveDrawingForPage(flipbook.turn('page'));
+        isDrawing = false;
+    }
+
+    function getCoords(e, target) {
+        const rect = target[0].getBoundingClientRect();
+        const touch = e.originalEvent.touches ? e.originalEvent.touches[0] : e;
+        return [touch.clientX - rect.left, touch.clientY - rect.top];
+    }
+
+    function saveDrawingForPage(pageNumber) {
+        const canvas = getCanvasForPage(pageNumber);
+        if (canvas) {
+            drawingStates[pageNumber] = canvas.toDataURL();
+        }
+    }
+
+    function loadDrawingForPage(pageNumber) {
+        const canvas = getCanvasForPage(pageNumber);
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (drawingStates[pageNumber]) {
+                const img = new Image();
+                img.onload = () => ctx.drawImage(img, 0, 0);
+                img.src = drawingStates[pageNumber];
+            }
+        }
+    }
+    setTimeout(() => loadDrawingForPage(1), 100);
+
+    // --- Sidebar Toolbar Logic ---
+    $('#menu-toggle').on('click', (e) => {
+        e.stopPropagation();
+        $('#tools-sidebar').toggleClass('open');
+    });
+    $(document).on('click', (e) => {
+        if ($('#tools-sidebar').hasClass('open') && !$(e.target).closest('#tools-sidebar').length && !$(e.target).closest('#menu-toggle').length) {
+            $('#tools-sidebar').removeClass('open');
+        }
+    });
+
+    function setActiveTool(tool) {
+        $('.tool-button').removeClass('active');
+        if (tool !== 'none') $(`#tool-${tool}`).addClass('active');
+        currentTool = tool;
+    }
+
+    $('#tool-pencil').on('click', () => setActiveTool('pencil'));
+    $('#tool-eraser').on('click', () => setActiveTool('eraser'));
+    $('.color-swatch').on('click', function() {
+        currentColor = $(this).data('color');
+        $('.color-swatch').removeClass('active');
+        $(this).addClass('active');
+        setActiveTool('pencil');
+    });
+    $('#tool-clear').on('click', () => {
+        const page = flipbook.turn('page');
+        const canvas = getCanvasForPage(page);
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            saveDrawingForPage(page);
+        }
+    });
+    $('#tool-print').on('click', () => window.print());
+    $('#tool-share').on('click', () => {
+        if (navigator.share) {
+            navigator.share({
+                title: 'RUNA Coffee - Cuaderno Digital',
+                text: 'Echa un vistazo a este increíble cuaderno digital de RUNA Coffee!',
+                url: window.location.href,
+            }).catch(console.error);
+        }
+    });
+    
+    // --- Image Upload Logic ---
+    $('#tool-upload').on('click', () => $('#image-uploader').click());
+    $('#image-uploader').on('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                const page = flipbook.turn('page');
+                const canvas = getCanvasForPage(page);
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    const maxW = canvas.width * 0.8;
+                    const maxH = canvas.height * 0.8;
+                    let w = img.width, h = img.height;
+                    const ratio = w / h;
+                    if (w > maxW) { w = maxW; h = w / ratio; }
+                    if (h > maxH) { h = maxH; w = h * ratio; }
+                    ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+                    saveDrawingForPage(page);
+                }
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+        $(this).val('');
+    });
+
+    // --- Calculator Logic ---
+    const calculator = $('#calculator');
+    const calcDisplay = $('#calc-display');
+    $('#tool-calc').on('click', () => calculator.fadeToggle());
+    $('#calc-close').on('click', () => calculator.fadeOut());
+    $('.calc-keys').on('click', '.calc-btn', function() {
+        const key = $(this).text();
+        const displayVal = calcDisplay.val();
+        if (key === 'C') {
+            calcDisplay.val('');
+        } else if ($(this).is('#calc-backspace')) {
+            calcDisplay.val(displayVal.slice(0, -1));
+        } else if ($(this).is('#calc-equals')) {
+            try {
+                calcDisplay.val(eval(displayVal.replace('×', '*').replace('÷', '/')));
+            } catch {
+                calcDisplay.val('Error');
+            }
+        } else {
+            calcDisplay.val(displayVal + key);
+        }
+    });
+    // Make calculator draggable
+    let pos1=0, pos2=0, pos3=0, pos4=0;
+    calculator.find('.calc-header').on('mousedown', function(e) {
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        $(document).on('mouseup', closeDragElement).on('mousemove', elementDrag);
+    });
+    function elementDrag(e) {
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        calculator.css({ top: (calculator.offset().top - pos2) + "px", left: (calculator.offset().left - pos1) + "px" });
+    }
+    function closeDragElement() {
+        $(document).off('mouseup', closeDragElement).off('mousemove', elementDrag);
+    }
+    
+    $(window).on('resize', () => flipbook.turn('size', $('.flipbook-container').width(), $('.flipbook-container').height())).trigger('resize');
+});
 </script>
 
 </body>
