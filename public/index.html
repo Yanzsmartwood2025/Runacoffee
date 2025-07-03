@@ -74,7 +74,7 @@
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; }
         #video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: opacity 0.5s ease-in-out; }
         #main-header { background-color: transparent; transition: background-color 0.4s ease, box-shadow 0.4s ease; }
-        .translucent-menu, .section-bg, footer, .cart-modal-content { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .translucent-menu, .section-bg, footer, .cart-modal-content, .modern-button { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         #video-intro { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 10000; transition: opacity 0.75s ease-out, visibility 0.75s; }
         #video-intro.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         #page-content { opacity: 0; transition: opacity 0.75s ease-in; transition-delay: 0.2s; visibility: hidden; }
@@ -229,7 +229,7 @@
                     </div>
 
                     <div class="mt-10">
-                        <a href="libro.html" class="inline-block bg-[var(--runa-primary)] text-white font-bold text-lg px-8 py-3 rounded-lg shadow-lg hover:bg-[var(--runa-secondary)] transition-all duration-300 transform hover:scale-105">
+                        <a href="libro.html" class="modern-button inline-block bg-black/20 text-white font-bold text-lg px-8 py-3 rounded-lg border border-white/30 hover:bg-white/30 transition-all duration-300 transform hover:scale-105">
                             Abrir Libro
                         </a>
                     </div>
@@ -251,7 +251,7 @@
                         alt="A 3D model of a stylized tree"
                         class="w-full h-96 rounded-lg"
                         preload reveal="auto">
-                        <button slot="ar-button" class="absolute bottom-4 right-4 bg-white rounded-full px-4 py-2 font-semibold shadow-lg text-gray-800 transition-transform transform hover:scale-105">
+                        <button slot="ar-button" class="modern-button absolute bottom-4 right-4 bg-black/20 text-white font-semibold px-6 py-3 rounded-lg border border-white/30 hover:bg-white/30 transition-all duration-300">
                             Ver en tu espacio
                         </button>
                     </model-viewer>
@@ -285,13 +285,14 @@
                     </div>
                     <div>
                         <h3 class="text-2xl font-bold mb-4">Formas de Pago</h3>
-                        <div id="payment-logos" class="flex justify-center md:justify-start flex-wrap items-center gap-x-6 gap-y-4">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/nequi-logo.png" alt="Logo de Nequi" class="h-6 object-contain">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/bancolombia-logo.png" alt="Logo de Bancolombia" class="h-9 object-contain">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/binance-pay-logo.png" alt="Logo de Binance Pay" class="h-10 object-contain">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/paypal-logo.png" alt="Logo de PayPal" class="h-7 object-contain">
+                        <div class="grid grid-cols-3 gap-6 items-center max-w-xs mx-auto md:mx-0">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Logo de Visa" title="Visa" class="h-4 w-full object-contain">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" alt="Logo de Mastercard" title="Mastercard" class="h-7 w-full object-contain">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/paypal-logo.png" alt="Logo de PayPal" title="PayPal" class="h-6 w-full object-contain">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/nequi-logo.png" alt="Logo de Nequi" title="Nequi" class="h-6 w-full object-contain">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/bancolombia-logo.png" alt="Logo de Bancolombia" title="Bancolombia" class="h-8 w-full object-contain">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/binance-pay-logo.png" alt="Logo de Binance Pay" title="Binance Pay" class="h-8 w-full object-contain">
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">Pagos seguros a través de nuestra plataforma.</p>
                     </div>
                 </div>
                 <div class="border-t border-gray-700 py-6 mt-8 text-center text-xs text-gray-400">
