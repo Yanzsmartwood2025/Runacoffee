@@ -156,6 +156,7 @@
                 <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
                 <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
             </button>
+            <div id="auth-container" class="flex items-center"></div>
         </div>
         <div class="flex-shrink-0">
              <a href="index.html" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
@@ -293,6 +294,20 @@
     <!-- Content injected by JS -->
 </div>
 
+<div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
+   <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
+        <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <h2 class="text-2xl font-bold text-white mb-2">Bienvenido a Runa</h2>
+        <p class="text-gray-400 mb-6">Inicia sesión o crea una cuenta</p>
+        <button id="google-login-button-modal" class="w-full inline-flex items-center justify-center gap-3 px-4 py-2 text-base font-semibold text-gray-700 bg-white border border-transparent rounded-lg shadow-sm hover:bg-gray-200 transition-all">
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,34.783,44,29.865,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+            <span>Iniciar sesión con Google</span>
+        </button>
+   </div>
+</div>
+
 <div class="calculator" id="calculator">
     <div class="calc-header"><i class="fas fa-arrows-alt"></i><i class="fas fa-times close-btn" id="calc-close"></i></div>
     <input type="text" class="calc-display" id="calc-display" readonly>
@@ -313,438 +328,495 @@
 <audio id="wind-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
 <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
 
-<script type="text/javascript">
-$(document).ready(function () {
-    const flipbook = $('.flipbook');
-    const drawingStates = {};
-    let currentTool = 'none';
-    let currentColor = 'black';
-    let currentLineWidth = 5;
-    let isDrawing = false;
-    let lastX = 0, lastY = 0;
-    const pageFlipSound = new Audio('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/c2acd6b2dd569ae8ee33f2441eaacb2386e7490d/public/assets/mp3/pasar-hoja-de-libro.mp3');
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    
+    $(document).ready(function () {
+        const flipbook = $('.flipbook');
+        const drawingStates = {};
+        let currentTool = 'none';
+        let currentColor = 'black';
+        let currentLineWidth = 5;
+        let isDrawing = false;
+        let lastX = 0, lastY = 0;
+        const pageFlipSound = new Audio('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/c2acd6b2dd569ae8ee33f2441eaacb2386e7490d/public/assets/mp3/pasar-hoja-de-libro.mp3');
 
-    flipbook.turn({
-        width: $('.flipbook-container').width(),
-        height: $('.flipbook-container').height(),
-        display: 'single',
-        elevation: 50,
-        gradients: true,
-        autoCenter: true,
-        when: {
-            turned: (event, page) => {
-                loadDrawingForPage(page);
-                if (page > 1) {
-                    pageFlipSound.currentTime = 2.2;
-                    pageFlipSound.play().catch(console.error);
-                    setTimeout(() => pageFlipSound.pause(), 1000);
+        flipbook.turn({
+            width: $('.flipbook-container').width(),
+            height: $('.flipbook-container').height(),
+            display: 'single',
+            elevation: 50,
+            gradients: true,
+            autoCenter: true,
+            when: {
+                turned: (event, page) => {
+                    loadDrawingForPage(page);
+                    if (page > 1) {
+                        pageFlipSound.currentTime = 2.2;
+                        pageFlipSound.play().catch(console.error);
+                        setTimeout(() => pageFlipSound.pause(), 1000);
+                    }
                 }
             }
-        }
-    });
+        });
 
-    function getCanvasForPage(pageNumber) {
-        let canvas = $(`#canvas-page-${pageNumber}`);
-        if (canvas.length === 0) {
-            const pageElement = flipbook.find(`.page[page=${pageNumber}]`);
-            if (!pageElement.length || pageElement.data('drawing-enabled') !== true) return null;
-            
-            canvas = $('<canvas>').addClass('drawing-canvas').attr('id', `canvas-page-${pageNumber}`);
-            pageElement.append(canvas);
-            const canvasEl = canvas[0];
-            canvasEl.width = pageElement.width();
-            canvasEl.height = pageElement.height();
-            saveDrawingForPage(pageNumber);
+        function getCanvasForPage(pageNumber) {
+            let canvas = $(`#canvas-page-${pageNumber}`);
+            if (canvas.length === 0) {
+                const pageElement = flipbook.find(`.page[page=${pageNumber}]`);
+                if (!pageElement.length || pageElement.data('drawing-enabled') !== true) return null;
+                
+                canvas = $('<canvas>').addClass('drawing-canvas').attr('id', `canvas-page-${pageNumber}`);
+                pageElement.append(canvas);
+                const canvasEl = canvas[0];
+                canvasEl.width = pageElement.width();
+                canvasEl.height = pageElement.height();
+                saveDrawingForPage(pageNumber);
 
-            canvas.on('mousedown touchstart', startDrawing);
-            canvas.on('mousemove touchmove', draw);
-            $(window).on('mouseup touchend', stopDrawing);
-        }
-        return canvas[0];
-    }
-
-    function startDrawing(e) {
-        if (currentTool === 'none') return;
-        isDrawing = true;
-        [lastX, lastY] = getCoords(e, $(e.target));
-    }
-
-    function draw(e) {
-        if (!isDrawing) return;
-        e.preventDefault();
-        const page = flipbook.turn('page');
-        const canvas = getCanvasForPage(page);
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const [x, y] = getCoords(e, $(canvas));
-        
-        if (currentTool === 'eraser') {
-            ctx.globalCompositeOperation = 'destination-out';
-            ctx.lineWidth = 25;
-        } else {
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.strokeStyle = currentColor;
-            ctx.lineWidth = currentLineWidth;
+                canvas.on('mousedown touchstart', startDrawing);
+                canvas.on('mousemove touchmove', draw);
+                $(window).on('mouseup touchend', stopDrawing);
+            }
+            return canvas[0];
         }
 
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(x, y);
-        ctx.lineCap = 'round';
-        ctx.stroke();
-        [lastX, lastY] = [x, y];
-    }
+        function startDrawing(e) {
+            if (currentTool === 'none') return;
+            isDrawing = true;
+            [lastX, lastY] = getCoords(e, $(e.target));
+        }
 
-    function stopDrawing() {
-        if(isDrawing) {
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
             const page = flipbook.turn('page');
             const canvas = getCanvasForPage(page);
-            if (canvas) {
-                canvas.getContext('2d').globalCompositeOperation = 'source-over';
-                saveDrawingForPage(page);
-            }
-        }
-        isDrawing = false;
-    }
-
-    function getCoords(e, target) {
-        const rect = target[0].getBoundingClientRect();
-        const touch = e.originalEvent.touches ? e.originalEvent.touches[0] : e;
-        return [touch.clientX - rect.left, touch.clientY - rect.top];
-    }
-
-    function saveDrawingForPage(pageNumber) {
-        const canvas = getCanvasForPage(pageNumber);
-        if (canvas) drawingStates[pageNumber] = canvas.toDataURL();
-    }
-
-    function loadDrawingForPage(pageNumber) {
-        const canvas = getCanvasForPage(pageNumber);
-        if (canvas) {
+            if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (drawingStates[pageNumber]) {
-                const img = new Image();
-                img.onload = () => ctx.drawImage(img, 0, 0);
-                img.src = drawingStates[pageNumber];
+            const [x, y] = getCoords(e, $(canvas));
+            
+            if (currentTool === 'eraser') {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.lineWidth = 25;
+            } else {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentLineWidth;
             }
-        }
-    }
-    setTimeout(() => loadDrawingForPage(1), 100);
 
-    function setActiveTool(tool) {
-        $('.tool-button').removeClass('active');
-        if (tool !== 'none') $(`#tool-${tool}`).addClass('active');
-        currentTool = tool;
-    }
-
-    $('#tool-pencil').on('click', () => setActiveTool('pencil'));
-    $('#tool-eraser').on('click', () => setActiveTool('eraser'));
-    $('.color-swatch').on('click', function() {
-        currentColor = $(this).data('color');
-        $('.color-swatch').removeClass('active');
-        $(this).addClass('active');
-        setActiveTool('pencil');
-    });
-    
-    $('#line-width-slider').on('input', function() {
-        currentLineWidth = $(this).val();
-        setActiveTool('pencil');
-    });
-
-    $('#tool-clear').on('click', () => {
-        const page = flipbook.turn('page');
-        const canvas = getCanvasForPage(page);
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            saveDrawingForPage(page);
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            [lastX, lastY] = [x, y];
         }
-    });
-    
-    $('#tool-print').on('click', () => window.print());
-    $('#tool-share').on('click', () => {
-        if (navigator.share) {
-            navigator.share({
-                title: 'RUNA Coffee - Cuaderno Digital',
-                text: 'Echa un vistazo a este increíble cuaderno digital de RUNA Coffee!',
-                url: window.location.href,
-            }).catch(console.error);
-        }
-    });
-    
-    $('#tool-upload').on('click', () => $('#image-uploader').click());
-    $('#image-uploader').on('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const img = new Image();
-            img.onload = () => {
+
+        function stopDrawing() {
+            if(isDrawing) {
                 const page = flipbook.turn('page');
                 const canvas = getCanvasForPage(page);
                 if (canvas) {
-                    const ctx = canvas.getContext('2d');
-                    const maxW = canvas.width * 0.8;
-                    const maxH = canvas.height * 0.8;
-                    let w = img.width, h = img.height;
-                    const ratio = w / h;
-                    if (w > maxW) { w = maxW; h = w / ratio; }
-                    if (h > maxH) { h = maxH; w = h * ratio; }
-                    ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+                    canvas.getContext('2d').globalCompositeOperation = 'source-over';
                     saveDrawingForPage(page);
                 }
-            };
-            img.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-        $(this).val('');
-    });
-
-    const calculator = $('#calculator');
-    $('#tool-calc').on('click', () => calculator.fadeToggle());
-    $('#calc-close').on('click', () => calculator.fadeOut());
-    $('.calc-keys').on('click', '.calc-btn', function() {
-        const key = $(this).text();
-        const displayVal = $('#calc-display').val();
-        if (key === 'C') {
-            $('#calc-display').val('');
-        } else if ($(this).is('#calc-backspace')) {
-            $('#calc-display').val(displayVal.slice(0, -1));
-        } else if ($(this).is('#calc-equals')) {
-            try {
-                $('#calc-display').val(eval(displayVal.replace('×', '*').replace('÷', '/')));
-            } catch {
-                $('#calc-display').val('Error');
             }
-        } else {
-            $('#calc-display').val(displayVal + key);
+            isDrawing = false;
         }
-    });
 
-    // --- HEADER SCRIPT LOGIC ---
-    const themeToggle = $('#theme-toggle');
-    const sunIcon = $('#theme-icon-sun');
-    const moonIcon = $('#theme-icon-moon');
-    const mainMenu = $('#main-menu');
-    const mixerPanel = $('#mixer-panel');
-    const videoSkinPanel = $('#video-skin-panel');
-
-    function applyTheme(theme) {
-        if (theme === 'dark') {
-            $('html').removeClass('light').addClass('dark');
-            sunIcon.show();
-            moonIcon.hide();
-        } else {
-            $('html').removeClass('dark').addClass('light');
-            sunIcon.hide();
-            moonIcon.show();
+        function getCoords(e, target) {
+            const rect = target[0].getBoundingClientRect();
+            const touch = e.originalEvent.touches ? e.originalEvent.touches[0] : e;
+            return [touch.clientX - rect.left, touch.clientY - rect.top];
         }
-    }
 
-    themeToggle.on('click', () => {
-        const newTheme = $('html').hasClass('dark') ? 'light' : 'dark';
-        localStorage.setItem('runaTheme', newTheme);
-        applyTheme(newTheme);
-    });
-
-    const savedTheme = localStorage.getItem('runaTheme') || 'light';
-    applyTheme(savedTheme);
-
-    function closeAllPanels() {
-        mainMenu.addClass('hidden');
-        mixerPanel.addClass('hidden');
-        videoSkinPanel.addClass('hidden');
-    }
-
-    $('#menu-button').on('click', (e) => {
-        e.stopPropagation();
-        const wasOpen = !mainMenu.hasClass('hidden');
-        closeAllPanels();
-        if (!wasOpen) mainMenu.removeClass('hidden');
-    });
-
-    $('#mixer-toggle-button').on('click', (e) => {
-        e.stopPropagation();
-        const wasOpen = !mixerPanel.hasClass('hidden');
-        closeAllPanels();
-        if (!wasOpen) mixerPanel.removeClass('hidden');
-    });
-
-    $('#video-skin-toggle').on('click', (e) => {
-        e.stopPropagation();
-        const wasOpen = !videoSkinPanel.hasClass('hidden');
-        closeAllPanels();
-        if (!wasOpen) videoSkinPanel.removeClass('hidden');
-    });
-    
-    $(window).on('click', (e) => {
-        if (!$(e.target).closest('#main-header').length) {
-            closeAllPanels();
+        function saveDrawingForPage(pageNumber) {
+            const canvas = getCanvasForPage(pageNumber);
+            if (canvas) drawingStates[pageNumber] = canvas.toDataURL();
         }
-    });
 
-    $('.menu-section-header').on('click', function() {
-        $(this).toggleClass('active').next('.menu-section-content').slideToggle();
-    });
+        function loadDrawingForPage(pageNumber) {
+            const canvas = getCanvasForPage(pageNumber);
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (drawingStates[pageNumber]) {
+                    const img = new Image();
+                    img.onload = () => ctx.drawImage(img, 0, 0);
+                    img.src = drawingStates[pageNumber];
+                }
+            }
+        }
+        setTimeout(() => loadDrawingForPage(1), 100);
 
-    // --- Mixer and Video Selector Logic ---
-    const videoSkins = [
-        { name: "Cascada Relajante", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/71882ac786adf1438958f62935ab5b2d35a82ae5/public/assets/videos/cascada-relajante.mp4" },
-        { name: "Cosecha de Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/a3de99a321f33e21822225fda04f372c7033aad0/public/assets/videos/runa_video_fondo_1.mp4" },
-        { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" }
-    ];
-    let currentVideoIndex = 0;
+        function setActiveTool(tool) {
+            $('.tool-button').removeClass('active');
+            if (tool !== 'none') $(`#tool-${tool}`).addClass('active');
+            currentTool = tool;
+        }
 
-    const ambienceSounds = [
-        { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
-        { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
-        { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
-        { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif' },
-        { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif' },
-        { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif' },
-        { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
-    ];
-    
-    function initializeMixer() {
-        const soundControlsContainer = $('#sound-controls');
-        if(!soundControlsContainer.length) return;
-        soundControlsContainer.html('');
+        $('#tool-pencil').on('click', () => setActiveTool('pencil'));
+        $('#tool-eraser').on('click', () => setActiveTool('eraser'));
+        $('.color-swatch').on('click', function() {
+            currentColor = $(this).data('color');
+            $('.color-swatch').removeClass('active');
+            $(this).addClass('active');
+            setActiveTool('pencil');
+        });
         
-        ambienceSounds.forEach(sound => {
-            const audioEl = document.getElementById(sound.id);
-            if (!audioEl) return;
+        $('#line-width-slider').on('input', function() {
+            currentLineWidth = $(this).val();
+            setActiveTool('pencil');
+        });
 
-            const controlHTML = `
-                <div class="flex items-center gap-4 text-sm text-white">
-                    <button id="btn-${sound.id}" class="mixer-icon-button relative w-10 h-10 rounded-full shadow-md flex-shrink-0 overflow-hidden"><img src="${sound.gifSrc}" alt="${sound.name}"></button>
-                    <span class="font-medium w-20 truncate">${sound.name}</span>
-                    <input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="0" class="flex-grow volume-slider">
-                </div>
-            `;
-            soundControlsContainer.append(controlHTML);
-
-            const slider = $(`#volume-${sound.id}`);
-            const button = $(`#btn-${sound.id}`);
-            
-            const updateSliderStyle = (target) => {
-                const percent = (target.val() / target.attr('max')) * 100;
-                target.css('--value-percent', `${percent}%`);
+        $('#tool-clear').on('click', () => {
+            const page = flipbook.turn('page');
+            const canvas = getCanvasForPage(page);
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                saveDrawingForPage(page);
+            }
+        });
+        
+        $('#tool-print').on('click', () => window.print());
+        $('#tool-share').on('click', () => {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'RUNA Coffee - Cuaderno Digital',
+                    text: 'Echa un vistazo a este increíble cuaderno digital de RUNA Coffee!',
+                    url: window.location.href,
+                }).catch(console.error);
+            }
+        });
+        
+        $('#tool-upload').on('click', () => $('#image-uploader').click());
+        $('#image-uploader').on('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const page = flipbook.turn('page');
+                    const canvas = getCanvasForPage(page);
+                    if (canvas) {
+                        const ctx = canvas.getContext('2d');
+                        const maxW = canvas.width * 0.8;
+                        const maxH = canvas.height * 0.8;
+                        let w = img.width, h = img.height;
+                        const ratio = w / h;
+                        if (w > maxW) { w = maxW; h = w / ratio; }
+                        if (h > maxH) { h = maxH; w = h * ratio; }
+                        ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+                        saveDrawingForPage(page);
+                    }
+                };
+                img.src = event.target.result;
             };
+            reader.readAsDataURL(file);
+            $(this).val('');
+        });
 
-            slider.on('input', function() {
-                const newVolume = parseFloat($(this).val());
-                audioEl.volume = newVolume;
-                button.toggleClass('active', newVolume > 0);
-                updateSliderStyle($(this));
-                if (newVolume > 0 && audioEl.paused) {
-                    audioEl.play().catch(console.error);
-                } else if (newVolume === 0 && !audioEl.paused) {
-                    audioEl.pause();
+        const calculator = $('#calculator');
+        $('#tool-calc').on('click', () => calculator.fadeToggle());
+        $('#calc-close').on('click', () => calculator.fadeOut());
+        $('.calc-keys').on('click', '.calc-btn', function() {
+            const key = $(this).text();
+            const displayVal = $('#calc-display').val();
+            if (key === 'C') {
+                $('#calc-display').val('');
+            } else if ($(this).is('#calc-backspace')) {
+                $('#calc-display').val(displayVal.slice(0, -1));
+            } else if ($(this).is('#calc-equals')) {
+                try {
+                    $('#calc-display').val(eval(displayVal.replace('×', '*').replace('÷', '/')));
+                } catch {
+                    $('#calc-display').val('Error');
                 }
-            });
+            } else {
+                $('#calc-display').val(displayVal + key);
+            }
+        });
+
+        // --- HEADER SCRIPT LOGIC ---
+        const themeToggle = $('#theme-toggle');
+        const sunIcon = $('#theme-icon-sun');
+        const moonIcon = $('#theme-icon-moon');
+        const mainMenu = $('#main-menu');
+        const mixerPanel = $('#mixer-panel');
+        const videoSkinPanel = $('#video-skin-panel');
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                $('html').removeClass('light').addClass('dark');
+                sunIcon.show();
+                moonIcon.hide();
+            } else {
+                $('html').removeClass('dark').addClass('light');
+                sunIcon.hide();
+                moonIcon.show();
+            }
+        }
+
+        themeToggle.on('click', () => {
+            const newTheme = $('html').hasClass('dark') ? 'light' : 'dark';
+            localStorage.setItem('runaTheme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        const savedTheme = localStorage.getItem('runaTheme') || 'light';
+        applyTheme(savedTheme);
+
+        function closeAllPanels() {
+            mainMenu.addClass('hidden');
+            mixerPanel.addClass('hidden');
+            videoSkinPanel.addClass('hidden');
+        }
+
+        $('#menu-button').on('click', (e) => {
+            e.stopPropagation();
+            const wasOpen = !mainMenu.hasClass('hidden');
+            closeAllPanels();
+            if (!wasOpen) mainMenu.removeClass('hidden');
+        });
+
+        $('#mixer-toggle-button').on('click', (e) => {
+            e.stopPropagation();
+            const wasOpen = !mixerPanel.hasClass('hidden');
+            closeAllPanels();
+            if (!wasOpen) mixerPanel.removeClass('hidden');
+        });
+
+        $('#video-skin-toggle').on('click', (e) => {
+            e.stopPropagation();
+            const wasOpen = !videoSkinPanel.hasClass('hidden');
+            closeAllPanels();
+            if (!wasOpen) videoSkinPanel.removeClass('hidden');
+        });
+        
+        $(window).on('click', (e) => {
+            if (!$(e.target).closest('#main-header').length) {
+                closeAllPanels();
+            }
+        });
+
+        $('.menu-section-header').on('click', function() {
+            $(this).toggleClass('active').next('.menu-section-content').slideToggle();
+        });
+
+        // --- Mixer and Video Selector Logic ---
+        const videoSkins = [
+            { name: "Cascada Relajante", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/71882ac786adf1438958f62935ab5b2d35a82ae5/public/assets/videos/cascada-relajante.mp4" },
+            { name: "Cosecha de Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/a3de99a321f33e21822225fda04f372c7033aad0/public/assets/videos/runa_video_fondo_1.mp4" },
+            { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" }
+        ];
+        let currentVideoIndex = 0;
+
+        const ambienceSounds = [
+            { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
+            { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
+            { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
+            { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif' },
+            { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif' },
+            { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif' },
+            { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
+        ];
+        
+        function initializeMixer() {
+            const soundControlsContainer = $('#sound-controls');
+            if(!soundControlsContainer.length) return;
+            soundControlsContainer.html('');
             
-            button.on('click', function() {
-                if (slider.val() > 0) {
-                    slider.data('lastValue', slider.val());
-                    slider.val(0);
-                } else {
-                    slider.val(slider.data('lastValue') || 0.5);
-                }
-                slider.trigger('input');
+            ambienceSounds.forEach(sound => {
+                const audioEl = document.getElementById(sound.id);
+                if (!audioEl) return;
+
+                const controlHTML = `
+                    <div class="flex items-center gap-4 text-sm text-white">
+                        <button id="btn-${sound.id}" class="mixer-icon-button relative w-10 h-10 rounded-full shadow-md flex-shrink-0 overflow-hidden"><img src="${sound.gifSrc}" alt="${sound.name}"></button>
+                        <span class="font-medium w-20 truncate">${sound.name}</span>
+                        <input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="0" class="flex-grow volume-slider">
+                    </div>
+                `;
+                soundControlsContainer.append(controlHTML);
+
+                const slider = $(`#volume-${sound.id}`);
+                const button = $(`#btn-${sound.id}`);
+                
+                const updateSliderStyle = (target) => {
+                    const percent = (target.val() / target.attr('max')) * 100;
+                    target.css('--value-percent', `${percent}%`);
+                };
+
+                slider.on('input', function() {
+                    const newVolume = parseFloat($(this).val());
+                    audioEl.volume = newVolume;
+                    button.toggleClass('active', newVolume > 0);
+                    updateSliderStyle($(this));
+                    if (newVolume > 0 && audioEl.paused) {
+                        audioEl.play().catch(console.error);
+                    } else if (newVolume === 0 && !audioEl.paused) {
+                        audioEl.pause();
+                    }
+                });
+                
+                button.on('click', function() {
+                    if (slider.val() > 0) {
+                        slider.data('lastValue', slider.val());
+                        slider.val(0);
+                    } else {
+                        slider.val(slider.data('lastValue') || 0.5);
+                    }
+                    slider.trigger('input');
+                });
+                updateSliderStyle(slider);
             });
-            updateSliderStyle(slider);
-        });
-    }
-
-    function setVideoSkin(index) {
-        const video = $('#video-background');
-        const source = $('#video-source');
-        if(video.length && source.length){
-            video.css('opacity', 0);
-            setTimeout(() => {
-                currentVideoIndex = index;
-                source.attr('src', videoSkins[currentVideoIndex].url);
-                video[0].load();
-                video[0].play().catch(console.error);
-                video.css('opacity', 1);
-                localStorage.setItem('runaVideoSkin', currentVideoIndex);
-                updateVideoListUI();
-            }, 500);
         }
-    }
 
-    function updateVideoListUI() {
-        const videoListContainer = $('#video-list');
-        if (!videoListContainer.length) return;
-        videoListContainer.find('button').each(function(index) {
-            $(this).toggleClass('active', index === currentVideoIndex);
+        function setVideoSkin(index) {
+            const video = $('#video-background');
+            const source = $('#video-source');
+            if(video.length && source.length){
+                video.css('opacity', 0);
+                setTimeout(() => {
+                    currentVideoIndex = index;
+                    source.attr('src', videoSkins[currentVideoIndex].url);
+                    video[0].load();
+                    video[0].play().catch(console.error);
+                    video.css('opacity', 1);
+                    localStorage.setItem('runaVideoSkin', currentVideoIndex);
+                    updateVideoListUI();
+                }, 500);
+            }
+        }
+
+        function updateVideoListUI() {
+            const videoListContainer = $('#video-list');
+            if (!videoListContainer.length) return;
+            videoListContainer.find('button').each(function(index) {
+                $(this).toggleClass('active', index === currentVideoIndex);
+            });
+        }
+        
+        function initializeVideoSelector() {
+            const videoListContainer = $('#video-list');
+            if(!videoListContainer.length) return;
+            videoListContainer.html('');
+
+            videoSkins.forEach((skin, index) => {
+                const button = $(`<button class="video-list-button w-full text-left p-2 rounded-lg transition-colors duration-200 text-white">${skin.name}</button>`);
+                button.on('click', () => setVideoSkin(index));
+                videoListContainer.append(button);
+            });
+            updateVideoListUI();
+        }
+
+        initializeMixer();
+        initializeVideoSelector();
+        const savedSkinIndex = parseInt(localStorage.getItem('runaVideoSkin')) || 0;
+        setVideoSkin(savedSkinIndex);
+
+        // --- Cart Logic ---
+        let cart = [];
+        const cartModal = $('#cart-modal');
+        const cartCounter = $('#cart-counter');
+
+        function updateCartCounter() {
+            if (cart.length > 0) {
+                cartCounter.text(cart.length).removeClass('hidden');
+            } else {
+                cartCounter.addClass('hidden');
+            }
+        }
+
+        function renderCartModal() {
+            let contentHTML = '';
+            if (cart.length === 0) {
+                contentHTML = `<div class="p-8 flex-grow flex flex-col items-center justify-center text-center"><svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><h3 class="font-semibold text-lg text-white">Tu carrito está vacío</h3><p class="text-sm text-gray-400">Añade productos para verlos aquí.</p></div>`;
+            } else {
+                // Logic to display items would go here
+            }
+
+            cartModal.html(`<div class="translucent-panel w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col ml-auto"><header class="p-4 border-b border-white/10 flex justify-between items-center"><h2 class="text-xl font-bold text-white">Tu Carrito</h2><button id="close-cart-button" class="p-1 rounded-full text-white hover:bg-white/10 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></header>${contentHTML}</div>`);
+            $('#close-cart-button').on('click', closeCart);
+        }
+
+        function openCart() {
+            renderCartModal();
+            cartModal.removeClass('hidden');
+        }
+
+        function closeCart() {
+            cartModal.addClass('hidden');
+        }
+
+        $('#open-cart-button').on('click', openCart);
+        cartModal.on('click', (event) => {
+            if (event.target === cartModal[0]) {
+                closeCart();
+            }
         });
-    }
-    
-    function initializeVideoSelector() {
-        const videoListContainer = $('#video-list');
-        if(!videoListContainer.length) return;
-        videoListContainer.html('');
 
-        videoSkins.forEach((skin, index) => {
-            const button = $(`<button class="video-list-button w-full text-left p-2 rounded-lg transition-colors duration-200 text-white">${skin.name}</button>`);
-            button.on('click', () => setVideoSkin(index));
-            videoListContainer.append(button);
-        });
-        updateVideoListUI();
-    }
+        $(window).on('resize', () => {
+            flipbook.turn('size', $('.flipbook-container').width(), $('.flipbook-container').height());
+        }).trigger('resize');
 
-    initializeMixer();
-    initializeVideoSelector();
-    const savedSkinIndex = parseInt(localStorage.getItem('runaVideoSkin')) || 0;
-    setVideoSkin(savedSkinIndex);
+        // --- Firebase Auth Logic ---
+        let auth;
+        const authContainer = $('#auth-container');
+        const authModal = $('#auth-modal');
+        
+        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        try {
+            const firebaseConfig = JSON.parse(firebaseConfigStr);
+            if (Object.keys(firebaseConfig).length > 0) {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+            } else {
+                console.warn("Firebase config is empty. Auth will not work.");
+            }
+        } catch (e) {
+            console.error("Error initializing Firebase:", e);
+        }
 
-    // --- Cart Logic ---
-    let cart = [];
-    const cartModal = $('#cart-modal');
-    const cartCounter = $('#cart-counter');
+        function renderUserUI(user) {
+            const userImage = user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" class="w-full h-full object-cover">` : `<span class="text-white font-bold text-xl">${user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}</span>`;
+            authContainer.html(`<div class="relative"><button id="user-menu-button" title="Mi Cuenta" class="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm overflow-hidden border-2 border-gray-600 hover:border-[var(--runa-primary)] bg-gray-700">${userImage}</button><div id="user-menu-dropdown" class="hidden absolute top-full left-0 mt-2 w-56 translucent-panel border rounded-lg shadow-xl z-50"><div class="px-4 py-3 border-b border-gray-500/50"><p class="text-sm font-semibold truncate text-white">${user.displayName || 'Usuario'}</p><p class="text-xs truncate text-gray-400">${user.email || 'Sin email'}</p></div><div class="py-1"><a href="#" id="logout-button-menu" class="flex items-center w-full text-left px-4 py-2 text-sm text-white hover:text-[var(--runa-primary)] transition-colors">Cerrar Sesión</a></div></div></div>`);
+            $('#logout-button-menu').on('click', (e) => { e.preventDefault(); if(auth) signOut(auth); });
+            $('#user-menu-button').on('click', (e) => { e.stopPropagation(); $('#user-menu-dropdown').toggleClass('hidden'); });
+        }
 
-    function updateCartCounter() {
-        if (cart.length > 0) {
-            cartCounter.text(cart.length).removeClass('hidden');
+        function renderGuestUI() {
+            authContainer.html(`<button id="open-auth-modal-button" title="Acceder o Registrarse" class="w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>`);
+            $('#open-auth-modal-button').on('click', () => authModal.removeClass('hidden'));
+        }
+
+        if (auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    renderUserUI(user);
+                } else {
+                    renderGuestUI();
+                }
+            });
+
+            $('#google-login-button-modal').on('click', () => {
+                const provider = new GoogleAuthProvider();
+                signInWithPopup(auth, provider)
+                    .then(() => authModal.addClass('hidden'))
+                    .catch((error) => console.error("Google Sign-In Error:", error));
+            });
         } else {
-            cartCounter.addClass('hidden');
-        }
-    }
-
-    function renderCartModal() {
-        let contentHTML = '';
-        if (cart.length === 0) {
-            contentHTML = `<div class="p-8 flex-grow flex flex-col items-center justify-center text-center"><svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><h3 class="font-semibold text-lg text-white">Tu carrito está vacío</h3><p class="text-sm text-gray-400">Añade productos para verlos aquí.</p></div>`;
-        } else {
-            // Logic to display items would go here
+            renderGuestUI();
         }
 
-        cartModal.html(`<div class="translucent-panel w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col ml-auto"><header class="p-4 border-b border-white/10 flex justify-between items-center"><h2 class="text-xl font-bold text-white">Tu Carrito</h2><button id="close-cart-button" class="p-1 rounded-full text-white hover:bg-white/10 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></header>${contentHTML}</div>`);
-        $('#close-cart-button').on('click', closeCart);
-    }
-
-    function openCart() {
-        renderCartModal();
-        cartModal.removeClass('hidden');
-    }
-
-    function closeCart() {
-        cartModal.addClass('hidden');
-    }
-
-    $('#open-cart-button').on('click', openCart);
-    cartModal.on('click', (event) => {
-        if (event.target === cartModal[0]) {
-            closeCart();
-        }
+        $('#close-auth-modal-button').on('click', () => authModal.addClass('hidden'));
+        authModal.on('click', (event) => { if (event.target === authModal[0]) authModal.addClass('hidden'); });
     });
-
-    $(window).on('resize', () => {
-        flipbook.turn('size', $('.flipbook-container').width(), $('.flipbook-container').height());
-    }).trigger('resize');
-});
 </script>
 
 </body>
