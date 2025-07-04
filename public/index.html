@@ -60,8 +60,6 @@
         html:not(.dark) .video-list-button.active { background-color: rgba(0,0,0,0.1); }
         html:not(.dark) .ghost-button { border-color: var(--runa-primary); color: var(--runa-primary); }
         html:not(.dark) .ghost-button:hover { background-color: var(--runa-primary); color: white; }
-        html:not(.dark) .payment-icon { color: #6b7280; } /* gray-500 */
-        html:not(.dark) .payment-icon:hover { color: #111827; } /* gray-900 */
         
         /* Dark Theme */
         html.dark body { background-color: #111; color: #E2E8F0; }
@@ -76,9 +74,6 @@
         html.dark .video-list-button.active { background-color: rgba(255,255,255,0.15); }
         html.dark .ghost-button { border-color: rgba(255, 255, 255, 0.8); color: white; }
         html.dark .ghost-button:hover { background-color: rgba(255, 255, 255, 0.9); color: #111; }
-        html.dark .payment-icon { color: #9ca3af; } /* gray-400 */
-        html.dark .payment-icon:hover { color: #ffffff; } /* white */
-
 
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; }
         #video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: opacity 0.5s ease-in-out; }
@@ -133,6 +128,16 @@
         html.dark .whatsapp-fab {
             background-color: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .payment-logo {
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+            opacity: 0.7;
+        }
+        .payment-logo:hover {
+            filter: grayscale(0%);
+            opacity: 1;
         }
 
         /* Styling for the default AR button to match the ghost-button */
@@ -322,7 +327,7 @@
                     <div>
                         <h3 class="text-2xl font-bold mb-4">Síguenos</h3>
                         <div class="flex justify-center md:justify-start space-x-4">
-                            <a href="https://www.instagram.com/_runacoffee_?igsh=MW9tMG1zcmhvM3JyeQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="payment-icon transition-colors" aria-label="Instagram de Runa Coffee">
+                            <a href="https://www.instagram.com/_runacoffee_?igsh=MW9tMG1zcmhvM3JyeQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram de Runa Coffee">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path fill-rule="evenodd" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" clip-rule="evenodd" />
                                 </svg>
@@ -331,31 +336,13 @@
                     </div>
                     <div>
                         <h3 class="text-2xl font-bold mb-4">Formas de Pago</h3>
-                        <div id="payment-logos" class="flex justify-center md:justify-start flex-wrap items-center gap-x-5 gap-y-4">
-                            <!-- Nequi -->
-                            <span title="Nequi" class="payment-icon transition-colors">
-                                <svg class="w-12 h-8" fill="currentColor" viewBox="0 0 134.2 82.6"><path d="M110.4 82.6H84.1c-3.5 0-6.4-2.9-6.4-6.4V34.3c0-3.5 2.9-6.4 6.4-6.4h26.3c3.5 0 6.4 2.9 6.4 6.4v41.9c0 3.5-2.8 6.4-6.4 6.4zM50.1 82.6H23.8c-3.5 0-6.4-2.9-6.4-6.4V6.4c0-3.5 2.9-6.4 6.4-6.4h26.3c3.5 0 6.4 2.9 6.4 6.4v70c0 3.4-2.9 6.2-6.4 6.2zm-22.6-61.9h15.2v-8.3H27.5v8.3zm0 16.6h15.2v-8.3H27.5v8.3zm0 16.6h15.2v-8.3H27.5v8.3zm0 16.6h15.2v-8.3H27.5v8.3zM94.9 65.1h15.2v-8.3H94.9v8.3zm0-16.6h15.2v-8.3H94.9v8.3zM80.7 0h-9.2L53.9 41.3v2.5h23.3s3.5-3.6 3.5-3.6V6.4c0-3.5-2.8-6.4-6.3-6.4zM0 41.3C0 22.2 14.4 6.7 32.2 6.7V0C14.4 0 0 18.5 0 41.3S14.4 82.6 32.2 82.6v-6.7C14.4 75.9 0 60.4 0 41.3z"/></svg>
-                            </span>
-                            <!-- Bancolombia -->
-                            <span title="Bancolombia" class="payment-icon transition-colors">
-                                <svg class="w-12 h-8" fill="currentColor" viewBox="0 0 32 32"><path d="M0 16C0 7.163 7.163 0 16 0s16 7.163 16 16-7.163 16-16 16S0 24.837 0 16zm15.923 7.438V8.5h-3.321v14.938h3.321zm5.793-7.469a2.484 2.484 0 00-2.484-2.484H16.92v4.968h2.312a2.484 2.484 0 002.484-2.484zm-11.586 0a2.484 2.484 0 002.484 2.484h2.312V13.5h-2.312a2.484 2.484 0 00-2.484 2.484z"/></svg>
-                            </span>
-                            <!-- PayPal -->
-                            <span title="PayPal" class="payment-icon transition-colors">
-                                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M3.345 3.164h5.993c.398 0 .74.28.813.673l.795 4.328c.05.297.315.51.615.51h2.109c3.184 0 5.034-1.664 5.56-4.83.107-.627.657-1.07 1.29-.98l1.32.19c.61.09.99.63.88 1.23-.62 3.4-2.84 5.73-6.23 6.03-2.13.19-3.79-1.29-4.32-3.27-.14-.52-.6-.87-1.14-.87H7.41c-.58 0-1.06.42-1.14.99l-.83 5.43c-.05.29-.31.5-.61.5H2.33c-.63 0-.93-.7-.56-1.22l1.575-2.21L2.12 3.734c-.11-.47.22-.9.7-1.01l.525-.16zm9.32 5.038c.49-2.85-1.48-4.32-3.93-4.32H6.93l.63 4.14s.39 2.22 2.13 2.22h2.25c.59 0 1.1-.39 1.23-.96l.1-.66z"/></svg>
-                            </span>
-                            <!-- Visa -->
-                            <span title="Visa" class="payment-icon transition-colors">
-                                <svg class="w-9 h-9" fill="currentColor" viewBox="0 0 24 24"><path d="M21.18,9.38A3.42,3.42,0,0,0,18.5,8.5H5.5A3.42,3.42,0,0,0,2.82,9.38L1.5,15.5H22.5ZM5.5,10.5H18.5a1.42,1.42,0,0,1,1.38.92L21.25,15.5H2.75Z"/></svg>
-                            </span>
-                            <!-- Mastercard -->
-                            <span title="Mastercard" class="payment-icon transition-colors">
-                                <svg class="w-9 h-9" fill="currentColor" viewBox="0 0 24 24"><path d="M12,12a5,5,0,1,0,5-5A5,5,0,0,0,12,12Zm0,8a5,5,0,1,0-5-5A5,5,0,0,0,12,20Z"/></svg>
-                            </span>
-                            <!-- Binance Pay -->
-                            <span title="Binance Pay" class="payment-icon transition-colors">
-                                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm-1.5 13.9v-1.8l-1.6.8v-1.8l1.6-.8V9.4l-3.2 1.6v1.8l1.6.8-1.6.8v1.8l3.2-1.6zm3 0v-1.8l-1.6.8v-1.8l1.6-.8V9.4l-3.2 1.6v1.8l1.6.8-1.6.8v1.8l3.2-1.6zm3-3.9v-1.8l-1.6.8V8.6l1.6-.8V6.5l-3.2 1.6v1.8l3.2-1.6z"/></svg>
-                            </span>
+                        <div id="payment-logos" class="flex justify-center md:justify-start flex-wrap items-center gap-x-6 gap-y-4">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/visa.png" alt="Visa" class="h-5 payment-logo">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/mastercard.png" alt="Mastercard" class="h-7 payment-logo">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/paypal.png" alt="PayPal" class="h-6 payment-logo">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/nequi.png" alt="Nequi" class="h-6 payment-logo">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/bancolombia.png" alt="Bancolombia" class="h-7 payment-logo">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/binancepay.png" alt="Binance Pay" class="h-8 payment-logo">
                         </div>
                         <p class="text-xs text-inherit/70 mt-4">Pagos seguros a través de nuestra plataforma.</p>
                     </div>
