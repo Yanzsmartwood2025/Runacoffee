@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cuaderno Digital Interactivo - RUNA Coffee</title>
+
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="RUNA Coffee - Mi Cuaderno Digital Interactivo" />
+    <meta property="og:description" content="¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital. Una experiencia para despertar los sentidos." />
+    <meta property="og:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/portada-libro.jpg" />
+    <meta property="og:url" content="https://URL-DE-TU-PAGINA-AQUI.com" />
+    <meta property="og:type" content="website" />
     
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- UPDATED Font Awesome Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -191,7 +199,8 @@
                 </div>
                 <div class="menu-section-content">
                     <div class="tool-grid">
-                        <div class="tool-button" id="tool-pencil" title="Lápiz"><i class="fas fa-pencil-alt"></i><span>Lápiz</span></div>
+                        <!-- CORRECTED ICONS -->
+                        <div class="tool-button" id="tool-pencil" title="Lápiz"><i class="fas fa-pencil"></i><span>Lápiz</span></div>
                         <div class="tool-button" id="tool-eraser" title="Borrador"><i class="fas fa-eraser"></i><span>Borrador</span></div>
                         <div class="tool-button" id="tool-upload" title="Subir Imagen"><i class="fas fa-image"></i><span>Foto</span></div>
                         <div class="tool-button" id="tool-clear" title="Limpiar Página"><i class="fas fa-trash"></i><span>Limpiar</span></div>
@@ -216,9 +225,10 @@
                 </div>
                 <div class="menu-section-content">
                     <div class="tool-grid">
+                        <!-- CORRECTED ICONS -->
                         <div class="tool-button" id="tool-calc" title="Calculadora"><i class="fas fa-calculator"></i><span>Calc</span></div>
                         <div class="tool-button" id="tool-print" title="Imprimir"><i class="fas fa-print"></i><span>Imprimir</span></div>
-                        <div class="tool-button" id="tool-share" title="Compartir"><i class="fas fa-share-alt"></i><span>Compartir</span></div>
+                        <div class="tool-button" id="tool-share" title="Compartir"><i class="fas fa-share-nodes"></i><span>Compartir</span></div>
                     </div>
                 </div>
             </div>
@@ -309,14 +319,15 @@
 </div>
 
 <div class="calculator" id="calculator">
-    <div class="calc-header"><i class="fas fa-arrows-alt"></i><i class="fas fa-times close-btn" id="calc-close"></i></div>
+    <!-- CORRECTED ICONS -->
+    <div class="calc-header"><i class="fas fa-up-down-left-right"></i><i class="fas fa-xmark close-btn" id="calc-close"></i></div>
     <input type="text" class="calc-display" id="calc-display" readonly>
     <div class="calc-keys">
         <button class="calc-btn">C</button><button class="calc-btn">(</button><button class="calc-btn">)</button><button class="calc-btn operator">/</button>
         <button class="calc-btn">7</button><button class="calc-btn">8</button><button class="calc-btn">9</button><button class="calc-btn operator">*</button>
         <button class="calc-btn">4</button><button class="calc-btn">5</button><button class="calc-btn">6</button><button class="calc-btn operator">-</button>
         <button class="calc-btn">1</button><button class="calc-btn">2</button><button class="calc-btn">3</button><button class="calc-btn operator">+</button>
-        <button class="calc-btn">0</button><button class="calc-btn">.</button><button class="calc-btn" id="calc-backspace"><i class="fas fa-backspace"></i></button><button class="calc-btn operator" id="calc-equals">=</button>
+        <button class="calc-btn">0</button><button class="calc-btn">.</button><button class="calc-btn" id="calc-backspace"><i class="fas fa-delete-left"></i></button><button class="calc-btn operator" id="calc-equals">=</button>
     </div>
 </div>
 
@@ -481,17 +492,42 @@
         });
         
         $('#tool-print').on('click', () => window.print());
-        $('#tool-share').on('click', () => {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'RUNA Coffee - Cuaderno Digital',
-                    text: 'Echa un vistazo a este increíble cuaderno digital de RUNA Coffee!',
-                    url: window.location.href,
-                }).catch(console.error);
+        
+        $('#tool-share').on('click', async () => {
+            const shareData = {
+                title: 'RUNA Coffee - Cuaderno Digital',
+                text: '¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital interactivo. ¡Una experiencia para despertar los sentidos!',
+                url: window.location.href,
+            };
+            
+            const imageUrl = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/portada-libro.jpg';
+
+            try {
+                const response = await fetch(imageUrl);
+                const blob = await response.blob();
+                const file = new File([blob], 'runa-portada.jpg', { type: 'image/jpeg' });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        ...shareData,
+                        files: [file]
+                    });
+                } else {
+                    await navigator.share(shareData);
+                }
+            } catch (error) {
+                console.error('Error sharing:', error);
+                try {
+                    await navigator.share(shareData);
+                } catch (fallbackError) {
+                    console.error('Fallback share failed too:', fallbackError);
+                    alert("No se pudo compartir. Es posible que tu navegador no sea compatible.");
+                }
             }
         });
         
         $('#tool-upload').on('click', () => $('#image-uploader').click());
+        $('<input type="file" id="image-uploader" accept="image/*" class="hidden">').appendTo('body');
         $('#image-uploader').on('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
