@@ -228,8 +228,8 @@
             </div>
             <div id="level-display"></div>
             <div id="game-overlay">
-                <h1>Runa Defenders</h1>
-                <p>¡Las plagas atacan! Protege tu Árbol de Café. Mueve a tu Grano Guardián, dispara a los enemigos y recolecta los Granos que caen para mejorar tus habilidades.</p>
+                <h1 id="overlay-title">Runa Defenders</h1>
+                <p id="overlay-text">¡Las plagas atacan! Protege tu Árbol de Café. Mueve a tu Grano Guardián, dispara a los enemigos y recolecta los Granos que caen para mejorar tus habilidades.</p>
                 <button id="start-button" class="game-button">Empezar</button>
             </div>
         </div>
@@ -615,7 +615,7 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const leftOffset = (canvas.width - activeLanes * cellSize) / 2;
         for (let i = 0; i < config.lanes; i++) {
-            const isActive = i >= (config.lanes - activeLanes) / 2 && i < (config.lanes + activeLanes) / 2;
+            const isActive = i >= Math.floor((config.lanes - activeLanes) / 2) && i < Math.floor((config.lanes + activeLanes) / 2);
             ctx.fillStyle = i % 2 === 0 ? 'rgba(0,0,0,0.05)' : 'rgba(0,0,0,0.1)';
             if (!isActive) {
                  ctx.fillStyle = 'rgba(0,0,0,0.2)';
@@ -623,6 +623,24 @@
             ctx.fillRect(i * cellSize, 0, cellSize, canvas.height);
         }
         
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.font = '14px "Press Start 2P"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        if (activeLanes < 5) {
+            ctx.translate(leftOffset / 2, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Josephine te quiero mucho', 0, 0);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+            ctx.translate(canvas.width - leftOffset / 2, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('RUNA GAME', 0, 0);
+        }
+        ctx.restore();
+
         tree.draw();
         player.draw();
         projectiles.forEach(p => p.draw());
@@ -648,8 +666,8 @@
     function displayGameOver() {
         cancelAnimationFrame(animationFrameId);
         gameOverlay.style.display = 'flex';
-        const title = document.createElement('h1');
-        const msg = document.createElement('p');
+        const title = document.getElementById('overlay-title');
+        const msg = document.getElementById('overlay-text');
         const btn = document.createElement('button');
         btn.className = 'game-button';
         btn.textContent = 'Volver a Intentar';
@@ -681,21 +699,19 @@
         tree.health = health;
         gameState = 'start';
         gameOverlay.style.display = 'flex';
-        const title = document.createElement('h1');
+        const title = document.getElementById('overlay-title');
+        const p = document.getElementById('overlay-text');
+        const startBtn = document.getElementById('start-button');
         title.textContent = 'Runa Defenders';
-        const p = document.createElement('p');
         p.textContent = '¡Las plagas atacan! Protege tu Árbol de Café. Mueve a tu Grano Guardián, dispara a los enemigos y recolecta los Granos que caen para mejorar tus habilidades.';
-        const startBtn = document.createElement('button');
-        startBtn.className = 'game-button';
-        startBtn.id = 'start-button'
+        startBtn.style.display = 'block';
         startBtn.textContent = 'Empezar';
-        gameOverlay.innerHTML = '';
-        gameOverlay.append(title, p, startBtn);
         
         startBtn.onclick = () => {
             if (Tone.context.state !== 'running') { Tone.start(); }
             gameState = 'playing';
             gameOverlay.style.display = 'none';
+            startNextLevel();
             gameLoop();
         };
     }
