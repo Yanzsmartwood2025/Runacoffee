@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Runa Defenders: La Furia del Grano</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            --game-bg: #5c7e3a;
+            --ui-bg: #4a2e1a;
+            --text-light: #fdfbf8;
+            --accent-color: #D47500;
+            --bar-bg: #3a2e2a;
+            --fire-color: #e11d48;
+            --wind-color: #38bdf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Press Start 2P', cursive;
+            background-color: #1a1310;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            aspect-ratio: 16 / 9;
+            background: var(--game-bg);
+            border: 8px solid var(--ui-bg);
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        #game-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background-image: url('https://www.transparenttextures.com/patterns/grass-cubes.png');
+        }
+
+        #ui-panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .resource-bag {
+            display: flex;
+            align-items: center;
+            background-color: var(--ui-bg);
+            padding: 8px 15px;
+            border-radius: 10px;
+            border: 4px solid #6d4c35;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            pointer-events: all;
+        }
+
+        .resource-bag img {
+            width: 40px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .resource-bag .resource-value {
+            font-size: 24px;
+            color: var(--text-light);
+            text-shadow: 2px 2px #000;
+        }
+        
+        .power-bar-container {
+            width: 150px;
+            height: 20px;
+            background-color: var(--bar-bg);
+            border-radius: 5px;
+            overflow: hidden;
+            border: 2px solid #6d4c35;
+        }
+        
+        .power-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--accent-color);
+            transition: width 0.2s linear;
+        }
+
+        #power-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: all;
+        }
+
+        .power-button {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #6d4c35;
+            border-radius: 10px;
+            background-color: var(--bar-bg);
+            cursor: pointer;
+            position: relative;
+            opacity: 0.5;
+            transition: opacity 0.3s, transform 0.1s;
+        }
+        .power-button.ready {
+            opacity: 1;
+            border-color: var(--accent-color);
+        }
+        .power-button.ready:hover {
+            transform: scale(1.1);
+        }
+        .power-button .cooldown {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .power-button img {
+            width: 100%;
+            height: 100%;
+            padding: 5px;
+        }
+
+        #game-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+        
+        #game-overlay h1 {
+            font-size: 3vw;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            text-shadow: 4px 4px #000;
+        }
+        
+        #game-overlay p {
+            font-size: 1.5vw;
+            max-width: 60%;
+            line-height: 1.5;
+        }
+
+        .game-button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.8vw;
+            padding: 15px 30px;
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 30px;
+            text-shadow: 2px 2px #000;
+            border-bottom: 5px solid #a15a00;
+            transition: all 0.1s ease;
+        }
+        
+        .game-button:active {
+            transform: translateY(3px);
+            border-bottom-width: 2px;
+        }
+
+        #orientation-blocker {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: #1a1310;
+            z-index: 200;
+            color: white;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        #orientation-blocker p {
+            font-size: 18px;
+        }
+        #orientation-blocker img {
+            width: 100px;
+            margin-top: 20px;
+            filter: invert(1);
+            animation: rotate 1.5s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(90deg); }
+        }
+
+        @media (orientation: portrait) {
+            #orientation-blocker {
+                display: flex;
+            }
+            #game-container {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-wrapper">
+        <div id="game-container">
+            <canvas id="game-canvas"></canvas>
+            <div id="ui-panel">
+                <div id="resource-bags" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Bolsa de Granos (Mejoras) -->
+                    <div id="grains-bag" class="resource-bag">
+                        <!-- REEMPLAZA ESTO con tu GIF/PNG de la bolsa -->
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MCAxMDAiPjxwYXRoIGQ9Ik0xMCAwaDYwdjEwMGgtNjB6IiBmaWxsPSIjODQ1YzQyIi8+PHBhdGggZD0iTTEwIDBoNjBsLTEwIDEwaC00MGwtMTAgLTEweiIgZmlsbD0iIzY5NGI0MSIvPjwvc3ZnPg==" alt="Bolsa de Granos">
+                        <span id="grains-value" class="resource-value">0</span>
+                    </div>
+                    <!-- Bolsa de Poder (Habilidad Especial) -->
+                    <div id="power-bag" class="resource-bag">
+                         <!-- REEMPLAZA ESTO con tu GIF/PNG de la bolsa mística -->
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MCAxMDAiPjxwYXRoIGQ9Ik0xMCAwaDYwdjEwMGgtNjB6IiBmaWxsPSIjNjkzMDhmIi8+PHBhdGggZD0iTTEwIDBoNjBsLTEwIDEwaC00MGwtMTAgLTEweiIgZmlsbD0iIzU0MjY4NyIvPjwvc3ZnPg==" alt="Bolsa de Poder">
+                        <div class="power-bar-container">
+                            <div id="power-bar" class="power-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="power-buttons">
+                    <!-- Los botones de poder se añadirán aquí -->
+                </div>
+            </div>
+            <div id="game-overlay">
+                <h1>Runa Defenders</h1>
+                <p>¡Las plagas atacan! Protege tu Árbol de Café. Mueve a tu Grano Guardián, dispara a los enemigos y recolecta los Granos y Orbes que caen para desatar el poder de los hongos.</p>
+                <button id="start-button" class="game-button">Empezar a Jugar</button>
+            </div>
+        </div>
+    </div>
+    <div id="orientation-blocker">
+        <p>Por favor, gira tu dispositivo a modo horizontal para jugar.</p>
+        <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/rotate-icon.png" alt="Girar dispositivo">
+    </div>
+
+<script type="module">
+// =================================================================
+// ---  CONFIGURACIÓN DEL JUEGO Y ASSETS ---
+// =================================================================
+const config = {
+    // Jugabilidad
+    lanes: 5,
+    initialLanes: 3,
+    playerSpeed: 7,
+    projectileSpeed: 10,
+    shootCooldown: 20, // frames
+    
+    // Recursos
+    grainSpawnRate: 180, // cada 3 segundos
+    orbSpawnRate: 300, // cada 5 segundos
+    powerBarMax: 100,
+    orbValue: 20, // cuánto llena la barra de poder
+
+    // Dificultad
+    enemyHealthMultiplier: 1.2, // por oleada
+    enemySpawnRate: 180, // frames
+    
+    // Personaje
+    player: {
+        // REEMPLAZA ESTO: Pon el enlace a tu GIF del Grano Guardián
+        image: {
+            idle: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iIzY1NDMyMSIvPjxwYXRoIGQ9Ik0zMCA1MEE0MCA0MCAwIDAgMCA3MCA1MCIgZmlsbD0iIzM4MjIyMiIvPjwvc3ZnPg==',
+            attack: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iIzk5NmI1MCIvPjxwYXRoIGQ9Ik0zMCA1MEE0MCA0MCAwIDAgMCA3MCA1MCIgZmlsbD0iIzM4MjIyMiIvPjwvc3ZnPg=='
+        },
+        projectileImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iOCIgZmlsbD0iI2Q0NzUwMCIvPjwvc3ZnPg=='
+    },
+    
+    // Árbol y Hongos
+    tree: {
+        // REEMPLAZA ESTO: GIF del árbol
+        image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNNTAgOTVsLTE1LTQwaC0xMHYtMTBoMjB2MTBoLTVsMTAtMzBoNWw5IDMwaC00di0xMGgyMHYxMGgtMTBsLTE1IDQwWiIgZmlsbD0iIzU0ODgyYSIvPjxwYXRoIGQ9Ik01MCA1NWgtMjVsMTAtMzBoNWwxMCAzMFoiIGZpbGw9IiM2YmE0MzQiLz48L3N2Zz4=',
+        health: 1000
+    },
+
+    // Recursos que caen
+    grainImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAzMCI+PGVsbGlwc2UgY3g9IjEwIiBjeT0iMTUiIHJ4PSI4IiByeT0iMTQiIGZpbGw9IiM2NTQzMjEiLz48L3N2Zz4=',
+    orbImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMTAiIGZpbGw9IiNmZGUwNDciLz48L3N2Zz4=',
+
+    // Enemigos
+    enemies: [
+        { name: 'Broca Débil', health: 1, speed: 0.8, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iI2M3M2EzYSIvPjwvc3ZnPg==' }, // 1 golpe
+        { name: 'Broca Normal', health: 60, speed: 0.6, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iI2M3N2IzYSIvPjwvc3ZnPg==' }, // 3 golpes
+        { name: 'Broca Fuerte', health: 300, speed: 0.4, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iI2E4M2EzYSIvPjwvc3ZnPg==' }, // 15 golpes
+        { name: 'Broca Tanque', health: 400, speed: 0.3, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iIzgwMDBmZiIvPjwvc3ZnPg==' }, // 20 golpes
+        { name: 'Broca Rey', health: 600, speed: 0.2, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iIzRjMDA3YSIvPjwvc3ZnPg==' }, // 30 golpes
+    ],
+    
+    // Oleadas
+    waves: [
+        { enemies: { 0: 5 } }, // Oleada 1: 5 enemigos tipo 0
+        { enemies: { 0: 8 } },
+        { enemies: { 0: 10, 1: 2 } }, // Oleada 3: 10 tipo 0, 2 tipo 1
+        { enemies: { 1: 8 } },
+        { enemies: { 0: 15, 1: 5 } },
+        { enemies: { 2: 1 } }, // Oleada 6: Desbloquea 4to carril y aparece enemigo fuerte
+        { enemies: { 0: 10, 1: 8, 2: 1 } },
+        { enemies: { 3: 1 } },
+        { enemies: { 1: 10, 2: 3 } },
+        { enemies: { 4: 1 } }, // Oleada 10: Desbloquea 5to carril y aparece el Rey
+    ],
+    
+    // Poderes de los Hongos
+    powers: [
+        { name: 'Fuego', unlockWave: 2, cooldown: 600, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2YyMGEwYSI+PHBhdGggZD0iTTEyIDJDNi40OCA4LjUgMiAxMiAyIDE2LjUgMiAyMiA2LjQ4IDIyIDEyIDIyIDE3LjUyIDIyIDIyIDE2LjUgMjIgMTIgMjIgOC41IDE3LjUyIDIgMTIgMnoiLz48L3N2Zz4=' },
+        { name: 'Viento', unlockWave: 5, cooldown: 900, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzNhZDNmZiI+PHBhdGggZD0iTTUgMy41QTEuNSAxLjUgMCAwIDEgNi41IDJoMTFhMS41IDEuNSAwIDAgMSAwIDNIMy41YTEuNSAxLjUgMCAwIDEtMS41LTEuNXYtMTBBMS41IDEuNSAwIDAgMSAzLjUgM2gxMVoiLz48L3N2Zz4=' },
+    ]
+};
+
+// =================================================================
+// ---  INICIALIZACIÓN DEL JUEGO ---
+// =================================================================
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+const container = document.getElementById('game-container');
+const gameOverlay = document.getElementById('game-overlay');
+const startButton = document.getElementById('start-button');
+const grainsValue = document.getElementById('grains-value');
+const powerBar = document.getElementById('power-bar');
+const powerButtonsContainer = document.getElementById('power-buttons');
+
+let cellSize, cellGap = 5;
+let frame = 0;
+let gameState = 'start'; // 'start', 'playing', 'wave_transition', 'game_over'
+let activeLanes = config.initialLanes;
+
+let player, tree;
+let projectiles = [], enemies = [], resources = [], particles = [];
+let currentWaveIndex = 0;
+let enemiesToSpawn = [];
+let shootTimer = 0;
+let grainPoints = 0;
+let powerPoints = 0;
+
+// =================================================================
+// ---  SISTEMA DE SONIDO (Tone.js) ---
+// =================================================================
+const sounds = {
+    shoot: new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
+    collectGrain: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 } }).toDestination(),
+    collectOrb: new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.3 } }).toDestination(),
+    enemyHit: new Tone.NoiseSynth({ noise: { type: 'pink' }, envelope: { attack: 0.01, decay: 0.05, sustain: 0, release: 0.05 } }).toDestination(),
+    powerReady: new Tone.Synth().toDestination(),
+    gameOver: new Tone.Synth().toDestination(),
+};
+
+function playSound(sound, note = null, duration = '8n') {
+    if (Tone.context.state !== 'running') {
+        Tone.start();
+    }
+    if (sounds[sound]) {
+        if (note) {
+            sounds[sound].triggerAttackRelease(note, duration);
+        } else {
+            sounds[sound].triggerAttackRelease(0.1);
+        }
+    }
+}
+
+// =================================================================
+// ---  CLASES DE OBJETOS DEL JUEGO ---
+// =================================================================
+class Player {
+    constructor() { this.reset(); }
+    reset() {
+        this.width = cellSize * 0.8;
+        this.height = cellSize * 0.8;
+        this.x = cellGap;
+        this.y = canvas.height / 2 - this.height / 2;
+        this.speed = config.playerSpeed;
+        this.moving = false;
+        this.targetY = this.y;
+        this.image = new Image();
+        this.image.src = config.player.image.idle;
+        this.attackImage = new Image();
+        this.attackImage.src = config.player.image.attack;
+        this.isAttacking = false;
+    }
+    draw() {
+        const currentImage = this.isAttacking ? this.attackImage : this.image;
+        ctx.drawImage(currentImage, this.x, this.y, this.width, this.height);
+    }
+    update() {
+        if (this.moving) {
+            const dy = this.targetY - this.y;
+            if (Math.abs(dy) < this.speed) {
+                this.y = this.targetY;
+                this.moving = false;
+            } else {
+                this.y += Math.sign(dy) * this.speed;
+            }
+        }
+        // Limitar movimiento a los carriles activos
+        const topLimit = (canvas.height - activeLanes * cellSize) / 2;
+        const bottomLimit = topLimit + (activeLanes - 1) * cellSize;
+        if (this.y < topLimit) this.y = topLimit;
+        if (this.y > bottomLimit) this.y = bottomLimit;
+    }
+    shoot() {
+        if (shootTimer <= 0) {
+            projectiles.push(new Projectile(this.x + this.width, this.y + this.height / 2));
+            shootTimer = config.shootCooldown;
+            playSound('shoot', 'C5', '16n');
+            this.isAttacking = true;
+            setTimeout(() => this.isAttacking = false, 100);
+        }
+    }
+}
+
+class Projectile {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = 30;
+        this.height = 15;
+        this.speed = config.projectileSpeed;
+        this.power = 20;
+        this.image = new Image();
+        this.image.src = config.player.projectileImage;
+    }
+    update() { this.x += this.speed; }
+    draw() { ctx.drawImage(this.image, this.x, this.y, this.width, this.height); }
+}
+
+class Enemy {
+    constructor(lane, typeIndex) {
+        this.type = config.enemies[typeIndex];
+        this.x = canvas.width;
+        this.y = ((canvas.height - activeLanes * cellSize) / 2) + (lane * cellSize) + cellGap;
+        this.width = cellSize - cellGap * 2;
+        this.height = cellSize - cellGap * 2;
+        this.speed = this.type.speed;
+        this.health = this.type.health * (1 + (currentWaveIndex * 0.1));
+        this.maxHealth = this.health;
+        this.image = new Image();
+        this.image.src = this.type.image;
+    }
+    update() { this.x -= this.speed; }
+    draw() { 
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        // Health bar
+        if (this.health < this.maxHealth) {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(this.x, this.y - 10, this.width, 5);
+            ctx.fillStyle = 'green';
+            ctx.fillRect(this.x, this.y - 10, this.width * (this.health / this.maxHealth), 5);
+        }
+    }
+}
+
+class Resource {
+    constructor(x, y, type) {
+        this.x = x;
+        this.y = y;
+        this.size = 40;
+        this.speedY = 1;
+        this.type = type; // 'grain' or 'orb'
+        this.image = new Image();
+        this.image.src = type === 'grain' ? config.grainImage : config.orbImage;
+        this.life = 300; // frames
+    }
+    update() {
+        this.y += this.speedY;
+        this.life--;
+    }
+    draw() {
+        ctx.globalAlpha = this.life < 60 ? this.life / 60 : 1;
+        ctx.drawImage(this.image, this.x, this.y, this.size, this.size);
+        ctx.globalAlpha = 1;
+    }
+}
+
+class Particle {
+    constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 5 + 2;
+        this.speedX = Math.random() * 3 - 1.5;
+        this.speedY = Math.random() * 3 - 1.5;
+        this.color = color;
+        this.life = 30;
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life--;
+    }
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.life / 30;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+}
+
+class Tree {
+    constructor() { this.reset(); }
+    reset() {
+        this.width = cellSize * 1.5;
+        this.height = canvas.height;
+        this.x = -this.width / 2;
+        this.y = 0;
+        this.health = config.tree.health;
+        this.maxHealth = config.tree.health;
+        this.image = new Image();
+        this.image.src = config.tree.image;
+    }
+    draw() {
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
+}
+
+// =================================================================
+// ---  LÓGICA DEL JUEGO ---
+// =================================================================
+function handleGameLogic() {
+    if (gameState !== 'playing') return;
+
+    // Player
+    player.update();
+    if (shootTimer > 0) shootTimer--;
+
+    // Projectiles
+    projectiles.forEach((p, i) => {
+        p.update();
+        if (p.x > canvas.width) projectiles.splice(i, 1);
+    });
+
+    // Enemies
+    enemies.forEach(e => e.update());
+    
+    // Resources
+    if (frame % config.grainSpawnRate === 0) {
+        const x = Math.random() * (canvas.width - cellSize * 2) + cellSize;
+        resources.push(new Resource(x, 0, 'grain'));
+    }
+    if (frame % config.orbSpawnRate === 0) {
+        const x = Math.random() * (canvas.width - cellSize * 2) + cellSize;
+        resources.push(new Resource(x, 0, 'orb'));
+    }
+    resources.forEach((r, i) => {
+        r.update();
+        if (r.life <= 0) resources.splice(i, 1);
+    });
+    
+    // Particles
+    particles.forEach((p, i) => {
+        p.update();
+        if (p.life <= 0) particles.splice(i, 1);
+    });
+
+    handleCollisions();
+    handleWaves();
+}
+
+function handleCollisions() {
+    // Projectile vs Enemy
+    projectiles.forEach((p, pi) => {
+        enemies.forEach((e, ei) => {
+            if (isColliding(p, e)) {
+                e.health -= p.power;
+                projectiles.splice(pi, 1);
+                playSound('enemyHit');
+                for (let i = 0; i < 5; i++) particles.push(new Particle(p.x, p.y, 'white'));
+                if (e.health <= 0) {
+                    enemies.splice(ei, 1);
+                    // Drop orb
+                    resources.push(new Resource(e.x, e.y, 'orb'));
+                }
+            }
+        });
+    });
+
+    // Enemy vs Tree
+    enemies.forEach((e, i) => {
+        if (e.x < tree.width / 2) {
+            tree.health -= 10;
+            enemies.splice(i, 1);
+            // Add tree hit effect
+        }
+    });
+
+    if (tree.health <= 0) {
+        gameState = 'game_over';
+        playSound('gameOver', 'C3', '1n');
+    }
+}
+
+function handleWaves() {
+    if (enemies.length === 0 && enemiesToSpawn.length === 0 && currentWaveIndex <= config.waves.length) {
+        gameState = 'wave_transition';
+        currentWaveIndex++;
+        setTimeout(startNextWave, 3000);
+    }
+}
+
+function startNextWave() {
+    if (currentWaveIndex > config.waves.length) {
+        gameState = 'game_over'; // Victory
+        return;
+    }
+    
+    if (currentWaveIndex === 5) activeLanes = 4;
+    if (currentWaveIndex === 9) activeLanes = 5;
+    
+    const wave = config.waves[currentWaveIndex - 1];
+    for (const type in wave.enemies) {
+        for (let i = 0; i < wave.enemies[type]; i++) {
+            enemiesToSpawn.push(parseInt(type));
+        }
+    }
+    enemiesToSpawn.sort(() => Math.random() - 0.5); // Shuffle
+    
+    gameState = 'playing';
+}
+
+function spawnEnemy() {
+    if (gameState === 'playing' && enemiesToSpawn.length > 0) {
+        const typeIndex = enemiesToSpawn.pop();
+        const lane = Math.floor(Math.random() * activeLanes);
+        enemies.push(new Enemy(lane, typeIndex));
+    }
+}
+
+// =================================================================
+// ---  DIBUJADO Y BUCLE PRINCIPAL ---
+// =================================================================
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw lanes
+    const topOffset = (canvas.height - activeLanes * cellSize) / 2;
+    for (let i = 0; i < activeLanes; i++) {
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(0,0,0,0.05)' : 'rgba(0,0,0,0.1)';
+        ctx.fillRect(0, topOffset + i * cellSize, canvas.width, cellSize);
+    }
+
+    tree.draw();
+    player.draw();
+    projectiles.forEach(p => p.draw());
+    enemies.forEach(e => e.draw());
+    resources.forEach(r => r.draw());
+    particles.forEach(p => p.draw());
+
+    // UI Update
+    grainsValue.textContent = grainPoints;
+    powerBar.style.width = `${powerPoints}%`;
+}
+
+function gameLoop() {
+    handleGameLogic();
+    draw();
+    
+    if (gameState !== 'game_over') {
+        requestAnimationFrame(gameLoop);
+    } else {
+        displayGameOver();
+    }
+}
+
+// =================================================================
+// ---  MANEJO DE UI Y EVENTOS ---
+// =================================================================
+function setupUI() {
+    config.powers.forEach((power, index) => {
+        if (currentWaveIndex >= power.unlockWave) {
+            // Logic to create and show power buttons
+        }
+    });
+}
+
+function displayGameOver() {
+    gameOverlay.style.display = 'flex';
+    const title = gameOverlay.querySelector('h1');
+    const message = gameOverlay.querySelector('p');
+    const button = document.createElement('button');
+    button.className = 'game-button';
+    button.textContent = 'Volver a Intentar';
+    button.addEventListener('click', init);
+    
+    if (tree.health <= 0) {
+        title.textContent = '¡El Árbol ha Caído!';
+        message.textContent = 'Las plagas han destruido tu cafetal. ¡Pero un guardián nunca se rinde!';
+    } else {
+        title.textContent = '¡VICTORIA!';
+        message.textContent = '¡Has protegido el cafetal! Eres un verdadero Héroe de Runa.';
+    }
+    
+    gameOverlay.innerHTML = '';
+    gameOverlay.appendChild(title);
+    gameOverlay.appendChild(message);
+    gameOverlay.appendChild(button);
+}
+
+function init() {
+    resizeCanvas();
+    player = new Player();
+    tree = new Tree();
+    
+    gameState = 'start';
+    activeLanes = config.initialLanes;
+    currentWaveIndex = 0;
+    enemiesToSpawn = [];
+    enemies = [];
+    projectiles = [];
+    resources = [];
+    particles = [];
+    grainPoints = 100; // Start with some points
+    powerPoints = 0;
+
+    gameOverlay.style.display = 'flex';
+    const title = gameOverlay.querySelector('h1');
+    const message = gameOverlay.querySelector('p');
+    const startBtn = document.createElement('button');
+    startBtn.className = 'game-button';
+    startBtn.textContent = 'Empezar a Jugar';
+    startBtn.onclick = () => {
+        gameState = 'wave_transition';
+        gameOverlay.style.display = 'none';
+        startNextWave();
+        setInterval(spawnEnemy, config.enemySpawnRate);
+        gameLoop();
+    };
+    gameOverlay.innerHTML = '';
+    gameOverlay.appendChild(title);
+    gameOverlay.appendChild(message);
+    gameOverlay.appendChild(startBtn);
+}
+
+// =================================================================
+// ---  CONTROLES ---
+// =================================================================
+let touchY = null;
+let touchStartX = null;
+
+function handleTouchStart(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    touchY = touch.clientY;
+    touchStartX = touch.clientX;
+}
+
+function handleTouchMove(e) {
+    e.preventDefault();
+    if (touchY === null || touchStartX > window.innerWidth / 2) return;
+    const touch = e.touches[0];
+    const newY = touch.clientY;
+    player.targetY += (newY - touchY);
+    player.moving = true;
+    touchY = newY;
+}
+
+function handleTouchEnd(e) {
+    e.preventDefault();
+    if (touchStartX > window.innerWidth / 2) {
+        player.shoot();
+    }
+    // Check for resource collection on tap
+    const touch = e.changedTouches[0];
+    const rect = canvas.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    checkResourceClick(x, y);
+
+    touchY = null;
+    touchStartX = null;
+}
+
+function handleKeyDown(e) {
+    if (e.key === 'w' || e.key === 'ArrowUp') {
+        player.y -= player.speed * 2;
+    } else if (e.key === 's' || e.key === 'ArrowDown') {
+        player.y += player.speed * 2;
+    } else if (e.key === ' ') {
+        e.preventDefault();
+        player.shoot();
+    }
+}
+
+function handleMouseClick(e) {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    checkResourceClick(x, y);
+}
+
+function checkResourceClick(x, y) {
+    for (let i = resources.length - 1; i >= 0; i--) {
+        const r = resources[i];
+        const dist = Math.sqrt((x - (r.x + r.size/2))**2 + (y - (r.y + r.size/2))**2);
+        if (dist < r.size) {
+            if (r.type === 'grain') {
+                grainPoints += 10;
+                playSound('collectGrain', 'G5');
+            } else {
+                powerPoints = Math.min(config.powerBarMax, powerPoints + config.orbValue);
+                playSound('collectOrb', 'A4');
+            }
+            resources.splice(i, 1);
+            break;
+        }
+    }
+}
+
+// =================================================================
+// ---  SETUP INICIAL ---
+// =================================================================
+function resizeCanvas() {
+    const { width, height } = container.getBoundingClientRect();
+    canvas.width = width;
+    canvas.height = height;
+    cellSize = height / config.lanes;
+    if(player) player.reset();
+    if(tree) tree.reset();
+}
+
+window.addEventListener('resize', resizeCanvas);
+canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+window.addEventListener('keydown', handleKeyDown);
+canvas.addEventListener('click', handleMouseClick);
+
+init();
+
+</script>
+
+</body>
+</html>
