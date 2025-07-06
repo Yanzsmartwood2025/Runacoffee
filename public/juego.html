@@ -235,7 +235,106 @@
         </div>
     </div>
     
-<script>
+<script type="module">
+    // =================================================================
+    // --- FIREBASE INTEGRATION ---
+    // =================================================================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    let app, auth, db;
+    let currentUser = null;
+    let userId = null;
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+    try {
+        const firebaseConfig = JSON.parse(firebaseConfigStr);
+        if (Object.keys(firebaseConfig).length > 0) {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            console.log("Firebase inicializado correctamente.");
+        } else {
+            console.warn("Configuración de Firebase vacía. El juego se ejecutará en modo sin conexión.");
+        }
+    } catch (e) {
+        console.error("Error al inicializar Firebase:", e);
+    }
+
+    if (auth) {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                userId = user.uid;
+                console.log("Usuario autenticado:", userId);
+                await loadGameData(); 
+            } else {
+                currentUser = null;
+                userId = null;
+                console.log("No hay sesión activa.");
+                init(0, 100, 0, config.tree.health);
+            }
+        });
+        
+        if (!auth.currentUser) {
+            try {
+                if (initialAuthToken) await signInWithCustomToken(auth, initialAuthToken);
+                else await signInAnonymously(auth);
+            } catch (error) {
+                console.error("Error en la autenticación anónima/personalizada:", error);
+            }
+        }
+    } else {
+        init(0, 100, 0, config.tree.health);
+    }
+    
+    async function saveGameData() {
+        if (!userId || !db) return;
+        const gameDataRef = doc(db, "game_progress", userId);
+        const dataToSave = {
+            level: currentLevelIndex,
+            grains: grainPoints,
+            power: powerPoints,
+            treeHealth: tree.health,
+            timestamp: new Date()
+        };
+        try {
+            await setDoc(gameDataRef, dataToSave, { merge: true });
+            console.log("Partida guardada para el usuario:", userId);
+        } catch (error) {
+            console.error("Error al guardar la partida:", error);
+        }
+    }
+
+    async function loadGameData() {
+        if (!userId || !db) {
+            init(0, 100, 0, config.tree.health);
+            return;
+        }
+        const gameDataRef = doc(db, "game_progress", userId);
+        try {
+            const docSnap = await getDoc(gameDataRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                init(data.level || 0, data.grains || 100, data.power || 0, data.treeHealth || config.tree.health);
+                console.log("Partida cargada:", data);
+            } else {
+                console.log("No hay datos guardados. Empezando nueva partida.");
+                init(0, 100, 0, config.tree.health);
+            }
+        } catch (error) {
+            console.error("Error al cargar la partida:", error);
+            init(0, 100, 0, config.tree.health);
+        }
+    }
+
+    // =================================================================
+    // ---  GAME CONFIG & ASSETS ---
+    // =================================================================
     const config = {
         lanes: 5, initialLanes: 3, playerSpeed: 5, projectileSpeed: 8, shootCooldown: 20, 
         grainSpawnRate: 600, 
@@ -287,7 +386,6 @@
     let powerPoints = 0;
     let animationFrameId;
 
-    // UPDATED: Sound system changed to PolySynth to prevent errors
     const sounds = {
         shoot: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
         collectGrain: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 } }).toDestination(),
@@ -488,6 +586,7 @@
 
     function startNextLevel() {
         gameState = 'level_transition';
+        saveGameData();
         currentLevelIndex++;
         if (currentLevelIndex >= config.levels.length) {
             gameState = 'game_over'; // Victory
@@ -524,23 +623,6 @@
             ctx.fillRect(i * cellSize, 0, cellSize, canvas.height);
         }
         
-        ctx.save();
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.font = '14px "Press Start 2P"';
-        ctx.textAlign = 'center';
-        
-        if (activeLanes < 5) {
-            ctx.translate(cellSize / 2, canvas.height / 2);
-            ctx.rotate(-Math.PI / 2);
-            ctx.fillText('Josephine te quiero mucho', 0, 0);
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-            ctx.translate(canvas.width - cellSize / 2, canvas.height / 2);
-            ctx.rotate(-Math.PI / 2);
-            ctx.fillText('RUNA GAME', 0, 0);
-        }
-        ctx.restore();
-
         tree.draw();
         player.draw();
         projectiles.forEach(p => p.draw());
@@ -583,19 +665,20 @@
         gameOverlay.append(title, msg, btn);
     }
 
-    function init() {
+    function init(level = 0, grains = 100, power = 0, health = config.tree.health) {
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
         resizeCanvas();
         player = new Player();
         tree = new Tree();
         activeLanes = config.initialLanes;
-        currentLevelIndex = 0;
+        currentLevelIndex = level;
         enemiesDefeatedThisLevel = 0;
         enemies = [];
         projectiles = [];
         resources = [];
-        grainPoints = 100;
-        powerPoints = 0;
+        grainPoints = grains;
+        powerPoints = power;
+        tree.health = health;
         gameState = 'start';
         gameOverlay.style.display = 'flex';
         const title = document.createElement('h1');
@@ -688,7 +771,6 @@
     }
 
     window.addEventListener('resize', resizeCanvas);
-    init();
     controlLoop();
 </script>
 
