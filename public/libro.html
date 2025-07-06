@@ -290,7 +290,7 @@
         .portal-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
         .portal-overlay { position: relative; z-index: 2; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); }
         .portal-content { text-align: center; padding: 2rem; border-radius: 1rem; color: white; max-width: 90%; }
-        .portal-content h2 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; } /* Reduced font size */
+        .portal-content h2 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; }
         .portal-content p { font-size: 1rem; margin-bottom: 1.5rem; }
         .portal-button {
             display: inline-block;
@@ -799,13 +799,25 @@
         
         function saveTextForPage(pageNumber) {
             const textLayer = getTextLayerForPage(pageNumber);
-            if (textLayer) textStates[pageNumber] = textLayer.innerHTML;
+            if (textLayer) {
+                textStates[pageNumber] = {
+                    html: textLayer.innerHTML,
+                    font: $(textLayer).css('font-family')
+                };
+            }
         }
 
         function loadTextForPage(pageNumber) {
             const textLayer = getTextLayerForPage(pageNumber);
             if (textLayer) {
-                textLayer.innerHTML = textStates[pageNumber] || '';
+                const state = textStates[pageNumber];
+                if (state) {
+                    textLayer.innerHTML = state.html || '';
+                    $(textLayer).css('font-family', state.font || "'Poppins', sans-serif");
+                } else {
+                    textLayer.innerHTML = '';
+                    $(textLayer).css('font-family', "'Poppins', sans-serif");
+                }
             }
         }
         
@@ -1010,8 +1022,13 @@
             fontButton.on('click', function() {
                 $('.font-button').removeClass('active');
                 $(this).addClass('active');
-                document.execCommand('fontName', false, $(this).data('fontFamily'));
-                getTextLayerForPage(flipbook.turn('page'))?.focus();
+                const page = flipbook.turn('page');
+                const textLayer = getTextLayerForPage(page);
+                if (textLayer) {
+                    $(textLayer).css('font-family', $(this).data('fontFamily'));
+                    $(textLayer).focus();
+                    saveTextForPage(page);
+                }
             });
             fontPalette.append(fontButton);
         });
