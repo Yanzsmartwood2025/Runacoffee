@@ -26,7 +26,7 @@
             --runa-primary: #D47500;
             --runa-secondary: #0072CE;
             --slider-track-color: #25D366;
-            --pencil-track-color: #8a2be2; /* Color for the line width slider */
+            --pencil-track-color: #8a2be2;
         }
         html { scroll-behavior: smooth; }
         
@@ -110,7 +110,7 @@
         
         .page-number { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-size: 0.9em; }
         
-        .drawing-canvas, .text-layer {
+        .drawing-canvas, .text-layer-container {
             position: absolute;
             top: 0;
             left: 0;
@@ -122,20 +122,29 @@
             touch-action: none;
             z-index: 10;
         }
-        .text-layer {
-            padding: 30px;
-            outline: none;
-            overflow-y: auto;
-            color: inherit;
-            z-index: 11;
-            box-sizing: border-box;
+        .text-layer-container { z-index: 11; }
+        
+        .draggable-text-box {
+            position: absolute;
+            padding: 5px;
+            min-width: 50px;
+            min-height: 20px;
+            cursor: move;
+            border: 1px dashed transparent;
+        }
+        .draggable-text-box:hover, .draggable-text-box.editing {
+            border-color: rgba(138, 43, 226, 0.5);
+        }
+        .draggable-text-box[contenteditable="true"] {
+            cursor: text;
         }
 
+
         /* Pointer events logic */
-        .drawing-tool-active .text-layer, .eraser-tool-active .text-layer { pointer-events: none; }
+        .drawing-tool-active .text-layer-container, .eraser-tool-active .text-layer-container { pointer-events: none; }
         .drawing-tool-active .drawing-canvas, .eraser-tool-active .drawing-canvas { pointer-events: auto; }
         .text-tool-active .drawing-canvas, .no-tool-active .drawing-canvas { pointer-events: none; }
-        .text-tool-active .text-layer, .no-tool-active .text-layer { pointer-events: auto; }
+        .text-tool-active .text-layer-container, .no-tool-active .text-layer-container { pointer-events: auto; }
 
         .menu-section-header { padding: 1rem 1.5rem; font-weight: 700; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
         .menu-section-header i { transition: transform 0.3s ease; }
@@ -280,10 +289,10 @@
 
         /* --- Color Picker Styles --- */
         #color-picker-container { display: none; padding: 10px; background-color: rgba(0,0,0,0.3); border-radius: 10px; margin-top: 15px; }
-        .color-picker-layout { display: flex; align-items: center; gap: 15px; }
+        .color-picker-layout { display: flex; align-items: center; gap: 15px; justify-content: center; }
         #color-wheel { cursor: crosshair; border-radius: 50%; }
         #color-preview { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; flex-shrink: 0; }
-        #luminosity-slider { -webkit-appearance: none; appearance: none; width: 120px; height: 15px; transform: rotate(270deg); transform-origin: 75px 75px; }
+        #luminosity-slider { width: 120px; }
 
         /* --- Portal Page Styles --- */
         .portal-page .content-wrapper { padding: 0 !important; display: flex; align-items: center; justify-content: center; }
@@ -412,12 +421,13 @@
                         <div class="tool-button" id="tool-upload" title="Subir Imagen"><i class="fas fa-image"></i><span>Foto</span></div>
                         <div class="tool-button" id="tool-clear" title="Limpiar Página"><i class="fas fa-trash"></i><span>Limpiar</span></div>
                         <div class="tool-button" id="tool-color" title="Color"><i class="fas fa-palette"></i><span>Color</span></div>
+                        <div class="tool-button" id="tool-add-page" title="Añadir Hoja"><i class="fas fa-plus-circle"></i><span>Añadir</span></div>
                     </div>
                     
                     <div id="color-picker-container">
                         <div class="color-picker-layout">
                             <canvas id="color-wheel" width="150" height="150"></canvas>
-                            <div class="flex flex-col items-center gap-2">
+                            <div class="flex flex-col items-center gap-4">
                                 <div id="color-preview"></div>
                                 <input type="range" id="luminosity-slider" min="0" max="100" value="50" class="styled-slider">
                             </div>
@@ -800,24 +810,14 @@
         function saveTextForPage(pageNumber) {
             const textLayer = getTextLayerForPage(pageNumber);
             if (textLayer) {
-                textStates[pageNumber] = {
-                    html: textLayer.innerHTML,
-                    font: $(textLayer).css('font-family')
-                };
+                textStates[pageNumber] = textLayer.innerHTML;
             }
         }
 
         function loadTextForPage(pageNumber) {
             const textLayer = getTextLayerForPage(pageNumber);
             if (textLayer) {
-                const state = textStates[pageNumber];
-                if (state) {
-                    textLayer.innerHTML = state.html || '';
-                    $(textLayer).css('font-family', state.font || "'Poppins', sans-serif");
-                } else {
-                    textLayer.innerHTML = '';
-                    $(textLayer).css('font-family', "'Poppins', sans-serif");
-                }
+                textLayer.innerHTML = textStates[pageNumber] || '';
             }
         }
         
@@ -844,7 +844,11 @@
                 $('#font-selector-container').removeClass('hidden');
                 $('#color-picker-container').addClass('hidden');
                 visualTool.hide();
-                document.execCommand('foreColor', false, currentColor);
+                const textLayer = getTextLayerForPage(flipbook.turn('page'));
+                if (textLayer) {
+                    $(textLayer).focus();
+                    document.execCommand('foreColor', false, currentColor);
+                }
             } else {
                 $('#font-selector-container').addClass('hidden');
                 if (tool === 'pencil' || tool === 'eraser') {
@@ -991,7 +995,10 @@
         
         // --- Tool Event Handlers ---
         $('#tool-pencil').on('click', () => { setActiveTool('pencil'); closeAllPanels(); });
-        $('#tool-text').on('click', () => { setActiveTool('text'); closeAllPanels(); });
+        $('#tool-text').on('click', () => { 
+             setActiveTool('text'); 
+             // Don't close panel, let user pick font
+        });
         $('#tool-eraser').on('click', () => { setActiveTool('eraser'); closeAllPanels(); });
         $('#tool-clear').on('click', () => {
             const page = flipbook.turn('page');
@@ -1008,6 +1015,16 @@
             closeAllPanels();
         });
         $('#tool-calc').on('click', () => { $('#calculator').fadeToggle(); closeAllPanels(); });
+        $('#tool-add-page').on('click', () => {
+            const newPage = $('<div class="page" data-drawing-enabled="true"><div class="page-number"></div></div>');
+            const book = $('.flipbook');
+            book.turn('addPage', newPage, book.turn('pages') + 1);
+            // Re-number pages
+            $('.flipbook .page').each(function(index) {
+                $(this).find('.page-number').text(index + 1);
+            });
+            closeAllPanels();
+        });
 
         $('#line-width-slider').on('input', function() {
             currentLineWidth = $(this).val();
@@ -1025,10 +1042,10 @@
                 const page = flipbook.turn('page');
                 const textLayer = getTextLayerForPage(page);
                 if (textLayer) {
-                    $(textLayer).css('font-family', $(this).data('fontFamily'));
+                    document.execCommand('fontName', false, $(this).data('fontFamily'));
                     $(textLayer).focus();
-                    saveTextForPage(page);
                 }
+                closeAllPanels();
             });
             fontPalette.append(fontButton);
         });
