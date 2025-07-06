@@ -15,13 +15,11 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- UPDATED Font Awesome Link -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600;700&family=Arial&family=Georgia&family=Courier+New&family=Times+New+Roman&family=Verdana&display=swap" rel="stylesheet">
 
     <style type="text/css">
         :root {
@@ -67,6 +65,9 @@
         html:not(.dark) .mixer-icon-button.active { border-color: var(--runa-primary); }
         html:not(.dark) input[type="range"] { --track-background: #E2E8F0; }
         html:not(.dark) .video-list-button.active { background-color: rgba(0,0,0,0.1); }
+        html:not(.dark) .font-button { background-color: rgba(0,0,0,0.05); color: #333; }
+        html:not(.dark) .font-button.active { background-color: rgba(0,0,0,0.2); }
+
 
         html.dark body { background-color: #111; color: #E2E8F0; }
         html.dark .translucent-panel { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.1); }
@@ -80,11 +81,14 @@
         html.dark .mixer-icon-button.active { border-color: var(--runa-primary); }
         html.dark input[type="range"] { --track-background: #4A5568; }
         html.dark .video-list-button.active { background-color: rgba(255,255,255,0.15); }
+        html.dark .font-button { background-color: rgba(255,255,255,0.1); color: #fff; }
+        html.dark .font-button.active { background-color: rgba(255,255,255,0.3); }
+
 
         .flipbook-viewport { display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; }
         .flipbook-container { width: 90vw; height: 85vh; max-width: 500px; max-height: 700px; position: relative; }
         .flipbook { width: 100%; height: 100%; }
-        .flipbook .page { box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s ease, color 0.3s ease; }
+        .flipbook .page { box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s ease, color 0.3s ease; position: relative; }
         .flipbook .hard { background-color: #101010; box-shadow: inset 0 0 5px #000; }
         .cover-page { 
             background-color: #101010 !important;
@@ -104,8 +108,36 @@
         .signature { font-family: 'Dancing Script', cursive; font-size: 1.8rem; text-align: right; margin-top: 2rem; }
         
         .page-number { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-size: 0.9em; }
-        .drawing-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
         
+        .drawing-canvas, .text-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .drawing-canvas {
+            cursor: none;
+            touch-action: none;
+            z-index: 10;
+        }
+        .text-layer {
+            padding: 30px;
+            outline: none;
+            overflow-y: auto;
+            color: inherit;
+            z-index: 11;
+            box-sizing: border-box;
+        }
+
+        .drawing-tool-active .text-layer, .no-tool-active .text-layer { pointer-events: none; }
+        .drawing-tool-active .drawing-canvas { pointer-events: auto; }
+        
+        .text-tool-active .drawing-canvas { pointer-events: none; }
+        .text-tool-active .text-layer { pointer-events: auto; }
+
+        .no-tool-active .drawing-canvas { pointer-events: none; }
+
         .menu-section-header { padding: 1rem 1.5rem; font-weight: 700; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
         .menu-section-header i { transition: transform 0.3s ease; }
         .menu-section-header.active i { transform: rotate(180deg); }
@@ -114,13 +146,37 @@
         .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 15px; }
         .tool-button { width: 55px; height: 55px; background-color: rgba(255, 255, 255, 0.1); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; transition: background-color 0.2s; border: 1px solid transparent; color: white; }
         .tool-button i { font-size: 20px; margin-bottom: 5px; }
-        .tool-button:hover { background-color: rgba(138, 43, 226, 0.5); }
+        html.dark .tool-button:hover { background-color: rgba(138, 43, 226, 0.5); }
+        html:not(.dark) .tool-button:hover { background-color: rgba(138, 43, 226, 0.3); }
         .tool-button.active { background-color: #8a2be2; border-color: rgba(255,255,255,0.5); }
         
         .color-palette { display: flex; gap: 10px; margin-top: 15px; }
         .color-swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: border-color 0.2s; }
         .color-swatch.active { border-color: white; }
         
+        #font-palette {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #font-palette::-webkit-scrollbar { display: none; }
+
+        .font-button {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: background-color 0.2s;
+            border: 1px solid transparent;
+        }
+        .font-button.active {
+            border-color: var(--runa-primary);
+        }
+
         input[type="range"].line-width-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: #555; border-radius: 5px; outline: none; opacity: 0.7; transition: opacity .2s; }
         input[type="range"].line-width-slider:hover { opacity: 1; }
         input[type="range"].line-width-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #8a2be2; cursor: pointer; border-radius: 50%; }
@@ -146,9 +202,53 @@
         .calc-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .calc-btn { background: #555; color: white; border: none; border-radius: 8px; padding: 20px; font-size: 1.2rem; cursor: pointer; transition: background-color 0.2s; }
         .calc-btn.operator { background: #f9a825; }
+
+        #page-turn-hint {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+        }
+        #page-turn-hint.visible {
+            opacity: 1;
+            animation: swipe-animation 2.5s ease-in-out infinite;
+        }
+        #page-turn-hint i {
+            font-size: 45px;
+            color: rgba(255, 255, 255, 0.7);
+            text-shadow: 0 3px 5px rgba(0,0,0,0.5);
+        }
+        @keyframes swipe-animation {
+            0%, 20% { transform: translate(0, 0); opacity: 0.8; }
+            60% { transform: translate(-40px, -40px); opacity: 0.8; }
+            80%, 100% { transform: translate(-40px, -40px); opacity: 0; }
+        }
+        
+        #visual-tool {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out;
+        }
+        #visual-tool i {
+            font-size: 35px;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+        #visual-tool.pencil {
+            transform: translate(-5px, -35px);
+        }
+        #visual-tool.eraser {
+            transform: translate(-20px, -20px);
+        }
     </style>
 </head>
-<body>
+<body class="no-tool-active">
 
 <div id="video-background-wrapper">
     <video id="video-background" autoplay loop muted playsinline>
@@ -201,13 +301,13 @@
                 </div>
                 <div class="menu-section-content">
                     <div class="tool-grid">
-                        <!-- CORRECTED ICONS -->
                         <div class="tool-button" id="tool-pencil" title="Lápiz"><i class="fas fa-pencil"></i><span>Lápiz</span></div>
+                        <div class="tool-button" id="tool-text" title="Texto"><i class="fas fa-font"></i><span>Texto</span></div>
                         <div class="tool-button" id="tool-eraser" title="Borrador"><i class="fas fa-eraser"></i><span>Borrador</span></div>
                         <div class="tool-button" id="tool-upload" title="Subir Imagen"><i class="fas fa-image"></i><span>Foto</span></div>
                         <div class="tool-button" id="tool-clear" title="Limpiar Página"><i class="fas fa-trash"></i><span>Limpiar</span></div>
                     </div>
-                    <div class="color-palette">
+                    <div class="color-palette mt-4">
                         <div class="color-swatch active" style="background-color: black;" data-color="black"></div>
                         <div class="color-swatch" style="background-color: #e74c3c;" data-color="#e74c3c"></div>
                         <div class="color-swatch" style="background-color: #3498db;" data-color="#3498db"></div>
@@ -215,8 +315,13 @@
                         <div class="color-swatch" style="background-color: #f1c40f;" data-color="#f1c40f"></div>
                     </div>
                     <div class="mt-4">
-                        <label for="line-width-slider" class="flex items-center gap-2 text-sm mb-2 text-white"><i class="fas fa-pen-nib"></i><span>Grosor</span></label>
+                        <label for="line-width-slider" class="flex items-center gap-2 text-sm mb-2"><i class="fas fa-pen-nib"></i><span>Grosor</span></label>
                         <input type="range" id="line-width-slider" min="1" max="50" value="5" class="line-width-slider w-full">
+                    </div>
+                    <div id="font-selector-container" class="hidden mt-4">
+                        <label class="flex items-center gap-2 text-sm mb-2"><i class="fas fa-font"></i><span>Tipografía</span></label>
+                        <div id="font-palette">
+                        </div>
                     </div>
                 </div>
              </div>
@@ -227,7 +332,6 @@
                 </div>
                 <div class="menu-section-content">
                     <div class="tool-grid">
-                        <!-- CORRECTED ICONS -->
                         <div class="tool-button" id="tool-calc" title="Calculadora"><i class="fas fa-calculator"></i><span>Calc</span></div>
                         <div class="tool-button" id="tool-print" title="Imprimir"><i class="fas fa-print"></i><span>Imprimir</span></div>
                         <div class="tool-button" id="tool-share" title="Compartir"><i class="fas fa-share-nodes"></i><span>Compartir</span></div>
@@ -264,13 +368,9 @@
                 <div class="page" data-drawing-enabled="false">
                     <div class="content-wrapper">
                         <h2 class="handwriting-title">¡De la tierra, con conciencia!</h2>
-                        
                         <p class="mb-4"><strong>Representa:</strong><br>Forma de vivir, sentir, y conectar con conciencia.</p>
-                        
                         <p class="mb-6"><strong>Runa:</strong><br>Es una palabra ancestral que en lenguas indígenas andinas significa 'Persona', 'Ser humano en plenitud' o 'Comunidad viva'.</p>
-                        
                         <h3>Valores que transmite la marca:</h3>
-                        
                         <ul>
                             <li class="mb-4"><strong>Autenticidad ancestral:</strong><br>RUNA honra nuestras raíces, es un tributo a la sabiduría de los pueblos originarios y su forma respetuosa de habitar el mundo.</li>
                             <li class="mb-4"><strong>Corazón con la tierra:</strong><br>Café cultivado con consciencia, en armonía y equilibrio con la naturaleza.</li>
@@ -282,15 +382,15 @@
                 </div>
                 <div class="page" data-drawing-enabled="false">
                      <div class="content-wrapper">
-                         <h3>Producción consciente:</h3>
-                         <p>Cada grano es cultivado en armonía con el entorno, bajo prácticas éticas y sostenibles. Producido por manos locales que trabajan con amor, respeto y dignidad.</p>
-                         <h3>Energía viva:</h3>
-                         <p>Vitalidad real, sin artificios. Nuestro café especial consciente potencia la plenitud, la conexión con tu interior, equilibrio, autenticidad, salud, vida... propósito.</p>
-                         <h3>Diseño con alma:</h3>
-                         <p>Como diseñadora, cree un lenguaje visual que une lo que somos... Místicos, naturales, vivos. Cada empaque, símbolo y detalle tiene una intención.</p>
-                          <h3>¿A quién va dirigido?</h3>
-                         <p>A personas conscientes, exploradores, espirituales, creativos, que no solo buscan sabor sino sentido. A quienes valoran el origen, la historia, y el impacto de lo que consumen.</p>
-                         <p class="signature mt-4">"Más que café, un llamado a despertar."</p>
+                          <h3>Producción consciente:</h3>
+                          <p>Cada grano es cultivado en armonía con el entorno, bajo prácticas éticas y sostenibles. Producido por manos locales que trabajan con amor, respeto y dignidad.</p>
+                          <h3>Energía viva:</h3>
+                          <p>Vitalidad real, sin artificios. Nuestro café especial consciente potencia la plenitud, la conexión con tu interior, equilibrio, autenticidad, salud, vida... propósito.</p>
+                          <h3>Diseño con alma:</h3>
+                          <p>Como diseñadora, cree un lenguaje visual que une lo que somos... Místicos, naturales, vivos. Cada empaque, símbolo y detalle tiene una intención.</p>
+                           <h3>¿A quién va dirigido?</h3>
+                          <p>A personas conscientes, exploradores, espirituales, creativos, que no solo buscan sabor sino sentido. A quienes valoran el origen, la historia, y el impacto de lo que consumen.</p>
+                          <p class="signature mt-4">"Más que café, un llamado a despertar."</p>
                      </div>
                     <div class="page-number">3</div>
                 </div>
@@ -301,13 +401,16 @@
                 <div class="page" data-drawing-enabled="true"><div class="page-number">8</div></div>
                 <div class="page hard" data-drawing-enabled="false"></div>
             </div>
+            <div id="page-turn-hint">
+                <i class="fas fa-hand-pointer"></i>
+            </div>
         </div>
     </div>
 </main>
 
-<div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-0 sm:p-4 bg-black/60 hidden">
-    <!-- Content injected by JS -->
-</div>
+<div id="visual-tool" class="hidden"></div>
+
+<div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-0 sm:p-4 bg-black/60 hidden"></div>
 
 <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
    <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
@@ -324,7 +427,6 @@
 </div>
 
 <div class="calculator" id="calculator">
-    <!-- CORRECTED ICONS -->
     <div class="calc-header"><i class="fas fa-up-down-left-right"></i><i class="fas fa-xmark close-btn" id="calc-close"></i></div>
     <input type="text" class="calc-display" id="calc-display" readonly>
     <div class="calc-keys">
@@ -349,38 +451,49 @@
     import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     
     $(document).ready(function () {
+        // --- State Variables ---
         const flipbook = $('.flipbook');
         const drawingStates = {};
+        const textStates = {};
         let currentTool = 'none';
         let currentColor = 'black';
         let currentLineWidth = 5;
         let isDrawing = false;
         let lastX = 0, lastY = 0;
         const pageFlipSound = new Audio('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/c2acd6b2dd569ae8ee33f2441eaacb2386e7490d/public/assets/mp3/pasar-hoja-de-libro.mp3');
+        const visualTool = $('#visual-tool');
+        
+        const fonts = [
+            { name: 'Poppins', family: "'Poppins', sans-serif" },
+            { name: 'Dancing Script', family: "'Dancing Script', cursive" },
+            { name: 'Arial', family: "Arial, sans-serif" },
+            { name: 'Georgia', family: "Georgia, serif" },
+            { name: 'Courier New', family: "'Courier New', monospace" },
+            { name: 'Times New Roman', family: "'Times New Roman', Times, serif" },
+            { name: 'Verdana', family: "Verdana, sans-serif" }
+        ];
 
-        flipbook.turn({
-            width: $('.flipbook-container').width(),
-            height: $('.flipbook-container').height(),
-            display: 'single',
-            elevation: 50,
-            gradients: true,
-            autoCenter: true,
-            when: {
-                turned: (event, page) => {
-                    loadDrawingForPage(page);
-                    if (page > 1) {
-                        pageFlipSound.currentTime = 2.2;
-                        pageFlipSound.play().catch(console.error);
-                        setTimeout(() => pageFlipSound.pause(), 1000);
-                    }
-                }
-            }
-        });
+        const videoSkins = [
+            { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" }
+        ];
+        let currentVideoIndex = 0;
+
+        const ambienceSounds = [
+            { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
+            { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
+            { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
+            { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif' },
+            { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif' },
+            { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif' },
+            { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
+        ];
+
+        // --- Function Definitions ---
 
         function getCanvasForPage(pageNumber) {
             let canvas = $(`#canvas-page-${pageNumber}`);
             if (canvas.length === 0) {
-                const pageElement = flipbook.find(`.page[page=${pageNumber}]`);
+                const pageElement = flipbook.find(`.page[data-page-number=${pageNumber}]`);
                 if (!pageElement.length || pageElement.data('drawing-enabled') !== true) return null;
                 
                 canvas = $('<canvas>').addClass('drawing-canvas').attr('id', `canvas-page-${pageNumber}`);
@@ -388,43 +501,63 @@
                 const canvasEl = canvas[0];
                 canvasEl.width = pageElement.width();
                 canvasEl.height = pageElement.height();
-                saveDrawingForPage(pageNumber);
 
                 canvas.on('mousedown touchstart', startDrawing);
                 canvas.on('mousemove touchmove', draw);
-                $(window).on('mouseup touchend', stopDrawing);
             }
             return canvas[0];
         }
 
+        function getTextLayerForPage(pageNumber) {
+            let textLayer = $(`#text-layer-page-${pageNumber}`);
+            if (textLayer.length === 0) {
+                const pageElement = flipbook.find(`.page[data-page-number=${pageNumber}]`);
+                if (!pageElement.length || pageElement.data('drawing-enabled') !== true) return null;
+
+                textLayer = $('<div>')
+                    .addClass('text-layer')
+                    .attr('id', `text-layer-page-${pageNumber}`)
+                    .attr('contenteditable', 'true')
+                    .attr('spellcheck', 'false');
+                pageElement.append(textLayer);
+
+                textLayer.on('input', () => saveTextForPage(pageNumber));
+            }
+            return textLayer[0];
+        }
+
         function startDrawing(e) {
-            if (currentTool === 'none') return;
+            if (currentTool !== 'pencil' && currentTool !== 'eraser') return;
             isDrawing = true;
-            [lastX, lastY] = getCoords(e, $(e.target));
+            visualTool.show();
+            const [x, y] = getCoords(e, $(e.target));
+            lastX = x;
+            lastY = y;
+            draw(e);
         }
 
         function draw(e) {
             if (!isDrawing) return;
             e.preventDefault();
+            
             const page = flipbook.turn('page');
             const canvas = getCanvasForPage(page);
             if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const [x, y] = getCoords(e, $(canvas));
             
-            if (currentTool === 'eraser') {
-                ctx.globalCompositeOperation = 'destination-out';
-                ctx.lineWidth = 25;
-            } else {
-                ctx.globalCompositeOperation = 'source-over';
-                ctx.strokeStyle = currentColor;
-                ctx.lineWidth = currentLineWidth;
-            }
+            const [x, y] = getCoords(e, $(canvas));
+            const canvasRect = canvas.getBoundingClientRect();
+            visualTool.css({ top: canvasRect.top + y, left: canvasRect.left + x });
+
+            const ctx = canvas.getContext('2d');
+            ctx.globalCompositeOperation = (currentTool === 'eraser') ? 'destination-out' : 'source-over';
+            ctx.lineWidth = (currentTool === 'eraser') ? 25 : currentLineWidth;
+            ctx.strokeStyle = currentColor;
 
             ctx.beginPath();
             ctx.moveTo(lastX, lastY);
             ctx.lineTo(x, y);
             ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
             ctx.stroke();
             [lastX, lastY] = [x, y];
         }
@@ -432,19 +565,16 @@
         function stopDrawing() {
             if(isDrawing) {
                 const page = flipbook.turn('page');
-                const canvas = getCanvasForPage(page);
-                if (canvas) {
-                    canvas.getContext('2d').globalCompositeOperation = 'source-over';
-                    saveDrawingForPage(page);
-                }
+                saveDrawingForPage(page);
             }
             isDrawing = false;
+            visualTool.hide();
         }
 
         function getCoords(e, target) {
             const rect = target[0].getBoundingClientRect();
-            const touch = e.originalEvent.touches ? e.originalEvent.touches[0] : e;
-            return [touch.clientX - rect.left, touch.clientY - rect.top];
+            const event = e.originalEvent.touches ? e.originalEvent.touches[0] : e;
+            return [event.clientX - rect.left, event.clientY - rect.top];
         }
 
         function saveDrawingForPage(pageNumber) {
@@ -464,132 +594,48 @@
                 }
             }
         }
-        setTimeout(() => loadDrawingForPage(1), 100);
-
-        function setActiveTool(tool) {
-            $('.tool-button').removeClass('active');
-            if (tool !== 'none') $(`#tool-${tool}`).addClass('active');
-            currentTool = tool;
+        
+        function saveTextForPage(pageNumber) {
+            const textLayer = getTextLayerForPage(pageNumber);
+            if (textLayer) textStates[pageNumber] = textLayer.innerHTML;
         }
 
-        $('#tool-pencil').on('click', () => setActiveTool('pencil'));
-        $('#tool-eraser').on('click', () => setActiveTool('eraser'));
-        $('.color-swatch').on('click', function() {
-            currentColor = $(this).data('color');
-            $('.color-swatch').removeClass('active');
-            $(this).addClass('active');
-            setActiveTool('pencil');
-        });
-        
-        $('#line-width-slider').on('input', function() {
-            currentLineWidth = $(this).val();
-            setActiveTool('pencil');
-        });
-
-        $('#tool-clear').on('click', () => {
-            const page = flipbook.turn('page');
-            const canvas = getCanvasForPage(page);
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                saveDrawingForPage(page);
+        function loadTextForPage(pageNumber) {
+            const textLayer = getTextLayerForPage(pageNumber);
+            if (textLayer) {
+                textLayer.innerHTML = textStates[pageNumber] || '';
             }
-        });
+        }
         
-        $('#tool-print').on('click', () => window.print());
-        
-        $('#tool-share').on('click', async () => {
-            const shareData = {
-                title: 'RUNA Coffee - Cuaderno Digital',
-                text: '¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital interactivo. ¡Una experiencia para despertar los sentidos!',
-                url: window.location.href,
-            };
-            
-            const imageUrl = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/portada-libro.jpg';
+        function setActiveTool(tool) {
+            $('.tool-button').removeClass('active');
+            visualTool.removeClass('pencil eraser');
+            $('body').removeClass('drawing-tool-active text-tool-active no-tool-active');
+            $('#font-selector-container').addClass('hidden');
 
-            try {
-                const response = await fetch(imageUrl);
-                const blob = await response.blob();
-                const file = new File([blob], 'runa-portada.jpg', { type: 'image/jpeg' });
+            currentTool = tool;
 
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        ...shareData,
-                        files: [file]
-                    });
-                } else {
-                    await navigator.share(shareData);
-                }
-            } catch (error) {
-                console.error('Error sharing:', error);
-                try {
-                    await navigator.share(shareData);
-                } catch (fallbackError) {
-                    console.error('Fallback share failed too:', fallbackError);
-                    alert("No se pudo compartir. Es posible que tu navegador no sea compatible.");
-                }
-            }
-        });
-        
-        $('#tool-upload').on('click', () => $('#image-uploader').click());
-        $('<input type="file" id="image-uploader" accept="image/*" class="hidden">').appendTo('body');
-        $('#image-uploader').on('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => {
-                    const page = flipbook.turn('page');
-                    const canvas = getCanvasForPage(page);
-                    if (canvas) {
-                        const ctx = canvas.getContext('2d');
-                        const maxW = canvas.width * 0.8;
-                        const maxH = canvas.height * 0.8;
-                        let w = img.width, h = img.height;
-                        const ratio = w / h;
-                        if (w > maxW) { w = maxW; h = w / ratio; }
-                        if (h > maxH) { h = maxH; w = h * ratio; }
-                        ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
-                        saveDrawingForPage(page);
-                    }
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-            $(this).val('');
-        });
-
-        const calculator = $('#calculator');
-        $('#tool-calc').on('click', () => calculator.fadeToggle());
-        $('#calc-close').on('click', () => calculator.fadeOut());
-        $('.calc-keys').on('click', '.calc-btn', function() {
-            const key = $(this).text();
-            const displayVal = $('#calc-display').val();
-            if (key === 'C') {
-                $('#calc-display').val('');
-            } else if ($(this).is('#calc-backspace')) {
-                $('#calc-display').val(displayVal.slice(0, -1));
-            } else if ($(this).is('#calc-equals')) {
-                try {
-                    $('#calc-display').val(eval(displayVal.replace('×', '*').replace('÷', '/')));
-                } catch {
-                    $('#calc-display').val('Error');
-                }
+            if (tool === 'pencil' || tool === 'eraser') {
+                $('body').addClass('drawing-tool-active');
+                $(`#tool-${tool}`).addClass('active');
+                visualTool.html(tool === 'pencil' ? '<i class="fas fa-pencil"></i>' : '<i class="fas fa-eraser"></i>').addClass(tool);
+            } else if (tool === 'text') {
+                $('body').addClass('text-tool-active');
+                $(`#tool-${tool}`).addClass('active');
+                $('#font-selector-container').removeClass('hidden');
+                visualTool.hide();
+                const page = flipbook.turn('page');
+                const textLayer = getTextLayerForPage(page);
+                if (textLayer) $(textLayer).focus();
             } else {
-                $('#calc-display').val(displayVal + key);
+                $('body').addClass('no-tool-active');
+                visualTool.hide();
             }
-        });
-
-        // --- HEADER SCRIPT LOGIC ---
-        const themeToggle = $('#theme-toggle');
-        const sunIcon = $('#theme-icon-sun');
-        const moonIcon = $('#theme-icon-moon');
-        const mainMenu = $('#main-menu');
-        const mixerPanel = $('#mixer-panel');
-        const videoSkinPanel = $('#video-skin-panel');
+        }
 
         function applyTheme(theme) {
+            const sunIcon = $('#theme-icon-sun');
+            const moonIcon = $('#theme-icon-moon');
             if (theme === 'dark') {
                 $('html').removeClass('light').addClass('dark');
                 sunIcon.show();
@@ -601,92 +647,25 @@
             }
         }
 
-        themeToggle.on('click', () => {
-            const newTheme = $('html').hasClass('dark') ? 'light' : 'dark';
-            localStorage.setItem('runaTheme', newTheme);
-            applyTheme(newTheme);
-        });
-
-        const savedTheme = localStorage.getItem('runaTheme') || 'light';
-        applyTheme(savedTheme);
-
         function closeAllPanels() {
-            mainMenu.addClass('hidden');
-            mixerPanel.addClass('hidden');
-            videoSkinPanel.addClass('hidden');
+            $('#main-menu, #mixer-panel, #video-skin-panel').addClass('hidden');
         }
 
-        $('#menu-button').on('click', (e) => {
-            e.stopPropagation();
-            const wasOpen = !mainMenu.hasClass('hidden');
-            closeAllPanels();
-            if (!wasOpen) mainMenu.removeClass('hidden');
-        });
-
-        $('#mixer-toggle-button').on('click', (e) => {
-            e.stopPropagation();
-            const wasOpen = !mixerPanel.hasClass('hidden');
-            closeAllPanels();
-            if (!wasOpen) mixerPanel.removeClass('hidden');
-        });
-
-        $('#video-skin-toggle').on('click', (e) => {
-            e.stopPropagation();
-            const wasOpen = !videoSkinPanel.hasClass('hidden');
-            closeAllPanels();
-            if (!wasOpen) videoSkinPanel.removeClass('hidden');
-        });
-        
-        $(window).on('click', (e) => {
-            if (!$(e.target).closest('#main-header').length) {
-                closeAllPanels();
-            }
-        });
-
-        $('.menu-section-header').on('click', function() {
-            $(this).toggleClass('active').next('.menu-section-content').slideToggle();
-        });
-
-        // --- Mixer and Video Selector Logic ---
-        const videoSkins = [
-            { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" }
-        ];
-        let currentVideoIndex = 0;
-
-        const ambienceSounds = [
-            { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
-            { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
-            { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
-            { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif' },
-            { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif' },
-            { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif' },
-            { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
-        ];
-        
         function initializeMixer() {
             const soundControlsContainer = $('#sound-controls');
-            if(!soundControlsContainer.length) return;
             soundControlsContainer.html('');
-            
             ambienceSounds.forEach(sound => {
                 const audioEl = document.getElementById(sound.id);
                 if (!audioEl) return;
-
-                const controlHTML = `
-                    <div class="flex items-center gap-4 text-sm text-white">
-                        <button id="btn-${sound.id}" class="mixer-icon-button relative w-10 h-10 rounded-full shadow-md flex-shrink-0 overflow-hidden"><img src="${sound.gifSrc}" alt="${sound.name}"></button>
-                        <span class="font-medium w-20 truncate">${sound.name}</span>
-                        <input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="0" class="flex-grow volume-slider">
-                    </div>
-                `;
+                
+                const controlHTML = `<div class="flex items-center gap-4 text-sm text-white"><button id="btn-${sound.id}" class="mixer-icon-button relative w-10 h-10 rounded-full shadow-md flex-shrink-0 overflow-hidden"><img src="${sound.gifSrc}" alt="${sound.name}"></button><span class="font-medium w-20 truncate">${sound.name}</span><input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="0" class="flex-grow volume-slider"></div>`;
                 soundControlsContainer.append(controlHTML);
-
+                
                 const slider = $(`#volume-${sound.id}`);
                 const button = $(`#btn-${sound.id}`);
-                
-                const updateSliderStyle = (target) => {
+                const updateSliderStyle = (target) => { 
                     const percent = (target.val() / target.attr('max')) * 100;
-                    target.css('--value-percent', `${percent}%`);
+                    target.css('--value-percent', `${percent}%`); 
                 };
 
                 slider.on('input', function() {
@@ -694,19 +673,17 @@
                     audioEl.volume = newVolume;
                     button.toggleClass('active', newVolume > 0);
                     updateSliderStyle($(this));
-                    if (newVolume > 0 && audioEl.paused) {
-                        audioEl.play().catch(console.error);
-                    } else if (newVolume === 0 && !audioEl.paused) {
-                        audioEl.pause();
-                    }
+                    if (newVolume > 0 && audioEl.paused) { audioEl.play().catch(e => console.error(`Error playing ${sound.id}:`, e)); } 
+                    else if (newVolume === 0 && !audioEl.paused) { audioEl.pause(); }
                 });
-                
+
                 button.on('click', function() {
-                    if (slider.val() > 0) {
-                        slider.data('lastValue', slider.val());
-                        slider.val(0);
-                    } else {
-                        slider.val(slider.data('lastValue') || 0.5);
+                    const currentVolume = parseFloat(slider.val());
+                    if (currentVolume > 0) { 
+                        slider.data('lastValue', currentVolume); 
+                        slider.val(0); 
+                    } else { 
+                        slider.val(slider.data('lastValue') || 0.5); 
                     }
                     slider.trigger('input');
                 });
@@ -723,7 +700,7 @@
                     currentVideoIndex = index;
                     source.attr('src', videoSkins[currentVideoIndex].url);
                     video[0].load();
-                    video[0].play().catch(console.error);
+                    video[0].play().catch(e => console.error("Video play failed:", e));
                     video.css('opacity', 1);
                     localStorage.setItem('runaVideoSkin', currentVideoIndex);
                     updateVideoListUI();
@@ -741,9 +718,7 @@
         
         function initializeVideoSelector() {
             const videoListContainer = $('#video-list');
-            if(!videoListContainer.length) return;
             videoListContainer.html('');
-
             videoSkins.forEach((skin, index) => {
                 const button = $(`<button class="video-list-button w-full text-left p-2 rounded-lg transition-colors duration-200 text-white">${skin.name}</button>`);
                 button.on('click', () => setVideoSkin(index));
@@ -752,109 +727,187 @@
             updateVideoListUI();
         }
 
-        initializeMixer();
-        initializeVideoSelector();
-        const savedSkinIndex = parseInt(localStorage.getItem('runaVideoSkin')) || 0;
-        setVideoSkin(savedSkinIndex);
-
-        // --- Cart Logic ---
-        let cart = [];
-        const cartModal = $('#cart-modal');
-        const cartCounter = $('#cart-counter');
-
-        function updateCartCounter() {
-            if (cart.length > 0) {
-                cartCounter.text(cart.length).removeClass('hidden');
-            } else {
-                cartCounter.addClass('hidden');
-            }
-        }
-
         function renderCartModal() {
-            let contentHTML = '';
-            if (cart.length === 0) {
-                contentHTML = `<div class="p-8 flex-grow flex flex-col items-center justify-center text-center"><svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><h3 class="font-semibold text-lg text-white">Tu carrito está vacío</h3><p class="text-sm text-gray-400">Añade productos para verlos aquí.</p></div>`;
-            } else {
-                // Logic to display items would go here
-            }
-
+            const cartModal = $('#cart-modal');
+            let contentHTML = `<div class="p-8 flex-grow flex flex-col items-center justify-center text-center"><svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><h3 class="font-semibold text-lg text-white">Tu carrito está vacío</h3><p class="text-sm text-gray-400">Añade productos para verlos aquí.</p></div>`;
+            // NOTE: Add logic here to render actual cart items if cart is not empty.
             cartModal.html(`<div class="translucent-panel w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col ml-auto"><header class="p-4 border-b border-white/10 flex justify-between items-center"><h2 class="text-xl font-bold text-white">Tu Carrito</h2><button id="close-cart-button" class="p-1 rounded-full text-white hover:bg-white/10 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></header>${contentHTML}</div>`);
-            $('#close-cart-button').on('click', closeCart);
+            $('#close-cart-button').on('click', () => $('#cart-modal').addClass('hidden'));
         }
 
-        function openCart() {
-            renderCartModal();
-            cartModal.removeClass('hidden');
-        }
+        // --- Initial Setup and Event Handlers ---
 
-        function closeCart() {
-            cartModal.addClass('hidden');
-        }
+        $('.flipbook .page').each((index, el) => $(el).attr('data-page-number', index + 1));
+        
+        $(window).on('mouseup touchend', stopDrawing);
 
-        $('#open-cart-button').on('click', openCart);
-        cartModal.on('click', (event) => {
-            if (event.target === cartModal[0]) {
-                closeCart();
+        flipbook.turn({
+            width: $('.flipbook-container').width(),
+            height: $('.flipbook-container').height(),
+            display: 'single',
+            elevation: 50,
+            gradients: true,
+            autoCenter: true,
+            when: {
+                turned: (event, page, view) => {
+                    view.forEach(p => {
+                        if (p > 0) {
+                            loadDrawingForPage(p);
+                            loadTextForPage(p);
+                        }
+                    });
+                    if(currentTool === 'text') getTextLayerForPage(page)?.focus();
+                    if (page > 1) {
+                        pageFlipSound.currentTime = 2.2;
+                        pageFlipSound.play().catch(console.error);
+                        setTimeout(() => pageFlipSound.pause(), 1000);
+                    }
+                }
             }
         });
-
-        $(window).on('resize', () => {
-            flipbook.turn('size', $('.flipbook-container').width(), $('.flipbook-container').height());
-        }).trigger('resize');
-
-        // --- Firebase Auth Logic ---
-        let auth;
-        const authContainer = $('#auth-container');
-        const authModal = $('#auth-modal');
         
-        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // --- Tool Event Handlers ---
+        $('#tool-pencil').on('click', () => setActiveTool('pencil'));
+        $('#tool-text').on('click', () => setActiveTool('text'));
+        $('#tool-eraser').on('click', () => setActiveTool('eraser'));
+
+        $('.color-swatch').on('click', function() {
+            currentColor = $(this).data('color');
+            $('.color-swatch').removeClass('active');
+            $(this).addClass('active');
+            setActiveTool('pencil');
+        });
         
-        try {
-            const firebaseConfig = JSON.parse(firebaseConfigStr);
-            if (Object.keys(firebaseConfig).length > 0) {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-            } else {
-                console.warn("Firebase config is empty. Auth will not work.");
+        $('#line-width-slider').on('input', function() {
+            currentLineWidth = $(this).val();
+            setActiveTool('pencil');
+        });
+
+        const fontPalette = $('#font-palette');
+        fonts.forEach(font => {
+            const fontButton = $(`<button class="font-button" style="font-family: ${font.family};">${font.name}</button>`);
+            fontButton.data('fontFamily', font.family);
+            fontButton.on('click', function() {
+                $('.font-button').removeClass('active');
+                $(this).addClass('active');
+                document.execCommand('fontName', false, $(this).data('fontFamily'));
+                getTextLayerForPage(flipbook.turn('page'))?.focus();
+            });
+            fontPalette.append(fontButton);
+        });
+        fontPalette.find('button:first').addClass('active');
+
+        $('#tool-clear').on('click', () => {
+            const page = flipbook.turn('page');
+            const canvas = getCanvasForPage(page);
+            if (canvas) {
+                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                saveDrawingForPage(page);
             }
-        } catch (e) {
-            console.error("Error initializing Firebase:", e);
+            const textLayer = getTextLayerForPage(page);
+            if (textLayer) {
+                textLayer.innerHTML = '';
+                saveTextForPage(page);
+            }
+        });
+        
+        $('#tool-print').on('click', () => window.print());
+        
+        $('#tool-share').on('click', async () => {
+             const shareData = {
+                title: 'RUNA Coffee - Cuaderno Digital',
+                text: '¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital interactivo.',
+                url: window.location.href,
+            };
+            try { await navigator.share(shareData); }
+            catch (err) { console.error("Share failed:", err); }
+        });
+        
+        $('#tool-upload').on('click', () => $('#image-uploader').click());
+        $('<input type="file" id="image-uploader" accept="image/*" class="hidden">').appendTo('body').on('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const page = flipbook.turn('page');
+                    const canvas = getCanvasForPage(page);
+                    if (canvas) {
+                        const ctx = canvas.getContext('2d');
+                        const maxW = canvas.width * 0.8, maxH = canvas.height * 0.8;
+                        let w = img.width, h = img.height, ratio = w / h;
+                        if (w > maxW) { w = maxW; h = w / ratio; }
+                        if (h > maxH) { h = maxH; w = h * ratio; }
+                        ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+                        saveDrawingForPage(page);
+                    }
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+            $(this).val('');
+        });
+
+        // --- Calculator ---
+        const calculator = $('#calculator');
+        $('#tool-calc').on('click', () => calculator.fadeToggle());
+        $('#calc-close').on('click', () => calculator.fadeOut());
+        $('.calc-keys').on('click', '.calc-btn', function() {
+            const key = $(this).text();
+            const display = $('#calc-display');
+            let displayVal = display.val();
+
+            if (key === 'C') { display.val(''); } 
+            else if ($(this).is('#calc-backspace')) { display.val(displayVal.slice(0, -1)); } 
+            else if ($(this).is('#calc-equals')) {
+                try {
+                    const result = new Function('return ' + displayVal.replace('×', '*').replace('÷', '/'))();
+                    display.val(result);
+                    setActiveTool('text');
+                    const textLayer = getTextLayerForPage(flipbook.turn('page'));
+                    if (textLayer) {
+                        document.execCommand('insertText', false, ` ${result} `);
+                        saveTextForPage(flipbook.turn('page'));
+                        calculator.fadeOut();
+                    }
+                } catch { display.val('Error'); }
+            } else { display.val(displayVal + key); }
+        });
+
+        // --- UI Panel Handlers ---
+        $('#theme-toggle').on('click', () => {
+            const newTheme = $('html').hasClass('dark') ? 'light' : 'dark';
+            localStorage.setItem('runaTheme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        $('#menu-button').on('click', (e) => { e.stopPropagation(); const wasOpen = !$('#main-menu').hasClass('hidden'); closeAllPanels(); if (!wasOpen) $('#main-menu').removeClass('hidden'); });
+        $('#mixer-toggle-button').on('click', (e) => { e.stopPropagation(); const wasOpen = !$('#mixer-panel').hasClass('hidden'); closeAllPanels(); if (!wasOpen) $('#mixer-panel').removeClass('hidden'); });
+        $('#video-skin-toggle').on('click', (e) => { e.stopPropagation(); const wasOpen = !$('#video-skin-panel').hasClass('hidden'); closeAllPanels(); if (!wasOpen) $('#video-skin-panel').removeClass('hidden'); });
+        $(window).on('click', (e) => { if (!$(e.target).closest('#main-header').length) closeAllPanels(); });
+        $('.menu-section-header').on('click', function() { $(this).toggleClass('active').next('.menu-section-content').slideToggle(); });
+        
+        // --- Cart ---
+        $('#open-cart-button').on('click', () => { renderCartModal(); $('#cart-modal').removeClass('hidden'); });
+        $('#cart-modal').on('click', (event) => { if (event.target === $('#cart-modal')[0]) $('#cart-modal').addClass('hidden'); });
+        
+        // --- Resizing ---
+        $(window).on('resize', () => flipbook.turn('size', $('.flipbook-container').width(), $('.flipbook-container').height())).trigger('resize');
+
+        // --- Page Turn Hint ---
+        const pageTurnHint = $('#page-turn-hint');
+        if (localStorage.getItem('runaHintSeen') !== 'true') {
+            setTimeout(() => pageTurnHint.addClass('visible'), 1500);
+            flipbook.one('turned', () => { pageTurnHint.removeClass('visible'); localStorage.setItem('runaHintSeen', 'true'); });
         }
 
-        function renderUserUI(user) {
-            const userImage = user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" class="w-full h-full object-cover">` : `<span class="text-white font-bold text-xl">${user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}</span>`;
-            authContainer.html(`<div class="relative"><button id="user-menu-button" title="Mi Cuenta" class="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm overflow-hidden border-2 border-gray-600 hover:border-[var(--runa-primary)] bg-gray-700">${userImage}</button><div id="user-menu-dropdown" class="hidden absolute top-full left-0 mt-2 w-56 translucent-panel border rounded-lg shadow-xl z-50"><div class="px-4 py-3 border-b border-gray-500/50"><p class="text-sm font-semibold truncate text-white">${user.displayName || 'Usuario'}</p><p class="text-xs truncate text-gray-400">${user.email || 'Sin email'}</p></div><div class="py-1"><a href="#" id="logout-button-menu" class="flex items-center w-full text-left px-4 py-2 text-sm text-white hover:text-[var(--runa-primary)] transition-colors">Cerrar Sesión</a></div></div></div>`);
-            $('#logout-button-menu').on('click', (e) => { e.preventDefault(); if(auth) signOut(auth); });
-            $('#user-menu-button').on('click', (e) => { e.stopPropagation(); $('#user-menu-dropdown').toggleClass('hidden'); });
-        }
-
-        function renderGuestUI() {
-            authContainer.html(`<button id="open-auth-modal-button" title="Acceder o Registrarse" class="w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>`);
-            $('#open-auth-modal-button').on('click', () => authModal.removeClass('hidden'));
-        }
-
-        if (auth) {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    renderUserUI(user);
-                } else {
-                    renderGuestUI();
-                }
-            });
-
-            $('#google-login-button-modal').on('click', () => {
-                const provider = new GoogleAuthProvider();
-                signInWithPopup(auth, provider)
-                    .then(() => authModal.addClass('hidden'))
-                    .catch((error) => console.error("Google Sign-In Error:", error));
-            });
-        } else {
-            renderGuestUI();
-        }
-
-        $('#close-auth-modal-button').on('click', () => authModal.addClass('hidden'));
-        authModal.on('click', (event) => { if (event.target === authModal[0]) authModal.addClass('hidden'); });
+        // --- Final Initializations ---
+        setTimeout(() => { loadDrawingForPage(1); loadTextForPage(1); }, 100);
+        applyTheme(localStorage.getItem('runaTheme') || 'light');
+        initializeMixer();
+        initializeVideoSelector();
+        setVideoSkin(parseInt(localStorage.getItem('runaVideoSkin')) || 0);
     });
 </script>
 
