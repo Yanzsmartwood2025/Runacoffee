@@ -19,13 +19,14 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600;700&family=Arial&family=Georgia&family=Courier+New&family=Times+New+Roman&family=Verdana&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Lobster&family=Pacifico&family=Caveat&family=Indie+Flower&family=Shadows+Into+Light&family=Lora&display=swap" rel="stylesheet">
 
     <style type="text/css">
         :root {
             --runa-primary: #D47500;
             --runa-secondary: #0072CE;
             --slider-track-color: #25D366;
+            --pencil-track-color: #8a2be2; /* Color for the line width slider */
         }
         html { scroll-behavior: smooth; }
         
@@ -88,7 +89,7 @@
         .flipbook-viewport { display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; }
         .flipbook-container { width: 90vw; height: 85vh; max-width: 500px; max-height: 700px; position: relative; }
         .flipbook { width: 100%; height: 100%; }
-        .flipbook .page { box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s ease, color 0.3s ease; position: relative; }
+        .flipbook .page { box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s ease, color 0.3s ease; position: relative; overflow: hidden; }
         .flipbook .hard { background-color: #101010; box-shadow: inset 0 0 5px #000; }
         .cover-page { 
             background-color: #101010 !important;
@@ -130,13 +131,11 @@
             box-sizing: border-box;
         }
 
-        .drawing-tool-active .text-layer, .no-tool-active .text-layer { pointer-events: none; }
-        .drawing-tool-active .drawing-canvas { pointer-events: auto; }
-        
-        .text-tool-active .drawing-canvas { pointer-events: none; }
-        .text-tool-active .text-layer { pointer-events: auto; }
-
-        .no-tool-active .drawing-canvas { pointer-events: none; }
+        /* Pointer events logic */
+        .drawing-tool-active .text-layer, .eraser-tool-active .text-layer { pointer-events: none; }
+        .drawing-tool-active .drawing-canvas, .eraser-tool-active .drawing-canvas { pointer-events: auto; }
+        .text-tool-active .drawing-canvas, .no-tool-active .drawing-canvas { pointer-events: none; }
+        .text-tool-active .text-layer, .no-tool-active .text-layer { pointer-events: auto; }
 
         .menu-section-header { padding: 1rem 1.5rem; font-weight: 700; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
         .menu-section-header i { transition: transform 0.3s ease; }
@@ -149,10 +148,6 @@
         html.dark .tool-button:hover { background-color: rgba(138, 43, 226, 0.5); }
         html:not(.dark) .tool-button:hover { background-color: rgba(138, 43, 226, 0.3); }
         .tool-button.active { background-color: #8a2be2; border-color: rgba(255,255,255,0.5); }
-        
-        .color-palette { display: flex; gap: 10px; margin-top: 15px; }
-        .color-swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: border-color 0.2s; }
-        .color-swatch.active { border-color: white; }
         
         #font-palette {
             display: flex;
@@ -177,31 +172,141 @@
             border-color: var(--runa-primary);
         }
 
-        input[type="range"].line-width-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: #555; border-radius: 5px; outline: none; opacity: 0.7; transition: opacity .2s; }
-        input[type="range"].line-width-slider:hover { opacity: 1; }
-        input[type="range"].line-width-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #8a2be2; cursor: pointer; border-radius: 50%; }
+        /* --- Slider Styles --- */
+        input[type="range"].styled-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: transparent;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.8;
+            transition: opacity .2s;
+        }
+        input[type="range"].styled-slider:hover { opacity: 1; }
+        input[type="range"].styled-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--thumb-color, #fff);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid;
+            margin-top: -6px;
+        }
+        html:not(.dark) input[type="range"].styled-slider::-webkit-slider-thumb { border-color: #FDFBF8; }
+        html.dark input[type="range"].styled-slider::-webkit-slider-thumb { border-color: #111; }
+        input[type="range"].styled-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--thumb-color, #fff);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid;
+        }
+        html:not(.dark) input[type="range"].styled-slider::-moz-range-thumb { border-color: #FDFBF8; }
+        html.dark input[type="range"].styled-slider::-moz-range-thumb { border-color: #111; }
+        input[type="range"].styled-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            border-radius: 5px;
+            background: linear-gradient(to right, var(--track-fill-color, #ccc) var(--value-percent, 0%), var(--track-background) var(--value-percent, 0%));
+        }
+        input[type="range"].styled-slider::-moz-range-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            border-radius: 5px;
+            background: linear-gradient(to right, var(--track-fill-color, #ccc) var(--value-percent, 0%), var(--track-background) var(--value-percent, 0%));
+        }
         
         .mixer-icon-button { border: 2px solid; transition: border-color 0.3s ease; display: flex; align-items: center; justify-content: center; }
         .mixer-icon-button img { width: 100%; height: 100%; object-fit: cover; }
-        input[type="range"].volume-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 5px; outline: none; background: transparent; }
-        input[type="range"].volume-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--runa-primary); cursor: pointer; border-radius: 50%; border: 2px solid; margin-top: -6px; }
-        input[type="range"].volume-slider::-moz-range-thumb { width: 20px; height: 20px; background: var(--runa-primary); cursor: pointer; border-radius: 50%; border: 2px solid; }
-        html:not(.dark) input[type="range"].volume-slider::-webkit-slider-thumb { border-color: #FDFBF8; }
-        html:not(.dark) input[type="range"].volume-slider::-moz-range-thumb { border-color: #FDFBF8; }
-        html.dark input[type="range"].volume-slider::-webkit-slider-thumb { border-color: #111; }
-        html.dark input[type="range"].volume-slider::-moz-range-thumb { border-color: #111; }
-        input[type="range"].volume-slider::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; border-radius: 5px; background: linear-gradient(to right, var(--slider-track-color) var(--value-percent, 0%), var(--track-background) var(--value-percent, 0%)); }
-        input[type="range"].volume-slider::-moz-range-track { width: 100%; height: 8px; cursor: pointer; border-radius: 5px; background: linear-gradient(to right, var(--slider-track-color) var(--value-percent, 0%), var(--track-background) var(--value-percent, 0%)); }
-    
+        
         #cart-counter { position: absolute; top: 0; right: 0; transform: translate(25%, -25%); width: 1.25rem; height: 1.25rem; background-color: #DC2626; color: white; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 0.25rem; }
         
-        .calculator { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 280px; background: #222; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 20px; z-index: 1001; display: none; }
+        /* --- TI-89 Calculator Styles --- */
+        #calculator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 2px 3px rgba(255,255,255,0.2);
+            z-index: 1001;
+            display: none;
+            background-image: url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/portada-libro.jpg);
+            background-size: cover;
+            background-position: center;
+            padding: 10px;
+        }
+        .calculator-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            padding: 15px;
+        }
         .calc-header { cursor: move; padding-bottom: 10px; color: white; display:flex; justify-content:space-between; align-items:center; }
+        .calc-brand { font-family: 'Arial', sans-serif; font-weight: bold; font-size: 1rem; color: #E0E0E0; text-shadow: 1px 1px 2px black;}
         .calc-header .close-btn { cursor: pointer; font-size: 1.2rem; }
-        .calc-display { width: 100%; background: #333; color: white; border: none; border-radius: 8px; padding: 15px; text-align: right; font-size: 2.5rem; margin-bottom: 15px; }
-        .calc-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .calc-btn { background: #555; color: white; border: none; border-radius: 8px; padding: 20px; font-size: 1.2rem; cursor: pointer; transition: background-color 0.2s; }
-        .calc-btn.operator { background: #f9a825; }
+        .calc-screen-container { background: #333; border: 3px solid #555; border-radius: 8px; padding: 5px; margin-bottom: 15px; }
+        #calc-display { width: 100%; background: #c8d4c5; color: #1a211a; border: none; border-radius: 4px; padding: 10px; text-align: right; font-family: 'Courier New', monospace; font-size: 1.8rem; min-height: 60px; resize: none; }
+        .calc-keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .calc-btn {
+            color: white;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 12px 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.4);
+        }
+        .calc-btn:active { transform: translateY(1px); box-shadow: 0 1px 1px rgba(0,0,0,0.4); }
+        .calc-btn.num { background: #4a4a4a; }
+        .calc-btn.num:hover { background: #5a5a5a; }
+        .calc-btn.op { background: #3a3a3a; }
+        .calc-btn.op:hover { background: #454545; }
+        .calc-btn.func { background: #2a2a2a; font-size: 0.8rem; }
+        .calc-btn.func:hover { background: #353535; }
+        .calc-btn.enter { background: #0072CE; }
+        .calc-btn.enter:hover { background: #0082de; }
+        .calc-btn.clear { background: var(--runa-primary); }
+        .calc-btn.clear:hover { background: #e48510; }
+
+        /* --- Color Picker Styles --- */
+        #color-picker-container { display: none; padding: 10px; background-color: rgba(0,0,0,0.3); border-radius: 10px; margin-top: 15px; }
+        .color-picker-layout { display: flex; align-items: center; gap: 15px; }
+        #color-wheel { cursor: crosshair; border-radius: 50%; }
+        #color-preview { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; flex-shrink: 0; }
+        #luminosity-slider { -webkit-appearance: none; appearance: none; width: 120px; height: 15px; transform: rotate(270deg); transform-origin: 75px 75px; }
+
+        /* --- Portal Page Styles --- */
+        .portal-page .content-wrapper { padding: 0 !important; display: flex; align-items: center; justify-content: center; }
+        .portal-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+        .portal-overlay { position: relative; z-index: 2; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); }
+        .portal-content { text-align: center; padding: 2rem; border-radius: 1rem; color: white; max-width: 90%; }
+        .portal-content h2 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; } /* Reduced font size */
+        .portal-content p { font-size: 1rem; margin-bottom: 1.5rem; }
+        .portal-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .portal-button:hover { background-color: rgba(255, 255, 255, 0.25); }
+
 
         #page-turn-hint {
             position: absolute;
@@ -306,17 +411,22 @@
                         <div class="tool-button" id="tool-eraser" title="Borrador"><i class="fas fa-eraser"></i><span>Borrador</span></div>
                         <div class="tool-button" id="tool-upload" title="Subir Imagen"><i class="fas fa-image"></i><span>Foto</span></div>
                         <div class="tool-button" id="tool-clear" title="Limpiar Página"><i class="fas fa-trash"></i><span>Limpiar</span></div>
+                        <div class="tool-button" id="tool-color" title="Color"><i class="fas fa-palette"></i><span>Color</span></div>
                     </div>
-                    <div class="color-palette mt-4">
-                        <div class="color-swatch active" style="background-color: black;" data-color="black"></div>
-                        <div class="color-swatch" style="background-color: #e74c3c;" data-color="#e74c3c"></div>
-                        <div class="color-swatch" style="background-color: #3498db;" data-color="#3498db"></div>
-                        <div class="color-swatch" style="background-color: #2ecc71;" data-color="#2ecc71"></div>
-                        <div class="color-swatch" style="background-color: #f1c40f;" data-color="#f1c40f"></div>
+                    
+                    <div id="color-picker-container">
+                        <div class="color-picker-layout">
+                            <canvas id="color-wheel" width="150" height="150"></canvas>
+                            <div class="flex flex-col items-center gap-2">
+                                <div id="color-preview"></div>
+                                <input type="range" id="luminosity-slider" min="0" max="100" value="50" class="styled-slider">
+                            </div>
+                        </div>
                     </div>
+
                     <div class="mt-4">
                         <label for="line-width-slider" class="flex items-center gap-2 text-sm mb-2"><i class="fas fa-pen-nib"></i><span>Grosor</span></label>
-                        <input type="range" id="line-width-slider" min="1" max="50" value="5" class="line-width-slider w-full">
+                        <input type="range" id="line-width-slider" min="1" max="50" value="5" class="styled-slider">
                     </div>
                     <div id="font-selector-container" class="hidden mt-4">
                         <label class="flex items-center gap-2 text-sm mb-2"><i class="fas fa-font"></i><span>Tipografía</span></label>
@@ -394,9 +504,45 @@
                      </div>
                     <div class="page-number">3</div>
                 </div>
-                <div class="page" data-drawing-enabled="true"><div class="page-number">4</div></div>
-                <div class="page" data-drawing-enabled="true"><div class="page-number">5</div></div>
-                <div class="page" data-drawing-enabled="true"><div class="page-number">6</div></div>
+                <div class="page portal-page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-coffee-beans-in-a-sack-3259-large.mp4"></video>
+                        <div class="portal-overlay translucent-panel">
+                            <div class="portal-content">
+                                <h2>Tienda RUNA</h2>
+                                <p>Descubre nuestra selección de cafés de especialidad, accesorios y más. Cada compra apoya a nuestras comunidades.</p>
+                                <a href="tienda.html" class="portal-button">Ir a la Tienda</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-number">4</div>
+                </div>
+                <div class="page portal-page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                         <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-top-view-of-a-cup-of-coffee-3445-large.mp4"></video>
+                         <div class="portal-overlay translucent-panel">
+                            <div class="portal-content">
+                                <h2>Juego RUNA</h2>
+                                <p>Pon a prueba tus sentidos y sumérgete en el mundo de RUNA con nuestro juego interactivo. ¿Estás listo para el desafío?</p>
+                                <a href="juego.html" class="portal-button">Jugar Ahora</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-number">5</div>
+                </div>
+                <div class="page portal-page" data-drawing-enabled="false">
+                     <div class="content-wrapper">
+                         <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-futuristic-computer-data-processing-screen-4740-large.mp4"></video>
+                         <div class="portal-overlay translucent-panel">
+                            <div class="portal-content">
+                                <h2>Jusn38 Tech</h2>
+                                <p>Explora la innovación y el diseño detrás de esta experiencia. Jusn38 Tech, creando el futuro de las interacciones digitales.</p>
+                                <a href="jusn38.html" class="portal-button">Conocer Más</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-number">6</div>
+                </div>
                 <div class="page" data-drawing-enabled="true"><div class="page-number">7</div></div>
                 <div class="page" data-drawing-enabled="true"><div class="page-number">8</div></div>
                 <div class="page hard" data-drawing-enabled="false"></div>
@@ -426,17 +572,58 @@
    </div>
 </div>
 
-<div class="calculator" id="calculator">
-    <div class="calc-header"><i class="fas fa-up-down-left-right"></i><i class="fas fa-xmark close-btn" id="calc-close"></i></div>
-    <input type="text" class="calc-display" id="calc-display" readonly>
-    <div class="calc-keys">
-        <button class="calc-btn">C</button><button class="calc-btn">(</button><button class="calc-btn">)</button><button class="calc-btn operator">/</button>
-        <button class="calc-btn">7</button><button class="calc-btn">8</button><button class="calc-btn">9</button><button class="calc-btn operator">*</button>
-        <button class="calc-btn">4</button><button class="calc-btn">5</button><button class="calc-btn">6</button><button class="calc-btn operator">-</button>
-        <button class="calc-btn">1</button><button class="calc-btn">2</button><button class="calc-btn">3</button><button class="calc-btn operator">+</button>
-        <button class="calc-btn">0</button><button class="calc-btn">.</button><button class="calc-btn" id="calc-backspace"><i class="fas fa-delete-left"></i></button><button class="calc-btn operator" id="calc-equals">=</button>
+<!-- TI-89 Calculator Structure -->
+<div id="calculator">
+    <div class="calculator-overlay">
+        <div class="calc-header">
+            <span class="calc-brand">TI-89 RUNA</span>
+            <div class="flex items-center gap-4">
+                <i id="calc-send" class="fas fa-paper-plane cursor-pointer hover:text-[var(--runa-primary)] transition-colors" title="Enviar a la página"></i>
+                <i class="fas fa-xmark close-btn" id="calc-close" title="Cerrar"></i>
+            </div>
+        </div>
+        <div class="calc-screen-container">
+            <textarea id="calc-display" readonly rows="2"></textarea>
+        </div>
+        <div class="calc-keys">
+            <!-- Row 1 -->
+            <button class="calc-btn func" data-func="Math.sin(">sin</button>
+            <button class="calc-btn func" data-func="Math.cos(">cos</button>
+            <button class="calc-btn func" data-func="Math.tan(">tan</button>
+            <button class="calc-btn op" data-key="**">^</button>
+            <button class="calc-btn func" data-func="Math.sqrt(">√</button>
+            <!-- Row 2 -->
+            <button class="calc-btn func" data-func="Math.log10(">log</button>
+            <button class="calc-btn func" data-func="Math.log(">ln</button>
+            <button class="calc-btn op" data-key="(">(</button>
+            <button class="calc-btn op" data-key=")">)</button>
+            <button class="calc-btn op" data-key="/">÷</button>
+            <!-- Row 3 -->
+            <button class="calc-btn num" data-key="7">7</button>
+            <button class="calc-btn num" data-key="8">8</button>
+            <button class="calc-btn num" data-key="9">9</button>
+            <button class="calc-btn op" data-key="*">×</button>
+            <button class="calc-btn clear" id="calc-backspace"><i class="fas fa-delete-left"></i></button>
+            <!-- Row 4 -->
+            <button class="calc-btn num" data-key="4">4</button>
+            <button class="calc-btn num" data-key="5">5</button>
+            <button class="calc-btn num" data-key="6">6</button>
+            <button class="calc-btn op" data-key="-">-</button>
+            <button class="calc-btn clear" id="calc-clear">C</button>
+            <!-- Row 5 -->
+            <button class="calc-btn num" data-key="1">1</button>
+            <button class="calc-btn num" data-key="2">2</button>
+            <button class="calc-btn num" data-key="3">3</button>
+            <button class="calc-btn op" data-key="+">+</button>
+            <button class="calc-btn enter" id="calc-equals" style="grid-row: span 2;">ENTER</button>
+            <!-- Row 6 -->
+            <button class="calc-btn num" data-key="0" style="grid-column: span 2;">0</button>
+            <button class="calc-btn num" data-key=".">.</button>
+            <button class="calc-btn op" data-key="*(-1)">(-)</button>
+        </div>
     </div>
 </div>
+
 
 <audio id="music-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
 <audio id="river-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
@@ -448,15 +635,16 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     
     $(document).ready(function () {
         // --- State Variables ---
         const flipbook = $('.flipbook');
         const drawingStates = {};
         const textStates = {};
-        let currentTool = 'none';
-        let currentColor = 'black';
+        let currentTool = 'no-tool';
+        let currentColor = 'rgb(0,0,0)';
+        let baseColorFromWheel = { r: 0, g: 0, b: 0 };
         let currentLineWidth = 5;
         let isDrawing = false;
         let lastX = 0, lastY = 0;
@@ -465,12 +653,20 @@
         
         const fonts = [
             { name: 'Poppins', family: "'Poppins', sans-serif" },
+            { name: 'Roboto', family: "'Roboto', sans-serif" },
+            { name: 'Lato', family: "'Lato', sans-serif" },
+            { name: 'Montserrat', family: "'Montserrat', sans-serif" },
+            { name: 'Oswald', family: "'Oswald', sans-serif" },
+            { name: 'Raleway', family: "'Raleway', sans-serif" },
+            { name: 'Merriweather', family: "'Merriweather', serif" },
+            { name: 'Playfair Display', family: "'Playfair Display', serif" },
+            { name: 'Lora', family: "'Lora', serif" },
             { name: 'Dancing Script', family: "'Dancing Script', cursive" },
-            { name: 'Arial', family: "Arial, sans-serif" },
-            { name: 'Georgia', family: "Georgia, serif" },
-            { name: 'Courier New', family: "'Courier New', monospace" },
-            { name: 'Times New Roman', family: "'Times New Roman', Times, serif" },
-            { name: 'Verdana', family: "Verdana, sans-serif" }
+            { name: 'Lobster', family: "'Lobster', cursive" },
+            { name: 'Pacifico', family: "'Pacifico', cursive" },
+            { name: 'Caveat', family: "'Caveat', cursive" },
+            { name: 'Indie Flower', family: "'Indie Flower', cursive" },
+            { name: 'Shadows Into Light', family: "'Shadows Into Light', cursive" },
         ];
 
         const videoSkins = [
@@ -522,6 +718,12 @@
                 pageElement.append(textLayer);
 
                 textLayer.on('input', () => saveTextForPage(pageNumber));
+                
+                textLayer.on('click', function(e) {
+                    if (currentTool !== 'text') {
+                        setActiveTool('text');
+                    }
+                });
             }
             return textLayer[0];
         }
@@ -610,26 +812,34 @@
         function setActiveTool(tool) {
             $('.tool-button').removeClass('active');
             visualTool.removeClass('pencil eraser');
-            $('body').removeClass('drawing-tool-active text-tool-active no-tool-active');
-            $('#font-selector-container').addClass('hidden');
-
+            $('body').removeClass('drawing-tool-active text-tool-active eraser-tool-active no-tool-active');
+            
             currentTool = tool;
-
-            if (tool === 'pencil' || tool === 'eraser') {
+            
+            if (tool === 'pencil') {
                 $('body').addClass('drawing-tool-active');
-                $(`#tool-${tool}`).addClass('active');
-                visualTool.html(tool === 'pencil' ? '<i class="fas fa-pencil"></i>' : '<i class="fas fa-eraser"></i>').addClass(tool);
+            } else if (tool === 'eraser') {
+                $('body').addClass('eraser-tool-active');
             } else if (tool === 'text') {
                 $('body').addClass('text-tool-active');
-                $(`#tool-${tool}`).addClass('active');
-                $('#font-selector-container').removeClass('hidden');
-                visualTool.hide();
-                const page = flipbook.turn('page');
-                const textLayer = getTextLayerForPage(page);
-                if (textLayer) $(textLayer).focus();
             } else {
                 $('body').addClass('no-tool-active');
+            }
+
+            $(`#tool-${tool}`).addClass('active');
+
+            if (tool === 'text') {
+                $('#font-selector-container').removeClass('hidden');
+                $('#color-picker-container').addClass('hidden');
                 visualTool.hide();
+                document.execCommand('foreColor', false, currentColor);
+            } else {
+                $('#font-selector-container').addClass('hidden');
+                if (tool === 'pencil' || tool === 'eraser') {
+                    visualTool.html(tool === 'pencil' ? '<i class="fas fa-pencil"></i>' : '<i class="fas fa-eraser"></i>').addClass(tool);
+                } else {
+                    visualTool.hide();
+                }
             }
         }
 
@@ -658,26 +868,20 @@
                 const audioEl = document.getElementById(sound.id);
                 if (!audioEl) return;
                 
-                const controlHTML = `<div class="flex items-center gap-4 text-sm text-white"><button id="btn-${sound.id}" class="mixer-icon-button relative w-10 h-10 rounded-full shadow-md flex-shrink-0 overflow-hidden"><img src="${sound.gifSrc}" alt="${sound.name}"></button><span class="font-medium w-20 truncate">${sound.name}</span><input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="0" class="flex-grow volume-slider"></div>`;
+                const controlHTML = `<div class="flex items-center gap-4 text-sm text-white"><button id="btn-${sound.id}" class="mixer-icon-button relative w-10 h-10 rounded-full shadow-md flex-shrink-0 overflow-hidden"><img src="${sound.gifSrc}" alt="${sound.name}"></button><span class="font-medium w-20 truncate">${sound.name}</span><input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="0" class="styled-slider" style="--thumb-color: var(--runa-primary); --track-fill-color: var(--slider-track-color);"></div>`;
                 soundControlsContainer.append(controlHTML);
                 
                 const slider = $(`#volume-${sound.id}`);
-                const button = $(`#btn-${sound.id}`);
-                const updateSliderStyle = (target) => { 
-                    const percent = (target.val() / target.attr('max')) * 100;
-                    target.css('--value-percent', `${percent}%`); 
-                };
-
                 slider.on('input', function() {
                     const newVolume = parseFloat($(this).val());
                     audioEl.volume = newVolume;
-                    button.toggleClass('active', newVolume > 0);
-                    updateSliderStyle($(this));
+                    $(`#btn-${sound.id}`).toggleClass('active', newVolume > 0);
+                    updateSliderFill(this);
                     if (newVolume > 0 && audioEl.paused) { audioEl.play().catch(e => console.error(`Error playing ${sound.id}:`, e)); } 
                     else if (newVolume === 0 && !audioEl.paused) { audioEl.pause(); }
                 });
 
-                button.on('click', function() {
+                $(`#btn-${sound.id}`).on('click', function() {
                     const currentVolume = parseFloat(slider.val());
                     if (currentVolume > 0) { 
                         slider.data('lastValue', currentVolume); 
@@ -687,7 +891,7 @@
                     }
                     slider.trigger('input');
                 });
-                updateSliderStyle(slider);
+                updateSliderFill(slider[0]);
             });
         }
 
@@ -730,9 +934,16 @@
         function renderCartModal() {
             const cartModal = $('#cart-modal');
             let contentHTML = `<div class="p-8 flex-grow flex flex-col items-center justify-center text-center"><svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><h3 class="font-semibold text-lg text-white">Tu carrito está vacío</h3><p class="text-sm text-gray-400">Añade productos para verlos aquí.</p></div>`;
-            // NOTE: Add logic here to render actual cart items if cart is not empty.
             cartModal.html(`<div class="translucent-panel w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col ml-auto"><header class="p-4 border-b border-white/10 flex justify-between items-center"><h2 class="text-xl font-bold text-white">Tu Carrito</h2><button id="close-cart-button" class="p-1 rounded-full text-white hover:bg-white/10 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></header>${contentHTML}</div>`);
             $('#close-cart-button').on('click', () => $('#cart-modal').addClass('hidden'));
+        }
+
+        function updateSliderFill(slider) {
+            const min = $(slider).attr('min') || 0;
+            const max = $(slider).attr('max') || 100;
+            const value = $(slider).val();
+            const percent = ((value - min) / (max - min)) * 100;
+            $(slider).css('--value-percent', `${percent}%`);
         }
 
         // --- Initial Setup and Event Handlers ---
@@ -767,20 +978,29 @@
         });
         
         // --- Tool Event Handlers ---
-        $('#tool-pencil').on('click', () => setActiveTool('pencil'));
-        $('#tool-text').on('click', () => setActiveTool('text'));
-        $('#tool-eraser').on('click', () => setActiveTool('eraser'));
-
-        $('.color-swatch').on('click', function() {
-            currentColor = $(this).data('color');
-            $('.color-swatch').removeClass('active');
-            $(this).addClass('active');
-            setActiveTool('pencil');
+        $('#tool-pencil').on('click', () => { setActiveTool('pencil'); closeAllPanels(); });
+        $('#tool-text').on('click', () => { setActiveTool('text'); closeAllPanels(); });
+        $('#tool-eraser').on('click', () => { setActiveTool('eraser'); closeAllPanels(); });
+        $('#tool-clear').on('click', () => {
+            const page = flipbook.turn('page');
+            const canvas = getCanvasForPage(page);
+            if (canvas) {
+                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                saveDrawingForPage(page);
+            }
+            const textLayer = getTextLayerForPage(page);
+            if (textLayer) {
+                textLayer.innerHTML = '';
+                saveTextForPage(page);
+            }
+            closeAllPanels();
         });
-        
+        $('#tool-calc').on('click', () => { $('#calculator').fadeToggle(); closeAllPanels(); });
+
         $('#line-width-slider').on('input', function() {
             currentLineWidth = $(this).val();
             setActiveTool('pencil');
+            updateSliderFill(this);
         });
 
         const fontPalette = $('#font-palette');
@@ -796,22 +1016,8 @@
             fontPalette.append(fontButton);
         });
         fontPalette.find('button:first').addClass('active');
-
-        $('#tool-clear').on('click', () => {
-            const page = flipbook.turn('page');
-            const canvas = getCanvasForPage(page);
-            if (canvas) {
-                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-                saveDrawingForPage(page);
-            }
-            const textLayer = getTextLayerForPage(page);
-            if (textLayer) {
-                textLayer.innerHTML = '';
-                saveTextForPage(page);
-            }
-        });
         
-        $('#tool-print').on('click', () => window.print());
+        $('#tool-print').on('click', () => { window.print(); closeAllPanels(); });
         
         $('#tool-share').on('click', async () => {
              const shareData = {
@@ -821,6 +1027,7 @@
             };
             try { await navigator.share(shareData); }
             catch (err) { console.error("Share failed:", err); }
+            closeAllPanels();
         });
         
         $('#tool-upload').on('click', () => $('#image-uploader').click());
@@ -847,33 +1054,136 @@
             };
             reader.readAsDataURL(file);
             $(this).val('');
+            closeAllPanels();
         });
 
-        // --- Calculator ---
+        // --- Color Picker Logic ---
+        $('#tool-color').on('click', () => {
+            $('#color-picker-container').slideToggle();
+        });
+        
+        const colorWheel = document.getElementById('color-wheel');
+        const colorPreview = document.getElementById('color-preview');
+        const luminositySlider = document.getElementById('luminosity-slider');
+        const cwCtx = colorWheel.getContext('2d');
+        const wheelRadius = colorWheel.width / 2;
+        cwCtx.translate(wheelRadius, wheelRadius);
+
+        function drawColorWheel() {
+            for (let angle = 0; angle < 360; angle++) {
+                const startAngle = (angle - 2) * Math.PI / 180;
+                const endAngle = angle * Math.PI / 180;
+                cwCtx.beginPath();
+                cwCtx.moveTo(0, 0);
+                cwCtx.arc(0, 0, wheelRadius, startAngle, endAngle);
+                cwCtx.closePath();
+                const gradient = cwCtx.createRadialGradient(0, 0, 0, 0, 0, wheelRadius);
+                gradient.addColorStop(0, "white");
+                gradient.addColorStop(1, `hsl(${angle}, 100%, 50%)`);
+                cwCtx.fillStyle = gradient;
+                cwCtx.fill();
+            }
+        }
+        
+        function updateFinalColor() {
+            const lum = luminositySlider.value;
+            let {r, g, b} = baseColorFromWheel;
+
+            const lerp = (a, b, t) => a + (b - a) * t;
+
+            if (lum < 50) {
+                const t = lum / 50;
+                r = lerp(0, r, t);
+                g = lerp(0, g, t);
+                b = lerp(0, b, t);
+            } else {
+                const t = (lum - 50) / 50;
+                r = lerp(r, 255, t);
+                g = lerp(g, 255, t);
+                b = lerp(b, 255, t);
+            }
+            
+            currentColor = `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+            colorPreview.style.backgroundColor = currentColor;
+            if (currentTool === 'text') {
+                 document.execCommand('foreColor', false, currentColor);
+            }
+        }
+
+        function pickColorFromWheel(e) {
+            const rect = colorWheel.getBoundingClientRect();
+            const x = e.clientX - rect.left - wheelRadius;
+            const y = e.clientY - rect.top - wheelRadius;
+            const pixel = cwCtx.getImageData(x + wheelRadius, y + wheelRadius, 1, 1).data;
+            baseColorFromWheel = { r: pixel[0], g: pixel[1], b: pixel[2] };
+            luminositySlider.style.setProperty('--track-fill-color', `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`);
+            updateFinalColor();
+        }
+
+        $(colorWheel).on('mousedown', (e) => {
+            pickColorFromWheel(e);
+            $(colorWheel).on('mousemove', pickColorFromWheel);
+        }).on('mouseup mouseleave', () => {
+            $(colorWheel).off('mousemove', pickColorFromWheel);
+        });
+        
+        $(luminositySlider).on('input', updateFinalColor);
+
+        // --- TI-89 Calculator Logic ---
         const calculator = $('#calculator');
-        $('#tool-calc').on('click', () => calculator.fadeToggle());
-        $('#calc-close').on('click', () => calculator.fadeOut());
-        $('.calc-keys').on('click', '.calc-btn', function() {
-            const key = $(this).text();
-            const display = $('#calc-display');
-            let displayVal = display.val();
+        const calcDisplay = $('#calc-display');
 
-            if (key === 'C') { display.val(''); } 
-            else if ($(this).is('#calc-backspace')) { display.val(displayVal.slice(0, -1)); } 
-            else if ($(this).is('#calc-equals')) {
-                try {
-                    const result = new Function('return ' + displayVal.replace('×', '*').replace('÷', '/'))();
-                    display.val(result);
-                    setActiveTool('text');
-                    const textLayer = getTextLayerForPage(flipbook.turn('page'));
-                    if (textLayer) {
-                        document.execCommand('insertText', false, ` ${result} `);
-                        saveTextForPage(flipbook.turn('page'));
-                        calculator.fadeOut();
-                    }
-                } catch { display.val('Error'); }
-            } else { display.val(displayVal + key); }
+        $('#calc-close').on('click', () => calculator.fadeOut());
+
+        function sendToPage(value) {
+            if (value && value !== 'Error') {
+                setActiveTool('text');
+                const page = flipbook.turn('page');
+                const textLayer = getTextLayerForPage(page);
+                if (textLayer) {
+                    $(textLayer).focus();
+                    const selection = window.getSelection();
+                    const range = document.createRange();
+                    range.selectNodeContents(textLayer);
+                    range.collapse(false);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+
+                    document.execCommand('insertText', false, ` ${value} `);
+                    saveTextForPage(page);
+                }
+            }
+        }
+        
+        $('#calc-send').on('click', () => {
+            sendToPage(calcDisplay.val());
+            calculator.fadeOut();
         });
+
+        $('.calc-keys').on('click', '.calc-btn', function() {
+            const key = $(this).data('key');
+            const func = $(this).data('func');
+            
+            if (key !== undefined) {
+                calcDisplay.val(calcDisplay.val() + key);
+            } else if (func !== undefined) {
+                calcDisplay.val(calcDisplay.val() + func);
+            }
+        });
+
+        $('#calc-clear').on('click', () => calcDisplay.val(''));
+        $('#calc-backspace').on('click', () => calcDisplay.val(calcDisplay.val().slice(0, -1)));
+        
+        $('#calc-equals').on('click', () => {
+            try {
+                let expression = calcDisplay.val();
+                const result = new Function('return ' + expression)();
+                calcDisplay.val(result);
+            } catch {
+                calcDisplay.val('Error');
+            }
+        });
+
 
         // --- UI Panel Handlers ---
         $('#theme-toggle').on('click', () => {
@@ -903,11 +1213,16 @@
         }
 
         // --- Final Initializations ---
+        setActiveTool('no-tool');
         setTimeout(() => { loadDrawingForPage(1); loadTextForPage(1); }, 100);
         applyTheme(localStorage.getItem('runaTheme') || 'light');
         initializeMixer();
         initializeVideoSelector();
         setVideoSkin(parseInt(localStorage.getItem('runaVideoSkin')) || 0);
+        $('#line-width-slider').css('--thumb-color', 'var(--pencil-track-color)').css('--track-fill-color', 'var(--pencil-track-color)');
+        updateSliderFill($('#line-width-slider')[0]);
+        drawColorWheel();
+        colorPreview.style.backgroundColor = currentColor;
     });
 </script>
 
