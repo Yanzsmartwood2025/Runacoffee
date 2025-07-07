@@ -21,7 +21,7 @@
 
     <style>
         :root {
-            --ui-bg: rgba(58, 46, 42, 0.75); /* Semi-transparent UI background */
+            --ui-bg: rgba(58, 46, 42, 0.75);
             --text-light: #fdfbf8;
             --accent-color: #D47500;
             --bar-bg: #3a2e2a;
@@ -51,27 +51,42 @@
             color: var(--text-light);
         }
 
-        /* --- MODIFIED: Updated background URL to your GitHub raw link --- */
+        /* --- MODIFIED: Container is now a viewport --- */
         #game-container {
             position: relative;
             width: 100vw;
             height: 100vh;
-            background: url('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/e60d103dfb61c7d07d0fe214e620173998d7c7ce/public/assets/imagenes/fondo-del-juego.jpg') no-repeat center center;
-            background-size: cover;
+            overflow: hidden; /* Crucial for the panning effect */
         }
 
-        /* --- NEW LAYOUT: Absolutely positioned elements --- */
+        /* --- NEW: Background wrapper for panning animation --- */
+        #background-wrapper {
+            position: absolute;
+            /* Make it wider to allow for panning */
+            width: 125%; 
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: url('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/e60d103dfb61c7d07d0fe214e620173998d7c7ce/public/assets/imagenes/fondo-del-juego.jpg') no-repeat;
+            background-size: 100% 100%;
+            /* Initial state: shifted left to show the right side */
+            transform: translateX(-20%);
+            transition: transform 1.2s ease-in-out;
+        }
+
+        /* When playing, pan the background to the gameplay view */
+        #game-container.playing #background-wrapper {
+            transform: translateX(0);
+        }
+
         #tree-container {
             position: absolute;
             left: 2.5%;
             top: 50%;
             transform: translateY(-50%);
             width: 20%;
-            /* Aspect ratio 1:1 to make it a circle */
             padding-top: 20%; 
             height: 0;
-            background: transparent;
-            border: none;
         }
 
         #tree-health-bar {
@@ -101,7 +116,7 @@
             position: absolute;
             left: 25%;
             top: 22%;
-            width: 71%;
+            width: 57%; /* Adjusted width to fit the panned view */
             height: 56%;
             background: transparent;
         }
@@ -240,7 +255,8 @@
 </head>
 <body>
     <div id="game-container">
-        <!-- All game elements are now direct children of the container -->
+        <div id="background-wrapper"></div>
+
         <div id="tree-container">
             <div id="tree-health-bar"></div>
             <div id="tree-canvas-container"></div>
@@ -456,6 +472,7 @@
         ]
     });
 
+    const gameContainer = document.getElementById('game-container');
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
     const gameOverlay = document.getElementById('game-overlay');
@@ -492,7 +509,6 @@
         reset() {
             this.width = cellSize * 0.9;
             this.height = cellSize * 0.9;
-            // --- MODIFIED: Player is now fixed horizontally at the left edge ---
             this.x = 10; 
             this.y = canvas.height / 2 - this.height / 2;
             this.speed = config.playerSpeed;
@@ -600,7 +616,6 @@
             }
         }
         for (let i = enemies.length - 1; i >= 0; i--) {
-            // --- MODIFIED: Enemies damage the base when they reach the player's area ---
             if (enemies[i].x < player.x + player.width) { 
                 base.health -= 50;
                 updateTreeAppearance();
@@ -675,6 +690,7 @@
     }
     function displayGameOver() {
         cancelAnimationFrame(animationFrameId);
+        gameContainer.classList.remove('playing'); // Revert pan
         gameOverlay.style.display = 'flex';
         gameOverlay.innerHTML = `
             <h1>¡Defensa Caída!</h1>
@@ -685,6 +701,7 @@
     }
     function displayLevelComplete() {
         cancelAnimationFrame(animationFrameId);
+        gameContainer.classList.remove('playing'); // Revert pan
         const nextLevelExists = currentLevelIndex + 1 < config.levels.length;
         gameOverlay.style.display = 'flex';
         gameOverlay.innerHTML = `
@@ -716,6 +733,7 @@
         updateUI();
         
         gameState = 'start';
+        gameContainer.classList.remove('playing'); // Ensure initial state
         gameOverlay.style.display = 'flex';
         gameOverlay.innerHTML = `
             <h1 id="overlay-title">Runa Defenders</h1>
@@ -726,6 +744,7 @@
         document.getElementById('start-button').onclick = () => {
             if (Tone.context.state !== 'running') { Tone.start(); }
             gameState = 'playing';
+            gameContainer.classList.add('playing'); // Trigger pan animation
             gameOverlay.style.display = 'none';
             spawnTimer = 0;
             gameLoop();
@@ -802,7 +821,6 @@
     }
     
     function resizeAll() {
-        // Resize the main game canvas
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
         cellSize = canvas.height / config.lanes;
@@ -813,7 +831,6 @@
             player.reset();
         }
 
-        // Redraw canvas if game is not running
         if(gameState !== 'playing' && gameState !== 'level_transition'){
             draw();
         }
