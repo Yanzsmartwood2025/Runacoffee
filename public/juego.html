@@ -6,9 +6,10 @@
     <title>Runa Defenders: La Furia del Grano</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
-    
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <!-- Three.js Library -->
     <script type="importmap">
         {
@@ -178,17 +179,15 @@
             border: none;
             cursor: pointer;
             padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         #auth-container img {
             width: 7vmin;
             height: 7vmin;
             border-radius: 50%;
             border: 3px solid #6d4c35;
-        }
-        #auth-container svg {
-            width: 7vmin;
-            height: 7vmin;
-            color: var(--text-light);
         }
 
         #coffee-bag-container {
@@ -304,7 +303,7 @@
                  Nivel: <span id="level-value">1</span>
              </div>
              <div id="auth-container">
-                <!-- This will be populated by the auth script -->
+                 <!-- This will be populated by the auth script -->
              </div>
         </div>
 
@@ -459,10 +458,10 @@
         try {
             const firebaseConfig = JSON.parse(firebaseConfigStr);
             if (Object.keys(firebaseConfig).length === 0) {
-                 console.log("Firebase config not found. Starting new game.");
-                 init(0, 0, 0, config.base.health, true);
-                 updateAuthUI(null);
-                 return;
+                console.log("Firebase config not found. Starting new game.");
+                init(0, 0, 0, config.base.health, true);
+                updateAuthUI(null);
+                return;
             }
 
             const app = initializeApp(firebaseConfig);
@@ -497,18 +496,35 @@
     function updateAuthUI(user) {
         authContainer.innerHTML = '';
         if (user && !user.isAnonymous) {
+            const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
+            const photoURL = user.photoURL || fallbackImage;
+
+            const userButton = document.createElement('button');
+            userButton.id = 'logout-btn'; // Add ID for event delegation
+            userButton.title = `Cerrar sesión de ${user.displayName || 'Usuario'}`;
+            
             const userPhoto = document.createElement('img');
-            userPhoto.src = user.photoURL;
-            userPhoto.alt = "User Photo";
-            userPhoto.title = `Cerrar sesión de ${user.displayName}`;
-            userPhoto.addEventListener('click', () => signOut(auth));
-            authContainer.appendChild(userPhoto);
+            userPhoto.src = photoURL;
+            userPhoto.alt = "Foto de Usuario";
+            userPhoto.style.objectFit = user.photoURL ? 'cover' : 'contain';
+            if (!user.photoURL) {
+                 userPhoto.style.padding = '5px';
+                 userPhoto.style.backgroundColor = '#fff';
+            }
+            userPhoto.onerror = () => { userPhoto.src = fallbackImage; };
+
+            userButton.appendChild(userPhoto);
+            authContainer.appendChild(userButton);
         } else {
             const loginButton = document.createElement('button');
-            loginButton.id = 'login-button';
+            loginButton.id = 'open-login-modal-btn'; // Add ID for event delegation
             loginButton.title = 'Iniciar Sesión';
-            loginButton.innerHTML = `<svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>`;
-            loginButton.addEventListener('click', () => authModal.classList.remove('hidden'));
+            
+            const loginImage = document.createElement('img');
+            loginImage.src = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
+            loginImage.alt = "Iniciar Sesión con Google";
+            
+            loginButton.appendChild(loginImage);
             authContainer.appendChild(loginButton);
         }
     }
@@ -657,6 +673,7 @@
         constructor(lane, typeIndex) {
             this.type = config.enemies[typeIndex];
             this.width = cellSize - 10; this.height = cellSize - 10;
+            // CAMBIO: Se ajusta la posición X inicial para que los enemigos aparezcan desde fuera de la pantalla.
             this.x = canvas.width; 
             this.baseY = (lane * cellSize) + 5;
             this.y = this.baseY;
@@ -857,7 +874,9 @@
 
         retryButton.addEventListener('click', (e) => { e.preventDefault(); init(currentLevelIndex, 0, 0, config.base.health, false); });
 
+        // --- Auth Event Listeners ---
         document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
+        
         document.getElementById('google-login-button-modal').addEventListener('click', () => {
             const provider = new GoogleAuthProvider();
             signInWithPopup(auth, provider).then(() => {
@@ -865,16 +884,29 @@
             }).catch(error => console.error("Google Sign-In Error:", error));
         });
 
+        // Delegated listener for the auth container
+        authContainer.addEventListener('click', (event) => {
+            const button = event.target.closest('button');
+            if (!button) return;
+
+            if (button.id === 'open-login-modal-btn') {
+                authModal.classList.remove('hidden');
+            } else if (button.id === 'logout-btn') {
+                signOut(auth).catch(error => console.error("Sign out error", error));
+            }
+        });
+
+        // --- Game Controls ---
         let keys = {};
         window.addEventListener('keydown', e => { keys[e.key] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
         window.addEventListener('keyup', e => { keys[e.key] = false; });
         
         function controlLoop() {
-            if (gameState === 'playing') {
+            if (gameState === 'playing' && player) {
                 if (keys['w'] || keys['ArrowUp']) player.y -= player.speed;
                 if (keys['s'] || keys['ArrowDown']) player.y += player.speed;
                 if (keys[' ']) player.shoot();
-                if (player) player.update();
+                player.update();
             }
             requestAnimationFrame(controlLoop);
         }
@@ -882,34 +914,66 @@
 
         let isDragging = false, didDrag = false, touchYOffset = 0, touchStartY = 0;
         canvas.addEventListener('touchstart', e => {
-            e.preventDefault(); const touch = e.touches[0]; const rect = canvas.getBoundingClientRect();
-            isDragging = true; didDrag = false;
+            e.preventDefault(); 
+            if (!player) return;
+            const touch = e.touches[0]; 
+            const rect = canvas.getBoundingClientRect();
+            isDragging = true; 
+            didDrag = false;
             const currentY = touch.clientY - rect.top;
-            touchStartY = currentY; touchYOffset = currentY - player.y;
+            touchStartY = currentY; 
+            touchYOffset = currentY - player.y;
         }, { passive: false });
 
         canvas.addEventListener('touchmove', e => {
-            e.preventDefault(); if (!isDragging) return;
-            const touch = e.touches[0]; const rect = canvas.getBoundingClientRect();
+            e.preventDefault(); 
+            if (!isDragging || !player) return;
+            const touch = e.touches[0]; 
+            const rect = canvas.getBoundingClientRect();
             const newY = touch.clientY - rect.top;
             if (Math.abs(newY - touchStartY) > 5) didDrag = true;
-            if (player) player.y = newY - touchYOffset;
+            player.y = newY - touchYOffset;
         }, { passive: false });
 
+        // CAMBIO: La lógica de 'touchend' ahora comprueba si se tocó al jugador antes de disparar.
         canvas.addEventListener('touchend', e => {
-            e.preventDefault(); if (didDrag || !player) return;
-            player.shoot();
+            e.preventDefault();
+            if (didDrag || !player) {
+                isDragging = false;
+                didDrag = false;
+                return;
+            }
+            
+            isDragging = false;
             const rect = canvas.getBoundingClientRect();
             const clickX = e.changedTouches[0].clientX - rect.left;
             const clickY = e.changedTouches[0].clientY - rect.top;
-            checkResourceClick(clickX, clickY);
+
+            // Comprueba si el toque está dentro de los límites del jugador
+            if (clickX >= player.x && clickX <= player.x + player.width &&
+                clickY >= player.y && clickY <= player.y + player.height) {
+                player.shoot();
+            } else {
+                // Si no, comprueba si se hizo clic en un recurso
+                checkResourceClick(clickX, clickY);
+            }
         });
 
+        // CAMBIO: La lógica de 'click' ahora comprueba si se hizo clic en el jugador antes de disparar.
         canvas.addEventListener('click', e => {
             if (!player) return;
             const rect = canvas.getBoundingClientRect();
-            checkResourceClick(e.clientX - rect.left, e.clientY - rect.top);
-            player.shoot();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            // Comprueba si el clic está dentro de los límites del jugador
+            if (clickX >= player.x && clickX <= player.x + player.width &&
+                clickY >= player.y && clickY <= player.y + player.height) {
+                player.shoot();
+            } else {
+                // Si no, comprueba si se hizo clic en un recurso
+                checkResourceClick(clickX, clickY);
+            }
         });
     }
 
