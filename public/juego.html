@@ -51,7 +51,6 @@
             color: var(--text-light);
         }
 
-        /* --- NEW: Loading screen --- */
         #loading-screen {
             position: absolute;
             inset: 0;
@@ -78,6 +77,8 @@
             height: 100%;
             top: 0;
             left: 0;
+            /* --- CAMBIO REVERTIDO --- */
+            /* Se vuelve a usar la URL de raw.githubusercontent.com para la prueba */
             background: url('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/e60d103dfb61c7d07d0fe214e620173998d7c7ce/public/assets/imagenes/fondo-del-juego.jpg') no-repeat;
             background-size: 100% 100%;
             transform: translateX(-20%);
@@ -212,7 +213,6 @@
             transform: scale(1.1);
         }
 
-        /* MODIFIED: Overlay is visible by default now */
         #game-overlay {
             position: absolute;
             inset: 0;
@@ -228,7 +228,6 @@
             opacity: 1;
             transition: opacity 0.3s ease;
         }
-        /* NEW: Hidden class to hide the overlay */
         #game-overlay.hidden {
             opacity: 0;
             pointer-events: none;
@@ -268,7 +267,6 @@
     </style>
 </head>
 <body>
-    <!-- NEW: Loading screen is the first thing -->
     <div id="loading-screen">Cargando...</div>
 
     <div id="game-container">
@@ -296,8 +294,8 @@
              <button id="power-2" class="power-button">?</button>
         </div>
 
-        <div id="game-overlay">
-            <div id="start-screen" class="overlay-screen visible">
+        <div id="game-overlay" class="hidden">
+            <div id="start-screen" class="overlay-screen">
                 <h1>Runa Defenders</h1>
                 <p>¡Las plagas atacan! Defiende tu cosecha.</p>
                 <button id="start-button" class="game-button">Empezar</button>
@@ -349,6 +347,9 @@
         treeScene.add(directionalLight);
         
         const loader = new GLTFLoader();
+        // --- CAMBIO REVERTIDO ---
+        // Se vuelve a usar la URL de raw.githubusercontent.com para la prueba.
+        // Nota el %20 en la ruta, que significa que hay un espacio en el nombre de la carpeta.
         loader.load('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb', (gltf) => {
             treeModel = gltf.scene;
             const box = new THREE.Box3().setFromObject(treeModel);
@@ -356,9 +357,11 @@
             treeModel.position.y -= box.min.y;
             treeModel.position.add(center.multiplyScalar(-1));
             
-            treeModel.scale.set(1.2, 1.2, 1.2);
+            treeModel.scale.set(1.6, 1.6, 1.6);
             treeScene.add(treeModel);
-            updateTreeAppearance();
+            if (base) {
+                updateTreeAppearance();
+            }
         }, undefined, (error) => {
             console.error('An error happened while loading the tree model:', error);
         });
@@ -381,14 +384,13 @@
     }
 
     function updateTreeAppearance() {
-        if (!base) return;
+        if (!base || !treeModel) return;
         const healthPercent = Math.max(0, base.health / base.maxHealth);
         
         if (treeHealthBar) {
             treeHealthBar.style.height = `${healthPercent * 100}%`;
         }
 
-        if (!treeModel) return;
         treeModel.traverse((node) => {
             if (node.isMesh && node.material) {
                 if (!node.material.originalColor) {
@@ -411,27 +413,32 @@
     const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
     const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-    try {
-        const firebaseConfig = JSON.parse(firebaseConfigStr);
-        if (Object.keys(firebaseConfig).length > 0) {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-        }
-    } catch (e) { console.error("Error al inicializar Firebase:", e); }
+    function initializeFirebase() {
+        try {
+            const firebaseConfig = JSON.parse(firebaseConfigStr);
+            if (Object.keys(firebaseConfig).length > 0) {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        await loadGameData();
+                    }
+                });
 
-    if (auth) {
-        onAuthStateChanged(auth, async (user) => {
-            if (user) { userId = user.uid; await loadGameData(); } 
-            else { userId = null; init(0, 0, config.base.health); }
-        });
-        if (!auth.currentUser) {
-            try {
-                if (initialAuthToken) await signInWithCustomToken(auth, initialAuthToken);
-                else await signInAnonymously(auth);
-            } catch (error) { console.error("Error en la autenticación:", error); }
+                if (!auth.currentUser) {
+                    signInAnonymously(auth).catch(error => console.error("Anonymous sign-in failed:", error));
+                }
+
+            } else {
+                 console.log("Firebase config not found. Running in offline mode.");
+            }
+        } catch (e) { 
+            console.error("Firebase initialization failed:", e);
         }
-    } else { init(0, 0, config.base.health); }
+    }
     
     async function saveGameData() {
         if (!userId || !db) return;
@@ -443,21 +450,20 @@
             timestamp: new Date()
         };
         try { await setDoc(gameDataRef, dataToSave, { merge: true }); } 
-        catch (error) { console.error("Error al guardar la partida:", error); }
+        catch (error) { console.error("Error saving game:", error); }
     }
 
     async function loadGameData() {
-        if (!userId || !db) { init(0, 0, config.base.health); return; }
+        if (!userId || !db) return;
         const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
         try {
             const docSnap = await getDoc(gameDataRef);
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                init(data.level || 0, data.power || 0, data.baseHealth || config.base.health);
-            } else { init(0, 0, config.base.health); }
+                init(data.level || 0, data.power || 0, data.baseHealth || config.base.health, false);
+            }
         } catch (error) {
-            console.error("Error al cargar la partida:", error);
-            init(0, 0, config.base.health);
+            console.error("Error loading game:", error);
         }
     }
 
@@ -465,8 +471,7 @@
     // ---  GAME CONFIG & MAIN LOGIC ---
     // =================================================================
     const config = {
-        lanes: 6, 
-        playerSpeed: 5, projectileSpeed: 8, shootCooldown: 20, 
+        lanes: 6, playerSpeed: 5, projectileSpeed: 8, shootCooldown: 20, 
         powerBarMax: 100, orbValue: 5, healingValue: 25,
         player: {}, base: { health: 1000 },
         grainImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAzMCI+PGVsbGlwc2UgY3g9IjEwIiBjeT0iMTUiIHJ4PSI4IiByeT0iMTQiIGZpbGw9IiM2NTQzMjEiLz48L3N2Zz4=',
@@ -475,10 +480,7 @@
     };
     Object.assign(config, {
         player: {
-            image: {
-                idle: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iIzY1NDMyMSIvPjxwYXRoIGQ9Ik0zMCA1MEE0MCA0MCAwIDAgMCA3MCA1MCIgZmlsbD0iIzM4MjIyMiIvPjwvc3ZnPg==',
-                attack: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iIzk5NmI1MCIvPjxwYXRoIGQ9Ik0zMCA1MEE0MCA0MCAwIDAgMCA3MCA1MCIgZmlsbD0iIzM4MjIyMiIvPjwvc3ZnPg=='
-            },
+            image: { idle: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iIzY1NDMyMSIvPjxwYXRoIGQ9Ik0zMCA1MEE0MCA0MCAwIDAgMCA3MCA1MCIgZmlsbD0iIzM4MjIyMiIvPjwvc3ZnPg==', attack: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iIzk5NmI1MCIvPjxwYXRoIGQ9Ik0zMCA1MEE0MCA0MCAwIDAgMCA3MCA1MCIgZmlsbD0iIzM4MjIyMiIvPjwvc3ZnPg==' },
             projectileImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iOCIgZmlsbD0iI2Q0NzUwMCIvPjwvc3ZnPg=='
         },
         enemies: [
@@ -487,20 +489,11 @@
             { name: 'Broca Fuerte', health: 300, speed: 0.3, grainChance: 0.2, orbChance: 0.5, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iI2E4M2EzYSIvPjwvc3ZnPg==' },
         ],
         levels: [
-            { duration: 180, waves: [
-                { startTime: 2,   enemyType: 0, spawnInterval: 240 }, { startTime: 30,  enemyType: 0, spawnInterval: 180 },
-                { startTime: 70,  enemyType: 1, spawnInterval: 480 }, { startTime: 120, enemyType: 0, spawnInterval: 120 },
-                { startTime: 160, enemyType: 1, spawnInterval: 300 },
-            ]},
-            { duration: 180, waves: [
-                { startTime: 2,   enemyType: 0, spawnInterval: 150 }, { startTime: 20,  enemyType: 1, spawnInterval: 240 },
-                { startTime: 60,  enemyType: 0, spawnInterval: 90 }, { startTime: 100, enemyType: 1, spawnInterval: 180 }, 
-                { startTime: 140, enemyType: 2, spawnInterval: 900 },
-            ]}
+            { duration: 180, waves: [ { startTime: 2, enemyType: 0, spawnInterval: 240 }, { startTime: 30, enemyType: 0, spawnInterval: 180 }, { startTime: 70, enemyType: 1, spawnInterval: 480 }, { startTime: 120, enemyType: 0, spawnInterval: 120 }, { startTime: 160, enemyType: 1, spawnInterval: 300 } ]},
+            { duration: 180, waves: [ { startTime: 2, enemyType: 0, spawnInterval: 150 }, { startTime: 20, enemyType: 1, spawnInterval: 240 }, { startTime: 60, enemyType: 0, spawnInterval: 90 }, { startTime: 100, enemyType: 1, spawnInterval: 180 }, { startTime: 140, enemyType: 2, spawnInterval: 900 } ]}
         ]
     });
 
-    // --- DOM Element References ---
     const loadingScreen = document.getElementById('loading-screen');
     const gameContainer = document.getElementById('game-container');
     const canvas = document.getElementById('game-canvas');
@@ -515,12 +508,11 @@
     const startButton = document.getElementById('start-button');
     const retryButton = document.getElementById('retry-button');
 
-
-    // --- Game State Variables ---
-    let cellSize, frame = 0, gameState = 'start', player, base;
+    let cellSize, player, base;
     let projectiles = [], enemies = [], resources = [];
     let currentLevelIndex = 0, shootTimer = 0, powerPoints = 0, animationFrameId;
     let levelTimer = 0, currentWaveIndex = -1, spawnTimer = 0;
+    let gameState = 'loading';
 
     const sounds = {
         shoot: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
@@ -533,12 +525,8 @@
     };
 
     function playSound(sound, note, duration = '8n') {
-        if (Tone.context.state !== 'running') { return; }
-        if (sounds[sound]) {
-            try {
-                sounds[sound].triggerAttackRelease(note, duration);
-            } catch (e) { /* Fail silently */ }
-        }
+        if (Tone.context.state !== 'running') return;
+        if (sounds[sound]) sounds[sound].triggerAttackRelease(note, duration);
     }
     
     class Player {
@@ -555,10 +543,7 @@
             this.attackImage.src = config.player.image.attack;
             this.isAttacking = false;
         }
-        draw() {
-            const currentImage = this.isAttacking ? this.attackImage : this.image;
-            ctx.drawImage(currentImage, this.x, this.y, this.width, this.height);
-        }
+        draw() { ctx.drawImage(this.isAttacking ? this.attackImage : this.image, this.x, this.y, this.width, this.height); }
         update() {
             if (this.y < 0) this.y = 0;
             if (this.y > canvas.height - this.height) this.y = canvas.height - this.height;
@@ -574,14 +559,9 @@
     }
     class Projectile {
         constructor(x, y) {
-            this.x = x;
-            this.y = y - 10;
-            this.width = 20;
-            this.height = 20;
-            this.speed = config.projectileSpeed;
-            this.power = 20;
-            this.image = new Image();
-            this.image.src = config.player.projectileImage;
+            this.x = x; this.y = y - 10; this.width = 20; this.height = 20;
+            this.speed = config.projectileSpeed; this.power = 20;
+            this.image = new Image(); this.image.src = config.player.projectileImage;
         }
         update() { this.x += this.speed; }
         draw() { ctx.drawImage(this.image, this.x, this.y, this.width, this.height); }
@@ -589,35 +569,27 @@
     class Enemy {
         constructor(lane, typeIndex) {
             this.type = config.enemies[typeIndex];
-            this.width = cellSize - 5 * 2;
-            this.height = cellSize - 5 * 2;
-            this.x = canvas.width;
+            this.width = cellSize - 10; this.height = cellSize - 10;
+            // --- MODIFIED: Enemies now spawn further to the right, off-screen ---
+            this.x = canvas.width * 1.32; 
             this.y = (lane * cellSize) + 5;
-            this.speed = this.type.speed;
-            this.health = this.type.health;
+            this.speed = this.type.speed; this.health = this.type.health;
             this.maxHealth = this.health;
-            this.image = new Image();
-            this.image.src = this.type.image;
+            this.image = new Image(); this.image.src = this.type.image;
         }
         update() { this.x -= this.speed; }
         draw() { 
             ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
             if (this.health < this.maxHealth) {
-                ctx.fillStyle = 'red';
-                ctx.fillRect(this.x, this.y - 10, this.width, 5);
-                ctx.fillStyle = 'green';
-                ctx.fillRect(this.x, this.y - 10, this.width * (this.health / this.maxHealth), 5);
+                ctx.fillStyle = 'red'; ctx.fillRect(this.x, this.y - 10, this.width, 5);
+                ctx.fillStyle = 'green'; ctx.fillRect(this.x, this.y - 10, this.width * (this.health / this.maxHealth), 5);
             }
         }
     }
     class Resource {
         constructor(x, y, type) {
-            this.x = x;
-            this.y = y;
-            this.size = 30;
-            this.type = type;
-            this.image = new Image();
-            this.image.src = type === 'grain' ? config.grainImage : config.orbImage;
+            this.x = x; this.y = y; this.size = 30; this.type = type;
+            this.image = new Image(); this.image.src = type === 'grain' ? config.grainImage : config.orbImage;
             this.life = 400; 
         }
         update() { this.life--; }
@@ -629,7 +601,6 @@
     }
 
     function isColliding(a,b){ return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y; }
-
     function triggerDamageFlash() {
         damageFlash.style.opacity = 1;
         setTimeout(() => { damageFlash.style.opacity = 0; }, 150);
@@ -639,9 +610,7 @@
         for (let i = projectiles.length - 1; i >= 0; i--) {
             for (let j = enemies.length - 1; j >= 0; j--) {
                 if (projectiles[i] && enemies[j] && isColliding(projectiles[i], enemies[j])) {
-                    enemies[j].health -= projectiles[i].power;
-                    projectiles.splice(i, 1);
-                    playSound('enemyHit');
+                    enemies[j].health -= projectiles[i].power; projectiles.splice(i, 1); playSound('enemyHit');
                     if (enemies[j].health <= 0) {
                         const enemyType = enemies[j].type;
                         if (Math.random() < enemyType.grainChance) resources.push(new Resource(enemies[j].x, enemies[j].y, 'grain'));
@@ -654,15 +623,9 @@
         }
         for (let i = enemies.length - 1; i >= 0; i--) {
             if (enemies[i].x < player.x + player.width) { 
-                base.health -= 50;
-                updateTreeAppearance();
-                triggerDamageFlash();
-                playSound('baseHit', 'C2', '4n');
+                base.health -= 50; updateTreeAppearance(); triggerDamageFlash(); playSound('baseHit', 'C2', '4n');
                 enemies.splice(i, 1);
-                if (base.health <= 0) {
-                    gameState = 'game_over';
-                    playSound('gameOver', 'C3', '1n');
-                }
+                if (base.health <= 0) { gameState = 'game_over'; playSound('gameOver', 'C3', '1n'); }
             }
         }
     }
@@ -670,7 +633,7 @@
     function handleGameLogic() {
         if (shootTimer > 0) shootTimer--;
         levelTimer += 1/60;
-        projectiles.forEach((p, i) => { p.update(); if (p.x > canvas.width) projectiles.splice(i, 1); });
+        projectiles.forEach((p, i) => { p.update(); if (p.x > canvas.width * 1.4) projectiles.splice(i, 1); });
         enemies.forEach(e => e.update());
         resources.forEach((r, i) => { r.update(); if (r.life <= 0) resources.splice(i, 1); });
         handleCollisions();
@@ -682,43 +645,27 @@
         const currentLevel = config.levels[currentLevelIndex];
         const nextWaveIndex = currentWaveIndex + 1;
         if (nextWaveIndex < currentLevel.waves.length && levelTimer >= currentLevel.waves[nextWaveIndex].startTime) {
-            currentWaveIndex = nextWaveIndex;
-            spawnTimer = 0;
+            currentWaveIndex = nextWaveIndex; spawnTimer = 0;
         }
-        if (levelTimer >= currentLevel.duration && enemies.length === 0) {
-            startNextLevel();
-            return;
-        }
+        if (levelTimer >= currentLevel.duration && enemies.length === 0) { startNextLevel(); return; }
         if (currentWaveIndex > -1) {
-            if (spawnTimer > 0) {
-                spawnTimer--;
-            } else if (enemies.length < 20) {
-                spawnEnemy();
-                spawnTimer = currentLevel.waves[currentWaveIndex].spawnInterval;
-            }
+            if (spawnTimer > 0) spawnTimer--;
+            else if (enemies.length < 20) { spawnEnemy(); spawnTimer = currentLevel.waves[currentWaveIndex].spawnInterval; }
         }
     }
 
-    function startNextLevel() { 
-        gameState = 'level_complete'; 
-        saveGameData(); 
-        showOverlay('level_complete');
-    }
-
+    function startNextLevel() { gameState = 'level_complete'; saveGameData(); showOverlay('level_complete'); }
     function spawnEnemy() {
         const currentWave = config.levels[currentLevelIndex].waves[currentWaveIndex];
-        const enemyTypeIndex = currentWave.enemyType;
-        const lane = Math.floor(Math.random() * config.lanes);
-        enemies.push(new Enemy(lane, enemyTypeIndex));
+        enemies.push(new Enemy(Math.floor(Math.random() * config.lanes), currentWave.enemyType));
     }
 
     function draw() { 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        player.draw();
+        if (player) player.draw();
         projectiles.forEach(p => p.draw());
         enemies.forEach(e => e.draw());
         resources.forEach(r => r.draw());
-        updateUI();
     }
 
     function updateUI() { 
@@ -727,23 +674,15 @@
     }
 
     function gameLoop() {
-        if (gameState === 'playing') {
-            handleGameLogic();
-        }
+        if (gameState === 'playing') handleGameLogic();
         draw();
         
-        if (gameState === 'game_over') {
-            showOverlay('game_over');
-        } else if (gameState !== 'level_complete') {
-            animationFrameId = requestAnimationFrame(gameLoop);
-        }
+        if (gameState === 'game_over') showOverlay('game_over');
+        else if (gameState !== 'level_complete') animationFrameId = requestAnimationFrame(gameLoop);
     }
 
     function showOverlay(type) {
-        if (animationFrameId) {
-            cancelAnimationFrame(animationFrameId);
-            animationFrameId = null;
-        }
+        if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
 
         gameContainer.classList.remove('playing');
         gameOverlay.classList.remove('hidden');
@@ -759,19 +698,13 @@
             gameOverScreen.classList.add('visible');
         } else if (type === 'level_complete') {
             const nextLevelExists = currentLevelIndex + 1 < config.levels.length;
-            const title = document.getElementById('level-complete-title');
-            const content = document.getElementById('level-complete-content');
-            
-            title.textContent = `¡Nivel ${currentLevelIndex + 1} Superado!`;
+            levelCompleteScreen.querySelector('h2').textContent = `¡Nivel ${currentLevelIndex + 1} Superado!`;
+            const content = levelCompleteScreen.querySelector('div');
             if (nextLevelExists) {
                 content.innerHTML = `<button id="next-level-button" class="game-button">Siguiente Nivel</button>`;
-                const nextLevelButton = document.getElementById('next-level-button');
-                if(nextLevelButton) {
-                    nextLevelButton.addEventListener('click', () => {
-                        currentLevelIndex++;
-                        init(currentLevelIndex, powerPoints, base.health);
-                    }, { once: true });
-                }
+                content.querySelector('button').addEventListener('click', () => {
+                    currentLevelIndex++; init(currentLevelIndex, powerPoints, base.health, false);
+                }, { once: true });
             } else {
                 content.innerHTML = `<h1>¡VICTORIA TOTAL!</h1><p>¡Has defendido la cosecha!</p>`;
             }
@@ -779,18 +712,15 @@
         }
     }
 
-    function init(level = 0, power = 0, health = config.base.health) {
+    function init(level = 0, power = 0, health = config.base.health, isFirstLoad = true) {
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
         
         currentLevelIndex = level;
         powerPoints = power;
         base = { health: Math.min(health, config.base.health), maxHealth: config.base.health };
         
-        levelTimer = 0;
-        currentWaveIndex = -1;
-        enemies = [];
-        projectiles = [];
-        resources = [];
+        levelTimer = 0; currentWaveIndex = -1;
+        enemies = []; projectiles = []; resources = [];
 
         resizeAll(); 
         updateTreeAppearance();
@@ -799,27 +729,17 @@
         gameState = 'start';
         showOverlay('start');
 
-        // Hide loading screen once the first init is done
-        if (loadingScreen) {
+        if (isFirstLoad) {
             loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 500); // Match CSS transition
+            setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
         }
     }
 
     function setupEventListeners() {
         const handleStart = async (event) => {
             event.preventDefault();
-            event.stopPropagation();
-
-            try {
-                if (Tone.context.state !== 'running') {
-                    await Tone.start();
-                }
-            } catch (e) {
-                console.error("Could not start audio context:", e);
-            }
+            try { if (Tone.context.state !== 'running') await Tone.start(); } 
+            catch (e) { console.error("Could not start audio context:", e); }
 
             gameState = 'playing';
             gameContainer.classList.add('playing');
@@ -828,14 +748,9 @@
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             gameLoop();
         };
-        
         startButton.addEventListener('click', handleStart);
 
-        const handleRetry = (event) => {
-            event.preventDefault();
-            init(currentLevelIndex, powerPoints, config.base.health);
-        };
-        retryButton.addEventListener('click', handleRetry);
+        retryButton.addEventListener('click', (e) => { e.preventDefault(); init(currentLevelIndex, powerPoints, config.base.health, false); });
 
         let keys = {};
         window.addEventListener('keydown', e => { keys[e.key] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
@@ -846,7 +761,7 @@
                 if (keys['w'] || keys['ArrowUp']) player.y -= player.speed;
                 if (keys['s'] || keys['ArrowDown']) player.y += player.speed;
                 if (keys[' ']) player.shoot();
-                player.update();
+                if (player) player.update();
             }
             requestAnimationFrame(controlLoop);
         }
@@ -854,40 +769,31 @@
 
         let isDragging = false, didDrag = false, touchYOffset = 0, touchStartY = 0;
         canvas.addEventListener('touchstart', e => {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            isDragging = true;
-            didDrag = false;
+            e.preventDefault(); const touch = e.touches[0]; const rect = canvas.getBoundingClientRect();
+            isDragging = true; didDrag = false;
             const currentY = touch.clientY - rect.top;
-            touchStartY = currentY;
-            touchYOffset = currentY - player.y;
+            touchStartY = currentY; touchYOffset = currentY - player.y;
         }, { passive: false });
 
         canvas.addEventListener('touchmove', e => {
-            e.preventDefault();
-            if (!isDragging) return;
-            const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
+            e.preventDefault(); if (!isDragging) return;
+            const touch = e.touches[0]; const rect = canvas.getBoundingClientRect();
             const newY = touch.clientY - rect.top;
             if (Math.abs(newY - touchStartY) > 5) didDrag = true;
-            player.y = newY - touchYOffset;
-            player.update();
+            if (player) player.y = newY - touchYOffset;
         }, { passive: false });
 
         canvas.addEventListener('touchend', e => {
-            e.preventDefault();
-            if (!didDrag) {
-                player.shoot();
-                const rect = canvas.getBoundingClientRect();
-                const clickX = e.changedTouches[0].clientX - rect.left;
-                const clickY = e.changedTouches[0].clientY - rect.top;
-                checkResourceClick(clickX, clickY);
-            }
-            isDragging = false;
+            e.preventDefault(); if (didDrag || !player) return;
+            player.shoot();
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.changedTouches[0].clientX - rect.left;
+            const clickY = e.changedTouches[0].clientY - rect.top;
+            checkResourceClick(clickX, clickY);
         });
 
         canvas.addEventListener('click', e => {
+            if (!player) return;
             const rect = canvas.getBoundingClientRect();
             checkResourceClick(e.clientX - rect.left, e.clientY - rect.top);
             player.shoot();
@@ -899,16 +805,9 @@
             const r = resources[i];
             const dist = Math.sqrt(Math.pow(x - (r.x + r.size/2), 2) + Math.pow(y - (r.y + r.size/2), 2));
             if (dist < r.size) { 
-                if (r.type === 'grain') {
-                    base.health = Math.min(base.maxHealth, base.health + config.healingValue);
-                    updateTreeAppearance();
-                    playSound('heal', 'A5');
-                } else {
-                    powerPoints = Math.min(config.powerBarMax, powerPoints + config.orbValue);
-                    playSound('collect', 'G5');
-                }
-                resources.splice(i, 1);
-                break;
+                if (r.type === 'grain') { base.health = Math.min(base.maxHealth, base.health + config.healingValue); updateTreeAppearance(); playSound('heal', 'A5'); } 
+                else { powerPoints = Math.min(config.powerBarMax, powerPoints + config.orbValue); playSound('collect', 'G5'); }
+                resources.splice(i, 1); break;
             }
         }
     }
@@ -916,26 +815,20 @@
     function resizeAll() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        if (canvas.height > 0) {
-            cellSize = canvas.height / config.lanes;
-        }
-        
-        if (!player) {
-            player = new Player();
-        } else {
-            player.reset();
-        }
-
-        if(gameState !== 'playing' && gameState !== 'level_transition'){
-            draw();
-        }
+        if (canvas.height > 0) cellSize = canvas.height / config.lanes;
+        if (!player) player = new Player();
+        else player.reset();
+        if(gameState !== 'playing') draw();
     }
 
     // --- INITIALIZE EVERYTHING ---
-    window.addEventListener('resize', resizeAll);
-    setupEventListeners();
-    initThreeScene();
-    // Firebase will trigger the first init call, which will hide the loading screen.
+    document.addEventListener('DOMContentLoaded', () => {
+        setupEventListeners();
+        initThreeScene();
+        initializeFirebase();
+        init(0, 0, config.base.health, true);
+        window.addEventListener('resize', resizeAll);
+    });
 </script>
 
 </body>
