@@ -51,6 +51,20 @@
             color: var(--text-light);
         }
 
+        /* --- NEW: Loading screen --- */
+        #loading-screen {
+            position: absolute;
+            inset: 0;
+            background: #1a1310;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5vmin;
+            z-index: 200;
+            transition: opacity 0.5s ease;
+        }
+
         #game-container {
             position: relative;
             width: 100vw;
@@ -129,9 +143,8 @@
             z-index: 99;
         }
 
-        #top-bar {
+        #top-bar, #bottom-bar {
             position: absolute;
-            top: 4%;
             left: 25%;
             width: 71%;
             height: 15%;
@@ -142,20 +155,8 @@
             border-radius: 15px;
             padding: 0 10px;
         }
-        
-        #bottom-bar {
-            position: absolute;
-            bottom: 4%;
-            left: 25%;
-            width: 71%;
-            height: 15%;
-            background-color: var(--ui-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            border-radius: 15px;
-        }
+        #top-bar { top: 4%; }
+        #bottom-bar { bottom: 4%; justify-content: center; gap: 20px; }
 
         .ui-element {
             display: flex;
@@ -211,6 +212,7 @@
             transform: scale(1.1);
         }
 
+        /* MODIFIED: Overlay is visible by default now */
         #game-overlay {
             position: absolute;
             inset: 0;
@@ -223,18 +225,15 @@
             text-align: center;
             color: white;
             padding: 20px;
-            /* Hidden by default, shown by adding a class */
-            visibility: hidden;
-            opacity: 0;
-            transition: visibility 0s 0.3s, opacity 0.3s ease;
-        }
-        #game-overlay.visible {
-            visibility: visible;
             opacity: 1;
             transition: opacity 0.3s ease;
         }
+        /* NEW: Hidden class to hide the overlay */
+        #game-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
 
-        /* --- NEW: Individual overlay screens --- */
         .overlay-screen {
             display: none;
             flex-direction: column;
@@ -269,6 +268,9 @@
     </style>
 </head>
 <body>
+    <!-- NEW: Loading screen is the first thing -->
+    <div id="loading-screen">Cargando...</div>
+
     <div id="game-container">
         <div id="background-wrapper"></div>
 
@@ -294,9 +296,8 @@
              <button id="power-2" class="power-button">?</button>
         </div>
 
-        <!-- MODIFIED: Overlay structure for better state management -->
         <div id="game-overlay">
-            <div id="start-screen" class="overlay-screen">
+            <div id="start-screen" class="overlay-screen visible">
                 <h1>Runa Defenders</h1>
                 <p>¡Las plagas atacan! Defiende tu cosecha.</p>
                 <button id="start-button" class="game-button">Empezar</button>
@@ -500,6 +501,7 @@
     });
 
     // --- DOM Element References ---
+    const loadingScreen = document.getElementById('loading-screen');
     const gameContainer = document.getElementById('game-container');
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
@@ -744,7 +746,7 @@
         }
 
         gameContainer.classList.remove('playing');
-        gameOverlay.classList.add('visible');
+        gameOverlay.classList.remove('hidden');
 
         startScreen.classList.remove('visible');
         gameOverScreen.classList.remove('visible');
@@ -796,16 +798,24 @@
         
         gameState = 'start';
         showOverlay('start');
+
+        // Hide loading screen once the first init is done
+        if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500); // Match CSS transition
+        }
     }
 
-    // --- SETUP EVENT LISTENERS ONCE ---
     function setupEventListeners() {
-        const handleStart = async () => {
-            // SAFE AUDIO START: Must be in a direct user interaction event
+        const handleStart = async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
             try {
                 if (Tone.context.state !== 'running') {
                     await Tone.start();
-                    console.log('Audio context started successfully.');
                 }
             } catch (e) {
                 console.error("Could not start audio context:", e);
@@ -813,18 +823,19 @@
 
             gameState = 'playing';
             gameContainer.classList.add('playing');
-            gameOverlay.classList.remove('visible');
+            gameOverlay.classList.add('hidden');
             spawnTimer = 0;
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             gameLoop();
         };
         
         startButton.addEventListener('click', handleStart);
-        startButton.addEventListener('touchend', handleStart);
 
-        const handleRetry = () => init(currentLevelIndex, powerPoints, config.base.health);
+        const handleRetry = (event) => {
+            event.preventDefault();
+            init(currentLevelIndex, powerPoints, config.base.health);
+        };
         retryButton.addEventListener('click', handleRetry);
-        retryButton.addEventListener('touchend', handleRetry);
 
         let keys = {};
         window.addEventListener('keydown', e => { keys[e.key] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
@@ -924,7 +935,7 @@
     window.addEventListener('resize', resizeAll);
     setupEventListeners();
     initThreeScene();
-    // Firebase will trigger the first init call
+    // Firebase will trigger the first init call, which will hide the loading screen.
 </script>
 
 </body>
