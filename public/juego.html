@@ -25,7 +25,7 @@
             --text-light: #fdfbf8;
             --accent-color: #D47500;
             --bar-bg: #3a2e2a;
-            --power-bar-fill: #fde047; /* Amarillo para la barra de poder */
+            --power-bar-fill: #fde047;
             --damage-flash-color: rgba(255, 0, 0, 0.3);
             --tree-health-bar-color: #7CFC00;
         }
@@ -154,7 +154,7 @@
             border-radius: 15px;
             padding: 0 10px;
         }
-        #top-bar { top: 4%; }
+        #top-bar { top: 4%; justify-content: space-between; }
         #bottom-bar { bottom: 4%; justify-content: center; gap: 20px; }
 
         .ui-element {
@@ -173,19 +173,22 @@
              padding: 1.5vmin 3vmin;
         }
 
-        #top-power-bar-container {
-            width: 25vmin;
-            height: 3vmin;
-            background-color: #2a1d1a;
-            border-radius: 5px;
-            overflow: hidden;
-            border: 2px solid #6d4c35;
+        #auth-container button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
         }
-        #top-power-bar {
-            width: 0%;
-            height: 100%;
-            background-color: #ccc; 
-            transition: width 0.2s linear;
+        #auth-container img {
+            width: 7vmin;
+            height: 7vmin;
+            border-radius: 50%;
+            border: 3px solid #6d4c35;
+        }
+        #auth-container svg {
+            width: 7vmin;
+            height: 7vmin;
+            color: var(--text-light);
         }
 
         #coffee-bag-container {
@@ -227,7 +230,6 @@
         .pulse {
             animation: pulse-animation 0.3s ease-in-out;
         }
-
 
         #game-overlay {
             position: absolute;
@@ -280,6 +282,10 @@
         }
         .game-button:active { transform: translateY(3px); border-bottom-width: 2px; }
 
+        /* Auth Modal Styles */
+        #auth-modal { z-index: 300; }
+        #auth-modal .translucent-panel { background-color: rgba(0,0,0,0.8); border: 2px solid var(--accent-color); }
+
     </style>
 </head>
 <body>
@@ -297,8 +303,8 @@
              <div id="level-display" class="ui-element">
                  Nivel: <span id="level-value">1</span>
              </div>
-             <div id="top-power-bar-container">
-                 <div id="top-power-bar"></div>
+             <div id="auth-container">
+                <!-- This will be populated by the auth script -->
              </div>
         </div>
 
@@ -307,11 +313,11 @@
 
         <div id="bottom-bar">
              <div id="coffee-bag-container" class="ui-element">
-                <img id="coffee-bag-icon" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
-                <span id="coffee-bean-counter">0</span>
+                 <img id="coffee-bag-icon" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
+                 <span id="coffee-bean-counter">0</span>
              </div>
              <div id="special-power-bar-container">
-                <div id="special-power-bar"></div>
+                 <div id="special-power-bar"></div>
              </div>
         </div>
 
@@ -333,13 +339,34 @@
         </div>
     </div>
     
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="fixed inset-0 flex items-center justify-center p-4 bg-black/60 hidden">
+       <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
+            <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-white mb-2" style="font-family: 'Press Start 2P', cursive;">Bienvenido</h2>
+            <p class="text-gray-400 mb-6" style="font-family: 'Poppins', sans-serif;">Inicia sesión para guardar tu progreso.</p>
+            <button id="google-login-button-modal" class="w-full inline-flex items-center justify-center gap-3 px-4 py-2 text-base font-semibold text-gray-700 bg-white border border-transparent rounded-lg shadow-sm hover:bg-gray-200 transition-all" style="font-family: 'Poppins', sans-serif;">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,34.783,44,29.865,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+                <span>Iniciar con Google</span>
+            </button>
+       </div>
+    </div>
+
 <script type="module">
     // =================================================================
-    // --- 3D SCENE MODULE ---
+    // --- MODULE IMPORTS ---
     // =================================================================
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+    // =================================================================
+    // --- 3D SCENE MODULE ---
+    // =================================================================
     let treeScene, treeCamera, treeRenderer, treeModel;
     const treeCanvasContainer = document.getElementById('tree-canvas-container');
     const treeHealthBar = document.getElementById('tree-health-bar');
@@ -422,42 +449,70 @@
     // =================================================================
     // --- FIREBASE INTEGRATION ---
     // =================================================================
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    let app, auth, db, userId = null;
+    let auth, db, userId = null;
+    const authContainer = document.getElementById('auth-container');
+    const authModal = document.getElementById('auth-modal');
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
     const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-    function initializeFirebase() {
+    async function initializeAndLoadGame() {
         try {
             const firebaseConfig = JSON.parse(firebaseConfigStr);
-            if (Object.keys(firebaseConfig).length > 0) {
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        await loadGameData();
-                    }
-                });
-
-                if (!auth.currentUser) {
-                    signInAnonymously(auth).catch(error => console.error("Anonymous sign-in failed:", error));
-                }
-
-            } else {
-                 console.log("Firebase config not found. Running in offline mode.");
+            if (Object.keys(firebaseConfig).length === 0) {
+                 console.log("Firebase config not found. Starting new game.");
+                 init(0, 0, 0, config.base.health, true);
+                 updateAuthUI(null);
+                 return;
             }
-        } catch (e) { 
+
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            onAuthStateChanged(auth, async (user) => {
+                updateAuthUI(user);
+                if (user) {
+                    userId = user.uid;
+                    const savedData = await loadGameData();
+                    if (savedData) {
+                        init(savedData.level || 0, savedData.specialPower || 0, savedData.coffeeBeans || 0, savedData.baseHealth || config.base.health, true);
+                    } else {
+                        init(0, 0, 0, config.base.health, true);
+                    }
+                } else {
+                    signInAnonymously(auth).catch(error => {
+                        console.error("Anonymous sign-in failed:", error);
+                        init(0, 0, 0, config.base.health, true);
+                    });
+                }
+            });
+
+        } catch (e) {
             console.error("Firebase initialization failed:", e);
+            init(0, 0, 0, config.base.health, true);
+            updateAuthUI(null);
         }
     }
-    
+
+    function updateAuthUI(user) {
+        authContainer.innerHTML = '';
+        if (user && !user.isAnonymous) {
+            const userPhoto = document.createElement('img');
+            userPhoto.src = user.photoURL;
+            userPhoto.alt = "User Photo";
+            userPhoto.title = `Cerrar sesión de ${user.displayName}`;
+            userPhoto.addEventListener('click', () => signOut(auth));
+            authContainer.appendChild(userPhoto);
+        } else {
+            const loginButton = document.createElement('button');
+            loginButton.id = 'login-button';
+            loginButton.title = 'Iniciar Sesión';
+            loginButton.innerHTML = `<svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>`;
+            loginButton.addEventListener('click', () => authModal.classList.remove('hidden'));
+            authContainer.appendChild(loginButton);
+        }
+    }
+
     async function saveGameData() {
         if (!userId || !db) return;
         const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
@@ -468,21 +523,22 @@
             baseHealth: base.health,
             timestamp: new Date()
         };
-        try { await setDoc(gameDataRef, dataToSave, { merge: true }); } 
-        catch (error) { console.error("Error saving game:", error); }
+        try {
+            await setDoc(gameDataRef, dataToSave, { merge: true });
+        } catch (error) {
+            console.error("Error saving game:", error);
+        }
     }
 
     async function loadGameData() {
-        if (!userId || !db) return;
+        if (!userId || !db) return null;
         const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
         try {
             const docSnap = await getDoc(gameDataRef);
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                init(data.level || 0, data.specialPower || 0, data.coffeeBeans || 0, data.baseHealth || config.base.health, false);
-            }
+            return docSnap.exists() ? docSnap.data() : null;
         } catch (error) {
             console.error("Error loading game:", error);
+            return null;
         }
     }
 
@@ -490,7 +546,6 @@
     // ---  GAME CONFIG & MAIN LOGIC ---
     // =================================================================
     const config = {
-        // --- CAMBIO: Reducido a 4 carriles para hacer todo más grande ---
         lanes: 4, 
         playerSpeed: 5, projectileSpeed: 8, shootCooldown: 20, 
         specialPowerMax: 100, orbValue: 10, healingValue: 25,
@@ -697,7 +752,12 @@
         }
     }
 
-    function startNextLevel() { gameState = 'level_complete'; saveGameData(); showOverlay('level_complete'); }
+    function startNextLevel() {
+        gameState = 'level_complete';
+        saveGameData();
+        showOverlay('level_complete');
+    }
+
     function spawnEnemy() {
         const currentWave = config.levels[currentLevelIndex].waves[currentWaveIndex];
         enemies.push(new Enemy(Math.floor(Math.random() * config.lanes), currentWave.enemyType));
@@ -797,6 +857,14 @@
 
         retryButton.addEventListener('click', (e) => { e.preventDefault(); init(currentLevelIndex, 0, 0, config.base.health, false); });
 
+        document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
+        document.getElementById('google-login-button-modal').addEventListener('click', () => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider).then(() => {
+                authModal.classList.add('hidden');
+            }).catch(error => console.error("Google Sign-In Error:", error));
+        });
+
         let keys = {};
         window.addEventListener('keydown', e => { keys[e.key] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
         window.addEventListener('keyup', e => { keys[e.key] = false; });
@@ -874,45 +942,54 @@
         flyingBean.style.zIndex = '999';
         flyingBean.style.width = `${resource.size}px`;
         flyingBean.style.height = `${resource.size}px`;
+        flyingBean.style.pointerEvents = 'none';
 
         const canvasRect = canvas.getBoundingClientRect();
-        const bagRect = coffeeBagIcon.getBoundingClientRect();
-
         const startX = canvasRect.left + resource.x;
         const startY = canvasRect.top + resource.y;
         
-        const endX = bagRect.left + bagRect.width / 2 - resource.size / 2;
-        const endY = bagRect.top + bagRect.height / 2 - resource.size / 2;
-
-        flyingBean.style.left = `${startX}px`;
-        flyingBean.style.top = `${startY}px`;
-
         document.body.appendChild(flyingBean);
 
-        requestAnimationFrame(() => {
-            flyingBean.style.transition = 'left 0.8s ease-in, top 0.8s ease-out, transform 0.8s ease-in, opacity 0.5s 0.5s';
-            flyingBean.style.left = `${endX}px`;
-            flyingBean.style.top = `${endY}px`;
-            flyingBean.style.transform = 'scale(0.2)';
-            flyingBean.style.opacity = '0.5';
-        });
+        const duration = 800; // ms
+        let startTime = null;
 
-        flyingBean.addEventListener('transitionend', () => {
-            base.health = Math.min(base.maxHealth, base.health + config.healingValue);
-            coffeeBeanCount++;
-            updateTreeAppearance();
-            updateUI();
-            playSound('heal', 'A5');
+        function animationLoop(currentTime) {
+            if (!startTime) startTime = currentTime;
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / duration, 1);
 
-            coffeeBagIcon.classList.add('pulse');
-            setTimeout(() => coffeeBagIcon.classList.remove('pulse'), 300);
+            const bagRect = coffeeBagIcon.getBoundingClientRect();
+            const endX = bagRect.left + bagRect.width / 2 - resource.size / 2;
+            const endY = bagRect.top + bagRect.height / 2 - resource.size / 2;
 
-            document.body.removeChild(flyingBean);
-            const originalResourceIndex = resources.findIndex(res => res === resource);
-            if (originalResourceIndex > -1) {
-                resources.splice(originalResourceIndex, 1);
+            const currentX = startX + (endX - startX) * progress;
+            const currentY = startY + (endY - startY) * progress;
+            const scale = 1 - (0.8 * progress); // Shrink to 20% of original size
+
+            flyingBean.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
+
+            if (progress < 1) {
+                requestAnimationFrame(animationLoop);
+            } else {
+                base.health = Math.min(base.maxHealth, base.health + config.healingValue);
+                coffeeBeanCount++;
+                updateTreeAppearance();
+                updateUI();
+                playSound('heal', 'A5');
+
+                coffeeBagIcon.classList.add('pulse');
+                setTimeout(() => coffeeBagIcon.classList.remove('pulse'), 300);
+
+                document.body.removeChild(flyingBean);
+                const originalResourceIndex = resources.findIndex(res => res === resource);
+                if (originalResourceIndex > -1) {
+                    resources.splice(originalResourceIndex, 1);
+                }
             }
-        }, { once: true });
+        }
+        
+        flyingBean.style.transform = `translate(${startX}px, ${startY}px)`;
+        requestAnimationFrame(animationLoop);
     }
     
     function resizeAll() {
@@ -928,8 +1005,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         setupEventListeners();
         initThreeScene();
-        initializeFirebase();
-        init(0, 0, 0, config.base.health, true);
+        initializeAndLoadGame();
         window.addEventListener('resize', resizeAll);
     });
 </script>
