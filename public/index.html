@@ -205,7 +205,8 @@
                         <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
                         <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
-                    <div id="auth-container" class="flex items-center"></div>
+                    <!-- El contenedor de autenticación será llenado por firebase-auth.js -->
+                    <div id="auth-container"></div>
                 </div>
                 <div class="flex-shrink-0">
                     <a href="#" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
@@ -392,15 +393,13 @@
        </div>
     </div>
     
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- SCRIPT DE AUTENTICACIÓN EXTERNO -->
+    <!-- Este script ahora maneja toda la lógica de Firebase -->
+    <script type="module" src="./firebase-auth.js"></script>
 
-        // --- GLOBAL VARIABLES & CONFIG ---
-        let app, auth, db;
-        let currentUser = null;
-        let userId = null;
+    <!-- SCRIPT PRINCIPAL DE LA PÁGINA -->
+    <script type="module">
+        // --- VARIABLES GLOBALES Y CONFIGURACIÓN (NO FIREBASE) ---
         let cart = [];
 
         const videoSkins = [
@@ -419,11 +418,11 @@
             { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
         ];
         
-        const authContainer = document.getElementById('auth-container');
-        const authModal = document.getElementById('auth-modal');
+        // --- ELEMENTOS DEL DOM ---
         const cartModal = document.getElementById('cart-modal');
         const cartCounter = document.getElementById('cart-counter');
 
+        // --- FUNCIONES DEL CARRITO ---
         const updateCartCounter = () => {
             if (cart.length > 0) {
                 cartCounter.textContent = cart.length;
@@ -491,35 +490,7 @@
             cartModal.classList.add('hidden');
         };
 
-        const authStateObserver = async (user) => {
-            currentUser = user;
-            if (user && !user.isAnonymous) {
-                userId = user.uid;
-                renderUserUI(user);
-            } else {
-                userId = localStorage.getItem('anonymousUserId') || `anon_${crypto.randomUUID()}`;
-                if (!localStorage.getItem('anonymousUserId')) {
-                    localStorage.setItem('anonymousUserId', userId);
-                }
-                renderGuestUI();
-            }
-        };
-
-        const renderUserUI = (user) => {
-            const userImage = user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" class="w-full h-full object-cover">` : `<span class="text-white font-bold text-xl">${user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}</span>`;
-            authContainer.innerHTML = `<div class="relative"><button id="user-menu-button" title="Mi Cuenta" class="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm overflow-hidden border-2 border-gray-600 hover:border-[var(--runa-primary)] bg-gray-700">${userImage}</button><div id="user-menu-dropdown" class="hidden absolute top-full left-0 mt-2 w-56 translucent-menu border rounded-lg shadow-xl z-50"><div class="px-4 py-3 border-b"><p class="text-sm font-semibold truncate">${user.displayName || 'Usuario'}</p><p class="text-xs truncate">${user.email || 'Sin email'}</p></div><div class="py-1"><a href="#" id="logout-button-menu" class="flex items-center w-full text-left px-4 py-2 text-sm hover:text-[var(--runa-primary)] transition-colors">Cerrar Sesión</a></div></div></div>`;
-            document.getElementById('logout-button-menu').addEventListener('click', (e) => { e.preventDefault(); if(auth) signOut(auth); });
-            const userMenuButton = document.getElementById('user-menu-button');
-            const userMenuDropdown = document.getElementById('user-menu-dropdown');
-            userMenuButton.addEventListener('click', (e) => { e.stopPropagation(); userMenuDropdown.classList.toggle('hidden'); });
-            window.addEventListener('click', () => { if (userMenuDropdown) userMenuDropdown.classList.add('hidden'); });
-        };
-
-        const renderGuestUI = () => {
-            authContainer.innerHTML = `<button id="open-auth-modal-button" title="Acceder o Registrarse" class="w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm text-inherit"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>`;
-            document.getElementById('open-auth-modal-button').addEventListener('click', () => authModal.classList.remove('hidden'));
-        };
-
+        // --- FUNCIONES DE LA INTERFAZ (MIXER, VIDEO, ETC.) ---
         let audioElements = {};
         
         const initializeMixer = () => {
@@ -640,37 +611,10 @@
             updateVideoListUI();
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
-            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // --- INICIALIZACIÓN DE LA PÁGINA ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // La autenticación de Firebase se maneja en el archivo externo: firebase-auth.js
             
-            try {
-                const firebaseConfig = JSON.parse(firebaseConfigStr);
-                if (Object.keys(firebaseConfig).length > 0) {
-                    app = initializeApp(firebaseConfig);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
-                } else {
-                    console.warn("Firebase config is empty. App will run in offline mode.");
-                }
-            } catch (e) {
-                console.error("Error initializing Firebase:", e);
-            }
-
-            authContainer.innerHTML = `<div class="w-9 h-9 rounded-full bg-gray-700 animate-pulse"></div>`;
-            if (auth) {
-                try {
-                    if (initialAuthToken) await signInWithCustomToken(auth, initialAuthToken);
-                    else if (!auth.currentUser) await signInAnonymously(auth);
-                } catch (error) {
-                    console.error("Auth initialization error:", error);
-                }
-                onAuthStateChanged(auth, authStateObserver);
-            } else {
-                authStateObserver(null);
-            }
-
             const videoIntro = document.getElementById('video-intro');
             const introVideo = document.getElementById('intro-video');
             const pageContent = document.getElementById('page-content');
@@ -722,7 +666,6 @@
             });
             applyTheme(localStorage.getItem('theme') || 'dark');
 
-            // Check for a saved skin, but default to 0 (the new first video) if none is found.
             const savedSkinIndex = parseInt(localStorage.getItem('runaVideoSkin')) || 0;
             currentVideoIndex = savedSkinIndex;
             const video = document.getElementById('video-background');
@@ -734,16 +677,6 @@
             
             document.getElementById('open-cart-button').addEventListener('click', openCart);
             cartModal.addEventListener('click', (event) => { if (event.target === cartModal) closeCart(); });
-            
-            document.getElementById('google-login-button-modal').addEventListener('click', () => {
-                if (!auth) return;
-                const provider = new GoogleAuthProvider();
-                signInWithPopup(auth, provider)
-                    .then(() => authModal.classList.add('hidden'))
-                    .catch((error) => console.error("Google Sign-In Error:", error));
-            });
-            document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
-            authModal.addEventListener('click', (event) => { if (event.target === authModal) authModal.classList.add('hidden'); });
             
             const arViewer = document.getElementById('ar-viewer');
             if(arViewer) {
