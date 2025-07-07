@@ -8,129 +8,190 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    
+    <!-- Three.js Library -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+            }
+        }
+    </script>
+
     <style>
         :root {
-            --game-bg: #5c7e3a;
-            --ui-bg: #4a2e1a;
+            --ui-bg: rgba(58, 46, 42, 0.75); /* Semi-transparent UI background */
             --text-light: #fdfbf8;
             --accent-color: #D47500;
             --bar-bg: #3a2e2a;
+            --power-bar-fill: #fde047;
+            --damage-flash-color: rgba(255, 0, 0, 0.3);
+            --tree-health-bar-color: #7CFC00;
         }
 
         * {
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
         }
 
         body {
-            margin: 0;
             font-family: 'Press Start 2P', cursive;
-            background-color: #1a1310;
             color: var(--text-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
         }
 
-        #game-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        /* --- MODIFIED: Updated background URL to your GitHub raw link --- */
         #game-container {
             position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: url('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/e60d103dfb61c7d07d0fe214e620173998d7c7ce/public/assets/imagenes/fondo-del-juego.jpg') no-repeat center center;
+            background-size: cover;
+        }
+
+        /* --- NEW LAYOUT: Absolutely positioned elements --- */
+        #tree-container {
+            position: absolute;
+            left: 2.5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20%;
+            /* Aspect ratio 1:1 to make it a circle */
+            padding-top: 20%; 
+            height: 0;
+            background: transparent;
+            border: none;
+        }
+
+        #tree-health-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            max-width: 500px;
-            aspect-ratio: 9 / 16;
-            background: var(--game-bg);
-            border: 8px solid var(--ui-bg);
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            background-color: var(--tree-health-bar-color);
+            box-shadow: 0 0 10px var(--tree-health-bar-color), 0 0 20px var(--tree-health-bar-color);
+            transition: height 0.3s ease-out;
+            z-index: 1;
+            border-radius: 0 0 50vw 50vw;
+        }
+        
+        #tree-canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            border-radius: 50%;
             overflow: hidden;
         }
 
         #game-canvas {
+            position: absolute;
+            left: 25%;
+            top: 22%;
+            width: 71%;
+            height: 56%;
+            background: transparent;
+        }
+
+        #damage-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            display: block;
-            background-image: url('https://www.transparenttextures.com/patterns/grass-cubes.png');
+            background-color: var(--damage-flash-color);
+            opacity: 0;
+            transition: opacity 0.1s ease-out;
+            pointer-events: none;
+            z-index: 99;
         }
 
-        #ui-panel {
+        #top-bar {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
+            top: 4%;
+            left: 25%;
+            width: 71%;
+            height: 15%;
+            background-color: var(--ui-bg);
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            z-index: 10;
-            pointer-events: none;
+            justify-content: space-around;
+            align-items: center;
+            border-radius: 15px;
+            padding: 0 10px;
         }
         
-        .resource-bag {
+        #bottom-bar {
+            position: absolute;
+            bottom: 4%;
+            left: 25%;
+            width: 71%;
+            height: 15%;
+            background-color: var(--ui-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            border-radius: 15px;
+        }
+
+        .ui-element {
             display: flex;
             align-items: center;
-            background-color: var(--ui-bg);
-            padding: 5px 10px;
+            background-color: var(--bar-bg);
+            padding: 1vmin 2.5vmin;
             border-radius: 8px;
             border: 3px solid #6d4c35;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            pointer-events: all;
-        }
-
-        .resource-bag img {
-            width: 25px;
-            height: 30px;
-            margin-right: 8px;
-        }
-
-        .resource-bag .resource-value {
-            font-size: 16px;
             color: var(--text-light);
+            font-size: 2.5vmin;
             text-shadow: 2px 2px #000;
         }
         
-        .power-bar-container {
-            width: 100px;
-            height: 15px;
-            background-color: var(--bar-bg);
+        #level-display {
+             padding: 1.5vmin 3vmin;
+        }
+
+        #power-bar-container {
+            width: 25vmin;
+            height: 3vmin;
+            background-color: #2a1d1a;
             border-radius: 5px;
             overflow: hidden;
             border: 2px solid #6d4c35;
         }
-        
-        .power-bar {
+        #power-bar {
             width: 0%;
             height: 100%;
-            background-color: var(--accent-color);
+            background-color: var(--power-bar-fill);
             transition: width 0.2s linear;
         }
 
-        #power-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: all;
-        }
-
         .power-button {
-            width: 50px;
-            height: 50px;
+            width: 10vmin;
+            height: 10vmin;
             border: 3px solid #6d4c35;
-            border-radius: 8px;
+            border-radius: 50%;
             background-color: var(--bar-bg);
             cursor: pointer;
             position: relative;
             opacity: 0.5;
             transition: opacity 0.3s, transform 0.1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4vmin;
         }
         .power-button.ready {
             opacity: 1;
@@ -138,11 +199,6 @@
         }
         .power-button.ready:hover {
             transform: scale(1.1);
-        }
-        .power-button img {
-            width: 100%;
-            height: 100%;
-            padding: 5px;
         }
 
         #game-overlay {
@@ -159,22 +215,14 @@
             padding: 20px;
         }
         
-        #game-overlay h1 {
-            font-size: 6vw;
-            margin-bottom: 20px;
-            color: var(--accent-color);
-            text-shadow: 4px 4px #000;
-        }
-        
-        #game-overlay p {
-            font-size: 3vw;
-            max-width: 80%;
-            line-height: 1.5;
-        }
+        #game-overlay h1, #game-overlay h2 { margin-bottom: 20px; color: var(--accent-color); text-shadow: 4px 4px #000; }
+        #game-overlay h1 { font-size: 8vmin; }
+        #game-overlay h2 { font-size: 6vmin; }
+        #game-overlay p { font-size: 3vmin; max-width: 80%; line-height: 1.5; }
 
         .game-button {
             font-family: 'Press Start 2P', cursive;
-            font-size: 4vw;
+            font-size: 4vmin;
             padding: 15px 30px;
             background: var(--accent-color);
             border: none;
@@ -186,56 +234,127 @@
             border-bottom: 5px solid #a15a00;
             transition: all 0.1s ease;
         }
-        
-        .game-button:active {
-            transform: translateY(3px);
-            border-bottom-width: 2px;
-        }
+        .game-button:active { transform: translateY(3px); border-bottom-width: 2px; }
 
-        #level-display {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 10px;
-            text-shadow: 1px 1px #000;
-            pointer-events: none;
-            background: rgba(0,0,0,0.2);
-            padding: 5px 8px;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
+    <div id="game-container">
+        <!-- All game elements are now direct children of the container -->
+        <div id="tree-container">
+            <div id="tree-health-bar"></div>
+            <div id="tree-canvas-container"></div>
+        </div>
+        
+        <div id="top-bar">
+             <div id="level-display" class="ui-element">
+                 Nivel: <span id="level-value">1</span>
+             </div>
+             <div id="power-bar-container">
+                 <div id="power-bar"></div>
+             </div>
+        </div>
 
-    <div id="game-wrapper">
-        <div id="game-container">
-            <canvas id="game-canvas"></canvas>
-            <div id="ui-panel">
-                <div id="resource-bags" style="display: flex; flex-direction: column; gap: 10px;">
-                    <div id="grains-bag" class="resource-bag">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MCAxMDAiPjxwYXRoIGQ9Ik0xMCAwaDYwdjEwMGgtNjB6IiBmaWxsPSIjODQ1YzQyIi8+PHBhdGggZD0iTTEwIDBoNjBsLTEwIDEwaC00MGwtMTAgLTEweiIgZmlsbD0iIzY5NGI0MSIvPjwvc3ZnPg==" alt="Bolsa de Granos">
-                        <span id="grains-value" class="resource-value">100</span>
-                    </div>
-                    <div id="power-bag" class="resource-bag">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MCAxMDAiPjxwYXRoIGQ9Ik0xMCAwaDYwdjEwMGgtNjB6IiBmaWxsPSIjNjkzMDhmIi8+PHBhdGggZD0iTTEwIDBoNjBsLTEwIDEwaC00MGwtMTAgLTEweiIgZmlsbD0iIzU0MjY4NyIvPjwvc3ZnPg==" alt="Bolsa de Poder">
-                        <div class="power-bar-container">
-                            <div id="power-bar" class="power-bar"></div>
-                        </div>
-                    </div>
-                </div>
-                <div id="power-buttons">
-                </div>
-            </div>
-            <div id="level-display"></div>
-            <div id="game-overlay">
-                <h1 id="overlay-title">Runa Defenders</h1>
-                <p id="overlay-text">¡Las plagas atacan! Protege tu Árbol de Café. Mueve a tu Grano Guardián, dispara a los enemigos y recolecta los Granos que caen para mejorar tus habilidades.</p>
-                <button id="start-button" class="game-button">Empezar</button>
-            </div>
+        <canvas id="game-canvas"></canvas>
+        <div id="damage-flash"></div>
+
+        <div id="bottom-bar">
+             <button id="power-1" class="power-button">?</button>
+             <button id="power-2" class="power-button">?</button>
+        </div>
+
+        <div id="game-overlay">
+             <h1 id="overlay-title">Runa Defenders</h1>
+             <p id="overlay-text">¡Las plagas atacan! Defiende tu cosecha. Mueve a tu Guardián y dispara a los enemigos que vienen de la derecha.</p>
+             <button id="start-button" class="game-button">Empezar</button>
         </div>
     </div>
     
 <script type="module">
+    // =================================================================
+    // --- 3D SCENE MODULE ---
+    // =================================================================
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    let treeScene, treeCamera, treeRenderer, treeModel;
+    const treeCanvasContainer = document.getElementById('tree-canvas-container');
+    const treeHealthBar = document.getElementById('tree-health-bar');
+    const healthyColor = new THREE.Color(0xffffff);
+    const damagedColor = new THREE.Color(0xff0000);
+
+    function initThreeScene() {
+        treeScene = new THREE.Scene();
+
+        const { width, height } = treeCanvasContainer.getBoundingClientRect();
+        treeCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
+        treeCamera.position.set(0, 1.2, 7);
+        treeCamera.lookAt(0, 0.8, 0);
+
+        treeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        treeRenderer.setClearColor(0x000000, 0); // Transparent background
+        treeRenderer.setSize(width, height);
+        treeRenderer.setPixelRatio(window.devicePixelRatio);
+        treeRenderer.outputColorSpace = THREE.SRGBColorSpace;
+        treeCanvasContainer.appendChild(treeRenderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+        treeScene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
+        directionalLight.position.set(5, 10, 7.5);
+        treeScene.add(directionalLight);
+        
+        const loader = new GLTFLoader();
+        loader.load('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb', (gltf) => {
+            treeModel = gltf.scene;
+            const box = new THREE.Box3().setFromObject(treeModel);
+            const center = box.getCenter(new THREE.Vector3());
+            treeModel.position.y -= box.min.y;
+            treeModel.position.add(center.multiplyScalar(-1));
+            
+            treeModel.scale.set(1.2, 1.2, 1.2);
+            treeScene.add(treeModel);
+            updateTreeAppearance();
+        }, undefined, (error) => {
+            console.error('An error happened while loading the tree model:', error);
+        });
+
+        function animateTree() {
+            requestAnimationFrame(animateTree);
+            treeRenderer.render(treeScene, treeCamera);
+        }
+        animateTree();
+        
+        const resizeObserver = new ResizeObserver(() => {
+            const { width, height } = treeCanvasContainer.getBoundingClientRect();
+            if (width > 0 && height > 0) {
+                treeCamera.aspect = width / height;
+                treeCamera.updateProjectionMatrix();
+                treeRenderer.setSize(width, height);
+            }
+        });
+        resizeObserver.observe(treeCanvasContainer);
+    }
+
+    function updateTreeAppearance() {
+        if (!base) return;
+        const healthPercent = Math.max(0, base.health / base.maxHealth);
+        
+        if (treeHealthBar) {
+            treeHealthBar.style.height = `${healthPercent * 100}%`;
+        }
+
+        if (!treeModel) return;
+        treeModel.traverse((node) => {
+            if (node.isMesh && node.material) {
+                if (!node.material.originalColor) {
+                    node.material.originalColor = node.material.color.clone();
+                }
+                node.material.color.copy(node.material.originalColor).lerp(damagedColor, 1 - healthPercent);
+            }
+        });
+    }
+
     // =================================================================
     // --- FIREBASE INTEGRATION ---
     // =================================================================
@@ -243,10 +362,7 @@
     import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    let app, auth, db;
-    let currentUser = null;
-    let userId = null;
-
+    let app, auth, db, userId = null;
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
     const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
     const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
@@ -257,88 +373,63 @@
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
-            console.log("Firebase inicializado correctamente.");
-        } else {
-            console.warn("Configuración de Firebase vacía. El juego se ejecutará en modo sin conexión.");
         }
-    } catch (e) {
-        console.error("Error al inicializar Firebase:", e);
-    }
+    } catch (e) { console.error("Error al inicializar Firebase:", e); }
 
     if (auth) {
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                userId = user.uid;
-                console.log("Usuario autenticado:", userId);
-                await loadGameData(); 
-            } else {
-                currentUser = null;
-                userId = null;
-                console.log("No hay sesión activa.");
-                init(0, 100, 0, config.tree.health);
-            }
+            if (user) { userId = user.uid; await loadGameData(); } 
+            else { userId = null; init(0, 0, config.base.health); }
         });
-        
         if (!auth.currentUser) {
             try {
                 if (initialAuthToken) await signInWithCustomToken(auth, initialAuthToken);
                 else await signInAnonymously(auth);
-            } catch (error) {
-                console.error("Error en la autenticación anónima/personalizada:", error);
-            }
+            } catch (error) { console.error("Error en la autenticación:", error); }
         }
-    } else {
-        init(0, 100, 0, config.tree.health);
-    }
+    } else { init(0, 0, config.base.health); }
     
     async function saveGameData() {
         if (!userId || !db) return;
-        const gameDataRef = doc(db, "game_progress", userId);
+        const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
         const dataToSave = {
             level: currentLevelIndex,
-            grains: grainPoints,
             power: powerPoints,
-            treeHealth: tree.health,
+            baseHealth: base.health,
             timestamp: new Date()
         };
-        try {
-            await setDoc(gameDataRef, dataToSave, { merge: true });
-            console.log("Partida guardada para el usuario:", userId);
-        } catch (error) {
-            console.error("Error al guardar la partida:", error);
-        }
+        try { await setDoc(gameDataRef, dataToSave, { merge: true }); } 
+        catch (error) { console.error("Error al guardar la partida:", error); }
     }
 
     async function loadGameData() {
-        if (!userId || !db) {
-            init(0, 100, 0, config.tree.health);
-            return;
-        }
-        const gameDataRef = doc(db, "game_progress", userId);
+        if (!userId || !db) { init(0, 0, config.base.health); return; }
+        const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
         try {
             const docSnap = await getDoc(gameDataRef);
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                init(data.level || 0, data.grains || 100, data.power || 0, data.treeHealth || config.tree.health);
-                console.log("Partida cargada:", data);
-            } else {
-                console.log("No hay datos guardados. Empezando nueva partida.");
-                init(0, 100, 0, config.tree.health);
-            }
+                init(data.level || 0, data.power || 0, data.baseHealth || config.base.health);
+            } else { init(0, 0, config.base.health); }
         } catch (error) {
             console.error("Error al cargar la partida:", error);
-            init(0, 100, 0, config.tree.health);
+            init(0, 0, config.base.health);
         }
     }
 
     // =================================================================
-    // ---  GAME CONFIG & ASSETS ---
+    // ---  GAME CONFIG & MAIN LOGIC ---
     // =================================================================
     const config = {
-        lanes: 5, initialLanes: 3, playerSpeed: 5, projectileSpeed: 8, shootCooldown: 20, 
-        grainSpawnRate: 600, 
-        powerBarMax: 100, orbValue: 20, 
+        lanes: 6, 
+        playerSpeed: 5, projectileSpeed: 8, shootCooldown: 20, 
+        powerBarMax: 100, orbValue: 5, healingValue: 25,
+        player: {}, base: { health: 1000 },
+        grainImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAzMCI+PGVsbGlwc2UgY3g9IjEwIiBjeT0iMTUiIHJ4PSI4IiByeT0iMTQiIGZpbGw9IiM2NTQzMjEiLz48L3N2Zz4=',
+        orbImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMTAiIGZpbGw9IiNmZGUwNDciLz48L3N2Zz4=',
+        enemies: [], levels: []
+    };
+    Object.assign(config, {
         player: {
             image: {
                 idle: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iIzY1NDMyMSIvPjxwYXRoIGQ9Ik0zMCA1MEE0MCA0MCAwIDAgMCA3MCA1MCIgZmlsbD0iIzM4MjIyMiIvPjwvc3ZnPg==',
@@ -346,50 +437,42 @@
             },
             projectileImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iOCIgZmlsbD0iI2Q0NzUwMCIvPjwvc3ZnPg=='
         },
-        tree: {
-            image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNNTAgOTVsLTE1LTQwaC0xMHYtMTBoMjB2MTBoLTVsMTAtMzBoNWw5IDMwaC00di0xMGgyMHYxMGgtMTBsLTE1IDQwWiIgZmlsbD0iIzU0ODgyYSIvPjxwYXRoIGQ9Ik01MCA1NWgtMjVsMTAtMzBoNWwxMCAzMFoiIGZpbGw9IiM2YmE0MzQiLz48L3N2Zz4=',
-            health: 1000
-        },
-        grainImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAzMCI+PGVsbGlwc2UgY3g9IjEwIiBjeT0iMTUiIHJ4PSI4IiByeT0iMTQiIGZpbGw9IiM2NTQzMjEiLz48L3N2Zz4=',
-        orbImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMTAiIGZpbGw9IiNmZGUwNDciLz48L3N2Zz4=',
         enemies: [
-            { name: 'Broca Débil', health: 20, speed: 0.8, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iI2M3M2EzYSIvPjwvc3ZnPg==' },
-            { name: 'Broca Normal', health: 60, speed: 0.6, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iI2M3N2IzYSIvPjwvc3ZnPg==' },
-            { name: 'Broca Fuerte', health: 300, speed: 0.4, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iI2E4M2EzYSIvPjwvc3ZnPg==' },
+            { name: 'Broca Débil', health: 20, speed: 0.5, grainChance: 0.8, orbChance: 0.1, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iI2M3M2EzYSIvPjwvc3ZnPg==' },
+            { name: 'Broca Normal', health: 60, speed: 0.4, grainChance: 0.5, orbChance: 0.2, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iI2M3N2IzYSIvPjwvc3ZnPg==' },
+            { name: 'Broca Fuerte', health: 300, speed: 0.3, grainChance: 0.2, orbChance: 0.5, image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iI2E4M2EzYSIvPjwvc3ZnPg==' },
         ],
         levels: [
-            { goal: 20, enemyTypes: [0], spawnInterval: 120 },
-            { goal: 30, enemyTypes: [0, 1], spawnInterval: 100 },
-            { goal: 1, enemyTypes: [2], spawnInterval: 0 },
+            { duration: 180, waves: [
+                { startTime: 2,   enemyType: 0, spawnInterval: 240 }, { startTime: 30,  enemyType: 0, spawnInterval: 180 },
+                { startTime: 70,  enemyType: 1, spawnInterval: 480 }, { startTime: 120, enemyType: 0, spawnInterval: 120 },
+                { startTime: 160, enemyType: 1, spawnInterval: 300 },
+            ]},
+            { duration: 180, waves: [
+                { startTime: 2,   enemyType: 0, spawnInterval: 150 }, { startTime: 20,  enemyType: 1, spawnInterval: 240 },
+                { startTime: 60,  enemyType: 0, spawnInterval: 90 }, { startTime: 100, enemyType: 1, spawnInterval: 180 }, 
+                { startTime: 140, enemyType: 2, spawnInterval: 900 },
+            ]}
         ]
-    };
+    });
 
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
-    const container = document.getElementById('game-container');
     const gameOverlay = document.getElementById('game-overlay');
-    const grainsValue = document.getElementById('grains-value');
     const powerBar = document.getElementById('power-bar');
-    const levelDisplay = document.getElementById('level-display');
+    const levelValue = document.getElementById('level-value');
+    const damageFlash = document.getElementById('damage-flash');
 
-    let cellSize, cellGap = 5;
-    let frame = 0;
-    let gameState = 'start';
-    let activeLanes = config.initialLanes;
-    let player, tree;
+    let cellSize, frame = 0, gameState = 'start', player, base;
     let projectiles = [], enemies = [], resources = [];
-    let currentLevelIndex = 0;
-    let enemiesDefeatedThisLevel = 0;
-    let spawnTimer = 0;
-    let shootTimer = 0;
-    let grainPoints = 0;
-    let powerPoints = 0;
-    let animationFrameId;
+    let currentLevelIndex = 0, shootTimer = 0, powerPoints = 0, animationFrameId;
+    let levelTimer = 0, currentWaveIndex = -1, spawnTimer = 0;
 
     const sounds = {
         shoot: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
-        collectGrain: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 } }).toDestination(),
-        collectOrb: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.3 } }).toDestination(),
+        collect: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 } }).toDestination(),
+        heal: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0.1, release: 0.2 } }).toDestination(),
+        baseHit: new Tone.MembraneSynth({ pitchDecay: 0.1, octaves: 2, envelope: { attack: 0.01, decay: 0.3, sustain: 0.01, release: 0.4 } }).toDestination(),
         enemyHit: new Tone.PolySynth(Tone.NoiseSynth, { noise: { type: 'pink' }, envelope: { attack: 0.01, decay: 0.05, sustain: 0, release: 0.05 } }).toDestination(),
         gameOver: new Tone.PolySynth(Tone.Synth).toDestination(),
         levelUp: new Tone.PolySynth(Tone.Synth).toDestination(),
@@ -399,19 +482,19 @@
         if (Tone.context.state !== 'running') { Tone.start().catch(console.error); }
         if (sounds[sound]) {
             try {
-                if (note) sounds[sound].triggerAttackRelease(note, duration);
-                else sounds[sound].triggerAttackRelease('C4', 0.1);
+                sounds[sound].triggerAttackRelease(note, duration);
             } catch (e) { /* Fail silently */ }
         }
     }
-
+    
     class Player {
         constructor() { this.reset(); }
         reset() {
             this.width = cellSize * 0.9;
             this.height = cellSize * 0.9;
-            this.x = canvas.width / 2 - this.width / 2;
-            this.y = canvas.height - this.height - 50;
+            // --- MODIFIED: Player is now fixed horizontally at the left edge ---
+            this.x = 10; 
+            this.y = canvas.height / 2 - this.height / 2;
             this.speed = config.playerSpeed;
             this.image = new Image();
             this.image.src = config.player.image.idle;
@@ -424,25 +507,22 @@
             ctx.drawImage(currentImage, this.x, this.y, this.width, this.height);
         }
         update() {
-            const leftLimit = (canvas.width - activeLanes * cellSize) / 2;
-            const rightLimit = leftLimit + activeLanes * cellSize - this.width;
-            if (this.x < leftLimit) this.x = leftLimit;
-            if (this.x > rightLimit) this.x = rightLimit;
+            if (this.y < 0) this.y = 0;
+            if (this.y > canvas.height - this.height) this.y = canvas.height - this.height;
         }
         shoot() {
             if (shootTimer > 0 || gameState !== 'playing') return;
-            projectiles.push(new Projectile(this.x + this.width / 2, this.y));
+            projectiles.push(new Projectile(this.x + this.width, this.y + this.height / 2));
             shootTimer = config.shootCooldown;
             playSound('shoot', 'C5', '16n');
             this.isAttacking = true;
             setTimeout(() => this.isAttacking = false, 100);
         }
     }
-
     class Projectile {
         constructor(x, y) {
-            this.x = x - 10;
-            this.y = y;
+            this.x = x;
+            this.y = y - 10;
             this.width = 20;
             this.height = 20;
             this.speed = config.projectileSpeed;
@@ -450,25 +530,23 @@
             this.image = new Image();
             this.image.src = config.player.projectileImage;
         }
-        update() { this.y -= this.speed; }
+        update() { this.x += this.speed; }
         draw() { ctx.drawImage(this.image, this.x, this.y, this.width, this.height); }
     }
-
     class Enemy {
         constructor(lane, typeIndex) {
             this.type = config.enemies[typeIndex];
-            const leftOffset = (canvas.width - activeLanes * cellSize) / 2;
-            this.x = leftOffset + (lane * cellSize) + cellGap;
-            this.y = -cellSize;
-            this.width = cellSize - cellGap * 2;
-            this.height = cellSize - cellGap * 2;
+            this.width = cellSize - 5 * 2;
+            this.height = cellSize - 5 * 2;
+            this.x = canvas.width;
+            this.y = (lane * cellSize) + 5;
             this.speed = this.type.speed;
             this.health = this.type.health;
             this.maxHealth = this.health;
             this.image = new Image();
             this.image.src = this.type.image;
         }
-        update() { this.y += this.speed; }
+        update() { this.x -= this.speed; }
         draw() { 
             ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
             if (this.health < this.maxHealth) {
@@ -479,22 +557,17 @@
             }
         }
     }
-
     class Resource {
-        constructor(type) {
-            this.x = Math.random() * canvas.width;
-            this.y = 0;
+        constructor(x, y, type) {
+            this.x = x;
+            this.y = y;
             this.size = 30;
-            this.speedY = 1;
             this.type = type;
             this.image = new Image();
             this.image.src = type === 'grain' ? config.grainImage : config.orbImage;
-            this.life = 400;
+            this.life = 400; 
         }
-        update() {
-            this.y += this.speedY;
-            this.life--;
-        }
+        update() { this.life--; }
         draw() {
             ctx.globalAlpha = this.life < 60 ? this.life / 60 : 1;
             ctx.drawImage(this.image, this.x, this.y, this.size, this.size);
@@ -502,41 +575,11 @@
         }
     }
 
-    class Tree {
-        constructor() { this.reset(); }
-        reset() {
-            this.width = canvas.width;
-            this.height = cellSize * 2;
-            this.x = 0;
-            this.y = canvas.height - this.height;
-            this.health = config.tree.health;
-            this.image = new Image();
-            this.image.src = config.tree.image;
-        }
-        draw() {
-            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        }
-    }
+    function isColliding(a,b){ return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y; }
 
-    function isColliding(a, b) {
-        return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
-    }
-
-    function handleGameLogic() {
-        if (shootTimer > 0) shootTimer--;
-        projectiles.forEach((p, i) => {
-            p.update();
-            if (p.y < 0) projectiles.splice(i, 1);
-        });
-        enemies.forEach(e => e.update());
-        resources.forEach((r, i) => {
-            r.update();
-            if (r.life <= 0 || r.y > canvas.height) resources.splice(i, 1);
-        });
-        if (frame % config.grainSpawnRate === 0) resources.push(new Resource('grain'));
-        
-        handleCollisions();
-        handleLevelProgression();
+    function triggerDamageFlash() {
+        damageFlash.style.opacity = 1;
+        setTimeout(() => { damageFlash.style.opacity = 0; }, 150);
     }
 
     function handleCollisions() {
@@ -547,10 +590,9 @@
                     projectiles.splice(i, 1);
                     playSound('enemyHit');
                     if (enemies[j].health <= 0) {
-                        enemiesDefeatedThisLevel++;
-                        if (currentLevelIndex > 0) {
-                            resources.push(new Resource('orb'));
-                        }
+                        const enemyType = enemies[j].type;
+                        if (Math.random() < enemyType.grainChance) resources.push(new Resource(enemies[j].x, enemies[j].y, 'grain'));
+                        if (Math.random() < enemyType.orbChance) resources.push(new Resource(enemies[j].x, enemies[j].y, 'orb'));
                         enemies.splice(j, 1);
                     }
                     break; 
@@ -558,208 +600,190 @@
             }
         }
         for (let i = enemies.length - 1; i >= 0; i--) {
-            if (enemies[i].y > canvas.height - cellSize) {
-                tree.health -= 10;
+            // --- MODIFIED: Enemies damage the base when they reach the player's area ---
+            if (enemies[i].x < player.x + player.width) { 
+                base.health -= 50;
+                updateTreeAppearance();
+                triggerDamageFlash();
+                playSound('baseHit', 'C2', '4n');
                 enemies.splice(i, 1);
-                if (tree.health <= 0) {
+                if (base.health <= 0) {
                     gameState = 'game_over';
                     playSound('gameOver', 'C3', '1n');
                 }
             }
         }
     }
-
+    
+    function handleGameLogic() {
+        if (shootTimer > 0) shootTimer--;
+        levelTimer += 1/60;
+        projectiles.forEach((p, i) => { p.update(); if (p.x > canvas.width) projectiles.splice(i, 1); });
+        enemies.forEach(e => e.update());
+        resources.forEach((r, i) => { r.update(); if (r.life <= 0) resources.splice(i, 1); });
+        handleCollisions();
+        handleLevelProgression();
+    }
     function handleLevelProgression() {
         if (gameState !== 'playing') return;
         const currentLevel = config.levels[currentLevelIndex];
-        if (enemiesDefeatedThisLevel >= currentLevel.goal) {
+        const nextWaveIndex = currentWaveIndex + 1;
+        if (nextWaveIndex < currentLevel.waves.length && levelTimer >= currentLevel.waves[nextWaveIndex].startTime) {
+            currentWaveIndex = nextWaveIndex;
+            spawnTimer = 0;
+        }
+        if (levelTimer >= currentLevel.duration && enemies.length === 0) {
             startNextLevel();
             return;
         }
-        if (spawnTimer > 0) {
-            spawnTimer--;
-        } else if (enemies.length < 10) {
-            spawnEnemy();
-            spawnTimer = currentLevel.spawnInterval;
+        if (currentWaveIndex > -1) {
+            if (spawnTimer > 0) {
+                spawnTimer--;
+            } else if (enemies.length < 20) {
+                spawnEnemy();
+                spawnTimer = currentLevel.waves[currentWaveIndex].spawnInterval;
+            }
         }
     }
-
-    function startNextLevel() {
-        gameState = 'level_transition';
-        saveGameData();
-        currentLevelIndex++;
-        if (currentLevelIndex >= config.levels.length) {
-            gameState = 'game_over'; // Victory
-            return;
-        }
-        enemies.length = 0;
-        projectiles.length = 0;
-        enemiesDefeatedThisLevel = 0;
-        if (currentLevelIndex === 4) activeLanes = 4;
-        if (currentLevelIndex === 8) activeLanes = 5;
-        resizeCanvas();
-        playSound('levelUp', 'G5', '4n');
-        setTimeout(() => {
-            gameState = 'playing';
-        }, 2000);
-    }
-
+    function startNextLevel() { gameState = 'level_complete'; saveGameData(); displayLevelComplete(); }
     function spawnEnemy() {
-        const currentLevel = config.levels[currentLevelIndex];
-        const enemyTypeIndex = currentLevel.enemyTypes[Math.floor(Math.random() * currentLevel.enemyTypes.length)];
-        const lane = Math.floor(Math.random() * activeLanes);
+        const currentWave = config.levels[currentLevelIndex].waves[currentWaveIndex];
+        const enemyTypeIndex = currentWave.enemyType;
+        const lane = Math.floor(Math.random() * config.lanes);
         enemies.push(new Enemy(lane, enemyTypeIndex));
     }
-
-    function draw() {
+    function draw() { 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const leftOffset = (canvas.width - activeLanes * cellSize) / 2;
-        for (let i = 0; i < config.lanes; i++) {
-            const isActive = i >= Math.floor((config.lanes - activeLanes) / 2) && i < Math.floor((config.lanes + activeLanes) / 2);
-            ctx.fillStyle = i % 2 === 0 ? 'rgba(0,0,0,0.05)' : 'rgba(0,0,0,0.1)';
-            if (!isActive) {
-                 ctx.fillStyle = 'rgba(0,0,0,0.2)';
-            }
-            ctx.fillRect(i * cellSize, 0, cellSize, canvas.height);
-        }
-        
-        ctx.save();
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.font = '14px "Press Start 2P"';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        
-        if (activeLanes < 5) {
-            ctx.translate(leftOffset / 2, canvas.height / 2);
-            ctx.rotate(-Math.PI / 2);
-            ctx.fillText('Josephine te quiero mucho', 0, 0);
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-            ctx.translate(canvas.width - leftOffset / 2, canvas.height / 2);
-            ctx.rotate(-Math.PI / 2);
-            ctx.fillText('RUNA GAME', 0, 0);
-        }
-        ctx.restore();
-
-        tree.draw();
         player.draw();
         projectiles.forEach(p => p.draw());
         enemies.forEach(e => e.draw());
         resources.forEach(r => r.draw());
-        grainsValue.textContent = grainPoints;
-        powerBar.style.width = `${powerPoints}%`;
-        levelDisplay.textContent = `Nivel: ${currentLevelIndex + 1}`;
+        updateUI();
     }
-
+    function updateUI() { 
+        levelValue.textContent = currentLevelIndex + 1;
+        powerBar.style.width = `${(powerPoints / config.powerBarMax) * 100}%`;
+    }
     function gameLoop() {
-        if (gameState === 'start') return;
-        if(gameState === 'playing') handleGameLogic();
+        if (gameState === 'playing') handleGameLogic();
         draw();
-        if (gameState !== 'game_over') {
-            frame++;
+        if (gameState !== 'game_over' && gameState !== 'level_complete') {
             animationFrameId = requestAnimationFrame(gameLoop);
-        } else {
+        } else if (gameState === 'game_over') {
             displayGameOver();
         }
     }
-
     function displayGameOver() {
         cancelAnimationFrame(animationFrameId);
         gameOverlay.style.display = 'flex';
-        const title = document.getElementById('overlay-title');
-        const msg = document.getElementById('overlay-text');
-        const btn = document.createElement('button');
-        btn.className = 'game-button';
-        btn.textContent = 'Volver a Intentar';
-        btn.onclick = init;
-        if (tree.health <= 0) {
-            title.textContent = '¡El Árbol ha Caído!';
-            msg.textContent = 'Las plagas han destruido tu cafetal.';
-        } else {
-            title.textContent = '¡VICTORIA!';
-            msg.textContent = '¡Has protegido el cafetal!';
-        }
-        gameOverlay.innerHTML = '';
-        gameOverlay.append(title, msg, btn);
+        gameOverlay.innerHTML = `
+            <h1>¡Defensa Caída!</h1>
+            <p>Las plagas han superado tus defensas.</p>
+            <button id="retry-button" class="game-button">Volver a Intentar</button>
+        `;
+        document.getElementById('retry-button').onclick = () => init(currentLevelIndex, powerPoints, config.base.health);
     }
-
-    function init(level = 0, grains = 100, power = 0, health = config.tree.health) {
+    function displayLevelComplete() {
+        cancelAnimationFrame(animationFrameId);
+        const nextLevelExists = currentLevelIndex + 1 < config.levels.length;
+        gameOverlay.style.display = 'flex';
+        gameOverlay.innerHTML = `
+            <h2>¡Nivel ${currentLevelIndex + 1} Superado!</h2>
+            ${nextLevelExists ? '<button id="next-level-button" class="game-button">Siguiente Nivel</button>' : '<h1>¡VICTORIA TOTAL!</h1><p>¡Has defendido la cosecha!</p>'}
+        `;
+        if (nextLevelExists) {
+            document.getElementById('next-level-button').onclick = () => {
+                currentLevelIndex++;
+                init(currentLevelIndex, powerPoints, base.health);
+            };
+        }
+    }
+    function init(level = 0, power = 0, health = config.base.health) {
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        resizeCanvas();
-        player = new Player();
-        tree = new Tree();
-        activeLanes = config.initialLanes;
+        
         currentLevelIndex = level;
-        enemiesDefeatedThisLevel = 0;
+        powerPoints = power;
+        base = { health: Math.min(health, config.base.health), maxHealth: config.base.health };
+        
+        levelTimer = 0;
+        currentWaveIndex = -1;
         enemies = [];
         projectiles = [];
         resources = [];
-        grainPoints = grains;
-        powerPoints = power;
-        tree.health = health;
+
+        resizeAll(); 
+        updateTreeAppearance();
+        updateUI();
+        
         gameState = 'start';
         gameOverlay.style.display = 'flex';
-        const title = document.getElementById('overlay-title');
-        const p = document.getElementById('overlay-text');
-        const startBtn = document.getElementById('start-button');
-        title.textContent = 'Runa Defenders';
-        p.textContent = '¡Las plagas atacan! Protege tu Árbol de Café. Mueve a tu Grano Guardián, dispara a los enemigos y recolecta los Granos que caen para mejorar tus habilidades.';
-        startBtn.style.display = 'block';
-        startBtn.textContent = 'Empezar';
-        
-        startBtn.onclick = () => {
+        gameOverlay.innerHTML = `
+            <h1 id="overlay-title">Runa Defenders</h1>
+            <p id="overlay-text">¡Las plagas atacan! Defiende tu cosecha. Mueve a tu Guardián y dispara a los enemigos que vienen de la derecha.</p>
+            <button id="start-button" class="game-button">Empezar Nivel ${level + 1}</button>
+        `;
+
+        document.getElementById('start-button').onclick = () => {
             if (Tone.context.state !== 'running') { Tone.start(); }
             gameState = 'playing';
             gameOverlay.style.display = 'none';
-            startNextLevel();
+            spawnTimer = 0;
             gameLoop();
         };
     }
-
     let keys = {};
-    window.addEventListener('keydown', e => { keys[e.key] = true; if (e.key === ' ') e.preventDefault(); });
-    window.addEventListener('keyup', e => keys[e.key] = false);
-
-    let touchX = null;
-    let isDragging = false;
+    window.addEventListener('keydown', e => { keys[e.key] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
+    window.addEventListener('keyup', e => { keys[e.key] = false; });
+    let isDragging = false, didDrag = false, touchYOffset = 0, touchStartY = 0;
     canvas.addEventListener('touchstart', e => {
         e.preventDefault();
         const touch = e.touches[0];
         const rect = canvas.getBoundingClientRect();
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
-        if (y > player.y && y < player.y + player.height && x > player.x && x < player.x + player.width) {
-            isDragging = true;
-            touchX = x - player.x;
-        } else {
-            player.shoot();
-            checkResourceClick(x, y);
-        }
+        isDragging = true;
+        didDrag = false;
+        const currentY = touch.clientY - rect.top;
+        touchStartY = currentY;
+        touchYOffset = currentY - player.y;
     }, { passive: false });
     canvas.addEventListener('touchmove', e => {
         e.preventDefault();
         if (!isDragging) return;
         const touch = e.touches[0];
         const rect = canvas.getBoundingClientRect();
-        player.x = touch.clientX - rect.left - touchX;
+        const newY = touch.clientY - rect.top;
+        if (Math.abs(newY - touchStartY) > 5) didDrag = true;
+        player.y = newY - touchYOffset;
+        player.update();
     }, { passive: false });
-    canvas.addEventListener('touchend', e => { isDragging = false; });
+    canvas.addEventListener('touchend', e => {
+        e.preventDefault();
+        if (!didDrag) {
+            player.shoot();
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.changedTouches[0].clientX - rect.left;
+            const clickY = e.changedTouches[0].clientY - rect.top;
+            checkResourceClick(clickX, clickY);
+        }
+        isDragging = false;
+    });
     canvas.addEventListener('click', e => {
         const rect = canvas.getBoundingClientRect();
         checkResourceClick(e.clientX - rect.left, e.clientY - rect.top);
+        player.shoot();
     });
 
     function checkResourceClick(x, y) {
         for (let i = resources.length - 1; i >= 0; i--) {
             const r = resources[i];
-            const dist = Math.sqrt((x - (r.x + r.size/2))**2 + (y - (r.y + r.size/2))**2);
-            if (dist < r.size) {
+            const dist = Math.sqrt(Math.pow(x - (r.x + r.size/2), 2) + Math.pow(y - (r.y + r.size/2), 2));
+            if (dist < r.size) { 
                 if (r.type === 'grain') {
-                    grainPoints += 10;
-                    playSound('collectGrain', 'G5');
+                    base.health = Math.min(base.maxHealth, base.health + config.healingValue);
+                    updateTreeAppearance();
+                    playSound('heal', 'A5');
                 } else {
                     powerPoints = Math.min(config.powerBarMax, powerPoints + config.orbValue);
-                    playSound('collectOrb', 'A4');
+                    playSound('collect', 'G5');
                 }
                 resources.splice(i, 1);
                 break;
@@ -769,25 +793,37 @@
 
     function controlLoop() {
         if (gameState === 'playing') {
-            if (keys['a'] || keys['ArrowLeft']) player.x -= player.speed;
-            if (keys['d'] || keys['ArrowRight']) player.x += player.speed;
+            if (keys['w'] || keys['ArrowUp']) player.y -= player.speed;
+            if (keys['s'] || keys['ArrowDown']) player.y += player.speed;
             if (keys[' ']) player.shoot();
             player.update();
         }
         requestAnimationFrame(controlLoop);
     }
     
-    function resizeCanvas() {
-        const { width, height } = container.getBoundingClientRect();
-        canvas.width = width;
-        canvas.height = height;
-        cellSize = width / config.lanes;
-        if (player) player.reset();
-        if (tree) tree.reset();
+    function resizeAll() {
+        // Resize the main game canvas
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+        cellSize = canvas.height / config.lanes;
+        
+        if (!player) {
+            player = new Player();
+        } else {
+            player.reset();
+        }
+
+        // Redraw canvas if game is not running
+        if(gameState !== 'playing' && gameState !== 'level_transition'){
+            draw();
+        }
     }
 
-    window.addEventListener('resize', resizeCanvas);
+    // --- INITIALIZE EVERYTHING ---
+    initThreeScene();
+    window.addEventListener('resize', resizeAll);
     controlLoop();
+
 </script>
 
 </body>
