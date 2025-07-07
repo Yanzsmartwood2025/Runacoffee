@@ -51,30 +51,25 @@
             color: var(--text-light);
         }
 
-        /* --- MODIFIED: Container is now a viewport --- */
         #game-container {
             position: relative;
             width: 100vw;
             height: 100vh;
-            overflow: hidden; /* Crucial for the panning effect */
+            overflow: hidden; 
         }
 
-        /* --- NEW: Background wrapper for panning animation --- */
         #background-wrapper {
             position: absolute;
-            /* Make it wider to allow for panning */
             width: 125%; 
             height: 100%;
             top: 0;
             left: 0;
             background: url('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/e60d103dfb61c7d07d0fe214e620173998d7c7ce/public/assets/imagenes/fondo-del-juego.jpg') no-repeat;
             background-size: 100% 100%;
-            /* Initial state: shifted left to show the right side */
             transform: translateX(-20%);
             transition: transform 1.2s ease-in-out;
         }
 
-        /* When playing, pan the background to the gameplay view */
         #game-container.playing #background-wrapper {
             transform: translateX(0);
         }
@@ -116,7 +111,7 @@
             position: absolute;
             left: 25%;
             top: 22%;
-            width: 57%; /* Adjusted width to fit the panned view */
+            width: 57%; 
             height: 56%;
             background: transparent;
         }
@@ -228,12 +223,32 @@
             text-align: center;
             color: white;
             padding: 20px;
+            /* Hidden by default, shown by adding a class */
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s 0.3s, opacity 0.3s ease;
+        }
+        #game-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        /* --- NEW: Individual overlay screens --- */
+        .overlay-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .overlay-screen.visible {
+            display: flex;
         }
         
-        #game-overlay h1, #game-overlay h2 { margin-bottom: 20px; color: var(--accent-color); text-shadow: 4px 4px #000; }
-        #game-overlay h1 { font-size: 8vmin; }
-        #game-overlay h2 { font-size: 6vmin; }
-        #game-overlay p { font-size: 3vmin; max-width: 80%; line-height: 1.5; }
+        .overlay-screen h1, .overlay-screen h2 { margin-bottom: 20px; color: var(--accent-color); text-shadow: 4px 4px #000; }
+        .overlay-screen h1 { font-size: 8vmin; }
+        .overlay-screen h2 { font-size: 6vmin; }
+        .overlay-screen p { font-size: 3vmin; max-width: 80%; line-height: 1.5; }
 
         .game-button {
             font-family: 'Press Start 2P', cursive;
@@ -279,10 +294,22 @@
              <button id="power-2" class="power-button">?</button>
         </div>
 
+        <!-- MODIFIED: Overlay structure for better state management -->
         <div id="game-overlay">
-             <h1 id="overlay-title">Runa Defenders</h1>
-             <p id="overlay-text">¡Las plagas atacan! Defiende tu cosecha. Mueve a tu Guardián y dispara a los enemigos que vienen de la derecha.</p>
-             <button id="start-button" class="game-button">Empezar</button>
+            <div id="start-screen" class="overlay-screen">
+                <h1>Runa Defenders</h1>
+                <p>¡Las plagas atacan! Defiende tu cosecha.</p>
+                <button id="start-button" class="game-button">Empezar</button>
+            </div>
+            <div id="game-over-screen" class="overlay-screen">
+                <h1>¡Defensa Caída!</h1>
+                <p>Las plagas han superado tus defensas.</p>
+                <button id="retry-button" class="game-button">Volver a Intentar</button>
+            </div>
+            <div id="level-complete-screen" class="overlay-screen">
+                <h2 id="level-complete-title"></h2>
+                <div id="level-complete-content"></div>
+            </div>
         </div>
     </div>
     
@@ -308,7 +335,7 @@
         treeCamera.lookAt(0, 0.8, 0);
 
         treeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        treeRenderer.setClearColor(0x000000, 0); // Transparent background
+        treeRenderer.setClearColor(0x000000, 0);
         treeRenderer.setSize(width, height);
         treeRenderer.setPixelRatio(window.devicePixelRatio);
         treeRenderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -472,6 +499,7 @@
         ]
     });
 
+    // --- DOM Element References ---
     const gameContainer = document.getElementById('game-container');
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
@@ -479,7 +507,14 @@
     const powerBar = document.getElementById('power-bar');
     const levelValue = document.getElementById('level-value');
     const damageFlash = document.getElementById('damage-flash');
+    const startScreen = document.getElementById('start-screen');
+    const gameOverScreen = document.getElementById('game-over-screen');
+    const levelCompleteScreen = document.getElementById('level-complete-screen');
+    const startButton = document.getElementById('start-button');
+    const retryButton = document.getElementById('retry-button');
 
+
+    // --- Game State Variables ---
     let cellSize, frame = 0, gameState = 'start', player, base;
     let projectiles = [], enemies = [], resources = [];
     let currentLevelIndex = 0, shootTimer = 0, powerPoints = 0, animationFrameId;
@@ -496,7 +531,7 @@
     };
 
     function playSound(sound, note, duration = '8n') {
-        if (Tone.context.state !== 'running') { Tone.start().catch(console.error); }
+        if (Tone.context.state !== 'running') { return; }
         if (sounds[sound]) {
             try {
                 sounds[sound].triggerAttackRelease(note, duration);
@@ -639,6 +674,7 @@
         handleCollisions();
         handleLevelProgression();
     }
+
     function handleLevelProgression() {
         if (gameState !== 'playing') return;
         const currentLevel = config.levels[currentLevelIndex];
@@ -660,13 +696,20 @@
             }
         }
     }
-    function startNextLevel() { gameState = 'level_complete'; saveGameData(); displayLevelComplete(); }
+
+    function startNextLevel() { 
+        gameState = 'level_complete'; 
+        saveGameData(); 
+        showOverlay('level_complete');
+    }
+
     function spawnEnemy() {
         const currentWave = config.levels[currentLevelIndex].waves[currentWaveIndex];
         const enemyTypeIndex = currentWave.enemyType;
         const lane = Math.floor(Math.random() * config.lanes);
         enemies.push(new Enemy(lane, enemyTypeIndex));
     }
+
     function draw() { 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         player.draw();
@@ -675,46 +718,65 @@
         resources.forEach(r => r.draw());
         updateUI();
     }
+
     function updateUI() { 
         levelValue.textContent = currentLevelIndex + 1;
         powerBar.style.width = `${(powerPoints / config.powerBarMax) * 100}%`;
     }
+
     function gameLoop() {
-        if (gameState === 'playing') handleGameLogic();
+        if (gameState === 'playing') {
+            handleGameLogic();
+        }
         draw();
-        if (gameState !== 'game_over' && gameState !== 'level_complete') {
+        
+        if (gameState === 'game_over') {
+            showOverlay('game_over');
+        } else if (gameState !== 'level_complete') {
             animationFrameId = requestAnimationFrame(gameLoop);
-        } else if (gameState === 'game_over') {
-            displayGameOver();
         }
     }
-    function displayGameOver() {
-        cancelAnimationFrame(animationFrameId);
-        gameContainer.classList.remove('playing'); // Revert pan
-        gameOverlay.style.display = 'flex';
-        gameOverlay.innerHTML = `
-            <h1>¡Defensa Caída!</h1>
-            <p>Las plagas han superado tus defensas.</p>
-            <button id="retry-button" class="game-button">Volver a Intentar</button>
-        `;
-        document.getElementById('retry-button').onclick = () => init(currentLevelIndex, powerPoints, config.base.health);
-    }
-    function displayLevelComplete() {
-        cancelAnimationFrame(animationFrameId);
-        gameContainer.classList.remove('playing'); // Revert pan
-        const nextLevelExists = currentLevelIndex + 1 < config.levels.length;
-        gameOverlay.style.display = 'flex';
-        gameOverlay.innerHTML = `
-            <h2>¡Nivel ${currentLevelIndex + 1} Superado!</h2>
-            ${nextLevelExists ? '<button id="next-level-button" class="game-button">Siguiente Nivel</button>' : '<h1>¡VICTORIA TOTAL!</h1><p>¡Has defendido la cosecha!</p>'}
-        `;
-        if (nextLevelExists) {
-            document.getElementById('next-level-button').onclick = () => {
-                currentLevelIndex++;
-                init(currentLevelIndex, powerPoints, base.health);
-            };
+
+    function showOverlay(type) {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+
+        gameContainer.classList.remove('playing');
+        gameOverlay.classList.add('visible');
+
+        startScreen.classList.remove('visible');
+        gameOverScreen.classList.remove('visible');
+        levelCompleteScreen.classList.remove('visible');
+
+        if (type === 'start') {
+            startButton.textContent = `Empezar Nivel ${currentLevelIndex + 1}`;
+            startScreen.classList.add('visible');
+        } else if (type === 'game_over') {
+            gameOverScreen.classList.add('visible');
+        } else if (type === 'level_complete') {
+            const nextLevelExists = currentLevelIndex + 1 < config.levels.length;
+            const title = document.getElementById('level-complete-title');
+            const content = document.getElementById('level-complete-content');
+            
+            title.textContent = `¡Nivel ${currentLevelIndex + 1} Superado!`;
+            if (nextLevelExists) {
+                content.innerHTML = `<button id="next-level-button" class="game-button">Siguiente Nivel</button>`;
+                const nextLevelButton = document.getElementById('next-level-button');
+                if(nextLevelButton) {
+                    nextLevelButton.addEventListener('click', () => {
+                        currentLevelIndex++;
+                        init(currentLevelIndex, powerPoints, base.health);
+                    }, { once: true });
+                }
+            } else {
+                content.innerHTML = `<h1>¡VICTORIA TOTAL!</h1><p>¡Has defendido la cosecha!</p>`;
+            }
+            levelCompleteScreen.classList.add('visible');
         }
     }
+
     function init(level = 0, power = 0, health = config.base.health) {
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
         
@@ -733,63 +795,93 @@
         updateUI();
         
         gameState = 'start';
-        gameContainer.classList.remove('playing'); // Ensure initial state
-        gameOverlay.style.display = 'flex';
-        gameOverlay.innerHTML = `
-            <h1 id="overlay-title">Runa Defenders</h1>
-            <p id="overlay-text">¡Las plagas atacan! Defiende tu cosecha. Mueve a tu Guardián y dispara a los enemigos que vienen de la derecha.</p>
-            <button id="start-button" class="game-button">Empezar Nivel ${level + 1}</button>
-        `;
+        showOverlay('start');
+    }
 
-        document.getElementById('start-button').onclick = () => {
-            if (Tone.context.state !== 'running') { Tone.start(); }
+    // --- SETUP EVENT LISTENERS ONCE ---
+    function setupEventListeners() {
+        const handleStart = async () => {
+            // SAFE AUDIO START: Must be in a direct user interaction event
+            try {
+                if (Tone.context.state !== 'running') {
+                    await Tone.start();
+                    console.log('Audio context started successfully.');
+                }
+            } catch (e) {
+                console.error("Could not start audio context:", e);
+            }
+
             gameState = 'playing';
-            gameContainer.classList.add('playing'); // Trigger pan animation
-            gameOverlay.style.display = 'none';
+            gameContainer.classList.add('playing');
+            gameOverlay.classList.remove('visible');
             spawnTimer = 0;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
             gameLoop();
         };
-    }
-    let keys = {};
-    window.addEventListener('keydown', e => { keys[e.key] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
-    window.addEventListener('keyup', e => { keys[e.key] = false; });
-    let isDragging = false, didDrag = false, touchYOffset = 0, touchStartY = 0;
-    canvas.addEventListener('touchstart', e => {
-        e.preventDefault();
-        const touch = e.touches[0];
-        const rect = canvas.getBoundingClientRect();
-        isDragging = true;
-        didDrag = false;
-        const currentY = touch.clientY - rect.top;
-        touchStartY = currentY;
-        touchYOffset = currentY - player.y;
-    }, { passive: false });
-    canvas.addEventListener('touchmove', e => {
-        e.preventDefault();
-        if (!isDragging) return;
-        const touch = e.touches[0];
-        const rect = canvas.getBoundingClientRect();
-        const newY = touch.clientY - rect.top;
-        if (Math.abs(newY - touchStartY) > 5) didDrag = true;
-        player.y = newY - touchYOffset;
-        player.update();
-    }, { passive: false });
-    canvas.addEventListener('touchend', e => {
-        e.preventDefault();
-        if (!didDrag) {
-            player.shoot();
-            const rect = canvas.getBoundingClientRect();
-            const clickX = e.changedTouches[0].clientX - rect.left;
-            const clickY = e.changedTouches[0].clientY - rect.top;
-            checkResourceClick(clickX, clickY);
+        
+        startButton.addEventListener('click', handleStart);
+        startButton.addEventListener('touchend', handleStart);
+
+        const handleRetry = () => init(currentLevelIndex, powerPoints, config.base.health);
+        retryButton.addEventListener('click', handleRetry);
+        retryButton.addEventListener('touchend', handleRetry);
+
+        let keys = {};
+        window.addEventListener('keydown', e => { keys[e.key] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
+        window.addEventListener('keyup', e => { keys[e.key] = false; });
+        
+        function controlLoop() {
+            if (gameState === 'playing') {
+                if (keys['w'] || keys['ArrowUp']) player.y -= player.speed;
+                if (keys['s'] || keys['ArrowDown']) player.y += player.speed;
+                if (keys[' ']) player.shoot();
+                player.update();
+            }
+            requestAnimationFrame(controlLoop);
         }
-        isDragging = false;
-    });
-    canvas.addEventListener('click', e => {
-        const rect = canvas.getBoundingClientRect();
-        checkResourceClick(e.clientX - rect.left, e.clientY - rect.top);
-        player.shoot();
-    });
+        controlLoop();
+
+        let isDragging = false, didDrag = false, touchYOffset = 0, touchStartY = 0;
+        canvas.addEventListener('touchstart', e => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            isDragging = true;
+            didDrag = false;
+            const currentY = touch.clientY - rect.top;
+            touchStartY = currentY;
+            touchYOffset = currentY - player.y;
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if (!isDragging) return;
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const newY = touch.clientY - rect.top;
+            if (Math.abs(newY - touchStartY) > 5) didDrag = true;
+            player.y = newY - touchYOffset;
+            player.update();
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', e => {
+            e.preventDefault();
+            if (!didDrag) {
+                player.shoot();
+                const rect = canvas.getBoundingClientRect();
+                const clickX = e.changedTouches[0].clientX - rect.left;
+                const clickY = e.changedTouches[0].clientY - rect.top;
+                checkResourceClick(clickX, clickY);
+            }
+            isDragging = false;
+        });
+
+        canvas.addEventListener('click', e => {
+            const rect = canvas.getBoundingClientRect();
+            checkResourceClick(e.clientX - rect.left, e.clientY - rect.top);
+            player.shoot();
+        });
+    }
 
     function checkResourceClick(x, y) {
         for (let i = resources.length - 1; i >= 0; i--) {
@@ -809,21 +901,13 @@
             }
         }
     }
-
-    function controlLoop() {
-        if (gameState === 'playing') {
-            if (keys['w'] || keys['ArrowUp']) player.y -= player.speed;
-            if (keys['s'] || keys['ArrowDown']) player.y += player.speed;
-            if (keys[' ']) player.shoot();
-            player.update();
-        }
-        requestAnimationFrame(controlLoop);
-    }
     
     function resizeAll() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        cellSize = canvas.height / config.lanes;
+        if (canvas.height > 0) {
+            cellSize = canvas.height / config.lanes;
+        }
         
         if (!player) {
             player = new Player();
@@ -837,10 +921,10 @@
     }
 
     // --- INITIALIZE EVERYTHING ---
-    initThreeScene();
     window.addEventListener('resize', resizeAll);
-    controlLoop();
-
+    setupEventListeners();
+    initThreeScene();
+    // Firebase will trigger the first init call
 </script>
 
 </body>
