@@ -78,7 +78,7 @@
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; }
         #video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: opacity 0.5s ease-in-out; }
         
-        .translucent-menu, .section-bg, footer, .cart-modal-content, .whatsapp-fab { 
+        .translucent-menu, .section-bg, footer, .cart-modal-content, .whatsapp-fab, #auth-modal .modal-content-bg { 
             backdrop-filter: blur(16px); 
             -webkit-backdrop-filter: blur(16px); 
         }
@@ -140,16 +140,15 @@
             opacity: 1;
         }
 
-        /* Styling for the default AR button to match the ghost-button */
         #ar-viewer::part(ar-button) {
             border-width: 2px;
-            border-radius: 0.5rem; /* rounded-lg */
+            border-radius: 0.5rem;
             background: transparent;
             font-family: 'Poppins', sans-serif;
-            font-weight: 700; /* font-bold */
-            font-size: 1.125rem; /* text-lg */
-            padding: 0.75rem 2rem; /* py-3 px-8 */
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-lg */
+            font-weight: 700;
+            font-size: 1.125rem;
+            padding: 0.75rem 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             transition: all 0.3s ease;
             position: absolute;
             bottom: 1rem;
@@ -174,7 +173,6 @@
             background-color: var(--runa-primary);
             color: white;
         }
-
     </style>
 </head>
 
@@ -205,8 +203,13 @@
                         <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
                         <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
-                    <!-- El contenedor de autenticación será llenado por firebase-auth.js -->
-                    <div id="auth-container"></div>
+                    <!-- Auth container will be populated by firebase-auth.js -->
+                    <div id="auth-container" class="flex items-center">
+                        <!-- CAMBIO: El botón ahora contiene una imagen de perfil -->
+                        <button id="user-profile-button" class="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent hover:border-[var(--runa-primary)] transition-colors" aria-label="Iniciar sesión">
+                            <img id="user-profile-picture" src="https://placehold.co/40x40/111827/FFFFFF?text=R" alt="Foto de perfil" class="w-full h-full object-cover">
+                        </button>
+                    </div>
                 </div>
                 <div class="flex-shrink-0">
                     <a href="#" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
@@ -305,7 +308,6 @@
                         alt="A 3D model of a stylized tree"
                         class="w-full h-96 rounded-lg"
                         loading="lazy" reveal="auto">
-                        <!-- El botón de AR ahora se estiliza a través de CSS en el <head> -->
                     </model-viewer>
                     
                     <div id="ar-failure-message" class="hidden mt-4 text-center text-red-500 bg-red-900/50 p-3 rounded-lg">
@@ -360,7 +362,7 @@
         </footer>
     </div>
     
-    <!-- WHATSAPP BUTTON: UPDATED with the image you provided -->
+    <!-- WHATSAPP BUTTON -->
     <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." 
        class="whatsapp-fab fixed bottom-6 right-6 z-50 rounded-full w-16 h-16 shadow-lg flex items-center justify-center p-4 transition-all duration-300 transform hover:scale-110" 
        target="_blank" 
@@ -380,7 +382,7 @@
     <!-- Modals -->
     <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-0 sm:p-4 bg-black/70 backdrop-blur-sm hidden"></div>
     <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
-       <div class="w-full max-w-xs bg-[#1a1310] rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
+       <div class="modal-content-bg w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
             <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
@@ -394,20 +396,16 @@
     </div>
     
     <!-- SCRIPT DE AUTENTICACIÓN EXTERNO -->
-    <!-- Este script ahora maneja toda la lógica de Firebase -->
     <script type="module" src="./firebase-auth.js"></script>
 
     <!-- SCRIPT PRINCIPAL DE LA PÁGINA -->
     <script type="module">
-        // --- VARIABLES GLOBALES Y CONFIGURACIÓN (NO FIREBASE) ---
+        // --- VARIABLES GLOBALES Y CONFIGURACIÓN ---
         let cart = [];
-
         const videoSkins = [
             { name: "Video del Árbol", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/f40a28a85af3d13368f89856c255ae77f7f8acae/public/assets/videos/arbol2.mp4" }
         ];
-        
         let currentVideoIndex = 0;
-
         const ambienceSounds = [
             { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
             { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
@@ -418,9 +416,49 @@
             { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
         ];
         
+        // --- LÓGICA DE AUTENTICACIÓN ---
+        let isUserLoggedIn = false;
+        const placeholderAvatar = 'https://placehold.co/40x40/111827/FFFFFF?text=R'; // Avatar por defecto
+
         // --- ELEMENTOS DEL DOM ---
         const cartModal = document.getElementById('cart-modal');
         const cartCounter = document.getElementById('cart-counter');
+        const authModal = document.getElementById('auth-modal');
+        const userProfileButton = document.getElementById('user-profile-button');
+        const userProfilePicture = document.getElementById('user-profile-picture');
+        const closeAuthModalButton = document.getElementById('close-auth-modal-button');
+
+        /**
+         * -------------------------------------------------------------------
+         * ¡IMPORTANTE! FUNCIONES PARA CONECTAR CON firebase-auth.js
+         * -------------------------------------------------------------------
+         * Estas funciones deben ser llamadas desde tu archivo `firebase-auth.js`
+         * para que la interfaz de usuario se actualice correctamente.
+         */
+
+        /**
+         * Llama a esta función cuando el usuario inicie sesión correctamente.
+         * @param {object} user - El objeto de usuario de Firebase (user).
+         * Ejemplo en firebase-auth.js: window.updateUIAfterLogin(user);
+         */
+        window.updateUIAfterLogin = (user) => {
+            if (!user || !user.photoURL) return;
+            isUserLoggedIn = true;
+            userProfilePicture.src = user.photoURL;
+            userProfileButton.setAttribute('aria-label', `Menú de ${user.displayName}`);
+            closeAuthModal(); // Cierra el modal de login si está abierto
+        };
+
+        /**
+         * Llama a esta función cuando el usuario cierre la sesión.
+         * Ejemplo en firebase-auth.js: window.updateUIAfterLogout();
+         */
+        window.updateUIAfterLogout = () => {
+            isUserLoggedIn = false;
+            userProfilePicture.src = placeholderAvatar;
+            userProfileButton.setAttribute('aria-label', 'Iniciar sesión');
+        };
+        // -------------------------------------------------------------------
 
         // --- FUNCIONES DEL CARRITO ---
         const updateCartCounter = () => {
@@ -481,14 +519,10 @@
             document.getElementById('close-cart-button').addEventListener('click', closeCart);
         };
 
-        const openCart = () => {
-            renderCartModal();
-            cartModal.classList.remove('hidden');
-        };
-
-        const closeCart = () => {
-            cartModal.classList.add('hidden');
-        };
+        const openCart = () => { renderCartModal(); cartModal.classList.remove('hidden'); };
+        const closeCart = () => { cartModal.classList.add('hidden'); };
+        const openAuthModal = () => { if (authModal) authModal.classList.remove('hidden'); };
+        const closeAuthModal = () => { if (authModal) authModal.classList.add('hidden'); };
 
         // --- FUNCIONES DE LA INTERFAZ (MIXER, VIDEO, ETC.) ---
         let audioElements = {};
@@ -542,11 +576,9 @@
                 slider.addEventListener('input', (e) => {
                     const newVolume = parseFloat(e.target.value);
                     const wasMuted = audio.paused || audio.volume === 0;
-
                     audio.volume = newVolume;
                     button.classList.toggle('active', newVolume > 0);
                     updateSliderStyle(e.target);
-
                     if (newVolume > 0 && wasMuted) {
                         audio.play().catch(err => console.error(`Audio play failed for ${audio.id}:`, err));
                     } else if (newVolume === 0 && !audio.paused) {
@@ -603,9 +635,7 @@
                 const button = document.createElement('button');
                 button.textContent = skin.name;
                 button.className = 'video-list-button w-full text-left p-2 rounded-lg transition-colors duration-200';
-                button.addEventListener('click', () => {
-                    setVideoSkin(index);
-                });
+                button.addEventListener('click', () => { setVideoSkin(index); });
                 videoListContainer.appendChild(button);
             });
             updateVideoListUI();
@@ -613,7 +643,6 @@
 
         // --- INICIALIZACIÓN DE LA PÁGINA ---
         document.addEventListener('DOMContentLoaded', () => {
-            // La autenticación de Firebase se maneja en el archivo externo: firebase-auth.js
             
             const videoIntro = document.getElementById('video-intro');
             const introVideo = document.getElementById('intro-video');
@@ -678,6 +707,24 @@
             document.getElementById('open-cart-button').addEventListener('click', openCart);
             cartModal.addEventListener('click', (event) => { if (event.target === cartModal) closeCart(); });
             
+            // --- EVENT LISTENERS PARA EL BOTÓN DE PERFIL ---
+            if(userProfileButton) {
+                userProfileButton.addEventListener('click', () => {
+                    if (isUserLoggedIn) {
+                        // Si el usuario está logueado, el botón podría abrir un menú
+                        // o directamente cerrar sesión.
+                        // Llama a tu función de logout de Firebase aquí.
+                        // Por ejemplo: window.signOut();
+                        console.log("Acción de menú de usuario / logout.");
+                    } else {
+                        // Si no está logueado, abre el modal de autenticación.
+                        openAuthModal();
+                    }
+                });
+            }
+            if(closeAuthModalButton) closeAuthModalButton.addEventListener('click', closeAuthModal);
+            if(authModal) authModal.addEventListener('click', (event) => { if (event.target === authModal) closeAuthModal(); });
+
             const arViewer = document.getElementById('ar-viewer');
             if(arViewer) {
                 arViewer.addEventListener('ar-status', (event) => {
