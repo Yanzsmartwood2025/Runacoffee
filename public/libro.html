@@ -21,9 +21,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Lobster&family=Pacifico&family=Caveat&family=Indie+Flower&family=Shadows+Into+Light&family=Lora&display=swap" rel="stylesheet">
     
-    <!-- Reference to your Firebase initialization script -->
-    <script src="firebase-init.js" type="module"></script>
-
     <style type="text/css">
         :root {
             --runa-primary: #D47500;
@@ -383,11 +380,9 @@
                 <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
                 <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
             </button>
-            <!-- Auth Container with initial login button -->
+            <!-- Auth Container - Content will be managed by Firebase Auth state -->
             <div id="auth-container" class="flex items-center">
-                <button id="login-button" class="p-2 rounded-full text-white" aria-label="Iniciar sesión">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </button>
+                <!-- This will be populated by JavaScript -->
             </div>
         </div>
         <div class="flex-shrink-0">
@@ -516,7 +511,7 @@
                           <p>Vitalidad real, sin artificios. Nuestro café especial consciente potencia la plenitud, la conexión con tu interior, equilibrio, autenticidad, salud, vida... propósito.</p>
                           <h3>Diseño con alma:</h3>
                           <p>Como diseñadora, cree un lenguaje visual que une lo que somos... Místicos, naturales, vivos. Cada empaque, símbolo y detalle tiene una intención.</p>
-                           <h3>¿A quién va dirigido?</h3>
+                            <h3>¿A quién va dirigido?</h3>
                           <p>A personas conscientes, exploradores, espirituales, creativos, que no solo buscan sabor sino sentido. A quienes valoran el origen, la historia, y el impacto de lo que consumen.</p>
                           <p class="signature mt-4">"Más que café, un llamado a despertar."</p>
                      </div>
@@ -648,9 +643,83 @@
 <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
 
 <script type="module">
-    // Firebase imports should be in your firebase-init.js file.
+    // Import Firebase services
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     
     $(document).ready(function () {
+        // --- Firebase Initialization ---
+        // These variables are expected to be provided by the environment.
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" };
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        // --- Firebase Auth UI Management ---
+        const handleSignIn = () => {
+             signInWithPopup(auth, googleProvider)
+                .then((result) => {
+                    console.log("Signed in successfully with Google", result.user);
+                    $('#auth-modal').addClass('hidden'); // Close modal on success
+                }).catch((error) => {
+                    console.error("Google sign-in error", error);
+                });
+        };
+
+        const updateAuthUI = (user) => {
+            const authContainer = $('#auth-container');
+            authContainer.empty(); // Clear previous content
+
+            if (user && !user.isAnonymous) {
+                // User is signed in with a provider (e.g., Google)
+                const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
+                const photoURL = user.photoURL || fallbackImage;
+
+                const userButton = $(`
+                    <button id="logout-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)] flex items-center justify-center bg-white p-1" title="Cerrar sesión: ${user.displayName || 'Usuario'}">
+                        <img src="${photoURL}" alt="${user.displayName || 'Usuario'}" class="w-full h-full ${user.photoURL ? 'object-cover' : 'object-contain'}" onerror="this.onerror=null;this.src='${fallbackImage}';">
+                    </button>
+                `);
+                
+                userButton.on('click', () => {
+                    signOut(auth).catch(error => console.error("Sign out error", error));
+                });
+                authContainer.append(userButton);
+
+            } else {
+                // User is signed out or anonymous
+                const loginButton = $(`
+                    <button id="open-auth-modal-button" class="p-1 rounded-full text-white" aria-label="Abrir modal de inicio de sesión">
+                        <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7">
+                    </button>
+                `);
+                // This button now ONLY opens the modal
+                loginButton.on('click', () => {
+                    $('#auth-modal').removeClass('hidden');
+                });
+                authContainer.append(loginButton);
+            }
+        };
+
+        // Attach listener to auth state changes
+        onAuthStateChanged(auth, updateAuthUI);
+
+        // Initial sign-in flow
+        if (initialAuthToken) {
+            signInWithCustomToken(auth, initialAuthToken).catch(err => {
+                console.error("Custom token sign-in failed, trying anonymous.", err);
+                signInAnonymously(auth);
+            });
+        } else {
+            signInAnonymously(auth);
+        }
+
+        // The button inside the modal handles the actual sign-in
+        $('#google-login-button-modal').on('click', handleSignIn);
+
+
         // --- State Variables ---
         const flipbook = $('.flipbook');
         const drawingStates = {};
@@ -1242,13 +1311,6 @@
         // --- Auth Modal Handlers ---
         $('#close-auth-modal-button').on('click', () => $('#auth-modal').addClass('hidden'));
         
-        // This handler opens the modal when the initial login icon is clicked.
-        // Your firebase-init.js will handle the actual sign-in logic and UI updates.
-        $('body').on('click', '#login-button', () => {
-            $('#auth-modal').removeClass('hidden');
-        });
-
-
         // --- Resizing ---
         $(window).on('resize', () => flipbook.turn('size', $('.flipbook-container').width(), $('.flipbook-container').height())).trigger('resize');
 
