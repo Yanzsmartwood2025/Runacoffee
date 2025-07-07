@@ -20,6 +20,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Lobster&family=Pacifico&family=Caveat&family=Indie+Flower&family=Shadows+Into+Light&family=Lora&display=swap" rel="stylesheet">
+    
+    <!-- Reference to your Firebase initialization script -->
+    <script src="firebase-init.js" type="module"></script>
 
     <style type="text/css">
         :root {
@@ -380,7 +383,12 @@
                 <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
                 <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
             </button>
-            <div id="auth-container" class="flex items-center"></div>
+            <!-- Auth Container with initial login button -->
+            <div id="auth-container" class="flex items-center">
+                <button id="login-button" class="p-2 rounded-full text-white" aria-label="Iniciar sesión">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </button>
+            </div>
         </div>
         <div class="flex-shrink-0">
              <a href="index.html" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
@@ -502,15 +510,15 @@
                 </div>
                 <div class="page" data-drawing-enabled="false">
                      <div class="content-wrapper">
-                         <h3>Producción consciente:</h3>
-                         <p>Cada grano es cultivado en armonía con el entorno, bajo prácticas éticas y sostenibles. Producido por manos locales que trabajan con amor, respeto y dignidad.</p>
-                         <h3>Energía viva:</h3>
-                         <p>Vitalidad real, sin artificios. Nuestro café especial consciente potencia la plenitud, la conexión con tu interior, equilibrio, autenticidad, salud, vida... propósito.</p>
-                         <h3>Diseño con alma:</h3>
-                         <p>Como diseñadora, cree un lenguaje visual que une lo que somos... Místicos, naturales, vivos. Cada empaque, símbolo y detalle tiene una intención.</p>
-                          <h3>¿A quién va dirigido?</h3>
-                         <p>A personas conscientes, exploradores, espirituales, creativos, que no solo buscan sabor sino sentido. A quienes valoran el origen, la historia, y el impacto de lo que consumen.</p>
-                         <p class="signature mt-4">"Más que café, un llamado a despertar."</p>
+                          <h3>Producción consciente:</h3>
+                          <p>Cada grano es cultivado en armonía con el entorno, bajo prácticas éticas y sostenibles. Producido por manos locales que trabajan con amor, respeto y dignidad.</p>
+                          <h3>Energía viva:</h3>
+                          <p>Vitalidad real, sin artificios. Nuestro café especial consciente potencia la plenitud, la conexión con tu interior, equilibrio, autenticidad, salud, vida... propósito.</p>
+                          <h3>Diseño con alma:</h3>
+                          <p>Como diseñadora, cree un lenguaje visual que une lo que somos... Místicos, naturales, vivos. Cada empaque, símbolo y detalle tiene una intención.</p>
+                           <h3>¿A quién va dirigido?</h3>
+                          <p>A personas conscientes, exploradores, espirituales, creativos, que no solo buscan sabor sino sentido. A quienes valoran el origen, la historia, y el impacto de lo que consumen.</p>
+                          <p class="signature mt-4">"Más que café, un llamado a despertar."</p>
                      </div>
                     <div class="page-number">3</div>
                 </div>
@@ -568,6 +576,7 @@
 
 <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-0 sm:p-4 bg-black/60 hidden"></div>
 
+<!-- Auth Modal -->
 <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
    <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
         <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors">
@@ -581,6 +590,7 @@
         </button>
    </div>
 </div>
+
 
 <!-- TI-89 Calculator Structure -->
 <div id="calculator">
@@ -638,8 +648,7 @@
 <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    // Firebase imports should be in your firebase-init.js file.
     
     $(document).ready(function () {
         // --- State Variables ---
@@ -1230,6 +1239,16 @@
         $('#open-cart-button').on('click', () => { renderCartModal(); $('#cart-modal').removeClass('hidden'); });
         $('#cart-modal').on('click', (event) => { if (event.target === $('#cart-modal')[0]) $('#cart-modal').addClass('hidden'); });
         
+        // --- Auth Modal Handlers ---
+        $('#close-auth-modal-button').on('click', () => $('#auth-modal').addClass('hidden'));
+        
+        // This handler opens the modal when the initial login icon is clicked.
+        // Your firebase-init.js will handle the actual sign-in logic and UI updates.
+        $('body').on('click', '#login-button', () => {
+            $('#auth-modal').removeClass('hidden');
+        });
+
+
         // --- Resizing ---
         $(window).on('resize', () => flipbook.turn('size', $('.flipbook-container').width(), $('.flipbook-container').height())).trigger('resize');
 
@@ -1255,4 +1274,4 @@
 </script>
 
 </body>
-</ht
+</html>
