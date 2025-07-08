@@ -29,6 +29,7 @@
             --power-bar-fill: #fde047;
             --damage-flash-color: rgba(255, 0, 0, 0.3);
             --tree-health-bar-color: #7CFC00;
+            --progress-bar-fill: #6ab04c; 
         }
 
         * {
@@ -220,6 +221,60 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
         }
 
+        /* --- CAMBIO: overflow: visible para que el gusano no se corte --- */
+        #level-progress-container {
+            flex-grow: 1;
+            height: 3.5vmin;
+            padding: 0;
+            position: relative;
+            background-color: #2a1d1a;
+            border-radius: 2vmin;
+            overflow: visible;
+        }
+        
+        #level-progress-bar {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #badc58, var(--progress-bar-fill));
+            border-radius: 2vmin;
+            transition: width 0.2s linear;
+            box-shadow: inset 0 0 1vmin rgba(0,0,0,0.5);
+        }
+        
+        #level-progress-icon {
+            position: absolute;
+            top: 50%;
+            right: 0%;
+            /* --- CAMBIO: Gusano volteado correctamente --- */
+            transform: translate(50%, -50%) scaleX(1); 
+            height: 6vmin;
+            width: 6vmin;
+            transition: right 0.2s linear;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.7));
+        }
+
+        #final-wave-warning {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            font-size: 7vmin;
+            color: #ff4757;
+            text-shadow: 4px 4px #000;
+            z-index: 150;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        #final-wave-warning.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
         @keyframes pulse-animation {
             0% { transform: scale(1); }
             50% { transform: scale(1.3); }
@@ -281,7 +336,6 @@
         }
         .game-button:active { transform: translateY(3px); border-bottom-width: 2px; }
 
-        /* Auth Modal Styles */
         #auth-modal { z-index: 300; }
         #auth-modal .translucent-panel { background-color: rgba(0,0,0,0.8); border: 2px solid var(--accent-color); }
 
@@ -302,19 +356,23 @@
              <div id="level-display" class="ui-element">
                  Nivel: <span id="level-value">1</span>
              </div>
-             <!-- NUEVO: Contenedor para agrupar los botones de la derecha -->
+             
+             <div id="level-progress-container" class="ui-element mx-4">
+                <div id="level-progress-bar"></div>
+                <img id="level-progress-icon" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png" alt="Progreso">
+             </div>
+
              <div class="flex items-center" style="gap: 2vmin;">
-                <button id="pause-button" class="ui-element" title="O sacude el teléfono para pausar" style="cursor: pointer; padding: 1.5vmin 3vmin;">
-                    Menú
-                </button>
-                <div id="auth-container">
-                    <!-- El ícono de Auth se insertará aquí -->
-                </div>
+                 <button id="pause-button" class="ui-element" title="O sacude el teléfono para pausar" style="cursor: pointer; padding: 1.5vmin 3vmin;">
+                     Menú
+                 </button>
+                 <div id="auth-container"></div>
              </div>
         </div>
 
         <canvas id="game-canvas"></canvas>
         <div id="damage-flash"></div>
+        <div id="final-wave-warning">¡OLEADA FINAL!</div>
 
         <div id="bottom-bar">
              <div id="coffee-bag-container" class="ui-element">
@@ -384,25 +442,21 @@
 
     function initThreeScene() {
         treeScene = new THREE.Scene();
-
         const { width, height } = treeCanvasContainer.getBoundingClientRect();
         treeCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
         treeCamera.position.set(0, 1.2, 7);
         treeCamera.lookAt(0, 0.8, 0);
-
         treeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         treeRenderer.setClearColor(0x000000, 0);
         treeRenderer.setSize(width, height);
         treeRenderer.setPixelRatio(window.devicePixelRatio);
         treeRenderer.outputColorSpace = THREE.SRGBColorSpace;
         treeCanvasContainer.appendChild(treeRenderer.domElement);
-
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         treeScene.add(ambientLight);
         const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
         directionalLight.position.set(5, 10, 7.5);
         treeScene.add(directionalLight);
-        
         const loader = new GLTFLoader();
         loader.load('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb', (gltf) => {
             treeModel = gltf.scene;
@@ -410,22 +464,17 @@
             const center = box.getCenter(new THREE.Vector3());
             treeModel.position.y -= box.min.y;
             treeModel.position.add(center.multiplyScalar(-1));
-            
             treeModel.scale.set(1.6, 1.6, 1.6);
             treeScene.add(treeModel);
-            if (base) {
-                updateTreeAppearance();
-            }
+            if (base) { updateTreeAppearance(); }
         }, undefined, (error) => {
             console.error('An error happened while loading the tree model:', error);
         });
-
         function animateTree() {
             requestAnimationFrame(animateTree);
             treeRenderer.render(treeScene, treeCamera);
         }
         animateTree();
-        
         const resizeObserver = new ResizeObserver(() => {
             const { width, height } = treeCanvasContainer.getBoundingClientRect();
             if (width > 0 && height > 0) {
@@ -440,11 +489,7 @@
     function updateTreeAppearance() {
         if (!base || !treeModel) return;
         const healthPercent = Math.max(0, base.health / base.maxHealth);
-        
-        if (treeHealthBar) {
-            treeHealthBar.style.height = `${healthPercent * 100}%`;
-        }
-
+        if (treeHealthBar) { treeHealthBar.style.height = `${healthPercent * 100}%`; }
         treeModel.traverse((node) => {
             if (node.isMesh && node.material) {
                 if (!node.material.originalColor) {
@@ -473,11 +518,9 @@
                 updateAuthUI(null);
                 return;
             }
-
             const app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
-
             onAuthStateChanged(auth, async (user) => {
                 updateAuthUI(user);
                 if (user) {
@@ -495,7 +538,6 @@
                     });
                 }
             });
-
         } catch (e) {
             console.error("Firebase initialization failed:", e);
             init(0, 0, 0, config.base.health, true);
@@ -508,11 +550,9 @@
         if (user && !user.isAnonymous) {
             const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
             const photoURL = user.photoURL || fallbackImage;
-
             const userButton = document.createElement('button');
             userButton.id = 'logout-btn';
             userButton.title = `Cerrar sesión de ${user.displayName || 'Usuario'}`;
-            
             const userPhoto = document.createElement('img');
             userPhoto.src = photoURL;
             userPhoto.alt = "Foto de Usuario";
@@ -522,18 +562,15 @@
                  userPhoto.style.backgroundColor = '#fff';
             }
             userPhoto.onerror = () => { userPhoto.src = fallbackImage; };
-
             userButton.appendChild(userPhoto);
             authContainer.appendChild(userButton);
         } else {
             const loginButton = document.createElement('button');
             loginButton.id = 'open-login-modal-btn';
             loginButton.title = 'Iniciar Sesión';
-            
             const loginImage = document.createElement('img');
             loginImage.src = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
             loginImage.alt = "Iniciar Sesión con Google";
-            
             loginButton.appendChild(loginImage);
             authContainer.appendChild(loginButton);
         }
@@ -572,8 +609,7 @@
     // ---  GAME CONFIG & MAIN LOGIC ---
     // =================================================================
     const config = {
-        lanes: 4, 
-        playerSpeed: 5, projectileSpeed: 8, shootCooldown: 20, 
+        lanes: 4, playerSpeed: 5, projectileSpeed: 8, shootCooldown: 20, 
         specialPowerMax: 100, orbValue: 10, healingValue: 25,
         player: {}, base: { health: 1000 },
         grainImage: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/collectible_coffee_bean.png',
@@ -594,8 +630,79 @@
             { name: 'Broca Fuerte', health: 300, speed: 0.3, grainChance: 0.2, orbChance: 0.5, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_3.png' },
         ],
         levels: [
-            { duration: 180, waves: [ { startTime: 2, enemyType: 0, spawnInterval: 240 }, { startTime: 30, enemyType: 0, spawnInterval: 180 }, { startTime: 70, enemyType: 1, spawnInterval: 480 }, { startTime: 120, enemyType: 0, spawnInterval: 120 }, { startTime: 160, enemyType: 1, spawnInterval: 300 } ]},
-            { duration: 180, waves: [ { startTime: 2, enemyType: 0, spawnInterval: 150 }, { startTime: 20, enemyType: 1, spawnInterval: 240 }, { startTime: 60, enemyType: 0, spawnInterval: 90 }, { startTime: 100, enemyType: 1, spawnInterval: 180 }, { startTime: 140, enemyType: 2, spawnInterval: 900 } ]}
+            // Nivel 1-3 (3 minutos = 180s)
+            { duration: 180, waves: [
+                { startTime: 5,   enemyType: 0, spawnInterval: 240 },
+                { startTime: 60,  enemyType: 0, spawnInterval: 180 },
+                { startTime: 120, enemyType: 0, spawnInterval: 100 }, // OLEADA FINAL
+                { startTime: 140, enemyType: 1, spawnInterval: 400 }  // OLEADA FINAL
+            ]},
+            { duration: 180, waves: [
+                { startTime: 5,   enemyType: 0, spawnInterval: 200 },
+                { startTime: 70,  enemyType: 1, spawnInterval: 500 },
+                { startTime: 120, enemyType: 0, spawnInterval: 90 }, // OLEADA FINAL
+                { startTime: 150, enemyType: 1, spawnInterval: 250 }  // OLEADA FINAL
+            ]},
+            { duration: 180, waves: [
+                { startTime: 5,   enemyType: 1, spawnInterval: 600 },
+                { startTime: 60,  enemyType: 0, spawnInterval: 150 },
+                { startTime: 120, enemyType: 1, spawnInterval: 200 }, // OLEADA FINAL
+                { startTime: 130, enemyType: 0, spawnInterval: 80 }  // OLEADA FINAL
+            ]},
+            // Nivel 4-7 (5 minutos = 300s)
+            { duration: 300, waves: [
+                { startTime: 10,  enemyType: 0, spawnInterval: 150 },
+                { startTime: 90,  enemyType: 1, spawnInterval: 300 },
+                { startTime: 180, enemyType: 0, spawnInterval: 100 },
+                { startTime: 240, enemyType: 1, spawnInterval: 120 }, // OLEADA FINAL
+                { startTime: 270, enemyType: 2, spawnInterval: 800 }  // OLEADA FINAL
+            ]},
+            { duration: 300, waves: [
+                { startTime: 10,  enemyType: 1, spawnInterval: 240 },
+                { startTime: 100, enemyType: 0, spawnInterval: 90 },
+                { startTime: 200, enemyType: 2, spawnInterval: 600 },
+                { startTime: 240, enemyType: 1, spawnInterval: 100 }, // OLEADA FINAL
+                { startTime: 260, enemyType: 0, spawnInterval: 60 }   // OLEADA FINAL
+            ]},
+            { duration: 300, waves: [
+                { startTime: 10,  enemyType: 1, spawnInterval: 200 },
+                { startTime: 80,  enemyType: 2, spawnInterval: 500 },
+                { startTime: 160, enemyType: 1, spawnInterval: 150 },
+                { startTime: 240, enemyType: 2, spawnInterval: 400 }, // OLEADA FINAL
+                { startTime: 250, enemyType: 1, spawnInterval: 90 }   // OLEADA FINAL
+            ]},
+            { duration: 300, waves: [
+                { startTime: 10,  enemyType: 2, spawnInterval: 700 },
+                { startTime: 60,  enemyType: 1, spawnInterval: 180 },
+                { startTime: 180, enemyType: 0, spawnInterval: 70 },
+                { startTime: 240, enemyType: 1, spawnInterval: 80 },  // OLEADA FINAL
+                { startTime: 250, enemyType: 2, spawnInterval: 300 }  // OLEADA FINAL
+            ]},
+            // Nivel 8-10 (6 minutos = 360s)
+            { duration: 360, waves: [
+                { startTime: 15,  enemyType: 1, spawnInterval: 120 },
+                { startTime: 120, enemyType: 2, spawnInterval: 300 },
+                { startTime: 240, enemyType: 1, spawnInterval: 90 },
+                { startTime: 300, enemyType: 2, spawnInterval: 200 }, // OLEADA FINAL
+                { startTime: 310, enemyType: 1, spawnInterval: 60 }   // OLEADA FINAL
+            ]},
+            { duration: 360, waves: [
+                { startTime: 15,  enemyType: 1, spawnInterval: 100 },
+                { startTime: 100, enemyType: 2, spawnInterval: 250 },
+                { startTime: 200, enemyType: 1, spawnInterval: 80 },
+                { startTime: 300, enemyType: 2, spawnInterval: 150 }, // OLEADA FINAL
+                { startTime: 315, enemyType: 1, spawnInterval: 50 },  // OLEADA FINAL
+                { startTime: 320, enemyType: 0, spawnInterval: 40 }   // OLEADA FINAL
+            ]},
+            { duration: 360, waves: [
+                { startTime: 15,  enemyType: 2, spawnInterval: 200 },
+                { startTime: 90,  enemyType: 1, spawnInterval: 70 },
+                { startTime: 180, enemyType: 2, spawnInterval: 150 },
+                { startTime: 240, enemyType: 1, spawnInterval: 60 },
+                { startTime: 300, enemyType: 2, spawnInterval: 100 }, // OLEADA FINAL
+                { startTime: 310, enemyType: 1, spawnInterval: 40 },  // OLEADA FINAL
+                { startTime: 320, enemyType: 2, spawnInterval: 120 }  // OLEADA FINAL
+            ]}
         ]
     });
 
@@ -615,9 +722,12 @@
     const retryButton = document.getElementById('retry-button');
     const resumeButton = document.getElementById('resume-button');
     const restartButtonPause = document.getElementById('restart-button-pause');
-    const pauseButton = document.getElementById('pause-button'); // NUEVO
+    const pauseButton = document.getElementById('pause-button');
     const coffeeBagIcon = document.getElementById('coffee-bag-icon');
     const coffeeBeanCounterEl = document.getElementById('coffee-bean-counter');
+    const levelProgressBar = document.getElementById('level-progress-bar');
+    const levelProgressIcon = document.getElementById('level-progress-icon');
+    const finalWaveWarning = document.getElementById('final-wave-warning');
 
     let laneHeight, characterSize, player, base;
     let projectiles = [], enemies = [], resources = [];
@@ -626,6 +736,7 @@
     let levelTimer = 0, currentWaveIndex = -1, spawnTimer = 0;
     let gameState = 'loading';
     let globalAnimationTimer = 0;
+    let finalWaveWarningShown = false;
 
     const sounds = {
         shoot: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
@@ -635,6 +746,7 @@
         enemyHit: new Tone.PolySynth(Tone.NoiseSynth, { noise: { type: 'pink' }, envelope: { attack: 0.01, decay: 0.05, sustain: 0, release: 0.05 } }).toDestination(),
         gameOver: new Tone.PolySynth(Tone.Synth).toDestination(),
         levelUp: new Tone.PolySynth(Tone.Synth).toDestination(),
+        warning: new Tone.Synth({ oscillator: { type: 'sawtooth' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.2 } }).toDestination()
     };
 
     function playSound(sound, note, duration = '8n') {
@@ -645,16 +757,11 @@
     class Player {
         constructor() { this.reset(); }
         reset() {
-            this.width = characterSize * 0.9;
-            this.height = characterSize * 0.9;
-            this.x = 10; 
-            this.baseY = canvas.height / 2 - this.height / 2;
-            this.y = this.baseY;
-            this.speed = config.playerSpeed;
-            this.image = new Image();
-            this.image.src = config.player.image.idle;
-            this.attackImage = new Image();
-            this.attackImage.src = config.player.image.attack;
+            this.width = characterSize * 0.9; this.height = characterSize * 0.9;
+            this.x = 10; this.baseY = canvas.height / 2 - this.height / 2;
+            this.y = this.baseY; this.speed = config.playerSpeed;
+            this.image = new Image(); this.image.src = config.player.image.idle;
+            this.attackImage = new Image(); this.attackImage.src = config.player.image.attack;
             this.isAttacking = false;
         }
         draw() {
@@ -668,8 +775,7 @@
         shoot() {
             if (shootTimer > 0 || gameState !== 'playing') return;
             projectiles.push(new Projectile(this.x + this.width, this.y + this.height / 2));
-            shootTimer = config.shootCooldown;
-            playSound('shoot', 'C5', '16n');
+            shootTimer = config.shootCooldown; playSound('shoot', 'C5', '16n');
             this.isAttacking = true;
             setTimeout(() => this.isAttacking = false, 100);
         }
@@ -685,21 +791,16 @@
     }
     class Enemy {
         constructor(lane, typeIndex) {
-            this.type = config.enemies[typeIndex];
-            this.width = characterSize - 10; 
-            this.height = characterSize - 10;
-            this.x = canvas.width + characterSize * 1.5; 
+            this.type = config.enemies[typeIndex]; this.width = characterSize - 10; 
+            this.height = characterSize - 10; this.x = canvas.width + characterSize * 1.5; 
             this.baseY = (lane * laneHeight) + (laneHeight - this.height) / 2;
-            this.y = this.baseY;
-            this.speed = this.type.speed; this.health = this.type.health;
-            this.maxHealth = this.health;
-            this.image = new Image(); this.image.src = this.type.image;
+            this.y = this.baseY; this.speed = this.type.speed; this.health = this.type.health;
+            this.maxHealth = this.health; this.image = new Image(); this.image.src = this.type.image;
         }
         update() { this.x -= this.speed; }
         draw() { 
             const bobble = Math.sin(globalAnimationTimer * 5 + this.baseY) * (characterSize * 0.05);
             ctx.drawImage(this.image, this.x, this.y + bobble, this.width, this.height);
-            
             if (this.health < this.maxHealth) {
                 ctx.fillStyle = 'red'; ctx.fillRect(this.x, this.y - 10 + bobble, this.width, 5);
                 ctx.fillStyle = 'green'; ctx.fillRect(this.x, this.y - 10 + bobble, this.width * (this.health / this.maxHealth), 5);
@@ -708,20 +809,15 @@
     }
     class Resource {
         constructor(x, y, type) {
-            this.x = x; this.y = y; 
-            this.size = 45; 
-            this.type = type;
+            this.x = x; this.y = y; this.size = 45; this.type = type;
             this.image = new Image(); this.image.src = type === 'grain' ? config.grainImage : config.orbImage;
-            this.life = 400;
-            this.isFlying = false;
+            this.life = 400; this.isFlying = false;
         }
         update() { this.life--; }
         draw() {
             if (this.isFlying) return;
             const scale = 1 + Math.sin(globalAnimationTimer * 6) * 0.08;
-            const newSize = this.size * scale;
-            const sizeDiff = (newSize - this.size) / 2;
-
+            const newSize = this.size * scale; const sizeDiff = (newSize - this.size) / 2;
             ctx.globalAlpha = this.life < 60 ? this.life / 60 : 1;
             ctx.drawImage(this.image, this.x - sizeDiff, this.y - sizeDiff, newSize, newSize);
             ctx.globalAlpha = 1;
@@ -758,6 +854,15 @@
         }
     }
     
+    function showFinalWaveWarning() {
+        if (!finalWaveWarning) return;
+        playSound('warning', 'C6', '2n');
+        finalWaveWarning.classList.add('visible');
+        setTimeout(() => {
+            finalWaveWarning.classList.remove('visible');
+        }, 4000);
+    }
+
     function handleGameLogic() {
         globalAnimationTimer += 0.02;
         if (shootTimer > 0) shootTimer--;
@@ -767,22 +872,37 @@
         resources.forEach((r, i) => { r.update(); if (r.life <= 0) resources.splice(i, 1); });
         handleCollisions();
         handleLevelProgression();
+
+        const currentLevel = config.levels[currentLevelIndex];
+        if (currentLevel && !finalWaveWarningShown && levelTimer >= currentLevel.duration - 60) {
+            showFinalWaveWarning();
+            finalWaveWarningShown = true;
+        }
     }
 
     function handleLevelProgression() {
         const currentLevel = config.levels[currentLevelIndex];
-        const nextWaveIndex = currentWaveIndex + 1;
-        if (nextWaveIndex < currentLevel.waves.length && levelTimer >= currentLevel.waves[nextWaveIndex].startTime) {
-            currentWaveIndex = nextWaveIndex; spawnTimer = 0;
-        }
+        if (!currentLevel) return;
+
         if (levelTimer >= currentLevel.duration && enemies.length === 0) {
             setGameState('level_complete');
             saveGameData();
             return;
         }
-        if (currentWaveIndex > -1) {
-            if (spawnTimer > 0) spawnTimer--;
-            else if (enemies.length < 20) { spawnEnemy(); spawnTimer = currentLevel.waves[currentWaveIndex].spawnInterval; }
+
+        const nextWaveIndex = currentWaveIndex + 1;
+        if (nextWaveIndex < currentLevel.waves.length && levelTimer >= currentLevel.waves[nextWaveIndex].startTime) {
+            currentWaveIndex = nextWaveIndex;
+            spawnTimer = 0;
+        }
+
+        if (currentWaveIndex > -1 && levelTimer < currentLevel.duration) {
+            if (spawnTimer > 0) {
+                spawnTimer--;
+            } else if (enemies.length < 20) {
+                spawnEnemy();
+                spawnTimer = currentLevel.waves[currentWaveIndex].spawnInterval;
+            }
         }
     }
 
@@ -803,6 +923,19 @@
         levelValue.textContent = currentLevelIndex + 1;
         coffeeBeanCounterEl.textContent = coffeeBeanCount;
         specialPowerBar.style.width = `${(specialPowerPoints / config.specialPowerMax) * 100}%`;
+
+        if (config.levels[currentLevelIndex]) {
+            const currentLevel = config.levels[currentLevelIndex];
+            let progressPercent = 0;
+            if (gameState === 'playing' || gameState === 'paused') {
+                progressPercent = Math.min((levelTimer / currentLevel.duration) * 100, 100);
+            } else if (gameState === 'level_complete') {
+                progressPercent = 100;
+            }
+            
+            levelProgressBar.style.width = `${progressPercent}%`;
+            levelProgressIcon.style.right = `${progressPercent}%`;
+        }
     }
 
     function gameLoop() {
@@ -811,29 +944,31 @@
             handleGameLogic();
         }
         draw();
+        updateUI();
     }
 
     function setGameState(newState) {
         gameState = newState;
-        
         gameContainer.classList.toggle('playing', newState === 'playing');
-        gameOverlay.classList.toggle('hidden', newState === 'playing');
-
+        gameOverlay.classList.toggle('hidden', newState === 'playing' || newState === 'level_complete');
+        
         startScreen.classList.toggle('visible', newState === 'start');
         gameOverScreen.classList.toggle('visible', newState === 'game_over');
         levelCompleteScreen.classList.toggle('visible', newState === 'level_complete');
         pauseScreen.classList.toggle('visible', newState === 'paused');
 
         if (newState === 'level_complete') {
+            gameOverlay.classList.remove('hidden');
             const nextLevelExists = currentLevelIndex + 1 < config.levels.length;
             levelCompleteScreen.querySelector('h2').textContent = `¡Nivel ${currentLevelIndex + 1} Superado!`;
             const content = levelCompleteScreen.querySelector('#level-complete-content');
+            
             if (nextLevelExists) {
-                content.innerHTML = `<button id="next-level-button" class="game-button">Siguiente Nivel</button>`;
-                content.querySelector('#next-level-button').addEventListener('click', () => {
+                content.innerHTML = `<p style="font-size: 4vmin; margin-top: 20px;">Cargando siguiente nivel...</p>`;
+                setTimeout(() => {
                     currentLevelIndex++;
                     init(currentLevelIndex, specialPowerPoints, coffeeBeanCount, base.health, false);
-                }, { once: true });
+                }, 3000);
             } else {
                 content.innerHTML = `<h1>¡VICTORIA TOTAL!</h1><p>¡Has defendido la cosecha!</p>`;
             }
@@ -842,7 +977,6 @@
 
     function init(level = 0, power = 0, beans = 0, health = config.base.health, isFirstLoad = true) {
         if (animationFrameId && !isFirstLoad) {
-            // No cancelar el loop si ya está corriendo, solo resetear estado.
         } else if (animationFrameId) {
              cancelAnimationFrame(animationFrameId);
         }
@@ -851,14 +985,13 @@
         specialPowerPoints = power;
         coffeeBeanCount = beans;
         base = { health: Math.min(health, config.base.health), maxHealth: config.base.health };
-        
         levelTimer = 0; currentWaveIndex = -1;
         enemies = []; projectiles = []; resources = [];
+        finalWaveWarningShown = false;
 
         resizeAll(); 
         updateTreeAppearance();
         updateUI();
-        
         setGameState('start');
         
         if (isFirstLoad) {
@@ -885,35 +1018,28 @@
             spawnTimer = 0;
         };
         startButton.addEventListener('click', handleStart);
-
         retryButton.addEventListener('click', (e) => { 
             e.preventDefault(); 
             init(currentLevelIndex, 0, 0, config.base.health, false); 
         });
-
-        // NUEVO: Listener para el botón de Menú/Pausa
         pauseButton.addEventListener('click', togglePause);
         resumeButton.addEventListener('click', togglePause);
         restartButtonPause.addEventListener('click', () => {
             init(currentLevelIndex, 0, 0, config.base.health, false);
         });
-
         document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
-        
         document.getElementById('google-login-button-modal').addEventListener('click', () => {
             const provider = new GoogleAuthProvider();
             signInWithPopup(auth, provider).then(() => {
                 authModal.classList.add('hidden');
             }).catch(error => console.error("Google Sign-In Error:", error));
         });
-
         authContainer.addEventListener('click', (event) => {
             const button = event.target.closest('button');
             if (!button) return;
             if (button.id === 'open-login-modal-btn') authModal.classList.remove('hidden');
             else if (button.id === 'logout-btn') signOut(auth).catch(error => console.error("Sign out error", error));
         });
-
         let keys = {};
         window.addEventListener('keydown', e => { 
             if (gameState === 'start' || gameState === 'playing' || gameState === 'paused') {
@@ -926,7 +1052,6 @@
             }
         });
         window.addEventListener('keyup', e => { keys[e.key] = false; });
-        
         function controlLoop() {
             if (gameState === 'playing' && player) {
                 if (keys['w'] || keys['ArrowUp']) player.y -= player.speed;
@@ -937,44 +1062,33 @@
             requestAnimationFrame(controlLoop);
         }
         controlLoop();
-
         let isDragging = false, didDrag = false, touchYOffset = 0, touchStartY = 0;
         canvas.addEventListener('touchstart', e => {
             e.preventDefault(); 
             if (!player || gameState !== 'playing') return;
-            const touch = e.touches[0]; 
-            const rect = canvas.getBoundingClientRect();
-            isDragging = true; 
-            didDrag = false;
+            const touch = e.touches[0]; const rect = canvas.getBoundingClientRect();
+            isDragging = true; didDrag = false;
             const currentY = touch.clientY - rect.top;
-            touchStartY = currentY; 
-            touchYOffset = currentY - player.y;
+            touchStartY = currentY; touchYOffset = currentY - player.y;
         }, { passive: false });
-
         canvas.addEventListener('touchmove', e => {
             e.preventDefault(); 
             if (!isDragging || !player || gameState !== 'playing') return;
-            const touch = e.touches[0]; 
-            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0]; const rect = canvas.getBoundingClientRect();
             const newY = touch.clientY - rect.top;
             if (Math.abs(newY - touchStartY) > 5) didDrag = true;
             player.y = newY - touchYOffset;
         }, { passive: false });
-
         canvas.addEventListener('touchend', e => {
             e.preventDefault();
             if (gameState !== 'playing') return;
             if (didDrag || !player) {
-                isDragging = false;
-                didDrag = false;
-                return;
+                isDragging = false; didDrag = false; return;
             }
-            
             isDragging = false;
             const rect = canvas.getBoundingClientRect();
             const clickX = e.changedTouches[0].clientX - rect.left;
             const clickY = e.changedTouches[0].clientY - rect.top;
-
             if (clickX >= player.x && clickX <= player.x + player.width &&
                 clickY >= player.y && clickY <= player.y + player.height) {
                 player.shoot();
@@ -982,13 +1096,11 @@
                 checkResourceClick(clickX, clickY);
             }
         });
-
         canvas.addEventListener('click', e => {
             if (!player || gameState !== 'playing') return;
             const rect = canvas.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const clickY = e.clientY - rect.top;
-
             if (clickX >= player.x && clickX <= player.x + player.width &&
                 clickY >= player.y && clickY <= player.y + player.height) {
                 player.shoot();
@@ -996,21 +1108,17 @@
                 checkResourceClick(clickX, clickY);
             }
         });
-
         let lastShakeTime = 0;
         const SHAKE_THRESHOLD = 25;
         let lastX, lastY, lastZ;
-
         function deviceMotionHandler(event) {
             const { acceleration } = event;
             const currentTime = new Date().getTime();
-
             if ((currentTime - lastShakeTime) > 500) {
                 if (lastX !== null && lastY !== null && lastZ !== null) {
                     const deltaX = Math.abs(acceleration.x - lastX);
                     const deltaY = Math.abs(acceleration.y - lastY);
                     const deltaZ = Math.abs(acceleration.z - lastZ);
-                    
                     if ((deltaX + deltaY + deltaZ) > SHAKE_THRESHOLD) {
                         lastShakeTime = currentTime;
                         if (gameState === 'playing' || gameState === 'paused') {
@@ -1018,12 +1126,9 @@
                         }
                     }
                 }
-                lastX = acceleration.x;
-                lastY = acceleration.y;
-                lastZ = acceleration.z;
+                lastX = acceleration.x; lastY = acceleration.y; lastZ = acceleration.z;
             }
         }
-        
         if (typeof DeviceMotionEvent.requestPermission === 'function') {
             const permissionHandler = () => {
                  DeviceMotionEvent.requestPermission()
@@ -1033,7 +1138,6 @@
                         }
                     })
                     .catch(console.error);
-                // Remover el listener para que no pida permiso de nuevo
                 startButton.removeEventListener('click', permissionHandler);
             };
             startButton.addEventListener('click', permissionHandler);
@@ -1065,48 +1169,34 @@
     function animateResourceToBag(resource) {
         const flyingBean = new Image();
         flyingBean.src = config.grainImage;
-        flyingBean.style.position = 'absolute';
-        flyingBean.style.zIndex = '999';
-        flyingBean.style.width = `${resource.size}px`;
-        flyingBean.style.height = `${resource.size}px`;
+        flyingBean.style.position = 'absolute'; flyingBean.style.zIndex = '999';
+        flyingBean.style.width = `${resource.size}px`; flyingBean.style.height = `${resource.size}px`;
         flyingBean.style.pointerEvents = 'none';
-
         const canvasRect = canvas.getBoundingClientRect();
         const startX = canvasRect.left + resource.x;
         const startY = canvasRect.top + resource.y;
-        
         document.body.appendChild(flyingBean);
-
         const duration = 800;
         let startTime = null;
-
         function animationLoop(currentTime) {
             if (!startTime) startTime = currentTime;
             const elapsedTime = currentTime - startTime;
             const progress = Math.min(elapsedTime / duration, 1);
-
             const bagRect = coffeeBagIcon.getBoundingClientRect();
             const endX = bagRect.left + bagRect.width / 2 - resource.size / 2;
             const endY = bagRect.top + bagRect.height / 2 - resource.size / 2;
-
             const currentX = startX + (endX - startX) * progress;
             const currentY = startY + (endY - startY) * progress;
             const scale = 1 - (0.8 * progress);
-
             flyingBean.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
-
             if (progress < 1) {
                 requestAnimationFrame(animationLoop);
             } else {
                 base.health = Math.min(base.maxHealth, base.health + config.healingValue);
                 coffeeBeanCount++;
-                updateTreeAppearance();
-                updateUI();
-                playSound('heal', 'A5');
-
+                updateTreeAppearance(); updateUI(); playSound('heal', 'A5');
                 coffeeBagIcon.classList.add('pulse');
                 setTimeout(() => coffeeBagIcon.classList.remove('pulse'), 300);
-
                 document.body.removeChild(flyingBean);
                 const originalResourceIndex = resources.findIndex(res => res === resource);
                 if (originalResourceIndex > -1) {
@@ -1114,7 +1204,6 @@
                 }
             }
         }
-        
         flyingBean.style.transform = `translate(${startX}px, ${startY}px)`;
         requestAnimationFrame(animationLoop);
     }
@@ -1122,24 +1211,19 @@
     function resizeAll() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        
         if (canvas.height <= 0) return;
-
         laneHeight = canvas.height / config.lanes;
         const aspectRatio = canvas.width / canvas.height;
-
         if (aspectRatio > 1.1) {
             characterSize = laneHeight * 1.25;
         } else {
             characterSize = laneHeight;
         }
-
         if (!player) {
             player = new Player();
         } else {
             player.reset();
         }
-        
         if(gameState !== 'playing') {
             draw();
         }
