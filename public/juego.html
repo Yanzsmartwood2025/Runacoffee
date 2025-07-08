@@ -29,7 +29,7 @@
             --power-bar-fill: #fde047;
             --damage-flash-color: rgba(255, 0, 0, 0.3);
             --tree-health-bar-color: #7CFC00;
-            --progress-bar-fill: #6ab04c; 
+            --timeline-progress-color: #7CFC00;
         }
 
         * {
@@ -73,16 +73,20 @@
             overflow: hidden; 
         }
 
-        /* --- CAMBIO: Se elimina la animación de deslizamiento del fondo --- */
         #background-wrapper {
             position: absolute;
-            width: 100%; 
+            width: 125%; 
             height: 100%;
             top: 0;
             left: 0;
             background: url('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/e60d103dfb61c7d07d0fe214e620173998d7c7ce/public/assets/imagenes/fondo-del-juego.jpg') no-repeat;
-            background-size: cover;
-            background-position: center;
+            background-size: 100% 100%;
+            transform: translateX(-20%);
+            transition: transform 1.2s ease-in-out;
+        }
+
+        #game-container.playing #background-wrapper {
+            transform: translateX(0);
         }
 
         #tree-container {
@@ -106,7 +110,7 @@
             z-index: 1;
             border-radius: 0 0 50vw 50vw;
         }
-        
+       
         #tree-canvas-container {
             position: absolute;
             top: 0;
@@ -122,10 +126,9 @@
             position: absolute;
             left: 25%;
             top: 22%;
-            width: 57%; 
+            width: 71%; 
             height: 56%;
             background: transparent;
-            touch-action: none;
         }
 
         #damage-flash {
@@ -154,7 +157,7 @@
             padding: 0 10px;
         }
         #top-bar { top: 4%; justify-content: space-between; }
-        #bottom-bar { bottom: 4%; justify-content: center; gap: 20px; }
+        #bottom-bar { bottom: 4%; justify-content: center; gap: 1vmin; }
 
         .ui-element {
             display: flex;
@@ -167,7 +170,7 @@
             font-size: 2.5vmin;
             text-shadow: 2px 2px #000;
         }
-        
+       
         #level-display {
              padding: 1.5vmin 3vmin;
         }
@@ -218,56 +221,37 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
         }
 
-        #level-progress-container {
+        #timeline-container {
             flex-grow: 1;
-            height: 3.5vmin;
-            padding: 0;
-            position: relative;
+            height: 2.5vmin;
+            margin: 0 2vmin;
             background-color: #2a1d1a;
-            border-radius: 2vmin;
+            border: 3px solid #6d4c35;
+            border-radius: 8px;
+            position: relative;
             overflow: visible;
         }
-        
-        #level-progress-bar {
+
+        #timeline-progress {
             position: absolute;
             right: 0;
             top: 0;
-            width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, #badc58, var(--progress-bar-fill));
-            border-radius: 2vmin;
-            transition: width 0.2s linear;
-            box-shadow: inset 0 0 1vmin rgba(0,0,0,0.5);
+            width: 0%; 
+            background-color: var(--timeline-progress-color);
+            box-shadow: 0 0 5px var(--timeline-progress-color), 0 0 10px var(--timeline-progress-color);
+            transition: width 0.1s linear;
+            border-radius: 0 4px 4px 0;
         }
-        
-        #level-progress-icon {
+
+        #timeline-worm {
             position: absolute;
             top: 50%;
             right: 0%;
-            transform: translate(50%, -50%) scaleX(1); 
-            height: 6vmin;
-            width: 6vmin;
-            transition: right 0.2s linear;
-            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.7));
-        }
-
-        #final-wave-warning {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.5);
-            font-size: 7vmin;
-            color: #ff4757;
-            text-shadow: 4px 4px #000;
-            z-index: 150;
-            pointer-events: none;
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
-
-        #final-wave-warning.visible {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
+            height: 5vmin;
+            transform: translate(50%, -50%);
+            transition: right 0.1s linear;
+            z-index: 10;
         }
 
         @keyframes pulse-animation {
@@ -275,10 +259,30 @@
             50% { transform: scale(1.3); }
             100% { transform: scale(1); }
         }
+        .pulse { animation: pulse-animation 0.3s ease-in-out; }
 
-        .pulse {
-            animation: pulse-animation 0.3s ease-in-out;
+        /* CAMBIO: Estilos para el botón y la barra de poder */
+        #activate-power-button {
+            padding: 1vmin;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
+        #activate-power-button:disabled {
+            filter: grayscale(1) brightness(0.6);
+            cursor: not-allowed;
+        }
+        #activate-power-button svg {
+            width: 4vmin;
+            height: 4vmin;
+        }
+        @keyframes power-ready-glow {
+            0%, 100% { box-shadow: 0 0 10px #fde047, 0 0 20px #fde047; transform: scale(1); }
+            50% { box-shadow: 0 0 20px #ffc400, 0 0 40px #ffc400; transform: scale(1.1); }
+        }
+        .power-ready {
+            animation: power-ready-glow 1.5s infinite ease-in-out;
+        }
+
 
         #game-overlay {
             position: absolute;
@@ -294,10 +298,13 @@
             padding: 20px;
             opacity: 1;
             transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        #game-overlay.active {
+            pointer-events: auto;
         }
         #game-overlay.hidden {
             opacity: 0;
-            pointer-events: none;
         }
 
         .overlay-screen {
@@ -309,7 +316,7 @@
         .overlay-screen.visible {
             display: flex;
         }
-        
+       
         .overlay-screen h1, .overlay-screen h2 { margin-bottom: 20px; color: var(--accent-color); text-shadow: 4px 4px #000; }
         .overlay-screen h1 { font-size: 8vmin; }
         .overlay-screen h2 { font-size: 6vmin; }
@@ -331,6 +338,23 @@
         }
         .game-button:active { transform: translateY(3px); border-bottom-width: 2px; }
 
+        #wave-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10vmin;
+            color: #ff4d4d;
+            text-shadow: 5px 5px #000;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 150;
+            pointer-events: none;
+        }
+        #wave-message.visible {
+            opacity: 1;
+        }
+
         #auth-modal { z-index: 300; }
         #auth-modal .translucent-panel { background-color: rgba(0,0,0,0.8); border: 2px solid var(--accent-color); }
 
@@ -346,36 +370,35 @@
             <div id="tree-health-bar"></div>
             <div id="tree-canvas-container"></div>
         </div>
-        
+       
         <div id="top-bar">
              <div id="level-display" class="ui-element">
-                 Nivel: <span id="level-value">1</span>
+                   Nivel: <span id="level-value">1</span>
              </div>
-             
-             <div id="level-progress-container" class="ui-element mx-4">
-                <div id="level-progress-bar"></div>
-                <img id="level-progress-icon" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png" alt="Progreso">
+             <div id="timeline-container">
+                <div id="timeline-progress"></div>
+                <img id="timeline-worm" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png" alt="Gusano del tiempo">
              </div>
-
-             <div class="flex items-center" style="gap: 2vmin;">
-                 <button id="pause-button" class="ui-element" title="O sacude el teléfono para pausar" style="cursor: pointer; padding: 1.5vmin 3vmin;">
-                     Menú
-                 </button>
-                 <div id="auth-container"></div>
+             <div id="auth-container">
              </div>
         </div>
 
         <canvas id="game-canvas"></canvas>
         <div id="damage-flash"></div>
-        <div id="final-wave-warning">¡OLEADA FINAL!</div>
 
         <div id="bottom-bar">
              <div id="coffee-bag-container" class="ui-element">
-                 <img id="coffee-bag-icon" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
-                 <span id="coffee-bean-counter">0</span>
+                  <img id="coffee-bag-icon" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
+                  <span id="coffee-bean-counter">0</span>
              </div>
+             <!-- CAMBIO: Botón para activar el poder especial -->
+             <button id="activate-power-button" class="ui-element" title="Activar Poder (E)" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .923-.14Z" clip-rule="evenodd" />
+                </svg>
+             </button>
              <div id="special-power-bar-container">
-                 <div id="special-power-bar"></div>
+                  <div id="special-power-bar"></div>
              </div>
         </div>
 
@@ -394,14 +417,14 @@
                 <h2 id="level-complete-title"></h2>
                 <div id="level-complete-content"></div>
             </div>
-            <div id="pause-screen" class="overlay-screen">
-                <h2>Pausa</h2>
-                <button id="resume-button" class="game-button">Continuar</button>
-                <button id="restart-button-pause" class="game-button">Reiniciar Nivel</button>
+            <div id="loading-next-level-screen" class="overlay-screen">
+                <h2>Cargando Siguiente Nivel...</h2>
             </div>
         </div>
+        
+        <div id="wave-message"></div>
     </div>
-    
+   
     <div id="auth-modal" class="fixed inset-0 flex items-center justify-center p-4 bg-black/60 hidden">
        <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
             <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors">
@@ -437,21 +460,25 @@
 
     function initThreeScene() {
         treeScene = new THREE.Scene();
+
         const { width, height } = treeCanvasContainer.getBoundingClientRect();
         treeCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
         treeCamera.position.set(0, 1.2, 7);
         treeCamera.lookAt(0, 0.8, 0);
+
         treeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         treeRenderer.setClearColor(0x000000, 0);
         treeRenderer.setSize(width, height);
         treeRenderer.setPixelRatio(window.devicePixelRatio);
         treeRenderer.outputColorSpace = THREE.SRGBColorSpace;
         treeCanvasContainer.appendChild(treeRenderer.domElement);
+
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         treeScene.add(ambientLight);
         const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
         directionalLight.position.set(5, 10, 7.5);
         treeScene.add(directionalLight);
+       
         const loader = new GLTFLoader();
         loader.load('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb', (gltf) => {
             treeModel = gltf.scene;
@@ -459,17 +486,22 @@
             const center = box.getCenter(new THREE.Vector3());
             treeModel.position.y -= box.min.y;
             treeModel.position.add(center.multiplyScalar(-1));
+           
             treeModel.scale.set(1.6, 1.6, 1.6);
             treeScene.add(treeModel);
-            if (base) { updateTreeAppearance(); }
+            if (base) {
+                updateTreeAppearance();
+            }
         }, undefined, (error) => {
             console.error('An error happened while loading the tree model:', error);
         });
+
         function animateTree() {
             requestAnimationFrame(animateTree);
             treeRenderer.render(treeScene, treeCamera);
         }
         animateTree();
+       
         const resizeObserver = new ResizeObserver(() => {
             const { width, height } = treeCanvasContainer.getBoundingClientRect();
             if (width > 0 && height > 0) {
@@ -484,7 +516,11 @@
     function updateTreeAppearance() {
         if (!base || !treeModel) return;
         const healthPercent = Math.max(0, base.health / base.maxHealth);
-        if (treeHealthBar) { treeHealthBar.style.height = `${healthPercent * 100}%`; }
+       
+        if (treeHealthBar) {
+            treeHealthBar.style.height = `${healthPercent * 100}%`;
+        }
+
         treeModel.traverse((node) => {
             if (node.isMesh && node.material) {
                 if (!node.material.originalColor) {
@@ -513,9 +549,11 @@
                 updateAuthUI(null);
                 return;
             }
+
             const app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
+
             onAuthStateChanged(auth, async (user) => {
                 updateAuthUI(user);
                 if (user) {
@@ -533,6 +571,7 @@
                     });
                 }
             });
+
         } catch (e) {
             console.error("Firebase initialization failed:", e);
             init(0, 0, 0, config.base.health, true);
@@ -545,9 +584,11 @@
         if (user && !user.isAnonymous) {
             const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
             const photoURL = user.photoURL || fallbackImage;
+
             const userButton = document.createElement('button');
             userButton.id = 'logout-btn';
             userButton.title = `Cerrar sesión de ${user.displayName || 'Usuario'}`;
+           
             const userPhoto = document.createElement('img');
             userPhoto.src = photoURL;
             userPhoto.alt = "Foto de Usuario";
@@ -557,15 +598,18 @@
                  userPhoto.style.backgroundColor = '#fff';
             }
             userPhoto.onerror = () => { userPhoto.src = fallbackImage; };
+
             userButton.appendChild(userPhoto);
             authContainer.appendChild(userButton);
         } else {
             const loginButton = document.createElement('button');
             loginButton.id = 'open-login-modal-btn';
             loginButton.title = 'Iniciar Sesión';
+           
             const loginImage = document.createElement('img');
             loginImage.src = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
             loginImage.alt = "Iniciar Sesión con Google";
+           
             loginButton.appendChild(loginImage);
             authContainer.appendChild(loginButton);
         }
@@ -604,8 +648,16 @@
     // ---  GAME CONFIG & MAIN LOGIC ---
     // =================================================================
     const config = {
-        lanes: 4, playerSpeed: 5, projectileSpeed: 8, shootCooldown: 20, 
-        specialPowerMax: 100, orbValue: 10, healingValue: 25,
+        lanes: 4, 
+        playerSpeed: 5, 
+        projectileSpeed: 8, 
+        // CAMBIO: Ajuste de cooldowns para el poder especial
+        shootCooldown: 40, // Disparo normal más lento
+        fastShootCooldown: 15, // Disparo rápido durante el poder
+        specialPowerMax: 100, 
+        powerDrainRate: 20, // Puntos por segundo, dura 5 segundos (100/20)
+        orbValue: 10, 
+        healingValue: 25,
         player: {}, base: { health: 1000 },
         grainImage: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/collectible_coffee_bean.png',
         orbImage: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/collectible_power_orb.png',
@@ -625,79 +677,26 @@
             { name: 'Broca Fuerte', health: 300, speed: 0.3, grainChance: 0.2, orbChance: 0.5, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_3.png' },
         ],
         levels: [
-            // Nivel 1-3 (3 minutos = 180s)
-            { duration: 180, waves: [
-                { startTime: 5,   enemyType: 0, spawnInterval: 240 },
-                { startTime: 60,  enemyType: 0, spawnInterval: 180 },
-                { startTime: 120, enemyType: 0, spawnInterval: 100 }, // OLEADA FINAL
-                { startTime: 140, enemyType: 1, spawnInterval: 400 }  // OLEADA FINAL
-            ]},
-            { duration: 180, waves: [
-                { startTime: 5,   enemyType: 0, spawnInterval: 200 },
-                { startTime: 70,  enemyType: 1, spawnInterval: 500 },
-                { startTime: 120, enemyType: 0, spawnInterval: 90 }, // OLEADA FINAL
-                { startTime: 150, enemyType: 1, spawnInterval: 250 }  // OLEADA FINAL
-            ]},
-            { duration: 180, waves: [
-                { startTime: 5,   enemyType: 1, spawnInterval: 600 },
-                { startTime: 60,  enemyType: 0, spawnInterval: 150 },
-                { startTime: 120, enemyType: 1, spawnInterval: 200 }, // OLEADA FINAL
-                { startTime: 130, enemyType: 0, spawnInterval: 80 }  // OLEADA FINAL
-            ]},
-            // Nivel 4-7 (5 minutos = 300s)
-            { duration: 300, waves: [
-                { startTime: 10,  enemyType: 0, spawnInterval: 150 },
-                { startTime: 90,  enemyType: 1, spawnInterval: 300 },
-                { startTime: 180, enemyType: 0, spawnInterval: 100 },
-                { startTime: 240, enemyType: 1, spawnInterval: 120 }, // OLEADA FINAL
-                { startTime: 270, enemyType: 2, spawnInterval: 800 }  // OLEADA FINAL
-            ]},
-            { duration: 300, waves: [
-                { startTime: 10,  enemyType: 1, spawnInterval: 240 },
-                { startTime: 100, enemyType: 0, spawnInterval: 90 },
-                { startTime: 200, enemyType: 2, spawnInterval: 600 },
-                { startTime: 240, enemyType: 1, spawnInterval: 100 }, // OLEADA FINAL
-                { startTime: 260, enemyType: 0, spawnInterval: 60 }   // OLEADA FINAL
-            ]},
-            { duration: 300, waves: [
-                { startTime: 10,  enemyType: 1, spawnInterval: 200 },
-                { startTime: 80,  enemyType: 2, spawnInterval: 500 },
-                { startTime: 160, enemyType: 1, spawnInterval: 150 },
-                { startTime: 240, enemyType: 2, spawnInterval: 400 }, // OLEADA FINAL
-                { startTime: 250, enemyType: 1, spawnInterval: 90 }   // OLEADA FINAL
-            ]},
-            { duration: 300, waves: [
-                { startTime: 10,  enemyType: 2, spawnInterval: 700 },
-                { startTime: 60,  enemyType: 1, spawnInterval: 180 },
-                { startTime: 180, enemyType: 0, spawnInterval: 70 },
-                { startTime: 240, enemyType: 1, spawnInterval: 80 },  // OLEADA FINAL
-                { startTime: 250, enemyType: 2, spawnInterval: 300 }  // OLEADA FINAL
-            ]},
-            // Nivel 8-10 (6 minutos = 360s)
-            { duration: 360, waves: [
-                { startTime: 15,  enemyType: 1, spawnInterval: 120 },
-                { startTime: 120, enemyType: 2, spawnInterval: 300 },
-                { startTime: 240, enemyType: 1, spawnInterval: 90 },
-                { startTime: 300, enemyType: 2, spawnInterval: 200 }, // OLEADA FINAL
-                { startTime: 310, enemyType: 1, spawnInterval: 60 }   // OLEADA FINAL
-            ]},
-            { duration: 360, waves: [
-                { startTime: 15,  enemyType: 1, spawnInterval: 100 },
-                { startTime: 100, enemyType: 2, spawnInterval: 250 },
-                { startTime: 200, enemyType: 1, spawnInterval: 80 },
-                { startTime: 300, enemyType: 2, spawnInterval: 150 }, // OLEADA FINAL
-                { startTime: 315, enemyType: 1, spawnInterval: 50 },  // OLEADA FINAL
-                { startTime: 320, enemyType: 0, spawnInterval: 40 }   // OLEADA FINAL
-            ]},
-            { duration: 360, waves: [
-                { startTime: 15,  enemyType: 2, spawnInterval: 200 },
-                { startTime: 90,  enemyType: 1, spawnInterval: 70 },
-                { startTime: 180, enemyType: 2, spawnInterval: 150 },
-                { startTime: 240, enemyType: 1, spawnInterval: 60 },
-                { startTime: 300, enemyType: 2, spawnInterval: 100 }, // OLEADA FINAL
-                { startTime: 310, enemyType: 1, spawnInterval: 40 },  // OLEADA FINAL
-                { startTime: 320, enemyType: 2, spawnInterval: 120 }  // OLEADA FINAL
-            ]}
+            // Nivel 1 (3 min)
+            { duration: 180, waves: [ { startTime: 5, enemyType: 0, spawnInterval: 240 }, { startTime: 40, enemyType: 0, spawnInterval: 180 }, { startTime: 90, enemyType: 0, spawnInterval: 150 }, { startTime: 120, enemyType: 0, spawnInterval: 100 } ]},
+            // Nivel 2 (3 min)
+            { duration: 180, waves: [ { startTime: 5, enemyType: 0, spawnInterval: 180 }, { startTime: 30, enemyType: 1, spawnInterval: 480 }, { startTime: 70, enemyType: 0, spawnInterval: 120 }, { startTime: 120, enemyType: 1, spawnInterval: 300 } ]},
+            // Nivel 3 (3 min)
+            { duration: 180, waves: [ { startTime: 5, enemyType: 0, spawnInterval: 120 }, { startTime: 20, enemyType: 1, spawnInterval: 300 }, { startTime: 60, enemyType: 0, spawnInterval: 90 }, { startTime: 100, enemyType: 1, spawnInterval: 240 }, { startTime: 120, enemyType: 1, spawnInterval: 180 } ]},
+            // Nivel 4 (5 min)
+            { duration: 300, waves: [ { startTime: 10, enemyType: 0, spawnInterval: 150 }, { startTime: 40, enemyType: 1, spawnInterval: 240 }, { startTime: 120, enemyType: 0, spawnInterval: 100 }, { startTime: 180, enemyType: 1, spawnInterval: 180 }, { startTime: 240, enemyType: 1, spawnInterval: 150 } ]},
+            // Nivel 5 (5 min)
+            { duration: 300, waves: [ { startTime: 10, enemyType: 1, spawnInterval: 240 }, { startTime: 50, enemyType: 0, spawnInterval: 100 }, { startTime: 120, enemyType: 1, spawnInterval: 180 }, { startTime: 180, enemyType: 2, spawnInterval: 900 }, { startTime: 240, enemyType: 1, spawnInterval: 120 } ]},
+            // Nivel 6 (5 min)
+            { duration: 300, waves: [ { startTime: 5, enemyType: 1, spawnInterval: 180 }, { startTime: 45, enemyType: 1, spawnInterval: 150 }, { startTime: 120, enemyType: 0, spawnInterval: 60 }, { startTime: 180, enemyType: 2, spawnInterval: 600 }, { startTime: 240, enemyType: 1, spawnInterval: 100 } ]},
+            // Nivel 7 (7 min)
+            { duration: 420, waves: [ { startTime: 10, enemyType: 1, spawnInterval: 150 }, { startTime: 60, enemyType: 0, spawnInterval: 80 }, { startTime: 180, enemyType: 1, spawnInterval: 120 }, { startTime: 240, enemyType: 2, spawnInterval: 600 }, { startTime: 300, enemyType: 1, spawnInterval: 100 }, { startTime: 360, enemyType: 2, spawnInterval: 480 } ]},
+            // Nivel 8 (7 min)
+            { duration: 420, waves: [ { startTime: 10, enemyType: 1, spawnInterval: 120 }, { startTime: 50, enemyType: 2, spawnInterval: 720 }, { startTime: 180, enemyType: 1, spawnInterval: 100 }, { startTime: 240, enemyType: 0, spawnInterval: 40 }, { startTime: 300, enemyType: 1, spawnInterval: 80 }, { startTime: 360, enemyType: 2, spawnInterval: 480 } ]},
+            // Nivel 9 (7 min)
+            { duration: 420, waves: [ { startTime: 5, enemyType: 2, spawnInterval: 600 }, { startTime: 30, enemyType: 1, spawnInterval: 90 }, { startTime: 180, enemyType: 0, spawnInterval: 30 }, { startTime: 240, enemyType: 1, spawnInterval: 60 }, { startTime: 300, enemyType: 2, spawnInterval: 400 }, { startTime: 360, enemyType: 1, spawnInterval: 50 } ]},
+            // Nivel 10 (7 min)
+            { duration: 420, waves: [ { startTime: 5, enemyType: 1, spawnInterval: 60 }, { startTime: 45, enemyType: 2, spawnInterval: 480 }, { startTime: 180, enemyType: 1, spawnInterval: 50 }, { startTime: 240, enemyType: 2, spawnInterval: 300 }, { startTime: 300, enemyType: 1, spawnInterval: 40 }, { startTime: 360, enemyType: 2, spawnInterval: 180 } ]}
         ]
     });
 
@@ -706,32 +705,33 @@
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
     const gameOverlay = document.getElementById('game-overlay');
+    const specialPowerBarContainer = document.getElementById('special-power-bar-container');
     const specialPowerBar = document.getElementById('special-power-bar');
+    const activatePowerButton = document.getElementById('activate-power-button');
     const levelValue = document.getElementById('level-value');
     const damageFlash = document.getElementById('damage-flash');
     const startScreen = document.getElementById('start-screen');
     const gameOverScreen = document.getElementById('game-over-screen');
     const levelCompleteScreen = document.getElementById('level-complete-screen');
-    const pauseScreen = document.getElementById('pause-screen');
+    const loadingNextLevelScreen = document.getElementById('loading-next-level-screen');
+    const waveMessage = document.getElementById('wave-message');
     const startButton = document.getElementById('start-button');
     const retryButton = document.getElementById('retry-button');
-    const resumeButton = document.getElementById('resume-button');
-    const restartButtonPause = document.getElementById('restart-button-pause');
-    const pauseButton = document.getElementById('pause-button');
     const coffeeBagIcon = document.getElementById('coffee-bag-icon');
     const coffeeBeanCounterEl = document.getElementById('coffee-bean-counter');
-    const levelProgressBar = document.getElementById('level-progress-bar');
-    const levelProgressIcon = document.getElementById('level-progress-icon');
-    const finalWaveWarning = document.getElementById('final-wave-warning');
+    const timelineProgress = document.getElementById('timeline-progress');
+    const timelineWorm = document.getElementById('timeline-worm');
 
-    let laneHeight, characterSize, player, base;
+    let cellSize, player, base;
     let projectiles = [], enemies = [], resources = [];
     let currentLevelIndex = 0, shootTimer = 0, animationFrameId;
     let specialPowerPoints = 0, coffeeBeanCount = 0;
     let levelTimer = 0, currentWaveIndex = -1, spawnTimer = 0;
     let gameState = 'loading';
     let globalAnimationTimer = 0;
-    let finalWaveWarningShown = false;
+    let levelMessagesShown = [];
+    // CAMBIO: Estado para el poder especial
+    let isPowerActive = false;
 
     const sounds = {
         shoot: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
@@ -741,26 +741,33 @@
         enemyHit: new Tone.PolySynth(Tone.NoiseSynth, { noise: { type: 'pink' }, envelope: { attack: 0.01, decay: 0.05, sustain: 0, release: 0.05 } }).toDestination(),
         gameOver: new Tone.PolySynth(Tone.Synth).toDestination(),
         levelUp: new Tone.PolySynth(Tone.Synth).toDestination(),
-        warning: new Tone.Synth({ oscillator: { type: 'sawtooth' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.2 } }).toDestination()
+        waveWarning: new Tone.MembraneSynth({ pitchDecay: 0.2, octaves: 5, envelope: { attack: 0.01, decay: 0.5, sustain: 0.01, release: 0.8 } }).toDestination(),
+        powerUp: new Tone.PolySynth(Tone.FMSynth, { harmonicity: 2, modulationIndex: 10, detune: 0, oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.5 }, modulation: { type: "square" }, modulationEnvelope: { attack: 0.1, decay: 0.1, sustain: 0.3, release: 0.5 } }).toDestination(),
+        powerDown: new Tone.PolySynth(Tone.AMSynth, { harmonicity: 1.5, detune: 0, oscillator: { type: "square" }, envelope: { attack: 0.01, decay: 0.5, sustain: 0, release: 0.5 }, modulation: { type: "sawtooth" }, modulationEnvelope: { attack: 0.1, decay: 0.2, sustain: 0, release: 0.5 } }).toDestination()
     };
 
     function playSound(sound, note, duration = '8n') {
         if (Tone.context.state !== 'running') return;
         if (sounds[sound]) sounds[sound].triggerAttackRelease(note, duration);
     }
-    
+   
     class Player {
         constructor() { this.reset(); }
         reset() {
-            this.width = characterSize * 0.9; this.height = characterSize * 0.9;
-            this.x = 10; this.baseY = canvas.height / 2 - this.height / 2;
-            this.y = this.baseY; this.speed = config.playerSpeed;
-            this.image = new Image(); this.image.src = config.player.image.idle;
-            this.attackImage = new Image(); this.attackImage.src = config.player.image.attack;
+            this.width = cellSize * 0.9;
+            this.height = cellSize * 0.9;
+            this.x = 10; 
+            this.baseY = canvas.height / 2 - this.height / 2;
+            this.y = this.baseY;
+            this.speed = config.playerSpeed;
+            this.image = new Image();
+            this.image.src = config.player.image.idle;
+            this.attackImage = new Image();
+            this.attackImage.src = config.player.image.attack;
             this.isAttacking = false;
         }
         draw() {
-            const bobble = Math.sin(globalAnimationTimer * 4) * (characterSize * 0.02);
+            const bobble = Math.sin(globalAnimationTimer * 4) * (cellSize * 0.02);
             ctx.drawImage(this.isAttacking ? this.attackImage : this.image, this.x, this.y + bobble, this.width, this.height);
         }
         update() {
@@ -770,7 +777,9 @@
         shoot() {
             if (shootTimer > 0 || gameState !== 'playing') return;
             projectiles.push(new Projectile(this.x + this.width, this.y + this.height / 2));
-            shootTimer = config.shootCooldown; playSound('shoot', 'C5', '16n');
+            // CAMBIO: El cooldown depende de si el poder está activo
+            shootTimer = isPowerActive ? config.fastShootCooldown : config.shootCooldown;
+            playSound('shoot', 'C5', '16n');
             this.isAttacking = true;
             setTimeout(() => this.isAttacking = false, 100);
         }
@@ -786,17 +795,20 @@
     }
     class Enemy {
         constructor(lane, typeIndex) {
-            this.type = config.enemies[typeIndex]; this.width = characterSize - 10; 
-            this.height = characterSize - 10; 
-            this.x = canvas.width + 100;
-            this.baseY = (lane * laneHeight) + (laneHeight - this.height) / 2;
-            this.y = this.baseY; this.speed = this.type.speed; this.health = this.type.health;
-            this.maxHealth = this.health; this.image = new Image(); this.image.src = this.type.image;
+            this.type = config.enemies[typeIndex];
+            this.width = cellSize - 10; this.height = cellSize - 10;
+            this.x = canvas.width + 500; 
+            this.baseY = (lane * cellSize) + 5;
+            this.y = this.baseY;
+            this.speed = this.type.speed; this.health = this.type.health;
+            this.maxHealth = this.health;
+            this.image = new Image(); this.image.src = this.type.image;
         }
         update() { this.x -= this.speed; }
         draw() { 
-            const bobble = Math.sin(globalAnimationTimer * 5 + this.baseY) * (characterSize * 0.05);
+            const bobble = Math.sin(globalAnimationTimer * 5 + this.baseY) * (cellSize * 0.05);
             ctx.drawImage(this.image, this.x, this.y + bobble, this.width, this.height);
+           
             if (this.health < this.maxHealth) {
                 ctx.fillStyle = 'red'; ctx.fillRect(this.x, this.y - 10 + bobble, this.width, 5);
                 ctx.fillStyle = 'green'; ctx.fillRect(this.x, this.y - 10 + bobble, this.width * (this.health / this.maxHealth), 5);
@@ -805,15 +817,20 @@
     }
     class Resource {
         constructor(x, y, type) {
-            this.x = x; this.y = y; this.size = 45; this.type = type;
+            this.x = x; this.y = y; 
+            this.size = 45; 
+            this.type = type;
             this.image = new Image(); this.image.src = type === 'grain' ? config.grainImage : config.orbImage;
-            this.life = 400; this.isFlying = false;
+            this.life = 400;
+            this.isFlying = false;
         }
         update() { this.life--; }
         draw() {
             if (this.isFlying) return;
             const scale = 1 + Math.sin(globalAnimationTimer * 6) * 0.08;
-            const newSize = this.size * scale; const sizeDiff = (newSize - this.size) / 2;
+            const newSize = this.size * scale;
+            const sizeDiff = (newSize - this.size) / 2;
+
             ctx.globalAlpha = this.life < 60 ? this.life / 60 : 1;
             ctx.drawImage(this.image, this.x - sizeDiff, this.y - sizeDiff, newSize, newSize);
             ctx.globalAlpha = 1;
@@ -845,61 +862,95 @@
             if (enemies[i].x < player.x + player.width) { 
                 base.health -= 50; updateTreeAppearance(); triggerDamageFlash(); playSound('baseHit', 'C2', '4n');
                 enemies.splice(i, 1);
-                if (base.health <= 0) { setGameState('game_over'); playSound('gameOver', 'C3', '1n'); }
+                if (base.health <= 0) { gameState = 'game_over'; playSound('gameOver', 'C3', '1n'); }
             }
         }
     }
-    
-    function showFinalWaveWarning() {
-        if (!finalWaveWarning) return;
-        playSound('warning', 'C6', '2n');
-        finalWaveWarning.classList.add('visible');
+   
+    function showWaveMessage(text) {
+        waveMessage.textContent = text;
+        waveMessage.classList.add('visible');
+        playSound('waveWarning', 'C4', '2n');
         setTimeout(() => {
-            finalWaveWarning.classList.remove('visible');
-        }, 4000);
+            waveMessage.classList.remove('visible');
+        }, 2500);
     }
 
     function handleGameLogic() {
         globalAnimationTimer += 0.02;
         if (shootTimer > 0) shootTimer--;
         levelTimer += 1/60;
+
+        // CAMBIO: Lógica para consumir el poder especial
+        if (isPowerActive) {
+            specialPowerPoints -= (config.powerDrainRate / 60);
+            if (specialPowerPoints <= 0) {
+                isPowerActive = false;
+                specialPowerPoints = 0;
+                playSound('powerDown', 'G3', '4n');
+                activatePowerButton.classList.remove('power-ready');
+            }
+        }
+
         projectiles.forEach((p, i) => { p.update(); if (p.x > canvas.width) projectiles.splice(i, 1); });
         enemies.forEach(e => e.update());
         resources.forEach((r, i) => { r.update(); if (r.life <= 0) resources.splice(i, 1); });
         handleCollisions();
         handleLevelProgression();
-
-        const currentLevel = config.levels[currentLevelIndex];
-        if (currentLevel && !finalWaveWarningShown && levelTimer >= currentLevel.duration - 60) {
-            showFinalWaveWarning();
-            finalWaveWarningShown = true;
-        }
     }
 
     function handleLevelProgression() {
+        if (gameState !== 'playing') return;
         const currentLevel = config.levels[currentLevelIndex];
-        if (!currentLevel) return;
+        const levelDuration = currentLevel.duration;
 
-        if (levelTimer >= currentLevel.duration && enemies.length === 0) {
-            setGameState('level_complete');
-            saveGameData();
-            return;
+        if (levelTimer >= levelDuration && enemies.length === 0) {
+            startNextLevel(); 
+            return; 
         }
 
-        const nextWaveIndex = currentWaveIndex + 1;
-        if (nextWaveIndex < currentLevel.waves.length && levelTimer >= currentLevel.waves[nextWaveIndex].startTime) {
-            currentWaveIndex = nextWaveIndex;
-            spawnTimer = 0;
-        }
-
-        if (currentWaveIndex > -1 && levelTimer < currentLevel.duration) {
-            if (spawnTimer > 0) {
-                spawnTimer--;
-            } else if (enemies.length < 20) {
-                spawnEnemy();
-                spawnTimer = currentLevel.waves[currentWaveIndex].spawnInterval;
+        if (currentLevelIndex < 3) { // Niveles 1-3 (3 min)
+            if (levelTimer >= 120 && !levelMessagesShown[0]) {
+                levelMessagesShown[0] = true; showWaveMessage("¡Oleada Final!");
+            }
+        } else if (currentLevelIndex < 6) { // Niveles 4-6 (5 min)
+            if (levelTimer >= 120 && !levelMessagesShown[0]) {
+                levelMessagesShown[0] = true; showWaveMessage("¡Se acerca una gran oleada!");
+            }
+            if (levelTimer >= 240 && !levelMessagesShown[1]) {
+                levelMessagesShown[1] = true; showWaveMessage("¡Oleada Final!");
+            }
+        } else { // Niveles 7-10 (7 min)
+            if (levelTimer >= 180 && !levelMessagesShown[0]) {
+                levelMessagesShown[0] = true; showWaveMessage("¡Oleada Intensa!");
+            }
+            if (levelTimer >= 360 && !levelMessagesShown[1]) {
+                levelMessagesShown[1] = true; showWaveMessage("¡Oleada Final!");
             }
         }
+
+        if (levelTimer < levelDuration) {
+            const nextWaveIndex = currentWaveIndex + 1;
+            if (nextWaveIndex < currentLevel.waves.length && levelTimer >= currentLevel.waves[nextWaveIndex].startTime) {
+                currentWaveIndex = nextWaveIndex; spawnTimer = 0;
+            }
+            
+            if (currentWaveIndex > -1) {
+                if (spawnTimer > 0) {
+                    spawnTimer--;
+                } else if (enemies.length < 20) { 
+                    spawnEnemy(); 
+                    spawnTimer = currentLevel.waves[currentWaveIndex].spawnInterval; 
+                }
+            }
+        }
+    }
+
+    function startNextLevel() {
+        gameState = 'level_complete';
+        playSound('levelUp', 'C6', '2n');
+        saveGameData();
+        showOverlay('level_complete');
     }
 
     function spawnEnemy() {
@@ -920,88 +971,107 @@
         coffeeBeanCounterEl.textContent = coffeeBeanCount;
         specialPowerBar.style.width = `${(specialPowerPoints / config.specialPowerMax) * 100}%`;
 
-        if (config.levels[currentLevelIndex]) {
-            const currentLevel = config.levels[currentLevelIndex];
-            let progressPercent = 0;
-            if (gameState === 'playing' || gameState === 'paused') {
-                progressPercent = Math.min((levelTimer / currentLevel.duration) * 100, 100);
-            } else if (gameState === 'level_complete') {
-                progressPercent = 100;
-            }
-            
-            levelProgressBar.style.width = `${progressPercent}%`;
-            levelProgressIcon.style.right = `${progressPercent}%`;
+        // CAMBIO: Lógica para el botón y brillo del poder
+        if (specialPowerPoints >= config.specialPowerMax && !isPowerActive) {
+            activatePowerButton.disabled = false;
+            activatePowerButton.classList.add('power-ready');
+        } else {
+            activatePowerButton.disabled = true;
+            activatePowerButton.classList.remove('power-ready');
+        }
+
+        const currentLevel = config.levels[currentLevelIndex];
+        if (currentLevel) {
+            const duration = currentLevel.duration;
+            const progressPercent = Math.min((levelTimer / duration) * 100, 100);
+
+            timelineProgress.style.width = `${progressPercent}%`;
+            timelineWorm.style.right = `${progressPercent}%`;
         }
     }
 
     function gameLoop() {
-        animationFrameId = requestAnimationFrame(gameLoop);
         if (gameState === 'playing') {
             handleGameLogic();
+            updateUI(); 
         }
         draw();
-        updateUI();
+       
+        if (gameState === 'game_over') showOverlay('game_over');
+        else if (gameState !== 'level_complete') animationFrameId = requestAnimationFrame(gameLoop);
     }
 
-    function setGameState(newState) {
-        gameState = newState;
-        gameContainer.classList.toggle('playing', newState === 'playing');
-        gameOverlay.classList.toggle('hidden', newState === 'playing' || newState === 'level_complete');
-        
-        startScreen.classList.toggle('visible', newState === 'start');
-        gameOverScreen.classList.toggle('visible', newState === 'game_over');
-        levelCompleteScreen.classList.toggle('visible', newState === 'level_complete');
-        pauseScreen.classList.toggle('visible', newState === 'paused');
+    function showOverlay(type) {
+        if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
 
-        if (newState === 'level_complete') {
-            gameOverlay.classList.remove('hidden');
+        gameOverlay.classList.remove('hidden');
+        gameOverlay.classList.add('active');
+
+        startScreen.classList.remove('visible');
+        gameOverScreen.classList.remove('visible');
+        levelCompleteScreen.classList.remove('visible');
+        loadingNextLevelScreen.classList.remove('visible');
+
+        if (type === 'start') {
+            startButton.textContent = `Empezar Nivel ${currentLevelIndex + 1}`;
+            startScreen.classList.add('visible');
+        } else if (type === 'game_over') {
+            gameOverScreen.classList.add('visible');
+        } else if (type === 'loading_next') {
+            loadingNextLevelScreen.classList.add('visible');
+        } else if (type === 'level_complete') {
             const nextLevelExists = currentLevelIndex + 1 < config.levels.length;
             levelCompleteScreen.querySelector('h2').textContent = `¡Nivel ${currentLevelIndex + 1} Superado!`;
-            const content = levelCompleteScreen.querySelector('#level-complete-content');
+            const content = levelCompleteScreen.querySelector('div');
             
             if (nextLevelExists) {
-                content.innerHTML = `<p style="font-size: 4vmin; margin-top: 20px;">Cargando siguiente nivel...</p>`;
-                setTimeout(() => {
-                    currentLevelIndex++;
-                    init(currentLevelIndex, specialPowerPoints, coffeeBeanCount, base.health, false);
-                }, 3000);
+                content.innerHTML = `<button id="next-level-button" class="game-button">Siguiente Nivel</button>`;
+                content.querySelector('#next-level-button').addEventListener('click', () => {
+                    showOverlay('loading_next');
+                    setTimeout(() => {
+                        currentLevelIndex++; 
+                        init(currentLevelIndex, specialPowerPoints, coffeeBeanCount, base.health, false);
+                    }, 1500);
+                }, { once: true });
             } else {
                 content.innerHTML = `<h1>¡VICTORIA TOTAL!</h1><p>¡Has defendido la cosecha!</p>`;
             }
+            levelCompleteScreen.classList.add('visible');
         }
     }
 
     function init(level = 0, power = 0, beans = 0, health = config.base.health, isFirstLoad = true) {
-        if (animationFrameId && !isFirstLoad) {
-        } else if (animationFrameId) {
-             cancelAnimationFrame(animationFrameId);
-        }
-        
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+       
         currentLevelIndex = level;
         specialPowerPoints = power;
         coffeeBeanCount = beans;
         base = { health: Math.min(health, config.base.health), maxHealth: config.base.health };
+       
         levelTimer = 0; currentWaveIndex = -1;
         enemies = []; projectiles = []; resources = [];
-        finalWaveWarningShown = false;
+        levelMessagesShown = [];
+        isPowerActive = false;
 
         resizeAll(); 
         updateTreeAppearance();
         updateUI();
-        setGameState('start');
-        
+       
+        gameState = 'start';
+        showOverlay('start');
+
         if (isFirstLoad) {
             loadingScreen.style.opacity = '0';
             setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
-            gameLoop();
         }
     }
-    
-    function togglePause() {
-        if (gameState === 'playing') {
-            setGameState('paused');
-        } else if (gameState === 'paused') {
-            setGameState('playing');
+
+    // CAMBIO: Nueva función para activar el poder
+    function activateSpecialPower() {
+        if (specialPowerPoints >= config.specialPowerMax && !isPowerActive && gameState === 'playing') {
+            isPowerActive = true;
+            playSound('powerUp', 'C5', '2n');
+            updateUI();
         }
     }
 
@@ -1010,48 +1080,55 @@
             event.preventDefault();
             try { if (Tone.context.state !== 'running') await Tone.start(); } 
             catch (e) { console.error("Could not start audio context:", e); }
-            setGameState('playing');
+
+            gameState = 'playing';
+            gameContainer.classList.add('playing');
+            gameOverlay.classList.add('hidden');
+            gameOverlay.classList.remove('active');
             spawnTimer = 0;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            gameLoop();
         };
         startButton.addEventListener('click', handleStart);
-        retryButton.addEventListener('click', (e) => { 
-            e.preventDefault(); 
-            init(currentLevelIndex, 0, 0, config.base.health, false); 
+
+        retryButton.addEventListener('click', (e) => { e.preventDefault(); init(currentLevelIndex, 0, 0, config.base.health, false); });
+
+        // CAMBIO: Event listeners para el poder especial
+        activatePowerButton.addEventListener('click', activateSpecialPower);
+        window.addEventListener('keydown', e => {
+            if (e.key.toLowerCase() === 'e') {
+                activateSpecialPower();
+            }
         });
-        pauseButton.addEventListener('click', togglePause);
-        resumeButton.addEventListener('click', togglePause);
-        restartButtonPause.addEventListener('click', () => {
-            init(currentLevelIndex, 0, 0, config.base.health, false);
-        });
+
         document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
+       
         document.getElementById('google-login-button-modal').addEventListener('click', () => {
             const provider = new GoogleAuthProvider();
             signInWithPopup(auth, provider).then(() => {
                 authModal.classList.add('hidden');
             }).catch(error => console.error("Google Sign-In Error:", error));
         });
+
         authContainer.addEventListener('click', (event) => {
             const button = event.target.closest('button');
             if (!button) return;
-            if (button.id === 'open-login-modal-btn') authModal.classList.remove('hidden');
-            else if (button.id === 'logout-btn') signOut(auth).catch(error => console.error("Sign out error", error));
-        });
-        let keys = {};
-        window.addEventListener('keydown', e => { 
-            if (gameState === 'start' || gameState === 'playing' || gameState === 'paused') {
-                keys[e.key] = true; 
-                if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault();
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    togglePause();
-                }
+
+            if (button.id === 'open-login-modal-btn') {
+                authModal.classList.remove('hidden');
+            } else if (button.id === 'logout-btn') {
+                signOut(auth).catch(error => console.error("Sign out error", error));
             }
         });
-        window.addEventListener('keyup', e => { keys[e.key] = false; });
+
+        let keys = {};
+        window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
+        window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+       
         function controlLoop() {
             if (gameState === 'playing' && player) {
-                if (keys['w'] || keys['ArrowUp']) player.y -= player.speed;
-                if (keys['s'] || keys['ArrowDown']) player.y += player.speed;
+                if (keys['w'] || keys['arrowup']) player.y -= player.speed;
+                if (keys['s'] || keys['arrowdown']) player.y += player.speed;
                 if (keys[' ']) player.shoot();
                 player.update();
             }
@@ -1059,21 +1136,24 @@
         }
         controlLoop();
 
-        // --- CAMBIO: Lógica de arrastre del personaje reactivada ---
         let isDragging = false, didDrag = false, touchYOffset = 0, touchStartY = 0;
         canvas.addEventListener('touchstart', e => {
             e.preventDefault(); 
-            if (!player || gameState !== 'playing') return;
-            const touch = e.touches[0]; const rect = canvas.getBoundingClientRect();
-            isDragging = true; didDrag = false;
+            if (!player) return;
+            const touch = e.touches[0]; 
+            const rect = canvas.getBoundingClientRect();
+            isDragging = true; 
+            didDrag = false;
             const currentY = touch.clientY - rect.top;
-            touchStartY = currentY; touchYOffset = currentY - player.y;
+            touchStartY = currentY; 
+            touchYOffset = currentY - player.y;
         }, { passive: false });
 
         canvas.addEventListener('touchmove', e => {
             e.preventDefault(); 
-            if (!isDragging || !player || gameState !== 'playing') return;
-            const touch = e.touches[0]; const rect = canvas.getBoundingClientRect();
+            if (!isDragging || !player) return;
+            const touch = e.touches[0]; 
+            const rect = canvas.getBoundingClientRect();
             const newY = touch.clientY - rect.top;
             if (Math.abs(newY - touchStartY) > 5) didDrag = true;
             player.y = newY - touchYOffset;
@@ -1081,14 +1161,17 @@
 
         canvas.addEventListener('touchend', e => {
             e.preventDefault();
-            if (gameState !== 'playing') return;
             if (didDrag || !player) {
-                isDragging = false; didDrag = false; return;
+                isDragging = false;
+                didDrag = false;
+                return;
             }
+           
             isDragging = false;
             const rect = canvas.getBoundingClientRect();
             const clickX = e.changedTouches[0].clientX - rect.left;
             const clickY = e.changedTouches[0].clientY - rect.top;
+
             if (clickX >= player.x && clickX <= player.x + player.width &&
                 clickY >= player.y && clickY <= player.y + player.height) {
                 player.shoot();
@@ -1098,10 +1181,11 @@
         });
 
         canvas.addEventListener('click', e => {
-            if (!player || gameState !== 'playing') return;
+            if (!player) return;
             const rect = canvas.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const clickY = e.clientY - rect.top;
+
             if (clickX >= player.x && clickX <= player.x + player.width &&
                 clickY >= player.y && clickY <= player.y + player.height) {
                 player.shoot();
@@ -1109,49 +1193,15 @@
                 checkResourceClick(clickX, clickY);
             }
         });
-        let lastShakeTime = 0;
-        const SHAKE_THRESHOLD = 25;
-        let lastX, lastY, lastZ;
-        function deviceMotionHandler(event) {
-            const { acceleration } = event;
-            const currentTime = new Date().getTime();
-            if ((currentTime - lastShakeTime) > 500) {
-                if (lastX !== null && lastY !== null && lastZ !== null) {
-                    const deltaX = Math.abs(acceleration.x - lastX);
-                    const deltaY = Math.abs(acceleration.y - lastY);
-                    const deltaZ = Math.abs(acceleration.z - lastZ);
-                    if ((deltaX + deltaY + deltaZ) > SHAKE_THRESHOLD) {
-                        lastShakeTime = currentTime;
-                        if (gameState === 'playing' || gameState === 'paused') {
-                           togglePause();
-                        }
-                    }
-                }
-                lastX = acceleration.x; lastY = acceleration.y; lastZ = acceleration.z;
-            }
-        }
-        if (typeof DeviceMotionEvent.requestPermission === 'function') {
-            const permissionHandler = () => {
-                 DeviceMotionEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            window.addEventListener('devicemotion', deviceMotionHandler);
-                        }
-                    })
-                    .catch(console.error);
-                startButton.removeEventListener('click', permissionHandler);
-            };
-            startButton.addEventListener('click', permissionHandler);
-        } else {
-            window.addEventListener('devicemotion', deviceMotionHandler);
-        }
     }
 
     function checkResourceClick(x, y) {
         for (let i = resources.length - 1; i >= 0; i--) {
             const r = resources[i];
             if (r.isFlying) continue;
+
             const dist = Math.sqrt(Math.pow(x - (r.x + r.size/2), 2) + Math.pow(y - (r.y + r.size/2), 2));
+           
             if (dist < r.size) { 
                 if (r.type === 'grain') {
                     r.isFlying = true;
@@ -1170,34 +1220,48 @@
     function animateResourceToBag(resource) {
         const flyingBean = new Image();
         flyingBean.src = config.grainImage;
-        flyingBean.style.position = 'absolute'; flyingBean.style.zIndex = '999';
-        flyingBean.style.width = `${resource.size}px`; flyingBean.style.height = `${resource.size}px`;
+        flyingBean.style.position = 'absolute';
+        flyingBean.style.zIndex = '999';
+        flyingBean.style.width = `${resource.size}px`;
+        flyingBean.style.height = `${resource.size}px`;
         flyingBean.style.pointerEvents = 'none';
+
         const canvasRect = canvas.getBoundingClientRect();
         const startX = canvasRect.left + resource.x;
         const startY = canvasRect.top + resource.y;
+       
         document.body.appendChild(flyingBean);
+
         const duration = 800;
         let startTime = null;
+
         function animationLoop(currentTime) {
             if (!startTime) startTime = currentTime;
             const elapsedTime = currentTime - startTime;
             const progress = Math.min(elapsedTime / duration, 1);
+
             const bagRect = coffeeBagIcon.getBoundingClientRect();
             const endX = bagRect.left + bagRect.width / 2 - resource.size / 2;
             const endY = bagRect.top + bagRect.height / 2 - resource.size / 2;
+
             const currentX = startX + (endX - startX) * progress;
             const currentY = startY + (endY - startY) * progress;
             const scale = 1 - (0.8 * progress);
+
             flyingBean.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
+
             if (progress < 1) {
                 requestAnimationFrame(animationLoop);
             } else {
                 base.health = Math.min(base.maxHealth, base.health + config.healingValue);
                 coffeeBeanCount++;
-                updateTreeAppearance(); updateUI(); playSound('heal', 'A5');
+                updateTreeAppearance();
+                updateUI();
+                playSound('heal', 'A5');
+
                 coffeeBagIcon.classList.add('pulse');
                 setTimeout(() => coffeeBagIcon.classList.remove('pulse'), 300);
+
                 document.body.removeChild(flyingBean);
                 const originalResourceIndex = resources.findIndex(res => res === resource);
                 if (originalResourceIndex > -1) {
@@ -1205,29 +1269,18 @@
                 }
             }
         }
+       
         flyingBean.style.transform = `translate(${startX}px, ${startY}px)`;
         requestAnimationFrame(animationLoop);
     }
-    
+   
     function resizeAll() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        if (canvas.height <= 0) return;
-        laneHeight = canvas.height / config.lanes;
-        const aspectRatio = canvas.width / canvas.height;
-        if (aspectRatio > 1.1) {
-            characterSize = laneHeight * 1.25;
-        } else {
-            characterSize = laneHeight;
-        }
-        if (!player) {
-            player = new Player();
-        } else {
-            player.reset();
-        }
-        if(gameState !== 'playing') {
-            draw();
-        }
+        if (canvas.height > 0) cellSize = canvas.height / config.lanes;
+        if (!player) player = new Player();
+        else player.reset();
+        if(gameState !== 'playing') draw();
     }
 
     // --- INITIALIZE EVERYTHING ---
