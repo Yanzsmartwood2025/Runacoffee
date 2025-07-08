@@ -605,7 +605,8 @@
     const coffeeBagIcon = document.getElementById('coffee-bag-icon');
     const coffeeBeanCounterEl = document.getElementById('coffee-bean-counter');
 
-    let cellSize, player, base;
+    // CAMBIO: Se reemplaza 'cellSize' por 'laneHeight' y 'characterSize' para un mejor control del tamaño.
+    let laneHeight, characterSize, player, base;
     let projectiles = [], enemies = [], resources = [];
     let currentLevelIndex = 0, shootTimer = 0, animationFrameId;
     let specialPowerPoints = 0, coffeeBeanCount = 0;
@@ -631,8 +632,9 @@
     class Player {
         constructor() { this.reset(); }
         reset() {
-            this.width = cellSize * 0.9;
-            this.height = cellSize * 0.9;
+            // CAMBIO: El tamaño del jugador ahora se basa en 'characterSize'.
+            this.width = characterSize * 0.9;
+            this.height = characterSize * 0.9;
             this.x = 10; 
             this.baseY = canvas.height / 2 - this.height / 2;
             this.y = this.baseY;
@@ -644,7 +646,7 @@
             this.isAttacking = false;
         }
         draw() {
-            const bobble = Math.sin(globalAnimationTimer * 4) * (cellSize * 0.02);
+            const bobble = Math.sin(globalAnimationTimer * 4) * (characterSize * 0.02);
             ctx.drawImage(this.isAttacking ? this.attackImage : this.image, this.x, this.y + bobble, this.width, this.height);
         }
         update() {
@@ -672,10 +674,11 @@
     class Enemy {
         constructor(lane, typeIndex) {
             this.type = config.enemies[typeIndex];
-            this.width = cellSize - 10; this.height = cellSize - 10;
-            // CAMBIO: Se ajusta la posición X inicial para que los enemigos aparezcan desde fuera de la pantalla.
-            this.x = canvas.width; 
-            this.baseY = (lane * cellSize) + 5;
+            // CAMBIO: El tamaño se basa en 'characterSize', la posición Y en 'laneHeight' y la X inicial está fuera de la pantalla.
+            this.width = characterSize - 10; 
+            this.height = characterSize - 10;
+            this.x = canvas.width + this.width; // Inicia justo fuera del borde derecho
+            this.baseY = (lane * laneHeight) + (laneHeight - this.height) / 2; // Centrado en el carril
             this.y = this.baseY;
             this.speed = this.type.speed; this.health = this.type.health;
             this.maxHealth = this.health;
@@ -683,7 +686,7 @@
         }
         update() { this.x -= this.speed; }
         draw() { 
-            const bobble = Math.sin(globalAnimationTimer * 5 + this.baseY) * (cellSize * 0.05);
+            const bobble = Math.sin(globalAnimationTimer * 5 + this.baseY) * (characterSize * 0.05);
             ctx.drawImage(this.image, this.x, this.y + bobble, this.width, this.height);
             
             if (this.health < this.maxHealth) {
@@ -935,7 +938,6 @@
             player.y = newY - touchYOffset;
         }, { passive: false });
 
-        // CAMBIO: La lógica de 'touchend' ahora comprueba si se tocó al jugador antes de disparar.
         canvas.addEventListener('touchend', e => {
             e.preventDefault();
             if (didDrag || !player) {
@@ -949,29 +951,24 @@
             const clickX = e.changedTouches[0].clientX - rect.left;
             const clickY = e.changedTouches[0].clientY - rect.top;
 
-            // Comprueba si el toque está dentro de los límites del jugador
             if (clickX >= player.x && clickX <= player.x + player.width &&
                 clickY >= player.y && clickY <= player.y + player.height) {
                 player.shoot();
             } else {
-                // Si no, comprueba si se hizo clic en un recurso
                 checkResourceClick(clickX, clickY);
             }
         });
 
-        // CAMBIO: La lógica de 'click' ahora comprueba si se hizo clic en el jugador antes de disparar.
         canvas.addEventListener('click', e => {
             if (!player) return;
             const rect = canvas.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const clickY = e.clientY - rect.top;
 
-            // Comprueba si el clic está dentro de los límites del jugador
             if (clickX >= player.x && clickX <= player.x + player.width &&
                 clickY >= player.y && clickY <= player.y + player.height) {
                 player.shoot();
             } else {
-                // Si no, comprueba si se hizo clic en un recurso
                 checkResourceClick(clickX, clickY);
             }
         });
@@ -1056,13 +1053,32 @@
         requestAnimationFrame(animationLoop);
     }
     
+    // CAMBIO: La función 'resizeAll' ahora ajusta el tamaño de los personajes según la orientación de la pantalla.
     function resizeAll() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        if (canvas.height > 0) cellSize = canvas.height / config.lanes;
-        if (!player) player = new Player();
-        else player.reset();
-        if(gameState !== 'playing') draw();
+        
+        if (canvas.height <= 0) return;
+
+        laneHeight = canvas.height / config.lanes;
+        const aspectRatio = canvas.width / canvas.height;
+
+        // Si la pantalla es horizontal (más ancha que alta), aumenta el tamaño de los personajes.
+        if (aspectRatio > 1.1) {
+            characterSize = laneHeight * 1.25; // Los personajes serán un 25% más grandes que la altura del carril.
+        } else {
+            characterSize = laneHeight; // En vertical, el tamaño se ajusta a la altura del carril.
+        }
+
+        if (!player) {
+            player = new Player();
+        } else {
+            player.reset();
+        }
+        
+        if(gameState !== 'playing') {
+            draw();
+        }
     }
 
     // --- INITIALIZE EVERYTHING ---
