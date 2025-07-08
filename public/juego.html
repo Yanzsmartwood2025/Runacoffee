@@ -302,8 +302,14 @@
              <div id="level-display" class="ui-element">
                  Nivel: <span id="level-value">1</span>
              </div>
-             <div id="auth-container">
-                 <!-- This will be populated by the auth script -->
+             <!-- NUEVO: Contenedor para agrupar los botones de la derecha -->
+             <div class="flex items-center" style="gap: 2vmin;">
+                <button id="pause-button" class="ui-element" title="O sacude el teléfono para pausar" style="cursor: pointer; padding: 1.5vmin 3vmin;">
+                    Menú
+                </button>
+                <div id="auth-container">
+                    <!-- El ícono de Auth se insertará aquí -->
+                </div>
              </div>
         </div>
 
@@ -335,10 +341,14 @@
                 <h2 id="level-complete-title"></h2>
                 <div id="level-complete-content"></div>
             </div>
+            <div id="pause-screen" class="overlay-screen">
+                <h2>Pausa</h2>
+                <button id="resume-button" class="game-button">Continuar</button>
+                <button id="restart-button-pause" class="game-button">Reiniciar Nivel</button>
+            </div>
         </div>
     </div>
     
-    <!-- Auth Modal -->
     <div id="auth-modal" class="fixed inset-0 flex items-center justify-center p-4 bg-black/60 hidden">
        <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
             <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors">
@@ -500,7 +510,7 @@
             const photoURL = user.photoURL || fallbackImage;
 
             const userButton = document.createElement('button');
-            userButton.id = 'logout-btn'; // Add ID for event delegation
+            userButton.id = 'logout-btn';
             userButton.title = `Cerrar sesión de ${user.displayName || 'Usuario'}`;
             
             const userPhoto = document.createElement('img');
@@ -517,7 +527,7 @@
             authContainer.appendChild(userButton);
         } else {
             const loginButton = document.createElement('button');
-            loginButton.id = 'open-login-modal-btn'; // Add ID for event delegation
+            loginButton.id = 'open-login-modal-btn';
             loginButton.title = 'Iniciar Sesión';
             
             const loginImage = document.createElement('img');
@@ -600,12 +610,15 @@
     const startScreen = document.getElementById('start-screen');
     const gameOverScreen = document.getElementById('game-over-screen');
     const levelCompleteScreen = document.getElementById('level-complete-screen');
+    const pauseScreen = document.getElementById('pause-screen');
     const startButton = document.getElementById('start-button');
     const retryButton = document.getElementById('retry-button');
+    const resumeButton = document.getElementById('resume-button');
+    const restartButtonPause = document.getElementById('restart-button-pause');
+    const pauseButton = document.getElementById('pause-button'); // NUEVO
     const coffeeBagIcon = document.getElementById('coffee-bag-icon');
     const coffeeBeanCounterEl = document.getElementById('coffee-bean-counter');
 
-    // CAMBIO: Se reemplaza 'cellSize' por 'laneHeight' y 'characterSize' para un mejor control del tamaño.
     let laneHeight, characterSize, player, base;
     let projectiles = [], enemies = [], resources = [];
     let currentLevelIndex = 0, shootTimer = 0, animationFrameId;
@@ -632,7 +645,6 @@
     class Player {
         constructor() { this.reset(); }
         reset() {
-            // CAMBIO: El tamaño del jugador ahora se basa en 'characterSize'.
             this.width = characterSize * 0.9;
             this.height = characterSize * 0.9;
             this.x = 10; 
@@ -674,11 +686,10 @@
     class Enemy {
         constructor(lane, typeIndex) {
             this.type = config.enemies[typeIndex];
-            // CAMBIO: El tamaño se basa en 'characterSize', la posición Y en 'laneHeight' y la X inicial está fuera de la pantalla.
             this.width = characterSize - 10; 
             this.height = characterSize - 10;
-            this.x = canvas.width + this.width; // Inicia justo fuera del borde derecho
-            this.baseY = (lane * laneHeight) + (laneHeight - this.height) / 2; // Centrado en el carril
+            this.x = canvas.width + characterSize * 1.5; 
+            this.baseY = (lane * laneHeight) + (laneHeight - this.height) / 2;
             this.y = this.baseY;
             this.speed = this.type.speed; this.health = this.type.health;
             this.maxHealth = this.health;
@@ -742,7 +753,7 @@
             if (enemies[i].x < player.x + player.width) { 
                 base.health -= 50; updateTreeAppearance(); triggerDamageFlash(); playSound('baseHit', 'C2', '4n');
                 enemies.splice(i, 1);
-                if (base.health <= 0) { gameState = 'game_over'; playSound('gameOver', 'C3', '1n'); }
+                if (base.health <= 0) { setGameState('game_over'); playSound('gameOver', 'C3', '1n'); }
             }
         }
     }
@@ -759,23 +770,20 @@
     }
 
     function handleLevelProgression() {
-        if (gameState !== 'playing') return;
         const currentLevel = config.levels[currentLevelIndex];
         const nextWaveIndex = currentWaveIndex + 1;
         if (nextWaveIndex < currentLevel.waves.length && levelTimer >= currentLevel.waves[nextWaveIndex].startTime) {
             currentWaveIndex = nextWaveIndex; spawnTimer = 0;
         }
-        if (levelTimer >= currentLevel.duration && enemies.length === 0) { startNextLevel(); return; }
+        if (levelTimer >= currentLevel.duration && enemies.length === 0) {
+            setGameState('level_complete');
+            saveGameData();
+            return;
+        }
         if (currentWaveIndex > -1) {
             if (spawnTimer > 0) spawnTimer--;
             else if (enemies.length < 20) { spawnEnemy(); spawnTimer = currentLevel.waves[currentWaveIndex].spawnInterval; }
         }
-    }
-
-    function startNextLevel() {
-        gameState = 'level_complete';
-        saveGameData();
-        showOverlay('level_complete');
     }
 
     function spawnEnemy() {
@@ -798,46 +806,46 @@
     }
 
     function gameLoop() {
-        if (gameState === 'playing') handleGameLogic();
+        animationFrameId = requestAnimationFrame(gameLoop);
+        if (gameState === 'playing') {
+            handleGameLogic();
+        }
         draw();
-        
-        if (gameState === 'game_over') showOverlay('game_over');
-        else if (gameState !== 'level_complete') animationFrameId = requestAnimationFrame(gameLoop);
     }
 
-    function showOverlay(type) {
-        if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
+    function setGameState(newState) {
+        gameState = newState;
+        
+        gameContainer.classList.toggle('playing', newState === 'playing');
+        gameOverlay.classList.toggle('hidden', newState === 'playing');
 
-        gameContainer.classList.remove('playing');
-        gameOverlay.classList.remove('hidden');
+        startScreen.classList.toggle('visible', newState === 'start');
+        gameOverScreen.classList.toggle('visible', newState === 'game_over');
+        levelCompleteScreen.classList.toggle('visible', newState === 'level_complete');
+        pauseScreen.classList.toggle('visible', newState === 'paused');
 
-        startScreen.classList.remove('visible');
-        gameOverScreen.classList.remove('visible');
-        levelCompleteScreen.classList.remove('visible');
-
-        if (type === 'start') {
-            startButton.textContent = `Empezar Nivel ${currentLevelIndex + 1}`;
-            startScreen.classList.add('visible');
-        } else if (type === 'game_over') {
-            gameOverScreen.classList.add('visible');
-        } else if (type === 'level_complete') {
+        if (newState === 'level_complete') {
             const nextLevelExists = currentLevelIndex + 1 < config.levels.length;
             levelCompleteScreen.querySelector('h2').textContent = `¡Nivel ${currentLevelIndex + 1} Superado!`;
-            const content = levelCompleteScreen.querySelector('div');
+            const content = levelCompleteScreen.querySelector('#level-complete-content');
             if (nextLevelExists) {
                 content.innerHTML = `<button id="next-level-button" class="game-button">Siguiente Nivel</button>`;
-                content.querySelector('button').addEventListener('click', () => {
-                    currentLevelIndex++; init(currentLevelIndex, specialPowerPoints, coffeeBeanCount, base.health, false);
+                content.querySelector('#next-level-button').addEventListener('click', () => {
+                    currentLevelIndex++;
+                    init(currentLevelIndex, specialPowerPoints, coffeeBeanCount, base.health, false);
                 }, { once: true });
             } else {
                 content.innerHTML = `<h1>¡VICTORIA TOTAL!</h1><p>¡Has defendido la cosecha!</p>`;
             }
-            levelCompleteScreen.classList.add('visible');
         }
     }
 
     function init(level = 0, power = 0, beans = 0, health = config.base.health, isFirstLoad = true) {
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        if (animationFrameId && !isFirstLoad) {
+            // No cancelar el loop si ya está corriendo, solo resetear estado.
+        } else if (animationFrameId) {
+             cancelAnimationFrame(animationFrameId);
+        }
         
         currentLevelIndex = level;
         specialPowerPoints = power;
@@ -851,12 +859,20 @@
         updateTreeAppearance();
         updateUI();
         
-        gameState = 'start';
-        showOverlay('start');
-
+        setGameState('start');
+        
         if (isFirstLoad) {
             loadingScreen.style.opacity = '0';
             setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+            gameLoop();
+        }
+    }
+    
+    function togglePause() {
+        if (gameState === 'playing') {
+            setGameState('paused');
+        } else if (gameState === 'paused') {
+            setGameState('playing');
         }
     }
 
@@ -865,19 +881,23 @@
             event.preventDefault();
             try { if (Tone.context.state !== 'running') await Tone.start(); } 
             catch (e) { console.error("Could not start audio context:", e); }
-
-            gameState = 'playing';
-            gameContainer.classList.add('playing');
-            gameOverlay.classList.add('hidden');
+            setGameState('playing');
             spawnTimer = 0;
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            gameLoop();
         };
         startButton.addEventListener('click', handleStart);
 
-        retryButton.addEventListener('click', (e) => { e.preventDefault(); init(currentLevelIndex, 0, 0, config.base.health, false); });
+        retryButton.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            init(currentLevelIndex, 0, 0, config.base.health, false); 
+        });
 
-        // --- Auth Event Listeners ---
+        // NUEVO: Listener para el botón de Menú/Pausa
+        pauseButton.addEventListener('click', togglePause);
+        resumeButton.addEventListener('click', togglePause);
+        restartButtonPause.addEventListener('click', () => {
+            init(currentLevelIndex, 0, 0, config.base.health, false);
+        });
+
         document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
         
         document.getElementById('google-login-button-modal').addEventListener('click', () => {
@@ -887,21 +907,24 @@
             }).catch(error => console.error("Google Sign-In Error:", error));
         });
 
-        // Delegated listener for the auth container
         authContainer.addEventListener('click', (event) => {
             const button = event.target.closest('button');
             if (!button) return;
-
-            if (button.id === 'open-login-modal-btn') {
-                authModal.classList.remove('hidden');
-            } else if (button.id === 'logout-btn') {
-                signOut(auth).catch(error => console.error("Sign out error", error));
-            }
+            if (button.id === 'open-login-modal-btn') authModal.classList.remove('hidden');
+            else if (button.id === 'logout-btn') signOut(auth).catch(error => console.error("Sign out error", error));
         });
 
-        // --- Game Controls ---
         let keys = {};
-        window.addEventListener('keydown', e => { keys[e.key] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
+        window.addEventListener('keydown', e => { 
+            if (gameState === 'start' || gameState === 'playing' || gameState === 'paused') {
+                keys[e.key] = true; 
+                if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault();
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    togglePause();
+                }
+            }
+        });
         window.addEventListener('keyup', e => { keys[e.key] = false; });
         
         function controlLoop() {
@@ -918,7 +941,7 @@
         let isDragging = false, didDrag = false, touchYOffset = 0, touchStartY = 0;
         canvas.addEventListener('touchstart', e => {
             e.preventDefault(); 
-            if (!player) return;
+            if (!player || gameState !== 'playing') return;
             const touch = e.touches[0]; 
             const rect = canvas.getBoundingClientRect();
             isDragging = true; 
@@ -930,7 +953,7 @@
 
         canvas.addEventListener('touchmove', e => {
             e.preventDefault(); 
-            if (!isDragging || !player) return;
+            if (!isDragging || !player || gameState !== 'playing') return;
             const touch = e.touches[0]; 
             const rect = canvas.getBoundingClientRect();
             const newY = touch.clientY - rect.top;
@@ -940,6 +963,7 @@
 
         canvas.addEventListener('touchend', e => {
             e.preventDefault();
+            if (gameState !== 'playing') return;
             if (didDrag || !player) {
                 isDragging = false;
                 didDrag = false;
@@ -960,7 +984,7 @@
         });
 
         canvas.addEventListener('click', e => {
-            if (!player) return;
+            if (!player || gameState !== 'playing') return;
             const rect = canvas.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const clickY = e.clientY - rect.top;
@@ -972,15 +996,57 @@
                 checkResourceClick(clickX, clickY);
             }
         });
+
+        let lastShakeTime = 0;
+        const SHAKE_THRESHOLD = 25;
+        let lastX, lastY, lastZ;
+
+        function deviceMotionHandler(event) {
+            const { acceleration } = event;
+            const currentTime = new Date().getTime();
+
+            if ((currentTime - lastShakeTime) > 500) {
+                if (lastX !== null && lastY !== null && lastZ !== null) {
+                    const deltaX = Math.abs(acceleration.x - lastX);
+                    const deltaY = Math.abs(acceleration.y - lastY);
+                    const deltaZ = Math.abs(acceleration.z - lastZ);
+                    
+                    if ((deltaX + deltaY + deltaZ) > SHAKE_THRESHOLD) {
+                        lastShakeTime = currentTime;
+                        if (gameState === 'playing' || gameState === 'paused') {
+                           togglePause();
+                        }
+                    }
+                }
+                lastX = acceleration.x;
+                lastY = acceleration.y;
+                lastZ = acceleration.z;
+            }
+        }
+        
+        if (typeof DeviceMotionEvent.requestPermission === 'function') {
+            const permissionHandler = () => {
+                 DeviceMotionEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            window.addEventListener('devicemotion', deviceMotionHandler);
+                        }
+                    })
+                    .catch(console.error);
+                // Remover el listener para que no pida permiso de nuevo
+                startButton.removeEventListener('click', permissionHandler);
+            };
+            startButton.addEventListener('click', permissionHandler);
+        } else {
+            window.addEventListener('devicemotion', deviceMotionHandler);
+        }
     }
 
     function checkResourceClick(x, y) {
         for (let i = resources.length - 1; i >= 0; i--) {
             const r = resources[i];
             if (r.isFlying) continue;
-
             const dist = Math.sqrt(Math.pow(x - (r.x + r.size/2), 2) + Math.pow(y - (r.y + r.size/2), 2));
-            
             if (dist < r.size) { 
                 if (r.type === 'grain') {
                     r.isFlying = true;
@@ -1011,7 +1077,7 @@
         
         document.body.appendChild(flyingBean);
 
-        const duration = 800; // ms
+        const duration = 800;
         let startTime = null;
 
         function animationLoop(currentTime) {
@@ -1025,7 +1091,7 @@
 
             const currentX = startX + (endX - startX) * progress;
             const currentY = startY + (endY - startY) * progress;
-            const scale = 1 - (0.8 * progress); // Shrink to 20% of original size
+            const scale = 1 - (0.8 * progress);
 
             flyingBean.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
 
@@ -1053,7 +1119,6 @@
         requestAnimationFrame(animationLoop);
     }
     
-    // CAMBIO: La función 'resizeAll' ahora ajusta el tamaño de los personajes según la orientación de la pantalla.
     function resizeAll() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
@@ -1063,11 +1128,10 @@
         laneHeight = canvas.height / config.lanes;
         const aspectRatio = canvas.width / canvas.height;
 
-        // Si la pantalla es horizontal (más ancha que alta), aumenta el tamaño de los personajes.
         if (aspectRatio > 1.1) {
-            characterSize = laneHeight * 1.25; // Los personajes serán un 25% más grandes que la altura del carril.
+            characterSize = laneHeight * 1.25;
         } else {
-            characterSize = laneHeight; // En vertical, el tamaño se ajusta a la altura del carril.
+            characterSize = laneHeight;
         }
 
         if (!player) {
