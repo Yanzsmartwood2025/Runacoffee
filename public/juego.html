@@ -120,6 +120,7 @@
             z-index: 2;
             border-radius: 50%;
             overflow: hidden;
+            cursor: pointer;
         }
 
         #game-canvas {
@@ -261,7 +262,6 @@
         }
         .pulse { animation: pulse-animation 0.3s ease-in-out; }
 
-        /* CAMBIO: Estilos para el botón y la barra de poder */
         #activate-power-button {
             padding: 1vmin;
             cursor: pointer;
@@ -391,7 +391,6 @@
                   <img id="coffee-bag-icon" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
                   <span id="coffee-bean-counter">0</span>
              </div>
-             <!-- CAMBIO: Botón para activar el poder especial -->
              <button id="activate-power-button" class="ui-element" title="Activar Poder (E)" disabled>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                     <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .923-.14Z" clip-rule="evenodd" />
@@ -452,7 +451,9 @@
     // =================================================================
     // --- 3D SCENE MODULE ---
     // =================================================================
-    let treeScene, treeCamera, treeRenderer, treeModel;
+    let treeScene, treeCamera, treeRenderer, treeModel, raycaster, mouse;
+    let powerOrbsGroup, powerOrbs = [], powerSelectButton;
+    let isRotationPaused = false; // CAMBIO: Flag para pausar la rotación
     const treeCanvasContainer = document.getElementById('tree-canvas-container');
     const treeHealthBar = document.getElementById('tree-health-bar');
     const healthyColor = new THREE.Color(0xffffff);
@@ -489,6 +490,16 @@
            
             treeModel.scale.set(1.6, 1.6, 1.6);
             treeScene.add(treeModel);
+
+            // CAMBIO: Crear el botón y añadirlo al modelo del árbol
+            const buttonGeometry = new THREE.CylinderGeometry(0.25, 0.25, 0.1, 32);
+            const buttonMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+            powerSelectButton = new THREE.Mesh(buttonGeometry, buttonMaterial);
+            powerSelectButton.name = "PowerSelectButton";
+            powerSelectButton.position.set(0, 1, 0.5); // Ajustar posición en el tronco
+            powerSelectButton.rotation.x = Math.PI / 2;
+            treeModel.add(powerSelectButton);
+
             if (base) {
                 updateTreeAppearance();
             }
@@ -496,8 +507,60 @@
             console.error('An error happened while loading the tree model:', error);
         });
 
+        powerOrbsGroup = new THREE.Group();
+        treeScene.add(powerOrbsGroup);
+
+        const textureLoader = new THREE.TextureLoader();
+        const gifUrls = [
+            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/fire.gif',
+            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/storm.gif',
+            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/rain.gif'
+        ];
+        const orbColors = [0xff8800, 0x00ffff, 0x0088ff];
+
+        const orbGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+
+        for (let i = 0; i < 3; i++) {
+            const angle = (i / 3) * Math.PI * 2;
+            const radius = 1.8;
+
+            const orb = new THREE.Mesh(orbGeometry, null);
+            orb.position.x = Math.cos(angle) * radius;
+            orb.position.z = Math.sin(angle) * radius;
+            orb.position.y = 1.5 + Math.sin(angle * 3) * 0.3;
+
+            orb.lockedMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
+            orb.unlockedMaterial = new THREE.MeshStandardMaterial({
+                map: textureLoader.load(gifUrls[i]),
+                emissive: orbColors[i],
+                emissiveMap: textureLoader.load(gifUrls[i]),
+                emissiveIntensity: 0,
+            });
+
+            const pointLight = new THREE.PointLight(orbColors[i], 0, 5);
+            orb.light = pointLight;
+
+            powerOrbsGroup.add(orb);
+            orb.add(pointLight);
+            powerOrbs.push(orb);
+        }
+        updatePowerOrbsVisuals();
+
+        raycaster = new THREE.Raycaster();
+        mouse = new THREE.Vector2();
+        treeCanvasContainer.addEventListener('click', onPowerSelectClick);
+
         function animateTree() {
             requestAnimationFrame(animateTree);
+            // CAMBIO: Rotación constante si no está pausada
+            if (powerOrbsGroup && !isRotationPaused) {
+                powerOrbsGroup.rotation.y += 0.008;
+            }
+            // Animar el botón
+            if (powerSelectButton) {
+                const time = Date.now() * 0.005;
+                powerSelectButton.scale.setScalar(1 + Math.sin(time) * 0.1);
+            }
             treeRenderer.render(treeScene, treeCamera);
         }
         animateTree();
@@ -511,6 +574,71 @@
             }
         });
         resizeObserver.observe(treeCanvasContainer);
+    }
+
+    // CAMBIO: Lógica de clic para seleccionar poder
+    function onPowerSelectClick(event) {
+        const rect = treeCanvasContainer.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, treeCamera);
+        const intersects = raycaster.intersectObjects(treeScene.children, true);
+
+        const buttonClicked = intersects.some(intersect => intersect.object.name === "PowerSelectButton");
+
+        if (buttonClicked && !isRotationPaused) {
+            isRotationPaused = true;
+
+            // Encontrar el orbe más cercano a la cámara (al frente)
+            let frontOrb = null;
+            let maxZ = -Infinity;
+            const cameraDirection = new THREE.Vector3();
+            treeCamera.getWorldDirection(cameraDirection);
+
+            powerOrbs.forEach(orb => {
+                const orbWorldPos = new THREE.Vector3();
+                orb.getWorldPosition(orbWorldPos);
+                
+                const cameraToOrb = orbWorldPos.clone().sub(treeCamera.position);
+                const dot = cameraToOrb.dot(cameraDirection);
+
+                if (dot > maxZ) {
+                    maxZ = dot;
+                    frontOrb = orb;
+                }
+            });
+
+            if (frontOrb) {
+                // Efecto visual de selección
+                const originalScale = frontOrb.scale.x;
+                frontOrb.scale.setScalar(originalScale * 1.5);
+                frontOrb.light.intensity *= 2;
+                
+                // Volver a la normalidad después de un segundo
+                setTimeout(() => {
+                    frontOrb.scale.setScalar(originalScale);
+                    updatePowerOrbsVisuals(); // Restaura la intensidad de la luz
+                    isRotationPaused = false;
+                }, 1000);
+            } else {
+                 isRotationPaused = false;
+            }
+        }
+    }
+
+
+    function updatePowerOrbsVisuals() {
+        powerOrbs.forEach((orb, i) => {
+            if (unlockedPowers[i]) {
+                orb.material = orb.unlockedMaterial;
+                orb.material.emissiveIntensity = 1.5;
+                orb.light.intensity = 1.5;
+            } else {
+                orb.material = orb.lockedMaterial;
+                orb.light.intensity = 0;
+            }
+        });
     }
 
     function updateTreeAppearance() {
@@ -545,7 +673,7 @@
             const firebaseConfig = JSON.parse(firebaseConfigStr);
             if (Object.keys(firebaseConfig).length === 0) {
                 console.log("Firebase config not found. Starting new game.");
-                init(0, 0, 0, config.base.health, true);
+                init(0, 0, 0, config.base.health, true, [false, false, false]);
                 updateAuthUI(null);
                 return;
             }
@@ -560,21 +688,28 @@
                     userId = user.uid;
                     const savedData = await loadGameData();
                     if (savedData) {
-                        init(savedData.level || 0, savedData.specialPower || 0, savedData.coffeeBeans || 0, savedData.baseHealth || config.base.health, true);
+                        init(
+                            savedData.level || 0, 
+                            savedData.specialPower || 0, 
+                            savedData.coffeeBeans || 0, 
+                            savedData.baseHealth || config.base.health, 
+                            true,
+                            savedData.unlockedPowers || [false, false, false]
+                        );
                     } else {
-                        init(0, 0, 0, config.base.health, true);
+                        init(0, 0, 0, config.base.health, true, [false, false, false]);
                     }
                 } else {
                     signInAnonymously(auth).catch(error => {
                         console.error("Anonymous sign-in failed:", error);
-                        init(0, 0, 0, config.base.health, true);
+                        init(0, 0, 0, config.base.health, true, [false, false, false]);
                     });
                 }
             });
 
         } catch (e) {
             console.error("Firebase initialization failed:", e);
-            init(0, 0, 0, config.base.health, true);
+            init(0, 0, 0, config.base.health, true, [false, false, false]);
             updateAuthUI(null);
         }
     }
@@ -623,6 +758,7 @@
             specialPower: specialPowerPoints,
             coffeeBeans: coffeeBeanCount,
             baseHealth: base.health,
+            unlockedPowers: unlockedPowers,
             timestamp: new Date()
         };
         try {
@@ -651,11 +787,10 @@
         lanes: 4, 
         playerSpeed: 5, 
         projectileSpeed: 8, 
-        // CAMBIO: Ajuste de cooldowns para el poder especial
-        shootCooldown: 40, // Disparo normal más lento
-        fastShootCooldown: 15, // Disparo rápido durante el poder
+        shootCooldown: 40,
+        fastShootCooldown: 15,
         specialPowerMax: 100, 
-        powerDrainRate: 20, // Puntos por segundo, dura 5 segundos (100/20)
+        powerDrainRate: 20,
         orbValue: 10, 
         healingValue: 25,
         player: {}, base: { health: 1000 },
@@ -677,25 +812,15 @@
             { name: 'Broca Fuerte', health: 300, speed: 0.3, grainChance: 0.2, orbChance: 0.5, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_3.png' },
         ],
         levels: [
-            // Nivel 1 (3 min)
             { duration: 180, waves: [ { startTime: 5, enemyType: 0, spawnInterval: 240 }, { startTime: 40, enemyType: 0, spawnInterval: 180 }, { startTime: 90, enemyType: 0, spawnInterval: 150 }, { startTime: 120, enemyType: 0, spawnInterval: 100 } ]},
-            // Nivel 2 (3 min)
             { duration: 180, waves: [ { startTime: 5, enemyType: 0, spawnInterval: 180 }, { startTime: 30, enemyType: 1, spawnInterval: 480 }, { startTime: 70, enemyType: 0, spawnInterval: 120 }, { startTime: 120, enemyType: 1, spawnInterval: 300 } ]},
-            // Nivel 3 (3 min)
             { duration: 180, waves: [ { startTime: 5, enemyType: 0, spawnInterval: 120 }, { startTime: 20, enemyType: 1, spawnInterval: 300 }, { startTime: 60, enemyType: 0, spawnInterval: 90 }, { startTime: 100, enemyType: 1, spawnInterval: 240 }, { startTime: 120, enemyType: 1, spawnInterval: 180 } ]},
-            // Nivel 4 (5 min)
             { duration: 300, waves: [ { startTime: 10, enemyType: 0, spawnInterval: 150 }, { startTime: 40, enemyType: 1, spawnInterval: 240 }, { startTime: 120, enemyType: 0, spawnInterval: 100 }, { startTime: 180, enemyType: 1, spawnInterval: 180 }, { startTime: 240, enemyType: 1, spawnInterval: 150 } ]},
-            // Nivel 5 (5 min)
             { duration: 300, waves: [ { startTime: 10, enemyType: 1, spawnInterval: 240 }, { startTime: 50, enemyType: 0, spawnInterval: 100 }, { startTime: 120, enemyType: 1, spawnInterval: 180 }, { startTime: 180, enemyType: 2, spawnInterval: 900 }, { startTime: 240, enemyType: 1, spawnInterval: 120 } ]},
-            // Nivel 6 (5 min)
             { duration: 300, waves: [ { startTime: 5, enemyType: 1, spawnInterval: 180 }, { startTime: 45, enemyType: 1, spawnInterval: 150 }, { startTime: 120, enemyType: 0, spawnInterval: 60 }, { startTime: 180, enemyType: 2, spawnInterval: 600 }, { startTime: 240, enemyType: 1, spawnInterval: 100 } ]},
-            // Nivel 7 (7 min)
             { duration: 420, waves: [ { startTime: 10, enemyType: 1, spawnInterval: 150 }, { startTime: 60, enemyType: 0, spawnInterval: 80 }, { startTime: 180, enemyType: 1, spawnInterval: 120 }, { startTime: 240, enemyType: 2, spawnInterval: 600 }, { startTime: 300, enemyType: 1, spawnInterval: 100 }, { startTime: 360, enemyType: 2, spawnInterval: 480 } ]},
-            // Nivel 8 (7 min)
             { duration: 420, waves: [ { startTime: 10, enemyType: 1, spawnInterval: 120 }, { startTime: 50, enemyType: 2, spawnInterval: 720 }, { startTime: 180, enemyType: 1, spawnInterval: 100 }, { startTime: 240, enemyType: 0, spawnInterval: 40 }, { startTime: 300, enemyType: 1, spawnInterval: 80 }, { startTime: 360, enemyType: 2, spawnInterval: 480 } ]},
-            // Nivel 9 (7 min)
             { duration: 420, waves: [ { startTime: 5, enemyType: 2, spawnInterval: 600 }, { startTime: 30, enemyType: 1, spawnInterval: 90 }, { startTime: 180, enemyType: 0, spawnInterval: 30 }, { startTime: 240, enemyType: 1, spawnInterval: 60 }, { startTime: 300, enemyType: 2, spawnInterval: 400 }, { startTime: 360, enemyType: 1, spawnInterval: 50 } ]},
-            // Nivel 10 (7 min)
             { duration: 420, waves: [ { startTime: 5, enemyType: 1, spawnInterval: 60 }, { startTime: 45, enemyType: 2, spawnInterval: 480 }, { startTime: 180, enemyType: 1, spawnInterval: 50 }, { startTime: 240, enemyType: 2, spawnInterval: 300 }, { startTime: 300, enemyType: 1, spawnInterval: 40 }, { startTime: 360, enemyType: 2, spawnInterval: 180 } ]}
         ]
     });
@@ -730,8 +855,8 @@
     let gameState = 'loading';
     let globalAnimationTimer = 0;
     let levelMessagesShown = [];
-    // CAMBIO: Estado para el poder especial
     let isPowerActive = false;
+    let unlockedPowers = [false, false, false];
 
     const sounds = {
         shoot: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
@@ -777,7 +902,6 @@
         shoot() {
             if (shootTimer > 0 || gameState !== 'playing') return;
             projectiles.push(new Projectile(this.x + this.width, this.y + this.height / 2));
-            // CAMBIO: El cooldown depende de si el poder está activo
             shootTimer = isPowerActive ? config.fastShootCooldown : config.shootCooldown;
             playSound('shoot', 'C5', '16n');
             this.isAttacking = true;
@@ -797,7 +921,7 @@
         constructor(lane, typeIndex) {
             this.type = config.enemies[typeIndex];
             this.width = cellSize - 10; this.height = cellSize - 10;
-            this.x = canvas.width + 500; 
+            this.x = canvas.width + 700; 
             this.baseY = (lane * cellSize) + 5;
             this.y = this.baseY;
             this.speed = this.type.speed; this.health = this.type.health;
@@ -847,11 +971,21 @@
         for (let i = projectiles.length - 1; i >= 0; i--) {
             for (let j = enemies.length - 1; j >= 0; j--) {
                 if (projectiles[i] && enemies[j] && isColliding(projectiles[i], enemies[j])) {
-                    enemies[j].health -= projectiles[i].power; projectiles.splice(i, 1); playSound('enemyHit');
+                    enemies[j].health -= projectiles[i].power; 
+                    projectiles.splice(i, 1); 
+                    playSound('enemyHit');
+
                     if (enemies[j].health <= 0) {
-                        const enemyType = enemies[j].type;
-                        if (Math.random() < enemyType.grainChance) resources.push(new Resource(enemies[j].x, enemies[j].y, 'grain'));
-                        if (Math.random() < enemyType.orbChance) resources.push(new Resource(enemies[j].x, enemies[j].y, 'orb'));
+                        const enemy = enemies[j];
+                        const dropX = Math.min(enemy.x, canvas.width - enemy.width);
+                        const dropY = enemy.y;
+
+                        if (Math.random() < enemy.type.grainChance) {
+                            resources.push(new Resource(dropX, dropY, 'grain'));
+                        }
+                        if (Math.random() < enemy.type.orbChance) {
+                            resources.push(new Resource(dropX, dropY, 'orb'));
+                        }
                         enemies.splice(j, 1);
                     }
                     break; 
@@ -881,7 +1015,6 @@
         if (shootTimer > 0) shootTimer--;
         levelTimer += 1/60;
 
-        // CAMBIO: Lógica para consumir el poder especial
         if (isPowerActive) {
             specialPowerPoints -= (config.powerDrainRate / 60);
             if (specialPowerPoints <= 0) {
@@ -909,18 +1042,18 @@
             return; 
         }
 
-        if (currentLevelIndex < 3) { // Niveles 1-3 (3 min)
+        if (currentLevelIndex < 3) {
             if (levelTimer >= 120 && !levelMessagesShown[0]) {
                 levelMessagesShown[0] = true; showWaveMessage("¡Oleada Final!");
             }
-        } else if (currentLevelIndex < 6) { // Niveles 4-6 (5 min)
+        } else if (currentLevelIndex < 6) {
             if (levelTimer >= 120 && !levelMessagesShown[0]) {
                 levelMessagesShown[0] = true; showWaveMessage("¡Se acerca una gran oleada!");
             }
             if (levelTimer >= 240 && !levelMessagesShown[1]) {
                 levelMessagesShown[1] = true; showWaveMessage("¡Oleada Final!");
             }
-        } else { // Niveles 7-10 (7 min)
+        } else {
             if (levelTimer >= 180 && !levelMessagesShown[0]) {
                 levelMessagesShown[0] = true; showWaveMessage("¡Oleada Intensa!");
             }
@@ -949,6 +1082,12 @@
     function startNextLevel() {
         gameState = 'level_complete';
         playSound('levelUp', 'C6', '2n');
+        
+        if (currentLevelIndex === 2) unlockedPowers[0] = true;
+        if (currentLevelIndex === 5) unlockedPowers[1] = true;
+        if (currentLevelIndex === 8) unlockedPowers[2] = true;
+        updatePowerOrbsVisuals();
+
         saveGameData();
         showOverlay('level_complete');
     }
@@ -971,7 +1110,6 @@
         coffeeBeanCounterEl.textContent = coffeeBeanCount;
         specialPowerBar.style.width = `${(specialPowerPoints / config.specialPowerMax) * 100}%`;
 
-        // CAMBIO: Lógica para el botón y brillo del poder
         if (specialPowerPoints >= config.specialPowerMax && !isPowerActive) {
             activatePowerButton.disabled = false;
             activatePowerButton.classList.add('power-ready');
@@ -1030,7 +1168,7 @@
                     showOverlay('loading_next');
                     setTimeout(() => {
                         currentLevelIndex++; 
-                        init(currentLevelIndex, specialPowerPoints, coffeeBeanCount, base.health, false);
+                        init(currentLevelIndex, specialPowerPoints, coffeeBeanCount, base.health, false, unlockedPowers);
                     }, 1500);
                 }, { once: true });
             } else {
@@ -1040,13 +1178,14 @@
         }
     }
 
-    function init(level = 0, power = 0, beans = 0, health = config.base.health, isFirstLoad = true) {
+    function init(level = 0, power = 0, beans = 0, health = config.base.health, isFirstLoad = true, powers = [false, false, false]) {
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
        
         currentLevelIndex = level;
         specialPowerPoints = power;
         coffeeBeanCount = beans;
         base = { health: Math.min(health, config.base.health), maxHealth: config.base.health };
+        unlockedPowers = powers;
        
         levelTimer = 0; currentWaveIndex = -1;
         enemies = []; projectiles = []; resources = [];
@@ -1055,6 +1194,7 @@
 
         resizeAll(); 
         updateTreeAppearance();
+        updatePowerOrbsVisuals();
         updateUI();
        
         gameState = 'start';
@@ -1066,7 +1206,6 @@
         }
     }
 
-    // CAMBIO: Nueva función para activar el poder
     function activateSpecialPower() {
         if (specialPowerPoints >= config.specialPowerMax && !isPowerActive && gameState === 'playing') {
             isPowerActive = true;
@@ -1091,9 +1230,8 @@
         };
         startButton.addEventListener('click', handleStart);
 
-        retryButton.addEventListener('click', (e) => { e.preventDefault(); init(currentLevelIndex, 0, 0, config.base.health, false); });
+        retryButton.addEventListener('click', (e) => { e.preventDefault(); init(currentLevelIndex, 0, 0, config.base.health, false, unlockedPowers); });
 
-        // CAMBIO: Event listeners para el poder especial
         activatePowerButton.addEventListener('click', activateSpecialPower);
         window.addEventListener('keydown', e => {
             if (e.key.toLowerCase() === 'e') {
