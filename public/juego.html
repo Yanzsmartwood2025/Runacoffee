@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Runa Defenders: La Furia del Grano</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Three.js Library -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --ui-bg: rgba(58, 46, 42, 0.75);
+            --text-light: #fdfbf8;
+            --accent-color: #D47500;
+            --bar-bg: #3a2e2a;
+            --power-bar-fill: #fde047;
+            --damage-flash-color: rgba(255, 0, 0, 0.3);
+            --tree-health-bar-color: #7CFC00;
+            --timeline-progress-color: #7CFC00;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--text-light);
+        }
+
+        #loading-screen {
+            position: absolute;
+            inset: 0;
+            background: #1a1310;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5vmin;
+            z-index: 200;
+            transition: opacity 0.5s ease;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        #background-wrapper {
+            position: absolute;
+            width: 125%; 
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: url('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/e60d103dfb61c7d07d0fe214e620173998d7c7ce/public/assets/imagenes/fondo-del-juego.jpg') no-repeat;
+            background-size: 100% 100%;
+            transform: translateX(-20%);
+            transition: transform 1.2s ease-in-out;
+        }
+
+        #game-container.playing #background-wrapper {
+            transform: translateX(0);
+        }
+
+        #tree-container {
+            position: absolute;
+            left: 2.5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20%;
+            padding-top: 20%; 
+            height: 0;
+        }
+
+        #tree-health-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--tree-health-bar-color);
+            box-shadow: 0 0 10px var(--tree-health-bar-color), 0 0 20px var(--tree-health-bar-color);
+            transition: height 0.3s ease-out;
+            z-index: 1;
+            border-radius: 0 0 50vw 50vw;
+        }
+       
+        #tree-canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        #game-canvas {
+            position: absolute;
+            left: 25%;
+            top: 22%;
+            width: 71%; 
+            height: 56%;
+            background: transparent;
+        }
+
+        #damage-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--damage-flash-color);
+            opacity: 0;
+            transition: opacity 0.1s ease-out;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        #top-bar, #bottom-bar {
+            position: absolute;
+            left: 25%;
+            width: 71%;
+            height: 15%;
+            background-color: var(--ui-bg);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-radius: 15px;
+            padding: 0 10px;
+        }
+        #top-bar { top: 4%; justify-content: space-between; }
+        #bottom-bar { bottom: 4%; justify-content: center; gap: 1vmin; }
+
+        .ui-element {
+            display: flex;
+            align-items: center;
+            background-color: var(--bar-bg);
+            padding: 1vmin 2.5vmin;
+            border-radius: 8px;
+            border: 3px solid #6d4c35;
+            color: var(--text-light);
+            font-size: 2.5vmin;
+            text-shadow: 2px 2px #000;
+        }
+       
+        #level-display {
+             padding: 1.5vmin 3vmin;
+        }
+
+        #auth-container button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #auth-container img {
+            width: 7vmin;
+            height: 7vmin;
+            border-radius: 50%;
+            border: 3px solid #6d4c35;
+        }
+
+        #coffee-bag-container {
+            gap: 15px;
+        }
+        #coffee-bag-icon {
+            width: 8vmin;
+            height: 8vmin;
+            transition: transform 0.15s ease-in-out;
+        }
+        #coffee-bean-counter {
+            font-size: 4vmin;
+            min-width: 3ch;
+            text-align: left;
+        }
+
+        #special-power-bar-container {
+            width: 30vmin;
+            height: 4vmin;
+            background-color: #2a1d1a;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 3px solid #6d4c35;
+        }
+        #special-power-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--power-bar-fill);
+            transition: width 0.2s linear;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        #timeline-container {
+            flex-grow: 1;
+            height: 2.5vmin;
+            margin: 0 2vmin;
+            background-color: #2a1d1a;
+            border: 3px solid #6d4c35;
+            border-radius: 8px;
+            position: relative;
+            overflow: visible;
+        }
+
+        #timeline-progress {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 0%; 
+            background-color: var(--timeline-progress-color);
+            box-shadow: 0 0 5px var(--timeline-progress-color), 0 0 10px var(--timeline-progress-color);
+            transition: width 0.1s linear;
+            border-radius: 0 4px 4px 0;
+        }
+
+        #timeline-worm {
+            position: absolute;
+            top: 50%;
+            right: 0%;
+            height: 5vmin;
+            transform: translate(50%, -50%);
+            transition: right 0.1s linear;
+            z-index: 10;
+        }
+
+        @keyframes pulse-animation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        .pulse { animation: pulse-animation 0.3s ease-in-out; }
+
+        #activate-power-button {
+            padding: 1vmin;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #activate-power-button:disabled {
+            filter: grayscale(1) brightness(0.6);
+            cursor: not-allowed;
+        }
+        #activate-power-button svg {
+            width: 4vmin;
+            height: 4vmin;
+        }
+        @keyframes power-ready-glow {
+            0%, 100% { box-shadow: 0 0 10px #fde047, 0 0 20px #fde047; transform: scale(1); }
+            50% { box-shadow: 0 0 20px #ffc400, 0 0 40px #ffc400; transform: scale(1.1); }
+        }
+        .power-ready {
+            animation: power-ready-glow 1.5s infinite ease-in-out;
+        }
+
+
+        #game-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            text-align: center;
+            color: white;
+            padding: 20px;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        #game-overlay.active {
+            pointer-events: auto;
+        }
+        #game-overlay.hidden {
+            opacity: 0;
+        }
+
+        .overlay-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .overlay-screen.visible {
+            display: flex;
+        }
+       
+        .overlay-screen h1, .overlay-screen h2 { margin-bottom: 20px; color: var(--accent-color); text-shadow: 4px 4px #000; }
+        .overlay-screen h1 { font-size: 8vmin; }
+        .overlay-screen h2 { font-size: 6vmin; }
+        .overlay-screen p { font-size: 3vmin; max-width: 80%; line-height: 1.5; }
+
+        .game-button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 4vmin;
+            padding: 15px 30px;
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 30px;
+            text-shadow: 2px 2px #000;
+            border-bottom: 5px solid #a15a00;
+            transition: all 0.1s ease;
+        }
+        .game-button:active { transform: translateY(3px); border-bottom-width: 2px; }
+
+        #wave-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10vmin;
+            color: #ff4d4d;
+            text-shadow: 5px 5px #000;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 150;
+            pointer-events: none;
+        }
+        #wave-message.visible {
+            opacity: 1;
+        }
+
+        #auth-modal { z-index: 300; }
+        #auth-modal .translucent-panel { background-color: rgba(0,0,0,0.8); border: 2px solid var(--accent-color); }
+
+    </style>
+</head>
+<body>
+    <div id="loading-screen">Cargando...</div>
+
+    <div id="game-container">
+        <div id="background-wrapper"></div>
+
+        <div id="tree-container">
+            <div id="tree-health-bar"></div>
+            <div id="tree-canvas-container"></div>
+        </div>
+       
+        <div id="top-bar">
+             <div id="level-display" class="ui-element">
+                   Nivel: <span id="level-value">1</span>
+             </div>
+             <div id="timeline-container">
+                <div id="timeline-progress"></div>
+                <img id="timeline-worm" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png" alt="Gusano del tiempo">
+             </div>
+             <div id="auth-container">
+             </div>
+        </div>
+
+        <canvas id="game-canvas"></canvas>
+        <div id="damage-flash"></div>
+
+        <div id="bottom-bar">
+             <div id="coffee-bag-container" class="ui-element">
+                  <img id="coffee-bag-icon" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
+                  <span id="coffee-bean-counter">0</span>
+             </div>
+             <button id="activate-power-button" class="ui-element" title="Activar Poder (E)" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .923-.14Z" clip-rule="evenodd" />
+                </svg>
+             </button>
+             <div id="special-power-bar-container">
+                  <div id="special-power-bar"></div>
+             </div>
+        </div>
+
+        <div id="game-overlay" class="hidden">
+            <div id="start-screen" class="overlay-screen">
+                <h1>Runa Defenders</h1>
+                <p>¡Las plagas atacan! Defiende tu cosecha.</p>
+                <button id="start-button" class="game-button">Empezar</button>
+            </div>
+            <div id="game-over-screen" class="overlay-screen">
+                <h1>¡Defensa Caída!</h1>
+                <p>Las plagas han superado tus defensas.</p>
+                <button id="retry-button" class="game-button">Volver a Intentar</button>
+            </div>
+            <div id="level-complete-screen" class="overlay-screen">
+                <h2 id="level-complete-title"></h2>
+                <div id="level-complete-content"></div>
+            </div>
+            <div id="loading-next-level-screen" class="overlay-screen">
+                <h2>Cargando Siguiente Nivel...</h2>
+            </div>
+        </div>
+        
+        <div id="wave-message"></div>
+    </div>
+   
+    <div id="auth-modal" class="fixed inset-0 flex items-center justify-center p-4 bg-black/60 hidden">
+       <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
+            <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-white mb-2" style="font-family: 'Press Start 2P', cursive;">Bienvenido</h2>
+            <p class="text-gray-400 mb-6" style="font-family: 'Poppins', sans-serif;">Inicia sesión para guardar tu progreso.</p>
+            <button id="google-login-button-modal" class="w-full inline-flex items-center justify-center gap-3 px-4 py-2 text-base font-semibold text-gray-700 bg-white border border-transparent rounded-lg shadow-sm hover:bg-gray-200 transition-all" style="font-family: 'Poppins', sans-serif;">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,34.783,44,29.865,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+                <span>Iniciar con Google</span>
+            </button>
+       </div>
+    </div>
+
+<script type="module">
+    // =================================================================
+    // --- MODULE IMPORTS ---
+    // =================================================================
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // =================================================================
+    // --- 3D SCENE MODULE ---
+    // =================================================================
+    let treeScene, treeCamera, treeRenderer, treeModel, raycaster, mouse;
+    let powerOrbsGroup, powerOrbs = [], powerSelectButton;
+    let isRotationPaused = false; // CAMBIO: Flag para pausar la rotación
+    const treeCanvasContainer = document.getElementById('tree-canvas-container');
+    const treeHealthBar = document.getElementById('tree-health-bar');
+    const healthyColor = new THREE.Color(0xffffff);
+    const damagedColor = new THREE.Color(0xff0000);
+
+    function initThreeScene() {
+        treeScene = new THREE.Scene();
+
+        const { width, height } = treeCanvasContainer.getBoundingClientRect();
+        treeCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
+        treeCamera.position.set(0, 1.2, 7);
+        treeCamera.lookAt(0, 0.8, 0);
+
+        treeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        treeRenderer.setClearColor(0x000000, 0);
+        treeRenderer.setSize(width, height);
+        treeRenderer.setPixelRatio(window.devicePixelRatio);
+        treeRenderer.outputColorSpace = THREE.SRGBColorSpace;
+        treeCanvasContainer.appendChild(treeRenderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+        treeScene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
+        directionalLight.position.set(5, 10, 7.5);
+        treeScene.add(directionalLight);
+       
+        const loader = new GLTFLoader();
+        loader.load('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb', (gltf) => {
+            treeModel = gltf.scene;
+            const box = new THREE.Box3().setFromObject(treeModel);
+            const center = box.getCenter(new THREE.Vector3());
+            treeModel.position.y -= box.min.y;
+            treeModel.position.add(center.multiplyScalar(-1));
+           
+            treeModel.scale.set(1.6, 1.6, 1.6);
+            treeScene.add(treeModel);
+
+            // CAMBIO: Crear el botón y añadirlo al modelo del árbol
+            const buttonGeometry = new THREE.CylinderGeometry(0.25, 0.25, 0.1, 32);
+            const buttonMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+            powerSelectButton = new THREE.Mesh(buttonGeometry, buttonMaterial);
+            powerSelectButton.name = "PowerSelectButton";
+            powerSelectButton.position.set(0, 1, 0.5); // Ajustar posición en el tronco
+            powerSelectButton.rotation.x = Math.PI / 2;
+            treeModel.add(powerSelectButton);
+
+            if (base) {
+                updateTreeAppearance();
+            }
+        }, undefined, (error) => {
+            console.error('An error happened while loading the tree model:', error);
+        });
+
+        powerOrbsGroup = new THREE.Group();
+        treeScene.add(powerOrbsGroup);
+
+        const textureLoader = new THREE.TextureLoader();
+        const gifUrls = [
+            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/fire.gif',
+            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/storm.gif',
+            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/rain.gif'
+        ];
+        const orbColors = [0xff8800, 0x00ffff, 0x0088ff];
+
+        const orbGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+
+        for (let i = 0; i < 3; i++) {
+            const angle = (i / 3) * Math.PI * 2;
+            const radius = 1.8;
+
+            const orb = new THREE.Mesh(orbGeometry, null);
+            orb.position.x = Math.cos(angle) * radius;
+            orb.position.z = Math.sin(angle) * radius;
+            orb.position.y = 1.5 + Math.sin(angle * 3) * 0.3;
+
+            orb.lockedMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
+            orb.unlockedMaterial = new THREE.MeshStandardMaterial({
+                map: textureLoader.load(gifUrls[i]),
+                emissive: orbColors[i],
+                emissiveMap: textureLoader.load(gifUrls[i]),
+                emissiveIntensity: 0,
+            });
+
+            const pointLight = new THREE.PointLight(orbColors[i], 0, 5);
+            orb.light = pointLight;
+
+            powerOrbsGroup.add(orb);
+            orb.add(pointLight);
+            powerOrbs.push(orb);
+        }
+        updatePowerOrbsVisuals();
+
+        raycaster = new THREE.Raycaster();
+        mouse = new THREE.Vector2();
+        treeCanvasContainer.addEventListener('click', onPowerSelectClick);
+
+        function animateTree() {
+            requestAnimationFrame(animateTree);
+            // CAMBIO: Rotación constante si no está pausada
+            if (powerOrbsGroup && !isRotationPaused) {
+                powerOrbsGroup.rotation.y += 0.008;
+            }
+            // Animar el botón
+            if (powerSelectButton) {
+                const time = Date.now() * 0.005;
+                powerSelectButton.scale.setScalar(1 + Math.sin(time) * 0.1);
+            }
+            treeRenderer.render(treeScene, treeCamera);
+        }
+        animateTree();
+       
+        const resizeObserver = new ResizeObserver(() => {
+            const { width, height } = treeCanvasContainer.getBoundingClientRect();
+            if (width > 0 && height > 0) {
+                treeCamera.aspect = width / height;
+                treeCamera.updateProjectionMatrix();
+                treeRenderer.setSize(width, height);
+            }
+        });
+        resizeObserver.observe(treeCanvasContainer);
+    }
+
+    // CAMBIO: Lógica de clic para seleccionar poder
+    function onPowerSelectClick(event) {
+        const rect = treeCanvasContainer.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, treeCamera);
+        const intersects = raycaster.intersectObjects(treeScene.children, true);
+
+        const buttonClicked = intersects.some(intersect => intersect.object.name === "PowerSelectButton");
+
+        if (buttonClicked && !isRotationPaused) {
+            isRotationPaused = true;
+
+            // Encontrar el orbe más cercano a la cámara (al frente)
+            let frontOrb = null;
+            let maxZ = -Infinity;
+            const cameraDirection = new THREE.Vector3();
+            treeCamera.getWorldDirection(cameraDirection);
+
+            powerOrbs.forEach(orb => {
+                const orbWorldPos = new THREE.Vector3();
+                orb.getWorldPosition(orbWorldPos);
+                
+                const cameraToOrb = orbWorldPos.clone().sub(treeCamera.position);
+                const dot = cameraToOrb.dot(cameraDirection);
+
+                if (dot > maxZ) {
+                    maxZ = dot;
+                    frontOrb = orb;
+                }
+            });
+
+            if (frontOrb) {
+                // Efecto visual de selección
+                const originalScale = frontOrb.scale.x;
+                frontOrb.scale.setScalar(originalScale * 1.5);
+                frontOrb.light.intensity *= 2;
+                
+                // Volver a la normalidad después de un segundo
+                setTimeout(() => {
+                    frontOrb.scale.setScalar(originalScale);
+                    updatePowerOrbsVisuals(); // Restaura la intensidad de la luz
+                    isRotationPaused = false;
+                }, 1000);
+            } else {
+                 isRotationPaused = false;
+            }
+        }
+    }
+
+
+    function updatePowerOrbsVisuals() {
+        powerOrbs.forEach((orb, i) => {
+            if (unlockedPowers[i]) {
+                orb.material = orb.unlockedMaterial;
+                orb.material.emissiveIntensity = 1.5;
+                orb.light.intensity = 1.5;
+            } else {
+                orb.material = orb.lockedMaterial;
+                orb.light.intensity = 0;
+            }
+        });
+    }
+
+    function updateTreeAppearance() {
+        if (!base || !treeModel) return;
+        const healthPercent = Math.max(0, base.health / base.maxHealth);
+       
+        if (treeHealthBar) {
+            treeHealthBar.style.height = `${healthPercent * 100}%`;
+        }
+
+        treeModel.traverse((node) => {
+            if (node.isMesh && node.material) {
+                if (!node.material.originalColor) {
+                    node.material.originalColor = node.material.color.clone();
+                }
+                node.material.color.copy(node.material.originalColor).lerp(damagedColor, 1 - healthPercent);
+            }
+        });
+    }
+
+    // =================================================================
+    // --- FIREBASE INTEGRATION ---
+    // =================================================================
+    let auth, db, userId = null;
+    const authContainer = document.getElementById('auth-container');
+    const authModal = document.getElementById('auth-modal');
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
+
+    async function initializeAndLoadGame() {
+        try {
+            const firebaseConfig = JSON.parse(firebaseConfigStr);
+            if (Object.keys(firebaseConfig).length === 0) {
+                console.log("Firebase config not found. Starting new game.");
+                init(0, 0, 0, config.base.health, true, [false, false, false]);
+                updateAuthUI(null);
+                return;
+            }
+
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            onAuthStateChanged(auth, async (user) => {
+                updateAuthUI(user);
+                if (user) {
+                    userId = user.uid;
+                    const savedData = await loadGameData();
+                    if (savedData) {
+                        init(
+                            savedData.level || 0, 
+                            savedData.specialPower || 0, 
+                            savedData.coffeeBeans || 0, 
+                            savedData.baseHealth || config.base.health, 
+                            true,
+                            savedData.unlockedPowers || [false, false, false]
+                        );
+                    } else {
+                        init(0, 0, 0, config.base.health, true, [false, false, false]);
+                    }
+                } else {
+                    signInAnonymously(auth).catch(error => {
+                        console.error("Anonymous sign-in failed:", error);
+                        init(0, 0, 0, config.base.health, true, [false, false, false]);
+                    });
+                }
+            });
+
+        } catch (e) {
+            console.error("Firebase initialization failed:", e);
+            init(0, 0, 0, config.base.health, true, [false, false, false]);
+            updateAuthUI(null);
+        }
+    }
+
+    function updateAuthUI(user) {
+        authContainer.innerHTML = '';
+        if (user && !user.isAnonymous) {
+            const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
+            const photoURL = user.photoURL || fallbackImage;
+
+            const userButton = document.createElement('button');
+            userButton.id = 'logout-btn';
+            userButton.title = `Cerrar sesión de ${user.displayName || 'Usuario'}`;
+           
+            const userPhoto = document.createElement('img');
+            userPhoto.src = photoURL;
+            userPhoto.alt = "Foto de Usuario";
+            userPhoto.style.objectFit = user.photoURL ? 'cover' : 'contain';
+            if (!user.photoURL) {
+                 userPhoto.style.padding = '5px';
+                 userPhoto.style.backgroundColor = '#fff';
+            }
+            userPhoto.onerror = () => { userPhoto.src = fallbackImage; };
+
+            userButton.appendChild(userPhoto);
+            authContainer.appendChild(userButton);
+        } else {
+            const loginButton = document.createElement('button');
+            loginButton.id = 'open-login-modal-btn';
+            loginButton.title = 'Iniciar Sesión';
+           
+            const loginImage = document.createElement('img');
+            loginImage.src = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
+            loginImage.alt = "Iniciar Sesión con Google";
+           
+            loginButton.appendChild(loginImage);
+            authContainer.appendChild(loginButton);
+        }
+    }
+
+    async function saveGameData() {
+        if (!userId || !db) return;
+        const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
+        const dataToSave = {
+            level: currentLevelIndex,
+            specialPower: specialPowerPoints,
+            coffeeBeans: coffeeBeanCount,
+            baseHealth: base.health,
+            unlockedPowers: unlockedPowers,
+            timestamp: new Date()
+        };
+        try {
+            await setDoc(gameDataRef, dataToSave, { merge: true });
+        } catch (error) {
+            console.error("Error saving game:", error);
+        }
+    }
+
+    async function loadGameData() {
+        if (!userId || !db) return null;
+        const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
+        try {
+            const docSnap = await getDoc(gameDataRef);
+            return docSnap.exists() ? docSnap.data() : null;
+        } catch (error) {
+            console.error("Error loading game:", error);
+            return null;
+        }
+    }
+
+    // =================================================================
+    // ---  GAME CONFIG & MAIN LOGIC ---
+    // =================================================================
+    const config = {
+        lanes: 4, 
+        playerSpeed: 5, 
+        projectileSpeed: 8, 
+        shootCooldown: 40,
+        fastShootCooldown: 15,
+        specialPowerMax: 100, 
+        powerDrainRate: 20,
+        orbValue: 10, 
+        healingValue: 25,
+        player: {}, base: { health: 1000 },
+        grainImage: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/collectible_coffee_bean.png',
+        orbImage: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/collectible_power_orb.png',
+        enemies: [], levels: []
+    };
+    Object.assign(config, {
+        player: {
+            image: { 
+                idle: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/player.png',
+                attack: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/player.png'
+            },
+            projectileImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iOCIgZmlsbD0iI2Q0NzUwMCIvPjwvc3ZnPg=='
+        },
+        enemies: [
+            { name: 'Broca Débil', health: 20, speed: 0.5, grainChance: 0.8, orbChance: 0.1, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png' },
+            { name: 'Broca Normal', health: 60, speed: 0.4, grainChance: 0.5, orbChance: 0.2, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_2.png' },
+            { name: 'Broca Fuerte', health: 300, speed: 0.3, grainChance: 0.2, orbChance: 0.5, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_3.png' },
+        ],
+        levels: [
+            { duration: 180, waves: [ { startTime: 5, enemyType: 0, spawnInterval: 240 }, { startTime: 40, enemyType: 0, spawnInterval: 180 }, { startTime: 90, enemyType: 0, spawnInterval: 150 }, { startTime: 120, enemyType: 0, spawnInterval: 100 } ]},
+            { duration: 180, waves: [ { startTime: 5, enemyType: 0, spawnInterval: 180 }, { startTime: 30, enemyType: 1, spawnInterval: 480 }, { startTime: 70, enemyType: 0, spawnInterval: 120 }, { startTime: 120, enemyType: 1, spawnInterval: 300 } ]},
+            { duration: 180, waves: [ { startTime: 5, enemyType: 0, spawnInterval: 120 }, { startTime: 20, enemyType: 1, spawnInterval: 300 }, { startTime: 60, enemyType: 0, spawnInterval: 90 }, { startTime: 100, enemyType: 1, spawnInterval: 240 }, { startTime: 120, enemyType: 1, spawnInterval: 180 } ]},
+            { duration: 300, waves: [ { startTime: 10, enemyType: 0, spawnInterval: 150 }, { startTime: 40, enemyType: 1, spawnInterval: 240 }, { startTime: 120, enemyType: 0, spawnInterval: 100 }, { startTime: 180, enemyType: 1, spawnInterval: 180 }, { startTime: 240, enemyType: 1, spawnInterval: 150 } ]},
+            { duration: 300, waves: [ { startTime: 10, enemyType: 1, spawnInterval: 240 }, { startTime: 50, enemyType: 0, spawnInterval: 100 }, { startTime: 120, enemyType: 1, spawnInterval: 180 }, { startTime: 180, enemyType: 2, spawnInterval: 900 }, { startTime: 240, enemyType: 1, spawnInterval: 120 } ]},
+            { duration: 300, waves: [ { startTime: 5, enemyType: 1, spawnInterval: 180 }, { startTime: 45, enemyType: 1, spawnInterval: 150 }, { startTime: 120, enemyType: 0, spawnInterval: 60 }, { startTime: 180, enemyType: 2, spawnInterval: 600 }, { startTime: 240, enemyType: 1, spawnInterval: 100 } ]},
+            { duration: 420, waves: [ { startTime: 10, enemyType: 1, spawnInterval: 150 }, { startTime: 60, enemyType: 0, spawnInterval: 80 }, { startTime: 180, enemyType: 1, spawnInterval: 120 }, { startTime: 240, enemyType: 2, spawnInterval: 600 }, { startTime: 300, enemyType: 1, spawnInterval: 100 }, { startTime: 360, enemyType: 2, spawnInterval: 480 } ]},
+            { duration: 420, waves: [ { startTime: 10, enemyType: 1, spawnInterval: 120 }, { startTime: 50, enemyType: 2, spawnInterval: 720 }, { startTime: 180, enemyType: 1, spawnInterval: 100 }, { startTime: 240, enemyType: 0, spawnInterval: 40 }, { startTime: 300, enemyType: 1, spawnInterval: 80 }, { startTime: 360, enemyType: 2, spawnInterval: 480 } ]},
+            { duration: 420, waves: [ { startTime: 5, enemyType: 2, spawnInterval: 600 }, { startTime: 30, enemyType: 1, spawnInterval: 90 }, { startTime: 180, enemyType: 0, spawnInterval: 30 }, { startTime: 240, enemyType: 1, spawnInterval: 60 }, { startTime: 300, enemyType: 2, spawnInterval: 400 }, { startTime: 360, enemyType: 1, spawnInterval: 50 } ]},
+            { duration: 420, waves: [ { startTime: 5, enemyType: 1, spawnInterval: 60 }, { startTime: 45, enemyType: 2, spawnInterval: 480 }, { startTime: 180, enemyType: 1, spawnInterval: 50 }, { startTime: 240, enemyType: 2, spawnInterval: 300 }, { startTime: 300, enemyType: 1, spawnInterval: 40 }, { startTime: 360, enemyType: 2, spawnInterval: 180 } ]}
+        ]
+    });
+
+    const loadingScreen = document.getElementById('loading-screen');
+    const gameContainer = document.getElementById('game-container');
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    const gameOverlay = document.getElementById('game-overlay');
+    const specialPowerBarContainer = document.getElementById('special-power-bar-container');
+    const specialPowerBar = document.getElementById('special-power-bar');
+    const activatePowerButton = document.getElementById('activate-power-button');
+    const levelValue = document.getElementById('level-value');
+    const damageFlash = document.getElementById('damage-flash');
+    const startScreen = document.getElementById('start-screen');
+    const gameOverScreen = document.getElementById('game-over-screen');
+    const levelCompleteScreen = document.getElementById('level-complete-screen');
+    const loadingNextLevelScreen = document.getElementById('loading-next-level-screen');
+    const waveMessage = document.getElementById('wave-message');
+    const startButton = document.getElementById('start-button');
+    const retryButton = document.getElementById('retry-button');
+    const coffeeBagIcon = document.getElementById('coffee-bag-icon');
+    const coffeeBeanCounterEl = document.getElementById('coffee-bean-counter');
+    const timelineProgress = document.getElementById('timeline-progress');
+    const timelineWorm = document.getElementById('timeline-worm');
+
+    let cellSize, player, base;
+    let projectiles = [], enemies = [], resources = [];
+    let currentLevelIndex = 0, shootTimer = 0, animationFrameId;
+    let specialPowerPoints = 0, coffeeBeanCount = 0;
+    let levelTimer = 0, currentWaveIndex = -1, spawnTimer = 0;
+    let gameState = 'loading';
+    let globalAnimationTimer = 0;
+    let levelMessagesShown = [];
+    let isPowerActive = false;
+    let unlockedPowers = [false, false, false];
+
+    const sounds = {
+        shoot: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
+        collect: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 } }).toDestination(),
+        heal: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0.1, release: 0.2 } }).toDestination(),
+        baseHit: new Tone.MembraneSynth({ pitchDecay: 0.1, octaves: 2, envelope: { attack: 0.01, decay: 0.3, sustain: 0.01, release: 0.4 } }).toDestination(),
+        enemyHit: new Tone.PolySynth(Tone.NoiseSynth, { noise: { type: 'pink' }, envelope: { attack: 0.01, decay: 0.05, sustain: 0, release: 0.05 } }).toDestination(),
+        gameOver: new Tone.PolySynth(Tone.Synth).toDestination(),
+        levelUp: new Tone.PolySynth(Tone.Synth).toDestination(),
+        waveWarning: new Tone.MembraneSynth({ pitchDecay: 0.2, octaves: 5, envelope: { attack: 0.01, decay: 0.5, sustain: 0.01, release: 0.8 } }).toDestination(),
+        powerUp: new Tone.PolySynth(Tone.FMSynth, { harmonicity: 2, modulationIndex: 10, detune: 0, oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.5 }, modulation: { type: "square" }, modulationEnvelope: { attack: 0.1, decay: 0.1, sustain: 0.3, release: 0.5 } }).toDestination(),
+        powerDown: new Tone.PolySynth(Tone.AMSynth, { harmonicity: 1.5, detune: 0, oscillator: { type: "square" }, envelope: { attack: 0.01, decay: 0.5, sustain: 0, release: 0.5 }, modulation: { type: "sawtooth" }, modulationEnvelope: { attack: 0.1, decay: 0.2, sustain: 0, release: 0.5 } }).toDestination()
+    };
+
+    function playSound(sound, note, duration = '8n') {
+        if (Tone.context.state !== 'running') return;
+        if (sounds[sound]) sounds[sound].triggerAttackRelease(note, duration);
+    }
+   
+    class Player {
+        constructor() { this.reset(); }
+        reset() {
+            this.width = cellSize * 0.9;
+            this.height = cellSize * 0.9;
+            this.x = 10; 
+            this.baseY = canvas.height / 2 - this.height / 2;
+            this.y = this.baseY;
+            this.speed = config.playerSpeed;
+            this.image = new Image();
+            this.image.src = config.player.image.idle;
+            this.attackImage = new Image();
+            this.attackImage.src = config.player.image.attack;
+            this.isAttacking = false;
+        }
+        draw() {
+            const bobble = Math.sin(globalAnimationTimer * 4) * (cellSize * 0.02);
+            ctx.drawImage(this.isAttacking ? this.attackImage : this.image, this.x, this.y + bobble, this.width, this.height);
+        }
+        update() {
+            if (this.y < 0) this.y = 0;
+            if (this.y > canvas.height - this.height) this.y = canvas.height - this.height;
+        }
+        shoot() {
+            if (shootTimer > 0 || gameState !== 'playing') return;
+            projectiles.push(new Projectile(this.x + this.width, this.y + this.height / 2));
+            shootTimer = isPowerActive ? config.fastShootCooldown : config.shootCooldown;
+            playSound('shoot', 'C5', '16n');
+            this.isAttacking = true;
+            setTimeout(() => this.isAttacking = false, 100);
+        }
+    }
+    class Projectile {
+        constructor(x, y) {
+            this.x = x; this.y = y - 10; this.width = 20; this.height = 20;
+            this.speed = config.projectileSpeed; this.power = 20;
+            this.image = new Image(); this.image.src = config.player.projectileImage;
+        }
+        update() { this.x += this.speed; }
+        draw() { ctx.drawImage(this.image, this.x, this.y, this.width, this.height); }
+    }
+    class Enemy {
+        constructor(lane, typeIndex) {
+            this.type = config.enemies[typeIndex];
+            this.width = cellSize - 10; this.height = cellSize - 10;
+            this.x = canvas.width + 700; 
+            this.baseY = (lane * cellSize) + 5;
+            this.y = this.baseY;
+            this.speed = this.type.speed; this.health = this.type.health;
+            this.maxHealth = this.health;
+            this.image = new Image(); this.image.src = this.type.image;
+        }
+        update() { this.x -= this.speed; }
+        draw() { 
+            const bobble = Math.sin(globalAnimationTimer * 5 + this.baseY) * (cellSize * 0.05);
+            ctx.drawImage(this.image, this.x, this.y + bobble, this.width, this.height);
+           
+            if (this.health < this.maxHealth) {
+                ctx.fillStyle = 'red'; ctx.fillRect(this.x, this.y - 10 + bobble, this.width, 5);
+                ctx.fillStyle = 'green'; ctx.fillRect(this.x, this.y - 10 + bobble, this.width * (this.health / this.maxHealth), 5);
+            }
+        }
+    }
+    class Resource {
+        constructor(x, y, type) {
+            this.x = x; this.y = y; 
+            this.size = 45; 
+            this.type = type;
+            this.image = new Image(); this.image.src = type === 'grain' ? config.grainImage : config.orbImage;
+            this.life = 400;
+            this.isFlying = false;
+        }
+        update() { this.life--; }
+        draw() {
+            if (this.isFlying) return;
+            const scale = 1 + Math.sin(globalAnimationTimer * 6) * 0.08;
+            const newSize = this.size * scale;
+            const sizeDiff = (newSize - this.size) / 2;
+
+            ctx.globalAlpha = this.life < 60 ? this.life / 60 : 1;
+            ctx.drawImage(this.image, this.x - sizeDiff, this.y - sizeDiff, newSize, newSize);
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    function isColliding(a,b){ return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y; }
+    function triggerDamageFlash() {
+        damageFlash.style.opacity = 1;
+        setTimeout(() => { damageFlash.style.opacity = 0; }, 150);
+    }
+
+    function handleCollisions() {
+        for (let i = projectiles.length - 1; i >= 0; i--) {
+            for (let j = enemies.length - 1; j >= 0; j--) {
+                if (projectiles[i] && enemies[j] && isColliding(projectiles[i], enemies[j])) {
+                    enemies[j].health -= projectiles[i].power; 
+                    projectiles.splice(i, 1); 
+                    playSound('enemyHit');
+
+                    if (enemies[j].health <= 0) {
+                        const enemy = enemies[j];
+                        const dropX = Math.min(enemy.x, canvas.width - enemy.width);
+                        const dropY = enemy.y;
+
+                        if (Math.random() < enemy.type.grainChance) {
+                            resources.push(new Resource(dropX, dropY, 'grain'));
+                        }
+                        if (Math.random() < enemy.type.orbChance) {
+                            resources.push(new Resource(dropX, dropY, 'orb'));
+                        }
+                        enemies.splice(j, 1);
+                    }
+                    break; 
+                }
+            }
+        }
+        for (let i = enemies.length - 1; i >= 0; i--) {
+            if (enemies[i].x < player.x + player.width) { 
+                base.health -= 50; updateTreeAppearance(); triggerDamageFlash(); playSound('baseHit', 'C2', '4n');
+                enemies.splice(i, 1);
+                if (base.health <= 0) { gameState = 'game_over'; playSound('gameOver', 'C3', '1n'); }
+            }
+        }
+    }
+   
+    function showWaveMessage(text) {
+        waveMessage.textContent = text;
+        waveMessage.classList.add('visible');
+        playSound('waveWarning', 'C4', '2n');
+        setTimeout(() => {
+            waveMessage.classList.remove('visible');
+        }, 2500);
+    }
+
+    function handleGameLogic() {
+        globalAnimationTimer += 0.02;
+        if (shootTimer > 0) shootTimer--;
+        levelTimer += 1/60;
+
+        if (isPowerActive) {
+            specialPowerPoints -= (config.powerDrainRate / 60);
+            if (specialPowerPoints <= 0) {
+                isPowerActive = false;
+                specialPowerPoints = 0;
+                playSound('powerDown', 'G3', '4n');
+                activatePowerButton.classList.remove('power-ready');
+            }
+        }
+
+        projectiles.forEach((p, i) => { p.update(); if (p.x > canvas.width) projectiles.splice(i, 1); });
+        enemies.forEach(e => e.update());
+        resources.forEach((r, i) => { r.update(); if (r.life <= 0) resources.splice(i, 1); });
+        handleCollisions();
+        handleLevelProgression();
+    }
+
+    function handleLevelProgression() {
+        if (gameState !== 'playing') return;
+        const currentLevel = config.levels[currentLevelIndex];
+        const levelDuration = currentLevel.duration;
+
+        if (levelTimer >= levelDuration && enemies.length === 0) {
+            startNextLevel(); 
+            return; 
+        }
+
+        if (currentLevelIndex < 3) {
+            if (levelTimer >= 120 && !levelMessagesShown[0]) {
+                levelMessagesShown[0] = true; showWaveMessage("¡Oleada Final!");
+            }
+        } else if (currentLevelIndex < 6) {
+            if (levelTimer >= 120 && !levelMessagesShown[0]) {
+                levelMessagesShown[0] = true; showWaveMessage("¡Se acerca una gran oleada!");
+            }
+            if (levelTimer >= 240 && !levelMessagesShown[1]) {
+                levelMessagesShown[1] = true; showWaveMessage("¡Oleada Final!");
+            }
+        } else {
+            if (levelTimer >= 180 && !levelMessagesShown[0]) {
+                levelMessagesShown[0] = true; showWaveMessage("¡Oleada Intensa!");
+            }
+            if (levelTimer >= 360 && !levelMessagesShown[1]) {
+                levelMessagesShown[1] = true; showWaveMessage("¡Oleada Final!");
+            }
+        }
+
+        if (levelTimer < levelDuration) {
+            const nextWaveIndex = currentWaveIndex + 1;
+            if (nextWaveIndex < currentLevel.waves.length && levelTimer >= currentLevel.waves[nextWaveIndex].startTime) {
+                currentWaveIndex = nextWaveIndex; spawnTimer = 0;
+            }
+            
+            if (currentWaveIndex > -1) {
+                if (spawnTimer > 0) {
+                    spawnTimer--;
+                } else if (enemies.length < 20) { 
+                    spawnEnemy(); 
+                    spawnTimer = currentLevel.waves[currentWaveIndex].spawnInterval; 
+                }
+            }
+        }
+    }
+
+    function startNextLevel() {
+        gameState = 'level_complete';
+        playSound('levelUp', 'C6', '2n');
+        
+        if (currentLevelIndex === 2) unlockedPowers[0] = true;
+        if (currentLevelIndex === 5) unlockedPowers[1] = true;
+        if (currentLevelIndex === 8) unlockedPowers[2] = true;
+        updatePowerOrbsVisuals();
+
+        saveGameData();
+        showOverlay('level_complete');
+    }
+
+    function spawnEnemy() {
+        const currentWave = config.levels[currentLevelIndex].waves[currentWaveIndex];
+        enemies.push(new Enemy(Math.floor(Math.random() * config.lanes), currentWave.enemyType));
+    }
+
+    function draw() { 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (player) player.draw();
+        projectiles.forEach(p => p.draw());
+        enemies.forEach(e => e.draw());
+        resources.forEach(r => r.draw());
+    }
+
+    function updateUI() { 
+        levelValue.textContent = currentLevelIndex + 1;
+        coffeeBeanCounterEl.textContent = coffeeBeanCount;
+        specialPowerBar.style.width = `${(specialPowerPoints / config.specialPowerMax) * 100}%`;
+
+        if (specialPowerPoints >= config.specialPowerMax && !isPowerActive) {
+            activatePowerButton.disabled = false;
+            activatePowerButton.classList.add('power-ready');
+        } else {
+            activatePowerButton.disabled = true;
+            activatePowerButton.classList.remove('power-ready');
+        }
+
+        const currentLevel = config.levels[currentLevelIndex];
+        if (currentLevel) {
+            const duration = currentLevel.duration;
+            const progressPercent = Math.min((levelTimer / duration) * 100, 100);
+
+            timelineProgress.style.width = `${progressPercent}%`;
+            timelineWorm.style.right = `${progressPercent}%`;
+        }
+    }
+
+    function gameLoop() {
+        if (gameState === 'playing') {
+            handleGameLogic();
+            updateUI(); 
+        }
+        draw();
+       
+        if (gameState === 'game_over') showOverlay('game_over');
+        else if (gameState !== 'level_complete') animationFrameId = requestAnimationFrame(gameLoop);
+    }
+
+    function showOverlay(type) {
+        if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
+
+        gameOverlay.classList.remove('hidden');
+        gameOverlay.classList.add('active');
+
+        startScreen.classList.remove('visible');
+        gameOverScreen.classList.remove('visible');
+        levelCompleteScreen.classList.remove('visible');
+        loadingNextLevelScreen.classList.remove('visible');
+
+        if (type === 'start') {
+            startButton.textContent = `Empezar Nivel ${currentLevelIndex + 1}`;
+            startScreen.classList.add('visible');
+        } else if (type === 'game_over') {
+            gameOverScreen.classList.add('visible');
+        } else if (type === 'loading_next') {
+            loadingNextLevelScreen.classList.add('visible');
+        } else if (type === 'level_complete') {
+            const nextLevelExists = currentLevelIndex + 1 < config.levels.length;
+            levelCompleteScreen.querySelector('h2').textContent = `¡Nivel ${currentLevelIndex + 1} Superado!`;
+            const content = levelCompleteScreen.querySelector('div');
+            
+            if (nextLevelExists) {
+                content.innerHTML = `<button id="next-level-button" class="game-button">Siguiente Nivel</button>`;
+                content.querySelector('#next-level-button').addEventListener('click', () => {
+                    showOverlay('loading_next');
+                    setTimeout(() => {
+                        currentLevelIndex++; 
+                        init(currentLevelIndex, specialPowerPoints, coffeeBeanCount, base.health, false, unlockedPowers);
+                    }, 1500);
+                }, { once: true });
+            } else {
+                content.innerHTML = `<h1>¡VICTORIA TOTAL!</h1><p>¡Has defendido la cosecha!</p>`;
+            }
+            levelCompleteScreen.classList.add('visible');
+        }
+    }
+
+    function init(level = 0, power = 0, beans = 0, health = config.base.health, isFirstLoad = true, powers = [false, false, false]) {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+       
+        currentLevelIndex = level;
+        specialPowerPoints = power;
+        coffeeBeanCount = beans;
+        base = { health: Math.min(health, config.base.health), maxHealth: config.base.health };
+        unlockedPowers = powers;
+       
+        levelTimer = 0; currentWaveIndex = -1;
+        enemies = []; projectiles = []; resources = [];
+        levelMessagesShown = [];
+        isPowerActive = false;
+
+        resizeAll(); 
+        updateTreeAppearance();
+        updatePowerOrbsVisuals();
+        updateUI();
+       
+        gameState = 'start';
+        showOverlay('start');
+
+        if (isFirstLoad) {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+        }
+    }
+
+    function activateSpecialPower() {
+        if (specialPowerPoints >= config.specialPowerMax && !isPowerActive && gameState === 'playing') {
+            isPowerActive = true;
+            playSound('powerUp', 'C5', '2n');
+            updateUI();
+        }
+    }
+
+    function setupEventListeners() {
+        const handleStart = async (event) => {
+            event.preventDefault();
+            try { if (Tone.context.state !== 'running') await Tone.start(); } 
+            catch (e) { console.error("Could not start audio context:", e); }
+
+            gameState = 'playing';
+            gameContainer.classList.add('playing');
+            gameOverlay.classList.add('hidden');
+            gameOverlay.classList.remove('active');
+            spawnTimer = 0;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            gameLoop();
+        };
+        startButton.addEventListener('click', handleStart);
+
+        retryButton.addEventListener('click', (e) => { e.preventDefault(); init(currentLevelIndex, 0, 0, config.base.health, false, unlockedPowers); });
+
+        activatePowerButton.addEventListener('click', activateSpecialPower);
+        window.addEventListener('keydown', e => {
+            if (e.key.toLowerCase() === 'e') {
+                activateSpecialPower();
+            }
+        });
+
+        document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
+       
+        document.getElementById('google-login-button-modal').addEventListener('click', () => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider).then(() => {
+                authModal.classList.add('hidden');
+            }).catch(error => console.error("Google Sign-In Error:", error));
+        });
+
+        authContainer.addEventListener('click', (event) => {
+            const button = event.target.closest('button');
+            if (!button) return;
+
+            if (button.id === 'open-login-modal-btn') {
+                authModal.classList.remove('hidden');
+            } else if (button.id === 'logout-btn') {
+                signOut(auth).catch(error => console.error("Sign out error", error));
+            }
+        });
+
+        let keys = {};
+        window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
+        window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+       
+        function controlLoop() {
+            if (gameState === 'playing' && player) {
+                if (keys['w'] || keys['arrowup']) player.y -= player.speed;
+                if (keys['s'] || keys['arrowdown']) player.y += player.speed;
+                if (keys[' ']) player.shoot();
+                player.update();
+            }
+            requestAnimationFrame(controlLoop);
+        }
+        controlLoop();
+
+        let isDragging = false, didDrag = false, touchYOffset = 0, touchStartY = 0;
+        canvas.addEventListener('touchstart', e => {
+            e.preventDefault(); 
+            if (!player) return;
+            const touch = e.touches[0]; 
+            const rect = canvas.getBoundingClientRect();
+            isDragging = true; 
+            didDrag = false;
+            const currentY = touch.clientY - rect.top;
+            touchStartY = currentY; 
+            touchYOffset = currentY - player.y;
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault(); 
+            if (!isDragging || !player) return;
+            const touch = e.touches[0]; 
+            const rect = canvas.getBoundingClientRect();
+            const newY = touch.clientY - rect.top;
+            if (Math.abs(newY - touchStartY) > 5) didDrag = true;
+            player.y = newY - touchYOffset;
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', e => {
+            e.preventDefault();
+            if (didDrag || !player) {
+                isDragging = false;
+                didDrag = false;
+                return;
+            }
+           
+            isDragging = false;
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.changedTouches[0].clientX - rect.left;
+            const clickY = e.changedTouches[0].clientY - rect.top;
+
+            if (clickX >= player.x && clickX <= player.x + player.width &&
+                clickY >= player.y && clickY <= player.y + player.height) {
+                player.shoot();
+            } else {
+                checkResourceClick(clickX, clickY);
+            }
+        });
+
+        canvas.addEventListener('click', e => {
+            if (!player) return;
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            if (clickX >= player.x && clickX <= player.x + player.width &&
+                clickY >= player.y && clickY <= player.y + player.height) {
+                player.shoot();
+            } else {
+                checkResourceClick(clickX, clickY);
+            }
+        });
+    }
+
+    function checkResourceClick(x, y) {
+        for (let i = resources.length - 1; i >= 0; i--) {
+            const r = resources[i];
+            if (r.isFlying) continue;
+
+            const dist = Math.sqrt(Math.pow(x - (r.x + r.size/2), 2) + Math.pow(y - (r.y + r.size/2), 2));
+           
+            if (dist < r.size) { 
+                if (r.type === 'grain') {
+                    r.isFlying = true;
+                    animateResourceToBag(r);
+                } else {
+                    specialPowerPoints = Math.min(config.specialPowerMax, specialPowerPoints + config.orbValue);
+                    playSound('collect', 'G5');
+                    updateUI();
+                    resources.splice(i, 1);
+                }
+                break;
+            }
+        }
+    }
+
+    function animateResourceToBag(resource) {
+        const flyingBean = new Image();
+        flyingBean.src = config.grainImage;
+        flyingBean.style.position = 'absolute';
+        flyingBean.style.zIndex = '999';
+        flyingBean.style.width = `${resource.size}px`;
+        flyingBean.style.height = `${resource.size}px`;
+        flyingBean.style.pointerEvents = 'none';
+
+        const canvasRect = canvas.getBoundingClientRect();
+        const startX = canvasRect.left + resource.x;
+        const startY = canvasRect.top + resource.y;
+       
+        document.body.appendChild(flyingBean);
+
+        const duration = 800;
+        let startTime = null;
+
+        function animationLoop(currentTime) {
+            if (!startTime) startTime = currentTime;
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / duration, 1);
+
+            const bagRect = coffeeBagIcon.getBoundingClientRect();
+            const endX = bagRect.left + bagRect.width / 2 - resource.size / 2;
+            const endY = bagRect.top + bagRect.height / 2 - resource.size / 2;
+
+            const currentX = startX + (endX - startX) * progress;
+            const currentY = startY + (endY - startY) * progress;
+            const scale = 1 - (0.8 * progress);
+
+            flyingBean.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
+
+            if (progress < 1) {
+                requestAnimationFrame(animationLoop);
+            } else {
+                base.health = Math.min(base.maxHealth, base.health + config.healingValue);
+                coffeeBeanCount++;
+                updateTreeAppearance();
+                updateUI();
+                playSound('heal', 'A5');
+
+                coffeeBagIcon.classList.add('pulse');
+                setTimeout(() => coffeeBagIcon.classList.remove('pulse'), 300);
+
+                document.body.removeChild(flyingBean);
+                const originalResourceIndex = resources.findIndex(res => res === resource);
+                if (originalResourceIndex > -1) {
+                    resources.splice(originalResourceIndex, 1);
+                }
+            }
+        }
+       
+        flyingBean.style.transform = `translate(${startX}px, ${startY}px)`;
+        requestAnimationFrame(animationLoop);
+    }
+   
+    function resizeAll() {
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+        if (canvas.height > 0) cellSize = canvas.height / config.lanes;
+        if (!player) player = new Player();
+        else player.reset();
+        if(gameState !== 'playing') draw();
+    }
+
+    // --- INITIALIZE EVERYTHING ---
+    document.addEventListener('DOMContentLoaded', () => {
+        setupEventListeners();
+        initThreeScene();
+        initializeAndLoadGame();
+        window.addEventListener('resize', resizeAll);
+    });
+</script>
+
+</body>
+</html>
