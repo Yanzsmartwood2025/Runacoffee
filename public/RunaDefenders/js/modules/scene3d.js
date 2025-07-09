@@ -12,7 +12,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 let treeScene, treeCamera, treeRenderer, treeModel;
 const damagedColor = new THREE.Color(0xff0000);
 
-export function initThreeScene(container) {
+// --- CORRECCIÓN: Pasamos el gameContext para poder pausar la animación ---
+export function initThreeScene(container, gameContext) {
     treeScene = new THREE.Scene();
 
     const { width, height } = container.getBoundingClientRect();
@@ -35,7 +36,7 @@ export function initThreeScene(container) {
     
     const loader = new GLTFLoader();
     
-    // --- RUTA DEL MODELO 3D ACTUALIZADA A LA URL RAW DE GITHUB ---
+    // Usamos la URL de GitHub para evitar problemas de rutas locales
     const modelUrl = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb';
 
     loader.load(modelUrl, (gltf) => {
@@ -53,6 +54,8 @@ export function initThreeScene(container) {
 
     function animateTree() {
         requestAnimationFrame(animateTree);
+        // --- CORRECCIÓN: No renderizar si el juego está en pausa ---
+        if (gameContext.gameState === 'paused') return;
         treeRenderer.render(treeScene, treeCamera);
     }
     animateTree();
