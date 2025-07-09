@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Runa Defenders - Nuevo Comienzo</title>
 
+    <!-- Fuentes de Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Nuestro archivo de estilos -->
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+    <!-- Pantalla de carga inicial -->
+    <div id="loading-screen">Cargando...</div>
+
+    <!-- Contenedor principal del juego -->
+    <div id="game-container">
+        <!-- Fondo del juego -->
+        <div id="background-wrapper"></div>
+
+        <!-- Lienzo principal del juego donde se mueven los personajes -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- === BARRA SUPERIOR DE INTERFAZ === -->
+        <div id="top-bar">
+            <button id="pause-button" title="Pausa (Esc)">Pausa</button>
+            <div id="level-display">Nivel: <span id="level-value">1</span></div>
+            <div id="timeline-container">
+                <div id="timeline-progress"></div>
+                <img id="timeline-worm" src="imagenes/enemy_broca_1.png" alt="Gusano del tiempo">
+            </div>
+            <!-- Aquí irá el botón de login/logout -->
+            <div id="auth-container"></div>
+        </div>
+
+        <!-- === BARRA INFERIOR DE INTERFAZ === -->
+        <div id="bottom-bar">
+            <div id="coffee-bag-container">
+                <img id="coffee-bag-icon" src="imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
+                <span id="coffee-bean-counter">0</span>
+            </div>
+            <button id="power-button" title="Activar Poder (E)" disabled>Poder</button>
+            <div id="power-bar-container">
+                <div id="power-bar"></div>
+            </div>
+        </div>
+
+        <!-- === SUPERPOSICIONES (Overlays) === -->
+        <div id="game-overlay" class="hidden">
+            <!-- Pantalla de Inicio -->
+            <div id="start-screen" class="overlay-screen">
+                <h1>Runa Defenders</h1>
+                <button id="start-button">Empezar</button>
+            </div>
+            <!-- Pantalla de Game Over -->
+            <div id="game-over-screen" class="overlay-screen">
+                <h1>¡Juego Terminado!</h1>
+                <button id="retry-button">Reintentar</button>
+            </div>
+            <!-- Pantalla de Pausa -->
+            <div id="pause-screen" class="overlay-screen">
+                <h2>Pausa</h2>
+                <button id="resume-button">Reanudar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Punto de entrada principal de nuestro juego -->
+    <script src="js/main.js" type="module"></script>
+</body>
+</html>
