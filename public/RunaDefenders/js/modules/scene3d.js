@@ -34,7 +34,11 @@ export function initThreeScene(container) {
     treeScene.add(directionalLight);
     
     const loader = new GLTFLoader();
-    loader.load('https/raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb', (gltf) => {
+    
+    // --- RUTA DEL MODELO 3D ACTUALIZADA A LA URL RAW DE GITHUB ---
+    const modelUrl = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb';
+
+    loader.load(modelUrl, (gltf) => {
         treeModel = gltf.scene;
         const box = new THREE.Box3().setFromObject(treeModel);
         const center = box.getCenter(new THREE.Vector3());
@@ -43,16 +47,16 @@ export function initThreeScene(container) {
         
         treeModel.scale.set(1.6, 1.6, 1.6);
         treeScene.add(treeModel);
+    }, undefined, (error) => {
+        console.error("No se pudo cargar el modelo 3D desde la URL:", error);
     });
 
     function animateTree() {
         requestAnimationFrame(animateTree);
-        // Aquí podría ir lógica de animación, como rotación
         treeRenderer.render(treeScene, treeCamera);
     }
     animateTree();
     
-    // Ajustar tamaño al cambiar la ventana
     const resizeObserver = new ResizeObserver(() => {
         const { width, height } = container.getBoundingClientRect();
         if (width > 0 && height > 0) {
