@@ -1,24 +1,21 @@
 /*
 * =================================================================
-* ARCHIVO: RunaDefenders/js/modules/scene3d.js
+* ARCHIVO: js/modules/scene3d.js
 * =================================================================
-* Propósito: Encapsula toda la lógica de Three.js para renderizar
-* y gestionar la escena del Árbol Runa.
+* Propósito: Maneja toda la lógica de la escena 3D del árbol
+* usando Three.js.
 */
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// Variables para la escena 3D
 let treeScene, treeCamera, treeRenderer, treeModel;
-const healthyColor = new THREE.Color(0xffffff);
 const damagedColor = new THREE.Color(0xff0000);
 
-// Inicializa toda la escena 3D
-export function initThreeScene(treeCanvasContainer) {
+export function initThreeScene(container) {
     treeScene = new THREE.Scene();
 
-    const { width, height } = treeCanvasContainer.getBoundingClientRect();
+    const { width, height } = container.getBoundingClientRect();
     treeCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
     treeCamera.position.set(0, 1.2, 7);
     treeCamera.lookAt(0, 0.8, 0);
@@ -28,61 +25,51 @@ export function initThreeScene(treeCanvasContainer) {
     treeRenderer.setSize(width, height);
     treeRenderer.setPixelRatio(window.devicePixelRatio);
     treeRenderer.outputColorSpace = THREE.SRGBColorSpace;
-    treeCanvasContainer.appendChild(treeRenderer.domElement);
+    container.appendChild(treeRenderer.domElement);
 
-    // Luces
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
     treeScene.add(ambientLight);
     const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
     directionalLight.position.set(5, 10, 7.5);
     treeScene.add(directionalLight);
-
-    // Cargar modelo del árbol
+    
     const loader = new GLTFLoader();
-    loader.load(
-        // RUTA CORREGIDA: Le decimos que suba dos niveles de carpeta (de /js/modules/ a /RunaDefenders/)
-        // y luego entre a la carpeta /assets/ compartida.
-        '../../assets/3D/arbol_runa.glb', 
-        (gltf) => {
-            treeModel = gltf.scene;
-            const box = new THREE.Box3().setFromObject(treeModel);
-            treeModel.position.y -= box.min.y;
-            treeModel.scale.set(1.6, 1.6, 1.6);
-            treeScene.add(treeModel);
-        },
-        undefined,
-        (error) => console.error('Error loading tree model:', error)
-    );
+    loader.load('https/raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb', (gltf) => {
+        treeModel = gltf.scene;
+        const box = new THREE.Box3().setFromObject(treeModel);
+        const center = box.getCenter(new THREE.Vector3());
+        treeModel.position.y -= box.min.y;
+        treeModel.position.add(center.multiplyScalar(-1));
+        
+        treeModel.scale.set(1.6, 1.6, 1.6);
+        treeScene.add(treeModel);
+    });
 
-    // Bucle de animación
     function animateTree() {
         requestAnimationFrame(animateTree);
-        if (treeModel) {
-            treeModel.rotation.y += 0.005;
-        }
+        // Aquí podría ir lógica de animación, como rotación
         treeRenderer.render(treeScene, treeCamera);
     }
     animateTree();
-
-    // Observador para redimensionar
+    
+    // Ajustar tamaño al cambiar la ventana
     const resizeObserver = new ResizeObserver(() => {
-        const { width, height } = treeCanvasContainer.getBoundingClientRect();
+        const { width, height } = container.getBoundingClientRect();
         if (width > 0 && height > 0) {
             treeCamera.aspect = width / height;
             treeCamera.updateProjectionMatrix();
             treeRenderer.setSize(width, height);
         }
     });
-    resizeObserver.observe(treeCanvasContainer);
+    resizeObserver.observe(container);
 }
 
-// Actualiza la apariencia del árbol según su vida
-export function updateTreeAppearance(base, treeHealthBar) {
+export function updateTreeAppearance(base, healthBarElement) {
     if (!base || !treeModel) return;
     const healthPercent = Math.max(0, base.health / base.maxHealth);
-
-    if (treeHealthBar) {
-        treeHealthBar.style.height = `${healthPercent * 100}%`;
+    
+    if (healthBarElement) {
+        healthBarElement.style.height = `${healthPercent * 100}%`;
     }
 
     treeModel.traverse((node) => {
