@@ -1,7 +1,9 @@
+// Importamos las clases necesarias
 import { Player } from './entities/Player.js';
 import { Enemy } from './entities/Enemy.js';
-// ¡Importamos nuestro "menú" de enemigos!
+import { Projectile } from './entities/Projectile.js'; // <-- Nueva importación
 import { enemyTypes } from './config.js';
+import { UI } from './ui.js';
 
 window.addEventListener('load', function(){
     const canvas = document.getElementById('game-canvas');
@@ -13,7 +15,9 @@ window.addEventListener('load', function(){
         constructor(width, height){
             this.width = width;
             this.height = height;
-            
+            this.gameState = 'loading';
+            this.ui = new UI(this);
+
             this.numberOfLanes = 4;
             this.lanePositions = [];
             const laneHeight = this.height / this.numberOfLanes;
@@ -22,75 +26,76 @@ window.addEventListener('load', function(){
             }
 
             this.player = new Player(this);
+            this.enemies = [];
+            this.projectiles = []; // <-- Array para guardar los proyectiles activos
 
-            // --- LÓGICA DE ENEMIGOS ---
-            this.enemies = []; // El array que contendrá los enemigos en pantalla
             this.enemyTimer = 0;
-            this.enemyInterval = 2000; // Crear un enemigo cada 2 segundos
-
-            // Lista de las claves de los enemigos que podemos crear
+            this.enemyInterval = 2000;
             this.availableEnemyKeys = Object.keys(enemyTypes);
-
-            // ... (el código de manejo de teclas se queda igual) ...
+            
+            // --- MANEJO DE EVENTOS ---
+            this.ui.startButton.addEventListener('click', () => this.startGame());
+            this.ui.retryButton.addEventListener('click', () => this.restartGame());
+            this.ui.resumeButton.addEventListener('click', () => this.resumeGame());
+            
             this.keys = {};
             window.addEventListener('keydown', (e) => {
+                if (this.gameState !== 'running') return;
+                
+                // Movimiento (sin cambios)
                 if ((e.key === 'w' || e.key === 'ArrowUp' || e.key === 's' || e.key === 'ArrowDown') && !this.keys[e.key]) {
                     this.keys[e.key] = true;
                     if (e.key === 'w' || e.key === 'ArrowUp') this.player.moveUp();
                     else if (e.key === 's' || e.key === 'ArrowDown') this.player.moveDown();
+                }
+
+                // ¡NUEVO! Lógica de disparo
+                if (e.key === ' ' || e.key.toLowerCase() === 'spacebar') {
+                    // Añadimos un nuevo proyectil al array del juego
+                    this.projectiles.push(this.player.shoot());
                 }
             });
             window.addEventListener('keyup', (e) => { delete this.keys[e.key]; });
         }
 
         update(){
+            if (this.gameState !== 'running') return;
+            
             this.player.update();
 
-            // Si ha pasado suficiente tiempo, añadimos un nuevo enemigo
+            // Actualizamos los proyectiles
+            this.projectiles.forEach(p => p.update());
+            this.projectiles = this.projectiles.filter(p => !p.markedForDeletion);
+            
+            // Actualizamos los enemigos (sin cambios)
             if (this.enemyTimer > this.enemyInterval){
                 this.addEnemy();
                 this.enemyTimer = 0;
             } else {
-                this.enemyTimer += 16; // Aproximadamente 16ms por fotograma
+                this.enemyTimer += 16;
             }
-
-            // Actualizamos cada enemigo en el array
-            this.enemies.forEach(enemy => {
-                enemy.update();
-            });
-
-            // Filtramos y eliminamos los enemigos que ya salieron de la pantalla
+            this.enemies.forEach(enemy => enemy.update());
             this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
         }
 
         draw(context){
-            // ... (el código para dibujar los carriles se queda igual) ...
-            context.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-            context.lineWidth = 2;
-            this.lanePositions.forEach(pos => {
-                context.beginPath();
-                context.moveTo(0, pos);
-                context.lineTo(this.width, pos);
-                context.stroke();
-            });
-
             this.player.draw(context);
-
-            // Dibujamos cada enemigo en el array
-            this.enemies.forEach(enemy => {
-                enemy.draw(context);
-            });
+            this.enemies.forEach(enemy => enemy.draw(context));
+            // Dibujamos los proyectiles
+            this.projectiles.forEach(p => p.draw(context));
         }
 
-        // Nuevo método para añadir un enemigo
         addEnemy(){
-            // Elegimos una "receta" de enemigo al azar de nuestro menú
             const randomKey = this.availableEnemyKeys[Math.floor(Math.random() * this.availableEnemyKeys.length)];
             const enemyData = enemyTypes[randomKey];
-            
-            // Creamos un nuevo enemigo usando esa receta
             this.enemies.push(new Enemy(this, enemyData));
         }
+
+        // ... (métodos de estado del juego sin cambios) ...
+        runInitialSetup() { this.gameState = 'ready'; this.ui.hideLoadingScreen(); this.ui.showOverlay('start'); }
+        startGame() { this.gameState = 'running'; this.ui.hideOverlay(); }
+        restartGame() { this.enemies = []; this.projectiles = []; this.startGame(); }
+        resumeGame() { this.gameState = 'running'; this.ui.hideOverlay(); }
     }
 
     const game = new Game(canvas.width, canvas.height);
@@ -101,5 +106,7 @@ window.addEventListener('load', function(){
         game.draw(ctx);
         requestAnimationFrame(animate);
     }
+
     animate();
+    game.runInitialSetup();
 });
