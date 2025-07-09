@@ -6,13 +6,14 @@
 * y los une para que el juego funcione.
 */
 
-// --- 1. IMPORTACIONES DE TODOS LOS MÓDULOS ---
+// --- 1. IMPORTACIONES DE TODOS LOS MÓDULOS (CORREGIDAS) ---
 import { config } from './config.js';
 import { Player } from './entities/Player.js';
 import { Enemy } from './entities/Enemy.js';
 import { Resource } from './entities/Resource.js';
 import { gameLoop } from './systems/gameLoop.js';
-import { handleCollisions, checkResourceClick } from './systems/collision.js';
+import { handleLevelProgression } from './systems/levelManager.js'; // <-- Se importa el archivo que faltaba
+import { handleCollisions, checkResourceClick } from './systems/collision.js'; // <-- Se importa la función que faltaba
 import { playSound, initSounds } from './systems/sfx.js';
 import { uiElements, updateUI, showOverlay, showWaveMessage, triggerDamageFlash, animateResourceToBag } from './modules/ui.js';
 import { initThreeScene, updateTreeAppearance } from './modules/scene3d.js';
@@ -45,7 +46,6 @@ const gameContext = {
     config: config,
     uiElements: uiElements,
     
-    // Funciones de sistema
     init: init,
     playSound: playSound,
     showOverlay: (type) => showOverlay(type, gameContext),
@@ -145,7 +145,6 @@ function setupEventListeners() {
     };
     uiElements.activatePowerButton.addEventListener('click', activateSpecialPower);
 
-    // Controles de Teclado
     const keys = {};
     window.addEventListener('keydown', e => { 
         const key = e.key.toLowerCase();
@@ -168,7 +167,7 @@ function setupEventListeners() {
         requestAnimationFrame(controlLoop);
     }
     controlLoop();
-
+    
     // Controles Táctiles
     let isDragging = false, didDrag = false, touchYOffset = 0, touchStartY = 0;
     const canvas = gameContext.canvas;
