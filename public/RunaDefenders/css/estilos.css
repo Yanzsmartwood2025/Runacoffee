@@ -1,9 +1,9 @@
 /*
 * =================================================================
-* ARCHIVO: RunaDefenders/css/estilos.css (Versión Completa)
+* ARCHIVO: RunaDefenders/css/estilos.css
 * =================================================================
 * Propósito: Contiene todos los estilos visuales para el juego,
-* incluyendo la disposición de la interfaz, fuentes, colores y animaciones.
+* manteniendo el HTML limpio.
 */
 
 :root {
@@ -55,16 +55,16 @@ body {
     position: relative;
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
+    overflow: hidden; 
 }
 
 #background-wrapper {
     position: absolute;
-    width: 125%;
+    width: 125%; 
     height: 100%;
     top: 0;
     left: 0;
-    background: url('../imagenes/fondo_juego.jpg') no-repeat; /* RUTA CORREGIDA */
+    background: url('../imagenes/fondo-del-juego.jpg') no-repeat;
     background-size: 100% 100%;
     transform: translateX(-20%);
     transition: transform 1.2s ease-in-out;
@@ -80,7 +80,7 @@ body {
     top: 50%;
     transform: translateY(-50%);
     width: 20%;
-    padding-top: 20%;
+    padding-top: 20%; 
     height: 0;
 }
 
@@ -112,7 +112,7 @@ body {
     position: absolute;
     left: 25%;
     top: 22%;
-    width: 71%;
+    width: 71%; 
     height: 56%;
     background: transparent;
 }
@@ -169,11 +169,6 @@ body {
 #menu-button:hover {
     background-color: #553e36;
 }
-#menu-button svg {
-    width: 5vmin;
-    height: 5vmin;
-}
-
 
 #auth-container button {
     background: none;
@@ -237,7 +232,7 @@ body {
     right: 0;
     top: 0;
     height: 100%;
-    width: 0%;
+    width: 0%; 
     background-color: var(--timeline-progress-color);
     box-shadow: 0 0 5px var(--timeline-progress-color), 0 0 10px var(--timeline-progress-color);
     transition: width 0.1s linear;
@@ -270,10 +265,7 @@ body {
     filter: grayscale(1) brightness(0.6);
     cursor: not-allowed;
 }
-#activate-power-button svg {
-    width: 4vmin;
-    height: 4vmin;
-}
+
 @keyframes power-ready-glow {
     0%, 100% { box-shadow: 0 0 10px #fde047, 0 0 20px #fde047; transform: scale(1); }
     50% { box-shadow: 0 0 20px #ffc400, 0 0 40px #ffc400; transform: scale(1.1); }
@@ -281,7 +273,6 @@ body {
 .power-ready {
     animation: power-ready-glow 1.5s infinite ease-in-out;
 }
-
 
 #game-overlay {
     position: absolute;
@@ -295,15 +286,17 @@ body {
     text-align: center;
     color: white;
     padding: 20px;
-    opacity: 1;
+    opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
 }
 #game-overlay.active {
+    opacity: 1;
     pointer-events: auto;
 }
 #game-overlay.hidden {
     opacity: 0;
+    pointer-events: none;
 }
 
 .overlay-screen {
@@ -311,6 +304,8 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 .overlay-screen.visible {
     display: flex;
@@ -344,7 +339,6 @@ body {
     margin-top: 20px;
 }
 
-
 #wave-message {
     position: absolute;
     top: 50%;
@@ -363,4 +357,7 @@ body {
 }
 
 #auth-modal { z-index: 300; }
-#auth-modal .translucent-panel { background-color: rgba(0,0,0,0.8); border: 2px solid var(--accent-color); }
+#auth-modal-content { 
+    background-color: rgba(0,0,0,0.8); 
+    border: 2px solid var(--accent-color); 
+}
