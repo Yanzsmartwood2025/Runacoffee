@@ -18,21 +18,28 @@ function startNextLevel(gameContext) {
     gameContext.gameState = 'level_complete';
     gameContext.playSound('levelUp', 'C6', '2n');
 
+    // Desbloquear poderes en niveles específicos
     if (gameContext.currentLevelIndex === 2) gameContext.unlockedPowers[0] = true;
     if (gameContext.currentLevelIndex === 5) gameContext.unlockedPowers[1] = true;
     if (gameContext.currentLevelIndex === 8) gameContext.unlockedPowers[2] = true;
-    // updatePowerOrbsVisuals(); // Esta función vive en scene3d.js, se llamará desde allí
-
+    
+    // Guardar el progreso y mostrar la pantalla de nivel completado
     gameContext.saveGameData();
     gameContext.showOverlay('level_complete');
 }
-
 
 export function handleLevelProgression(gameContext) {
     if (gameContext.gameState !== 'playing') return;
 
     const { config, currentLevelIndex, levelTimer, enemies, showWaveMessage } = gameContext;
     const currentLevel = config.levels[currentLevelIndex];
+    
+    // Si no hay nivel, no hacer nada
+    if (!currentLevel) {
+        console.error(`Nivel ${currentLevelIndex} no encontrado en la configuración.`);
+        return;
+    }
+
     const levelDuration = currentLevel.duration;
 
     // Condición de victoria del nivel
@@ -41,14 +48,7 @@ export function handleLevelProgression(gameContext) {
         return;
     }
 
-    // Lógica para mostrar mensajes de oleadas
-    // (Esta lógica puede ser expandida o mejorada)
-    if (levelTimer >= 120 && !gameContext.levelMessagesShown[0]) {
-        gameContext.levelMessagesShown[0] = true;
-        showWaveMessage("¡Oleada Final!");
-    }
-
-    // Lógica para activar oleadas
+    // Activar oleadas basadas en el tiempo
     if (levelTimer < levelDuration) {
         const nextWaveIndex = gameContext.currentWaveIndex + 1;
         if (nextWaveIndex < currentLevel.waves.length && levelTimer >= currentLevel.waves[nextWaveIndex].startTime) {
@@ -56,6 +56,7 @@ export function handleLevelProgression(gameContext) {
             gameContext.spawnTimer = 0;
         }
 
+        // Generar enemigos de la oleada activa
         if (gameContext.currentWaveIndex > -1) {
             if (gameContext.spawnTimer > 0) {
                 gameContext.spawnTimer--;
