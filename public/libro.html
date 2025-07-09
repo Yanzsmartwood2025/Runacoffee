@@ -534,12 +534,12 @@
                     <div class="content-wrapper">
                          <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-top-view-of-a-cup-of-coffee-3445-large.mp4"></video>
                          <div class="portal-overlay translucent-panel">
-                            <div class="portal-content">
-                                <h2>Juego RUNA</h2>
-                                <p>Pon a prueba tus sentidos y sumérgete en el mundo de RUNA con nuestro juego interactivo. ¿Estás listo para el desafío?</p>
-                                <a href="juego.html" class="portal-button">Jugar Ahora</a>
-                            </div>
-                        </div>
+                             <div class="portal-content">
+                                 <h2>Juego RUNA</h2>
+                                 <p>Pon a prueba tus sentidos y sumérgete en el mundo de RUNA con nuestro juego interactivo. ¿Estás listo para el desafío?</p>
+                                 <a href="public/RunaDefenders/RunaDefenders.html" class="portal-button">Jugar Ahora</a>
+                             </div>
+                         </div>
                     </div>
                     <div class="page-number">5</div>
                 </div>
@@ -547,12 +547,12 @@
                      <div class="content-wrapper">
                          <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-futuristic-computer-data-processing-screen-4740-large.mp4"></video>
                          <div class="portal-overlay translucent-panel">
-                            <div class="portal-content">
-                                <h2>Jusn38 Tech</h2>
-                                <p>Explora la innovación y el diseño detrás de esta experiencia. Jusn38 Tech, creando el futuro de las interacciones digitales.</p>
-                                <a href="jusn38.html" class="portal-button">Conocer Más</a>
-                            </div>
-                        </div>
+                             <div class="portal-content">
+                                 <h2>Jusn38 Tech</h2>
+                                 <p>Explora la innovación y el diseño detrás de esta experiencia. Jusn38 Tech, creando el futuro de las interacciones digitales.</p>
+                                 <a href="jusn38.html" class="portal-button">Conocer Más</a>
+                             </div>
+                         </div>
                     </div>
                     <div class="page-number">6</div>
                 </div>
@@ -660,12 +660,12 @@
         // --- Firebase Auth UI Management ---
         const handleSignIn = () => {
              signInWithPopup(auth, googleProvider)
-                .then((result) => {
-                    console.log("Signed in successfully with Google", result.user);
-                    $('#auth-modal').addClass('hidden'); // Close modal on success
-                }).catch((error) => {
-                    console.error("Google sign-in error", error);
-                });
+                 .then((result) => {
+                     console.log("Signed in successfully with Google", result.user);
+                     $('#auth-modal').addClass('hidden'); // Close modal on success
+                 }).catch((error) => {
+                     console.error("Google sign-in error", error);
+                 });
         };
 
         const updateAuthUI = (user) => {
@@ -1127,13 +1127,13 @@
         
         $('#tool-share').on('click', async () => {
              const shareData = {
-                title: 'RUNA Coffee - Cuaderno Digital',
-                text: '¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital interactivo.',
-                url: window.location.href,
-            };
-            try { await navigator.share(shareData); }
-            catch (err) { console.error("Share failed:", err); }
-            closeAllPanels();
+                 title: 'RUNA Coffee - Cuaderno Digital',
+                 text: '¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital interactivo.',
+                 url: window.location.href,
+             };
+             try { await navigator.share(shareData); }
+             catch (err) { console.error("Share failed:", err); }
+             closeAllPanels();
         });
         
         $('#tool-upload').on('click', () => $('#image-uploader').click());
