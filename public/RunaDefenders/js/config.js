@@ -18,7 +18,7 @@ export const config = {
     orbValue: 10, 
     healingValue: 25,
     base: { health: 1000 },
-    // --- RUTAS DE IMAGEN CORREGIDAS ---
+    // --- RUTAS DE IMAGEN CORREGIDAS PARA COINCIDIR CON LA CARPETA 'imagenes' ---
     grainImage: '../imagenes/collectible_coffee_bean.png',
     orbImage: '../imagenes/collectible_power_orb.png',
     player: {
