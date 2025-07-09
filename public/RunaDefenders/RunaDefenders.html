@@ -1,1 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Runa Defenders: La Furia del Grano</title>
+    
+    <!-- Fuentes y Librerías Externas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Import Map para Three.js (Esto se queda aquí) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <!-- NUEVO: Llamada al archivo de estilos CSS externo -->
+    <link rel="stylesheet" href="css/estilos.css">
+
+</head>
+<body>
+    <!-- El cuerpo del HTML ahora solo contiene la estructura vacía (el esqueleto) -->
+
+    <div id="loading-screen">Cargando...</div>
+
+    <div id="game-container">
+        <div id="background-wrapper"></div>
+
+        <div id="tree-container">
+            <div id="tree-health-bar"></div>
+            <div id="tree-canvas-container"></div>
+        </div>
+        
+        <div id="top-bar">
+            <button id="menu-button" class="ui-element" title="Menú (Esc)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 5vmin; height: 5vmin;"><path fill-rule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" /></svg>
+            </button>
+            <div id="level-display" class="ui-element">
+                Nivel: <span id="level-value">1</span>
+            </div>
+            <div id="timeline-container">
+                <div id="timeline-progress"></div>
+                <img id="timeline-worm" src="imagenes/enemy_broca_1.png" alt="Gusano del tiempo">
+            </div>
+            <div id="auth-container"></div>
+        </div>
+
+        <canvas id="game-canvas"></canvas>
+        <div id="damage-flash"></div>
+
+        <div id="bottom-bar">
+            <div id="coffee-bag-container" class="ui-element">
+                <img id="coffee-bag-icon" src="imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
+                <span id="coffee-bean-counter">0</span>
+            </div>
+            <button id="activate-power-button" class="ui-element" title="Activar Poder (E)" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 4vmin; height: 4vmin;"><path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .923-.14Z" clip-rule="evenodd" /></svg>
+            </button>
+            <div id="special-power-bar-container">
+                <div id="special-power-bar"></div>
+            </div>
+        </div>
+
+        <div id="game-overlay" class="hidden">
+            <div id="start-screen" class="overlay-screen">
+                <h1>Runa Defenders</h1>
+                <p>¡Las plagas atacan! Defiende tu cosecha.</p>
+                <button id="start-button" class="game-button">Empezar</button>
+            </div>
+            <div id="game-over-screen" class="overlay-screen">
+                <h1>¡Defensa Caída!</h1>
+                <p>Las plagas han superado tus defensas.</p>
+                <button id="retry-button" class="game-button">Volver a Intentar</button>
+            </div>
+            <div id="pause-screen" class="overlay-screen">
+                <h2>Pausa</h2>
+                <div class="pause-menu-buttons">
+                    <button id="resume-button" class="game-button">Reanudar</button>
+                    <button id="restart-level-button" class="game-button">Reiniciar Nivel</button>
+                </div>
+            </div>
+            <div id="level-complete-screen" class="overlay-screen">
+                <h2 id="level-complete-title"></h2>
+                <div id="level-complete-content"></div>
+            </div>
+            <div id="loading-next-level-screen" class="overlay-screen">
+                <h2>Cargando Siguiente Nivel...</h2>
+            </div>
+        </div>
+        
+        <div id="wave-message"></div>
+    </div>
+    
+    <div id="auth-modal" class="fixed inset-0 flex items-center justify-center p-4 bg-black/60 hidden">
+       <!-- Contenido del modal de autenticación -->
+    </div>
+
+    <!-- NUEVO: La llamada al "Director de Orquesta" -->
+    <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
 
