@@ -11,8 +11,6 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // Variables para la escena 3D
 let treeScene, treeCamera, treeRenderer, treeModel;
-let powerOrbsGroup, powerOrbs = [], powerSelectButton;
-let isRotationPaused = false;
 const healthyColor = new THREE.Color(0xffffff);
 const damagedColor = new THREE.Color(0xff0000);
 
@@ -42,7 +40,9 @@ export function initThreeScene(treeCanvasContainer) {
     // Cargar modelo del árbol
     const loader = new GLTFLoader();
     loader.load(
-        '../assets/3D/arbol_runa.glb', // RUTA CORREGIDA: Apunta a la carpeta de assets compartidos
+        // RUTA CORREGIDA: Le decimos que suba dos niveles de carpeta (de /js/modules/ a /RunaDefenders/)
+        // y luego entre a la carpeta /assets/ compartida.
+        '../../assets/3D/arbol_runa.glb', 
         (gltf) => {
             treeModel = gltf.scene;
             const box = new THREE.Box3().setFromObject(treeModel);
@@ -57,7 +57,7 @@ export function initThreeScene(treeCanvasContainer) {
     // Bucle de animación
     function animateTree() {
         requestAnimationFrame(animateTree);
-        if (treeModel && !isRotationPaused) {
+        if (treeModel) {
             treeModel.rotation.y += 0.005;
         }
         treeRenderer.render(treeScene, treeCamera);
@@ -94,9 +94,3 @@ export function updateTreeAppearance(base, treeHealthBar) {
         }
     });
 }
-
-// Lógica para los orbes de poder (aún no implementada, pero el espacio está aquí)
-export function updatePowerOrbsVisuals(unlockedPowers) {
-    // Aquí irá la lógica para mostrar los orbes desbloqueados
-}
-
