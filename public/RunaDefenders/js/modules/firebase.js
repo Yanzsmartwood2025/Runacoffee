@@ -1,28 +1,25 @@
-
 /*
 * =================================================================
-* ARCHIVO: RunaDefenders/js/modules/firebase.js
+* ARCHIVO: js/modules/firebase.js
 * =================================================================
-* Propósito: Gestiona toda la interacción con Firebase, incluyendo
-* autenticación y guardado/carga de datos en Firestore.
+* Propósito: Centraliza toda la comunicación con Firebase:
+* autenticación, guardado y carga de datos.
 */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-let auth, db, userId;
+let auth, db, userId = null;
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-// Inicializa Firebase y configura el listener de autenticación
-export function initializeFirebase(onDataLoaded, onNoData, onUserChange) {
+export function initializeFirebase(onLoadSuccess, onLoadError, onAuthChange) {
     const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
     try {
         const firebaseConfig = JSON.parse(firebaseConfigStr);
         if (Object.keys(firebaseConfig).length === 0) {
             console.log("Firebase config not found. Starting new game.");
-            onNoData();
-            onUserChange(null);
+            onLoadError();
             return;
         }
 
@@ -31,32 +28,25 @@ export function initializeFirebase(onDataLoaded, onNoData, onUserChange) {
         db = getFirestore(app);
 
         onAuthStateChanged(auth, async (user) => {
-            onUserChange(user); // Notifica al UI sobre el cambio de usuario
-
+            onAuthChange(user); // Actualiza la UI de autenticación
             if (user) {
                 userId = user.uid;
                 const savedData = await loadGameData();
-                onDataLoaded(savedData);
+                onLoadSuccess(savedData);
             } else {
-                signInAnonymously(auth).catch(error => {
-                    console.error("Anonymous sign-in failed:", error);
-                    onNoData();
-                });
+                signInAnonymously(auth).catch(onLoadError);
             }
         });
-
     } catch (e) {
         console.error("Firebase initialization failed:", e);
-        onNoData();
-        onUserChange(null);
+        onLoadError();
     }
 }
 
-// Guarda los datos del juego en Firestore
-export async function saveGameData(gameData) {
+export async function saveGameData(data) {
     if (!userId || !db) return;
     const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
-    const dataToSave = { ...gameData, timestamp: new Date() };
+    const dataToSave = { ...data, timestamp: new Date() };
     try {
         await setDoc(gameDataRef, dataToSave, { merge: true });
     } catch (error) {
@@ -64,7 +54,6 @@ export async function saveGameData(gameData) {
     }
 }
 
-// Carga los datos del juego desde Firestore
 async function loadGameData() {
     if (!userId || !db) return null;
     const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
@@ -77,16 +66,11 @@ async function loadGameData() {
     }
 }
 
-// Lógica de autenticación con Google
 export function handleGoogleLogin() {
-    if (!auth) return;
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-        .catch(error => console.error("Google Sign-In Error:", error));
+    signInWithPopup(auth, provider).catch(error => console.error("Google Sign-In Error:", error));
 }
 
 export function handleSignOut() {
-    if (auth) {
-        signOut(auth).catch(error => console.error("Sign out error", error));
-    }
+    signOut(auth).catch(error => console.error("Sign out error", error));
 }
