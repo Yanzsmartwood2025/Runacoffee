@@ -97,6 +97,16 @@
             width: 20%;
             padding-top: 20%; 
             height: 0;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        #tree-container.menu-view {
+            left: 50%;
+            top: 50%;
+            width: 50vmin;
+            padding-top: 50vmin;
+            transform: translate(-50%, -50%);
+            z-index: 250;
         }
 
         #tree-health-bar {
@@ -156,6 +166,7 @@
             align-items: center;
             border-radius: 15px;
             padding: 0 10px;
+            transition: opacity 0.5s ease;
         }
         #top-bar { top: 4%; justify-content: space-between; }
         #bottom-bar { bottom: 4%; justify-content: center; gap: 1vmin; }
@@ -176,7 +187,7 @@
              padding: 1.5vmin 3vmin;
         }
 
-        #auth-container button {
+        #auth-container button, #pause-button {
             background: none;
             border: none;
             cursor: pointer;
@@ -190,6 +201,16 @@
             height: 7vmin;
             border-radius: 50%;
             border: 3px solid #6d4c35;
+        }
+       
+        #pause-button svg {
+            width: 6vmin;
+            height: 6vmin;
+            color: var(--text-light);
+            transition: transform 0.2s ease;
+        }
+        #pause-button:hover svg {
+            transform: scale(1.1);
         }
 
         #coffee-bag-container {
@@ -297,7 +318,7 @@
             color: white;
             padding: 20px;
             opacity: 1;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, background-color 0.8s ease;
             pointer-events: none;
         }
         #game-overlay.active {
@@ -306,6 +327,10 @@
         #game-overlay.hidden {
             opacity: 0;
         }
+        #game-overlay.menu-mode-bg {
+            background-color: rgba(0,0,0,0.85);
+        }
+
 
         .overlay-screen {
             display: none;
@@ -337,6 +362,48 @@
             transition: all 0.1s ease;
         }
         .game-button:active { transform: translateY(3px); border-bottom-width: 2px; }
+        .game-button.secondary {
+             background: #6d4c35;
+             border-bottom-color: #3a2e2a;
+             font-size: 3vmin;
+             padding: 12px 25px;
+             margin: 10px;
+        }
+        
+        #how-to-play-screen {
+            font-family: 'Poppins', sans-serif;
+            text-align: left;
+            max-width: 90vmin;
+            background: var(--ui-bg);
+            padding: 4vmin;
+            border-radius: 15px;
+            border: 3px solid #6d4c35;
+        }
+        #how-to-play-screen h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 5vmin;
+            width: 100%;
+            text-align: center;
+        }
+        #how-to-play-screen ul {
+            list-style: none;
+            padding: 0;
+        }
+        #how-to-play-screen li {
+            font-size: 2.2vmin;
+            margin-bottom: 2vmin;
+            line-height: 1.6;
+            display: flex;
+            align-items: flex-start;
+        }
+        #how-to-play-screen li strong {
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-right: 1.5vmin;
+            display: inline-block;
+            min-width: 15vmin;
+        }
+
 
         #wave-message {
             position: absolute;
@@ -372,12 +439,19 @@
         </div>
        
         <div id="top-bar">
-             <div id="level-display" class="ui-element">
-                   Nivel: <span id="level-value">1</span>
+             <div class="flex items-center gap-4">
+                 <button id="pause-button" class="ui-element !p-2" title="Pausar Juego">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
+                    </svg>
+                 </button>
+                 <div id="level-display" class="ui-element">
+                     Nivel: <span id="level-value">1</span>
+                 </div>
              </div>
              <div id="timeline-container">
-                <div id="timeline-progress"></div>
-                <img id="timeline-worm" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png" alt="Gusano del tiempo">
+                  <div id="timeline-progress"></div>
+                  <img id="timeline-worm" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png" alt="Gusano del tiempo">
              </div>
              <div id="auth-container">
              </div>
@@ -392,9 +466,9 @@
                   <span id="coffee-bean-counter">0</span>
              </div>
              <button id="activate-power-button" class="ui-element" title="Activar Poder (E)" disabled>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                    <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .923-.14Z" clip-rule="evenodd" />
-                </svg>
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                      <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .923-.14Z" clip-rule="evenodd" />
+                 </svg>
              </button>
              <div id="special-power-bar-container">
                   <div id="special-power-bar"></div>
@@ -419,8 +493,28 @@
             <div id="loading-next-level-screen" class="overlay-screen">
                 <h2>Cargando Siguiente Nivel...</h2>
             </div>
+             <div id="pause-screen" class="overlay-screen">
+                <h2>Pausa</h2>
+                <div class="flex flex-col items-center">
+                    <button id="resume-button" class="game-button">Reanudar</button>
+                    <button id="how-to-play-button" class="game-button secondary">Cómo Jugar</button>
+                    <button id="restart-pause-button" class="game-button secondary">Reiniciar Nivel</button>
+                    <button id="main-menu-button" class="game-button secondary">Menú Principal</button>
+                </div>
+             </div>
+             <div id="how-to-play-screen" class="overlay-screen">
+                <h2>Cómo Jugar</h2>
+                <ul>
+                    <li><strong>Movimiento:</strong><span>Usa las teclas <b>W/S</b> o las <b>Flechas Arriba/Abajo</b>. En móvil, desliza el dedo sobre tu personaje.</span></li>
+                    <li><strong>Disparo:</strong><span>Presiona la <b>Barra Espaciadora</b> o haz clic en tu personaje para disparar.</span></li>
+                    <li><strong>Recolección:</strong><span>Haz clic en los <b>Granos de Café</b> (curan el árbol) y en los <b>Orbes de Poder</b> (cargan habilidad) que sueltan los enemigos.</span></li>
+                    <li><strong>Poder Especial:</strong><span>Cuando la barra de poder esté llena, presiona la tecla <b>E</b> para activar un disparo rápido temporal.</span></li>
+                    <li><strong>Menú de Poderes:</strong><span>Haz clic en el <b>Árbol de Café</b> para abrir el menú de poderes. Haz clic en un poder desbloqueado (iluminado) para seleccionarlo.</span></li>
+                </ul>
+                <button id="back-to-pause-button" class="game-button secondary">Volver</button>
+            </div>
         </div>
-        
+       
         <div id="wave-message"></div>
     </div>
    
@@ -451,21 +545,24 @@
     // =================================================================
     // --- 3D SCENE MODULE ---
     // =================================================================
-    let treeScene, treeCamera, treeRenderer, treeModel, raycaster, mouse;
-    let powerOrbsGroup, powerOrbs = [], powerSelectButton;
-    let isRotationPaused = false; // CAMBIO: Flag para pausar la rotación
+    let treeScene, treeCamera, treeRenderer, treeModel;
+    let orbsGroup, orbs = [];
+    const treeContainer = document.getElementById('tree-container');
     const treeCanvasContainer = document.getElementById('tree-canvas-container');
     const treeHealthBar = document.getElementById('tree-health-bar');
     const healthyColor = new THREE.Color(0xffffff);
     const damagedColor = new THREE.Color(0xff0000);
+    const lockedOrbColor = new THREE.Color(0x333333);
+    const unlockedOrbColor = new THREE.Color(0xffffff);
+    let raycaster, pointer;
 
     function initThreeScene() {
         treeScene = new THREE.Scene();
 
         const { width, height } = treeCanvasContainer.getBoundingClientRect();
         treeCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
-        treeCamera.position.set(0, 1.2, 7);
-        treeCamera.lookAt(0, 0.8, 0);
+        treeCamera.position.set(0, 1.5, 9);
+        treeCamera.lookAt(0, 1, 0);
 
         treeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         treeRenderer.setClearColor(0x000000, 0);
@@ -487,81 +584,69 @@
             const center = box.getCenter(new THREE.Vector3());
             treeModel.position.y -= box.min.y;
             treeModel.position.add(center.multiplyScalar(-1));
-           
-            treeModel.scale.set(1.6, 1.6, 1.6);
+            treeModel.scale.set(1.9, 1.9, 1.9);
             treeScene.add(treeModel);
-
-            // CAMBIO: Crear el botón y añadirlo al modelo del árbol
-            const buttonGeometry = new THREE.CylinderGeometry(0.25, 0.25, 0.1, 32);
-            const buttonMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-            powerSelectButton = new THREE.Mesh(buttonGeometry, buttonMaterial);
-            powerSelectButton.name = "PowerSelectButton";
-            powerSelectButton.position.set(0, 1, 0.5); // Ajustar posición en el tronco
-            powerSelectButton.rotation.x = Math.PI / 2;
-            treeModel.add(powerSelectButton);
-
-            if (base) {
-                updateTreeAppearance();
-            }
+            if (base) updateTreeAppearance();
         }, undefined, (error) => {
             console.error('An error happened while loading the tree model:', error);
         });
 
-        powerOrbsGroup = new THREE.Group();
-        treeScene.add(powerOrbsGroup);
+        orbsGroup = new THREE.Group();
+        treeScene.add(orbsGroup);
 
-        const textureLoader = new THREE.TextureLoader();
         const gifUrls = [
+            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/birds.gif',
             'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/fire.gif',
+            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/music.gif',
+            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/rain.gif',
+            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/river.gif',
             'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/storm.gif',
-            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/rain.gif'
+            'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/wind.gif'
         ];
-        const orbColors = [0xff8800, 0x00ffff, 0x0088ff];
 
-        const orbGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+        const orbCount = 7;
+        const orbGeometry = new THREE.SphereGeometry(0.45, 32, 32);
+        orbGeometry.rotateY(-Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
 
-        for (let i = 0; i < 3; i++) {
-            const angle = (i / 3) * Math.PI * 2;
-            const radius = 1.8;
-
-            const orb = new THREE.Mesh(orbGeometry, null);
+        for (let i = 0; i < orbCount; i++) {
+            const texture = textureLoader.load(gifUrls[i]);
+            texture.colorSpace = THREE.SRGBColorSpace;
+            const orbMaterial = new THREE.MeshBasicMaterial({
+                map: texture,
+                side: THREE.DoubleSide,
+                transparent: true,
+                color: lockedOrbColor
+            });
+            const orb = new THREE.Mesh(orbGeometry, orbMaterial);
+            orb.userData = { index: i, unlocked: false, name: `Poder ${i+1}` };
+            const angle = (i / orbCount) * Math.PI * 2;
+            const radius = 2.5;
             orb.position.x = Math.cos(angle) * radius;
             orb.position.z = Math.sin(angle) * radius;
-            orb.position.y = 1.5 + Math.sin(angle * 3) * 0.3;
-
-            orb.lockedMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
-            orb.unlockedMaterial = new THREE.MeshStandardMaterial({
-                map: textureLoader.load(gifUrls[i]),
-                emissive: orbColors[i],
-                emissiveMap: textureLoader.load(gifUrls[i]),
-                emissiveIntensity: 0,
-            });
-
-            const pointLight = new THREE.PointLight(orbColors[i], 0, 5);
-            orb.light = pointLight;
-
-            powerOrbsGroup.add(orb);
-            orb.add(pointLight);
-            powerOrbs.push(orb);
+            orb.initialY = 1.5;
+            orb.position.y = orb.initialY;
+            orb.bobSpeed = 2 + Math.random() * 3;
+            orb.bobOffset = Math.random() * Math.PI * 2;
+            orbsGroup.add(orb);
+            orbs.push(orb);
         }
-        updatePowerOrbsVisuals();
 
         raycaster = new THREE.Raycaster();
-        mouse = new THREE.Vector2();
-        treeCanvasContainer.addEventListener('click', onPowerSelectClick);
+        pointer = new THREE.Vector2();
 
         function animateTree() {
             requestAnimationFrame(animateTree);
-            // CAMBIO: Rotación constante si no está pausada
-            if (powerOrbsGroup && !isRotationPaused) {
-                powerOrbsGroup.rotation.y += 0.008;
+            if (orbsGroup) {
+                orbsGroup.rotation.y += 0.005;
+                orbs.forEach(orb => {
+                    orb.position.y = orb.initialY + Math.sin(globalAnimationTimer * orb.bobSpeed + orb.bobOffset) * 0.3;
+                    orb.lookAt(treeCamera.position);
+                });
             }
-            // Animar el botón
-            if (powerSelectButton) {
-                const time = Date.now() * 0.005;
-                powerSelectButton.scale.setScalar(1 + Math.sin(time) * 0.1);
+            if (treeRenderer && treeScene && treeCamera) {
+                treeRenderer.render(treeScene, treeCamera);
             }
-            treeRenderer.render(treeScene, treeCamera);
         }
         animateTree();
        
@@ -576,87 +661,82 @@
         resizeObserver.observe(treeCanvasContainer);
     }
 
-    // CAMBIO: Lógica de clic para seleccionar poder
-    function onPowerSelectClick(event) {
-        const rect = treeCanvasContainer.getBoundingClientRect();
-        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-        raycaster.setFromCamera(mouse, treeCamera);
-        const intersects = raycaster.intersectObjects(treeScene.children, true);
-
-        const buttonClicked = intersects.some(intersect => intersect.object.name === "PowerSelectButton");
-
-        if (buttonClicked && !isRotationPaused) {
-            isRotationPaused = true;
-
-            // Encontrar el orbe más cercano a la cámara (al frente)
-            let frontOrb = null;
-            let maxZ = -Infinity;
-            const cameraDirection = new THREE.Vector3();
-            treeCamera.getWorldDirection(cameraDirection);
-
-            powerOrbs.forEach(orb => {
-                const orbWorldPos = new THREE.Vector3();
-                orb.getWorldPosition(orbWorldPos);
-                
-                const cameraToOrb = orbWorldPos.clone().sub(treeCamera.position);
-                const dot = cameraToOrb.dot(cameraDirection);
-
-                if (dot > maxZ) {
-                    maxZ = dot;
-                    frontOrb = orb;
-                }
-            });
-
-            if (frontOrb) {
-                // Efecto visual de selección
-                const originalScale = frontOrb.scale.x;
-                frontOrb.scale.setScalar(originalScale * 1.5);
-                frontOrb.light.intensity *= 2;
-                
-                // Volver a la normalidad después de un segundo
-                setTimeout(() => {
-                    frontOrb.scale.setScalar(originalScale);
-                    updatePowerOrbsVisuals(); // Restaura la intensidad de la luz
-                    isRotationPaused = false;
-                }, 1000);
-            } else {
-                 isRotationPaused = false;
-            }
-        }
-    }
-
-
-    function updatePowerOrbsVisuals() {
-        powerOrbs.forEach((orb, i) => {
-            if (unlockedPowers[i]) {
-                orb.material = orb.unlockedMaterial;
-                orb.material.emissiveIntensity = 1.5;
-                orb.light.intensity = 1.5;
-            } else {
-                orb.material = orb.lockedMaterial;
-                orb.light.intensity = 0;
-            }
-        });
-    }
-
     function updateTreeAppearance() {
         if (!base || !treeModel) return;
         const healthPercent = Math.max(0, base.health / base.maxHealth);
-       
-        if (treeHealthBar) {
-            treeHealthBar.style.height = `${healthPercent * 100}%`;
-        }
-
+        if (treeHealthBar) treeHealthBar.style.height = `${healthPercent * 100}%`;
         treeModel.traverse((node) => {
             if (node.isMesh && node.material) {
-                if (!node.material.originalColor) {
-                    node.material.originalColor = node.material.color.clone();
-                }
+                if (!node.material.originalColor) node.material.originalColor = node.material.color.clone();
                 node.material.color.copy(node.material.originalColor).lerp(damagedColor, 1 - healthPercent);
             }
         });
+    }
+
+    function updateOrbsLockState() {
+        const unlockedCount = currentLevelIndex + 1;
+        orbs.forEach((orb, i) => {
+            const isUnlocked = i < unlockedCount;
+            orb.userData.unlocked = isUnlocked;
+            orb.material.color.set(isUnlocked ? unlockedOrbColor : lockedOrbColor);
+        });
+    }
+
+    function animateCamera(targetPosition, onComplete) {
+        const startPosition = treeCamera.position.clone();
+        const duration = 800;
+        let startTime = null;
+
+        function animationLoop(currentTime) {
+            if (!startTime) startTime = currentTime;
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / duration, 1);
+            const easeProgress = 0.5 - 0.5 * Math.cos(progress * Math.PI);
+
+            treeCamera.position.lerpVectors(startPosition, targetPosition, easeProgress);
+            
+            if (progress < 1) {
+                requestAnimationFrame(animationLoop);
+            } else {
+                if (onComplete) onComplete();
+            }
+        }
+        requestAnimationFrame(animationLoop);
+    }
+
+    function toggleTreeMenu(show) {
+        if (show) {
+            if (gameState !== 'playing' && gameState !== 'paused') return;
+            previousGameState = gameState;
+            gameState = 'menu';
+            
+            treeContainer.classList.add('menu-view');
+            gameOverlay.classList.add('menu-mode-bg');
+            document.getElementById('top-bar').style.opacity = '0';
+            document.getElementById('bottom-bar').style.opacity = '0';
+
+            const menuCameraPosition = new THREE.Vector3(0, 1.5, 6);
+            animateCamera(menuCameraPosition);
+
+        } else {
+            if (gameState !== 'menu') return;
+            
+            treeContainer.classList.remove('menu-view');
+            gameOverlay.classList.remove('menu-mode-bg');
+            document.getElementById('top-bar').style.opacity = '1';
+            document.getElementById('bottom-bar').style.opacity = '1';
+            
+            const gameCameraPosition = new THREE.Vector3(0, 1.5, 9);
+            animateCamera(gameCameraPosition, () => {
+                if (previousGameState === 'playing') {
+                    gameState = 'playing';
+                    gameLoop();
+                } else {
+                    gameState = 'paused';
+                    // If we were paused, we don't need to restart the game loop, just set the state.
+                }
+            });
+        }
     }
 
     // =================================================================
@@ -673,7 +753,7 @@
             const firebaseConfig = JSON.parse(firebaseConfigStr);
             if (Object.keys(firebaseConfig).length === 0) {
                 console.log("Firebase config not found. Starting new game.");
-                init(0, 0, 0, config.base.health, true, [false, false, false]);
+                init(0, 0, 0, config.base.health, true);
                 updateAuthUI(null);
                 return;
             }
@@ -693,23 +773,22 @@
                             savedData.specialPower || 0, 
                             savedData.coffeeBeans || 0, 
                             savedData.baseHealth || config.base.health, 
-                            true,
-                            savedData.unlockedPowers || [false, false, false]
+                            true
                         );
                     } else {
-                        init(0, 0, 0, config.base.health, true, [false, false, false]);
+                        init(0, 0, 0, config.base.health, true);
                     }
                 } else {
                     signInAnonymously(auth).catch(error => {
                         console.error("Anonymous sign-in failed:", error);
-                        init(0, 0, 0, config.base.health, true, [false, false, false]);
+                        init(0, 0, 0, config.base.health, true);
                     });
                 }
             });
 
         } catch (e) {
             console.error("Firebase initialization failed:", e);
-            init(0, 0, 0, config.base.health, true, [false, false, false]);
+            init(0, 0, 0, config.base.health, true);
             updateAuthUI(null);
         }
     }
@@ -758,7 +837,6 @@
             specialPower: specialPowerPoints,
             coffeeBeans: coffeeBeanCount,
             baseHealth: base.health,
-            unlockedPowers: unlockedPowers,
             timestamp: new Date()
         };
         try {
@@ -774,7 +852,8 @@
         try {
             const docSnap = await getDoc(gameDataRef);
             return docSnap.exists() ? docSnap.data() : null;
-        } catch (error) {
+        } catch (error)
+        {
             console.error("Error loading game:", error);
             return null;
         }
@@ -830,7 +909,6 @@
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
     const gameOverlay = document.getElementById('game-overlay');
-    const specialPowerBarContainer = document.getElementById('special-power-bar-container');
     const specialPowerBar = document.getElementById('special-power-bar');
     const activatePowerButton = document.getElementById('activate-power-button');
     const levelValue = document.getElementById('level-value');
@@ -839,9 +917,17 @@
     const gameOverScreen = document.getElementById('game-over-screen');
     const levelCompleteScreen = document.getElementById('level-complete-screen');
     const loadingNextLevelScreen = document.getElementById('loading-next-level-screen');
+    const pauseScreen = document.getElementById('pause-screen');
+    const howToPlayScreen = document.getElementById('how-to-play-screen');
     const waveMessage = document.getElementById('wave-message');
     const startButton = document.getElementById('start-button');
     const retryButton = document.getElementById('retry-button');
+    const pauseButton = document.getElementById('pause-button');
+    const resumeButton = document.getElementById('resume-button');
+    const restartPauseButton = document.getElementById('restart-pause-button');
+    const mainMenuButton = document.getElementById('main-menu-button');
+    const howToPlayButton = document.getElementById('how-to-play-button');
+    const backToPauseButton = document.getElementById('back-to-pause-button');
     const coffeeBagIcon = document.getElementById('coffee-bag-icon');
     const coffeeBeanCounterEl = document.getElementById('coffee-bean-counter');
     const timelineProgress = document.getElementById('timeline-progress');
@@ -852,11 +938,10 @@
     let currentLevelIndex = 0, shootTimer = 0, animationFrameId;
     let specialPowerPoints = 0, coffeeBeanCount = 0;
     let levelTimer = 0, currentWaveIndex = -1, spawnTimer = 0;
-    let gameState = 'loading';
+    let gameState = 'loading', previousGameState = 'loading';
     let globalAnimationTimer = 0;
     let levelMessagesShown = [];
     let isPowerActive = false;
-    let unlockedPowers = [false, false, false];
 
     const sounds = {
         shoot: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
@@ -1067,7 +1152,7 @@
             if (nextWaveIndex < currentLevel.waves.length && levelTimer >= currentLevel.waves[nextWaveIndex].startTime) {
                 currentWaveIndex = nextWaveIndex; spawnTimer = 0;
             }
-            
+           
             if (currentWaveIndex > -1) {
                 if (spawnTimer > 0) {
                     spawnTimer--;
@@ -1082,12 +1167,6 @@
     function startNextLevel() {
         gameState = 'level_complete';
         playSound('levelUp', 'C6', '2n');
-        
-        if (currentLevelIndex === 2) unlockedPowers[0] = true;
-        if (currentLevelIndex === 5) unlockedPowers[1] = true;
-        if (currentLevelIndex === 8) unlockedPowers[2] = true;
-        updatePowerOrbsVisuals();
-
         saveGameData();
         showOverlay('level_complete');
     }
@@ -1135,8 +1214,11 @@
         }
         draw();
        
-        if (gameState === 'game_over') showOverlay('game_over');
-        else if (gameState !== 'level_complete') animationFrameId = requestAnimationFrame(gameLoop);
+        if (gameState === 'game_over') {
+            showOverlay('game_over');
+        } else if (gameState !== 'level_complete' && gameState !== 'paused' && gameState !== 'menu') {
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
     }
 
     function showOverlay(type) {
@@ -1149,6 +1231,8 @@
         gameOverScreen.classList.remove('visible');
         levelCompleteScreen.classList.remove('visible');
         loadingNextLevelScreen.classList.remove('visible');
+        pauseScreen.classList.remove('visible');
+        howToPlayScreen.classList.remove('visible');
 
         if (type === 'start') {
             startButton.textContent = `Empezar Nivel ${currentLevelIndex + 1}`;
@@ -1157,18 +1241,22 @@
             gameOverScreen.classList.add('visible');
         } else if (type === 'loading_next') {
             loadingNextLevelScreen.classList.add('visible');
+        } else if (type === 'pause') {
+            pauseScreen.classList.add('visible');
+        } else if (type === 'how_to_play') {
+            howToPlayScreen.classList.add('visible');
         } else if (type === 'level_complete') {
             const nextLevelExists = currentLevelIndex + 1 < config.levels.length;
             levelCompleteScreen.querySelector('h2').textContent = `¡Nivel ${currentLevelIndex + 1} Superado!`;
             const content = levelCompleteScreen.querySelector('div');
-            
+           
             if (nextLevelExists) {
                 content.innerHTML = `<button id="next-level-button" class="game-button">Siguiente Nivel</button>`;
                 content.querySelector('#next-level-button').addEventListener('click', () => {
                     showOverlay('loading_next');
                     setTimeout(() => {
                         currentLevelIndex++; 
-                        init(currentLevelIndex, specialPowerPoints, coffeeBeanCount, base.health, false, unlockedPowers);
+                        init(currentLevelIndex, specialPowerPoints, coffeeBeanCount, base.health, false);
                     }, 1500);
                 }, { once: true });
             } else {
@@ -1178,14 +1266,13 @@
         }
     }
 
-    function init(level = 0, power = 0, beans = 0, health = config.base.health, isFirstLoad = true, powers = [false, false, false]) {
+    function init(level = 0, power = 0, beans = 0, health = config.base.health, isFirstLoad = true) {
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
        
         currentLevelIndex = level;
         specialPowerPoints = power;
         coffeeBeanCount = beans;
         base = { health: Math.min(health, config.base.health), maxHealth: config.base.health };
-        unlockedPowers = powers;
        
         levelTimer = 0; currentWaveIndex = -1;
         enemies = []; projectiles = []; resources = [];
@@ -1194,7 +1281,7 @@
 
         resizeAll(); 
         updateTreeAppearance();
-        updatePowerOrbsVisuals();
+        updateOrbsLockState();
         updateUI();
        
         gameState = 'start';
@@ -1230,7 +1317,42 @@
         };
         startButton.addEventListener('click', handleStart);
 
-        retryButton.addEventListener('click', (e) => { e.preventDefault(); init(currentLevelIndex, 0, 0, config.base.health, false, unlockedPowers); });
+        retryButton.addEventListener('click', (e) => { e.preventDefault(); init(currentLevelIndex, 0, 0, config.base.health, false); });
+       
+        pauseButton.addEventListener('click', () => {
+             if (gameState === 'playing') {
+                 previousGameState = gameState;
+                 gameState = 'paused';
+                 showOverlay('pause');
+             }
+        });
+       
+        resumeButton.addEventListener('click', () => {
+            if (gameState === 'paused') {
+                gameState = 'playing';
+                gameOverlay.classList.add('hidden');
+                gameOverlay.classList.remove('active');
+                gameLoop();
+            }
+        });
+       
+        const restartFunction = () => {
+            init(currentLevelIndex, 0, 0, config.base.health, false);
+        };
+        restartPauseButton.addEventListener('click', restartFunction);
+       
+        mainMenuButton.addEventListener('click', () => {
+            init(0, 0, 0, config.base.health, false);
+        });
+
+        howToPlayButton.addEventListener('click', () => {
+            showOverlay('how_to_play');
+        });
+
+        backToPauseButton.addEventListener('click', () => {
+            showOverlay('pause');
+        });
+
 
         activatePowerButton.addEventListener('click', activateSpecialPower);
         window.addEventListener('keydown', e => {
@@ -1329,6 +1451,35 @@
                 player.shoot();
             } else {
                 checkResourceClick(clickX, clickY);
+            }
+        });
+
+        treeCanvasContainer.addEventListener('click', (event) => {
+            if (gameState === 'playing' || gameState === 'paused') {
+                toggleTreeMenu(true);
+                return;
+            }
+            
+            if (gameState !== 'menu') return;
+
+            const rect = treeCanvasContainer.getBoundingClientRect();
+            pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(pointer, treeCamera);
+            const intersects = raycaster.intersectObjects(orbs);
+
+            if (intersects.length > 0) {
+                const clickedOrb = intersects[0].object;
+                if (clickedOrb.userData.unlocked) {
+                    console.log(`Poder seleccionado: ${clickedOrb.userData.name}`);
+                    // Aquí puedes añadir la lógica para activar el poder seleccionado
+                    playSound('collect', 'C6');
+                    toggleTreeMenu(false);
+                }
+            } else {
+                // Si se hace clic fuera de un orbe, también se cierra el menú
+                toggleTreeMenu(false);
             }
         });
     }
