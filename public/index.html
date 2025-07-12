@@ -27,6 +27,10 @@
     <meta name="twitter:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
     <link rel="icon" href="https://i.ibb.co/L5TjL4q/IMG-20250620-WA0020.jpg" type="image/jpeg">
 
+    <!-- Google AdSense Script -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1934722168208297"
+     crossorigin="anonymous"></script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -205,7 +209,6 @@
                     </button>
                     <!-- Auth container -->
                     <div id="auth-container" class="flex items-center">
-                        <!-- CAMBIO: La imagen por defecto ahora es el logo de Google -->
                         <button id="user-profile-button" class="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent hover:border-[var(--runa-primary)] transition-colors flex items-center justify-center bg-white">
                             <img id="user-profile-picture" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Iniciar sesión con Google" class="w-6 h-6 object-contain">
                         </button>
@@ -316,6 +319,30 @@
                 </div>
             </section>
 
+            <!-- INICIO: Espacio para Anuncio de Google AdSense -->
+            <section class="py-10 section-bg">
+                <div class="container mx-auto px-6 text-center">
+                    <h3 class="text-xl font-semibold mb-4 text-inherit/80">Publicidad</h3>
+                    <!--
+                      AQUÍ DEBES PEGAR EL CÓDIGO DE TU BLOQUE DE ANUNCIOS DE ADSENSE
+                      Suele tener este aspecto:
+                      <ins class="adsbygoogle"
+                           style="display:block"
+                           data-ad-client="ca-pub-1934722168208297"
+                           data-ad-slot="TU_ID_DE_BLOQUE_DE_ANUNCIO"
+                           data-ad-format="auto"
+                           data-full-width-responsive="true"></ins>
+                      <script>
+                           (adsbygoogle = window.adsbygoogle || []).push({});
+                      </script>
+                    -->
+                    <div class="bg-gray-200 dark:bg-gray-800 rounded-lg flex items-center justify-center min-h-[250px] text-gray-500">
+                        <p>Espacio reservado para el anuncio.</p>
+                    </div>
+                </div>
+            </section>
+            <!-- FIN: Espacio para Anuncio de Google AdSense -->
+
         </main>
         
         <footer id="contacto" class="pt-16 pb-8">
@@ -367,7 +394,7 @@
        class="whatsapp-fab fixed bottom-6 right-6 z-50 rounded-full w-16 h-16 shadow-lg flex items-center justify-center p-4 transition-all duration-300 transform hover:scale-110" 
        target="_blank" 
        aria-label="Contactar por WhatsApp">
-       <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/26548b0b3ba43b9b8337c561fd153a54b746325d/public/assets/imagenes/Icono-whatsapp.png" alt="WhatsApp" class="w-full h-full">
+        <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/26548b0b3ba43b9b8337c561fd153a54b746325d/public/assets/imagenes/Icono-whatsapp.png" alt="WhatsApp" class="w-full h-full">
     </a>
     
     <!-- Audio Elements -->
@@ -418,7 +445,6 @@
         
         // --- LÓGICA DE AUTENTICACIÓN ---
         let isUserLoggedIn = false;
-        // CAMBIO: El avatar por defecto ahora es el logo de Google
         const placeholderAvatar = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
 
         // --- ELEMENTOS DEL DOM ---
@@ -724,3 +750,5 @@
     </script>
 </body>
 </html>
+
+     
