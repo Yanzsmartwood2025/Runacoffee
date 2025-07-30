@@ -1,1 +1,351 @@
+<!doctype html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuaderno Digital Interactivo - RUNA Coffee</title>
+
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="RUNA Coffee - Mi Cuaderno Digital Interactivo" />
+    <meta property="og:description" content="¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital. Una experiencia para despertar los sentidos." />
+    <meta property="og:image" content="assets/imagenes/portada-libro.jpg" />
+    <meta property="og:url" content="https://URL-DE-TU-PAGINA-AQUI.com" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Librerías externas (CDN) -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- Fuentes de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Lobster&family=Pacifico&family=Caveat&family=Indie+Flower&family=Shadows+Into+Light&family=Lora&display=swap" rel="stylesheet">
+    
+    <!-- Tu archivo CSS personalizado -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="no-tool-active">
+
+<div id="video-background-wrapper">
+    <video id="video-background" autoplay loop muted playsinline>
+        <source id="video-source" src="assets/videos/runa-fondo-video.mp4" type="video/mp4">
+    </video>
+</div>
+
+<header id="main-header" class="fixed top-0 left-0 right-0 z-40">
+    <nav class="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center h-20">
+        <div class="flex-1 flex justify-start items-center space-x-2 sm:space-x-4">
+            <button class="text-white p-2" id="menu-button" aria-label="Open menu">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <button id="theme-toggle" class="p-2 rounded-full text-white" aria-label="Change color theme">
+                <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
+                <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            </button>
+            <!-- Auth Container - Content will be managed by Firebase Auth state -->
+            <div id="auth-container" class="flex items-center">
+                <!-- This will be populated by JavaScript -->
+            </div>
+        </div>
+        <div class="flex-shrink-0">
+             <a href="index.html" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
+                 <video autoplay loop muted playsinline class="w-full h-full object-contain">
+                     <source src="assets/videos/runa-logo-animado.mp4" type="video/mp4">
+                 </video>
+             </a>
+        </div>
+        <div class="flex-1 flex justify-end items-center space-x-2 sm:space-x-4">
+            <button id="video-skin-toggle" class="p-2 rounded-full text-white" aria-label="Open video selector">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            </button>
+            <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)]" aria-label="Open ambiance mixer">
+                <video autoplay loop muted playsinline class="w-full h-full object-cover">
+                    <source src="assets/videos/runa-equalizer-video.mp4" type="video/mp4">
+                </video>
+            </button>
+            <div id="cart-icon-wrapper" class="relative">
+                <button id="open-cart-button" class="p-1 text-white">
+                   <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                   <span id="cart-counter" class="hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <div id="main-menu" class="hidden absolute w-full shadow-lg border-t translucent-panel">
+        <div class="container mx-auto px-6 py-4 text-white">
+             <div class="menu-section">
+                <div class="menu-section-header">
+                    <span>Herramientas Creativas</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="menu-section-content">
+                    <div class="tool-grid">
+                        <div class="tool-button" id="tool-pencil" title="Lápiz"><i class="fas fa-pencil"></i><span>Lápiz</span></div>
+                        <div class="tool-button" id="tool-text" title="Texto"><i class="fas fa-font"></i><span>Texto</span></div>
+                        <div class="tool-button" id="tool-eraser" title="Borrador"><i class="fas fa-eraser"></i><span>Borrador</span></div>
+                        <div class="tool-button" id="tool-upload" title="Subir Imagen"><i class="fas fa-image"></i><span>Foto</span></div>
+                        <div class="tool-button" id="tool-clear" title="Limpiar Página"><i class="fas fa-trash"></i><span>Limpiar</span></div>
+                        <div class="tool-button" id="tool-color" title="Color"><i class="fas fa-palette"></i><span>Color</span></div>
+                        <div class="tool-button" id="tool-add-page" title="Añadir Hoja"><i class="fas fa-plus-circle"></i><span>Añadir</span></div>
+                    </div>
+                    
+                    <div id="color-picker-container">
+                        <div class="color-picker-layout">
+                            <canvas id="color-wheel" width="150" height="150"></canvas>
+                            <div class="flex flex-col items-center gap-4">
+                                <div id="color-preview"></div>
+                                <input type="range" id="luminosity-slider" min="0" max="100" value="50" class="styled-slider">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label for="line-width-slider" class="flex items-center gap-2 text-sm mb-2"><i class="fas fa-pen-nib"></i><span>Grosor</span></label>
+                        <input type="range" id="line-width-slider" min="1" max="50" value="5" class="styled-slider">
+                    </div>
+                    <div id="font-selector-container" class="hidden mt-4">
+                        <label class="flex items-center gap-2 text-sm mb-2"><i class="fas fa-font"></i><span>Tipografía</span></label>
+                        <div id="font-palette">
+                        </div>
+                    </div>
+                </div>
+             </div>
+             <div class="menu-section">
+                <div class="menu-section-header">
+                    <span>Utilidades</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="menu-section-content">
+                    <div class="tool-grid">
+                        <div class="tool-button" id="tool-calc" title="Calculadora"><i class="fas fa-calculator"></i><span>Calc</span></div>
+                        <div class="tool-button" id="tool-print" title="Imprimir"><i class="fas fa-print"></i><span>Imprimir</span></div>
+                        <div class="tool-button" id="tool-share" title="Compartir"><i class="fas fa-share-nodes"></i><span>Compartir</span></div>
+                    </div>
+                </div>
+             </div>
+        </div>
+    </div>
+    <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t translucent-panel">
+        <div class="container mx-auto px-6 py-4">
+            <h3 class="font-semibold text-lg mb-4 text-white">Mezclador de Ambiente</h3>
+            <div id="sound-controls" class="space-y-4"></div>
+        </div>
+    </div>
+    <div id="video-skin-panel" class="hidden absolute w-full shadow-lg border-t translucent-panel">
+        <div class="container mx-auto px-6 py-4">
+            <h3 class="font-semibold text-lg mb-4 text-white">Selector de Video de Fondo</h3>
+            <div id="video-list" class="space-y-2"></div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="flipbook-viewport">
+        <div class="flipbook-container">
+            <div class="flipbook">
+                <div class="page hard cover-page" data-drawing-enabled="false"></div>
+                <div class="page" data-drawing-enabled="false">
+                    <div class="content-wrapper flex flex-col justify-center items-center">
+                        <h2 class="text-6xl text-center uppercase" style="font-family: 'Poppins', sans-serif; font-weight: 700;">RUNA COFFEE</h2>
+                    </div>
+                    <div class="page-number">1</div>
+                </div>
+                <!-- START: New RUNA Coffee History Pages -->
+                <div class="page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <h2 class="handwriting-title">La Historia de RUNA Coffee: Un Puente entre Mundos Sagrados ⚔️🌿</h2>
+                        <p class="mb-4">Nació de una búsqueda profunda…</p>
+                        <p class="mb-4">Desde hace ya muchos años por medio de una persona indimensionablemente trascendental en mi existencia, sentí una conexión con la fuerza ancestral de los pueblos vikingos: su sabiduría, su conexión con la naturaleza, sus símbolos sagrados grabados en piedra —las runas— que hablaban el lenguaje del alma. Esa mística me llamaba… pero algo no encajaba del todo con mi realidad: soy del corazón de Colombia, tierra de montañas y café.</p>
+                        <h3>El Llamado del Norte 🌌</h3>
+                        <ul>
+                            <li class="mb-2">Me llamó la atención su fuerza, su valentía y su conexión con lo sagrado.</li>
+                            <li class="mb-2">Me fascinaban sus runas: símbolos grabados que no solo eran letras, sino portales de sabiduría y poder espiritual.</li>
+                            <li class="mb-2">También descubrí que los vikingos consumían hongos sagrados antes de entrar en batalla, no solo por fuerza, sino para conectarse con visiones, claridad y propósito.</li>
+                            <li>Ellos no solo luchaban con el cuerpo, sino también con el alma despierta.</li>
+                        </ul>
+                    </div>
+                    <div class="page-number">2</div>
+                </div>
+                <div class="page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <h2 class="handwriting-title">La Revelación y el Nacimiento de RUNA Coffee 💡</h2>
+                        <h3>La Raíz en Colombia ⛰️☕️</h3>
+                        <p class="mb-4">Pero yo nací en Colombia, entre montañas, neblinas y cafetales.</p>
+                        <p class="mb-4">Y me preguntaba: ¿Cómo puedo unir ese legado del norte con esta tierra fértil que llevo en mi sangre para la creación de mi marca de café?</p>
+                        <h3>La Revelación: "Runa" ✨</h3>
+                        <p class="mb-4">Investigando, encontré que en el idioma quechua, que hablan los indígenas, andinos y amazónicos, “runa” significa ser humano verdadero: un ser conectado con la madre tierra, con la comunidad y con su conciencia. Eso fue un llamado. ¡Una revelación!</p>
+                        <p class="mb-4">La palabra runa estaba presente en ambos mundos:</p>
+                        <ul>
+                            <li class="mb-2">🌿 Los Andes, donde nací,</li>
+                            <li>⚔️ Y El Norte, de donde me sentía espiritualmente heredera.</li>
+                        </ul>
+                        <h3>El Nacimiento de RUNA Coffee 🍄‍🟫</h3>
+                        <p class="mb-4">Ahí nació Runa Coffee: Una marca que fusiona el café sagrado de nuestras montañas con los hongos ancestrales, como los hongos de poder que también usaban los vikingos.</p>
+                        <p class="mb-4">No como escape, sino como medicina. Como ritual de enfoque, expansión y propósito.</p>
+                        <p>Cada taza de Runa Coffee es un puente entre lo visible y lo invisible. Es un llamado al guerrero de luz que todos llevamos dentro. Es café con alma, con raíz, con visión. Un elixir para despertar, para sanar y para recordar quién eres.</p>
+                    </div>
+                    <div class="page-number">3</div>
+                </div>
+                <!-- END: New RUNA Coffee History Pages -->
+                <div class="page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <h2 class="handwriting-title">¡De la tierra, con conciencia!</h2>
+                        <p class="mb-4"><strong>Representa:</strong><br>Forma de vivir, sentir, y conectar con conciencia.</p>
+                        <p class="mb-6"><strong>Runa:</strong><br>Es una palabra ancestral que en lenguas indígenas andinas significa 'Persona', 'Ser humano en plenitud' o 'Comunidad viva'.</p>
+                        <h3>Valores que transmite la marca:</h3>
+                        <ul>
+                            <li class="mb-4"><strong>Autenticidad ancestral:</strong><br>RUNA honra nuestras raíces, es un tributo a la sabiduría de los pueblos originarios y su forma respetuosa de habitar el mundo.</li>
+                            <li class="mb-4"><strong>Corazón con la tierra:</strong><br>Café cultivado con consciencia, en armonía y equilibrio con la naturaleza.</li>
+                            <li class="mb-4"><strong>Vitalidad Pura:</strong><br>Energía natural, real, que no solo despierta el cuerpo, sino también el alma.</li>
+                            <li><strong>Comunidad:</strong><br>Cada sorbo une historias, conocimiento, manos campesinas y propósitos.</li>
+                        </ul>
+                    </div>
+                    <div class="page-number">4</div>
+                </div>
+                <div class="page" data-drawing-enabled="false">
+                     <div class="content-wrapper">
+                         <h3>Producción consciente:</h3>
+                         <p>Cada grano es cultivado en armonía con el entorno, bajo prácticas éticas y sostenibles. Producido por manos locales que trabajan con amor, respeto y dignidad.</p>
+                         <h3>Energía viva:</h3>
+                         <p>Vitalidad real, sin artificios. Nuestro café especial consciente potencia la plenitud, la conexión con tu interior, equilibrio, autenticidad, salud, vida... propósito.</p>
+                         <h3>Diseño con alma:</h3>
+                         <p>Como diseñadora, cree un lenguaje visual que une lo que somos... Místicos, naturales, vivos. Cada empaque, símbolo y detalle tiene una intención.</p>
+                           <h3>¿A quién va dirigido?</h3>
+                         <p>A personas conscientes, exploradores, espirituales, creativos, que no solo buscan sabor sino sentido. A quienes valoran el origen, la historia, y el impacto de lo que consumen.</p>
+                         <p class="signature mt-4">"Más que café, un llamado a despertar."</p>
+                     </div>
+                    <div class="page-number">5</div>
+                </div>
+                <div class="page portal-page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-coffee-beans-in-a-sack-3259-large.mp4"></video>
+                        <div class="portal-overlay translucent-panel">
+                            <div class="portal-content">
+                                <h2>Tienda RUNA</h2>
+                                <p>Descubre nuestra selección de cafés de especialidad, accesorios y más. Cada compra apoya a nuestras comunidades.</p>
+                                <a href="tienda.html" class="portal-button">Ir a la Tienda</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-number">6</div>
+                </div>
+                <div class="page portal-page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                           <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-top-view-of-a-cup-of-coffee-3445-large.mp4"></video>
+                           <div class="portal-overlay translucent-panel">
+                                <div class="portal-content">
+                                    <h2>Juego RUNA</h2>
+                                    <p>Pon a prueba tus sentidos y sumérgete en el mundo de RUNA con nuestro juego interactivo. ¿Estás listo para el desafío?</p>
+                                    <a href="juego.html" class="portal-button">Jugar Ahora</a>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="page-number">7</div>
+                </div>
+                <div class="page portal-page" data-drawing-enabled="false">
+                     <div class="content-wrapper">
+                           <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-futuristic-computer-data-processing-screen-4740-large.mp4"></video>
+                           <div class="portal-overlay translucent-panel">
+                                <div class="portal-content">
+                                    <h2>Jusn38 Tech</h2>
+                                    <p>Explora la innovación y el diseño detrás de esta experiencia. Jusn38 Tech, creando el futuro de las interacciones digitales.</p>
+                                    <a href="jusn38.html" class="portal-button">Conocer Más</a>
+                                </div>
+                            </div>
+                     </div>
+                    <div class="page-number">8</div>
+                </div>
+                <div class="page" data-drawing-enabled="true"><div class="page-number">9</div></div>
+                <div class="page" data-drawing-enabled="true"><div class="page-number">10</div></div>
+                <div class="page hard" data-drawing-enabled="false"></div>
+            </div>
+            <div id="page-turn-hint">
+                <i class="fas fa-hand-pointer"></i>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="visual-tool" class="hidden"></div>
+
+<div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-0 sm:p-4 bg-black/60 hidden"></div>
+
+<!-- Auth Modal -->
+<div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
+   <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
+        <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <h2 class="text-2xl font-bold text-white mb-2">Bienvenido a Runa</h2>
+        <p class="text-gray-400 mb-6">Inicia sesión o crea una cuenta</p>
+        <button id="google-login-button-modal" class="w-full inline-flex items-center justify-center gap-3 px-4 py-2 text-base font-semibold text-gray-700 bg-white border border-transparent rounded-lg shadow-sm hover:bg-gray-200 transition-all">
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,34.783,44,29.865,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+            <span>Iniciar sesión con Google</span>
+        </button>
+   </div>
+</div>
+
+
+<!-- TI-89 Calculator Structure -->
+<div id="calculator">
+    <div class="calculator-overlay">
+        <div class="calc-header">
+            <span class="calc-brand">TI-89 RUNA</span>
+            <div class="flex items-center gap-4">
+                <i id="calc-send" class="fas fa-paper-plane cursor-pointer hover:text-[var(--runa-primary)] transition-colors" title="Enviar a la página"></i>
+                <i class="fas fa-xmark close-btn" id="calc-close" title="Cerrar"></i>
+            </div>
+        </div>
+        <div class="calc-screen-container">
+            <textarea id="calc-display" readonly rows="2"></textarea>
+        </div>
+        <div class="calc-keys">
+            <button class="calc-btn func" data-func="Math.sin(">sin</button>
+            <button class="calc-btn func" data-func="Math.cos(">cos</button>
+            <button class="calc-btn func" data-func="Math.tan(">tan</button>
+            <button class="calc-btn op" data-key="**">^</button>
+            <button class="calc-btn func" data-func="Math.sqrt(">√</button>
+            <button class="calc-btn func" data-func="Math.log10(">log</button>
+            <button class="calc-btn func" data-func="Math.log(">ln</button>
+            <button class="calc-btn op" data-key="(">(</button>
+            <button class="calc-btn op" data-key=")">)</button>
+            <button class="calc-btn op" data-key="/">÷</button>
+            <button class="calc-btn num" data-key="7">7</button>
+            <button class="calc-btn num" data-key="8">8</button>
+            <button class="calc-btn num" data-key="9">9</button>
+            <button class="calc-btn op" data-key="*">×</button>
+            <button class="calc-btn clear" id="calc-backspace"><i class="fas fa-delete-left"></i></button>
+            <button class="calc-btn num" data-key="4">4</button>
+            <button class="calc-btn num" data-key="5">5</button>
+            <button class="calc-btn num" data-key="6">6</button>
+            <button class="calc-btn op" data-key="-">-</button>
+            <button class="calc-btn clear" id="calc-clear">C</button>
+            <button class="calc-btn num" data-key="1">1</button>
+            <button class="calc-btn num" data-key="2">2</button>
+            <button class="calc-btn num" data-key="3">3</button>
+            <button class="calc-btn op" data-key="+">+</button>
+            <button class="calc-btn enter" id="calc-equals" style="grid-row: span 2;">ENTER</button>
+            <button class="calc-btn num" data-key="0" style="grid-column: span 2;">0</button>
+            <button class="calc-btn num" data-key=".">.</button>
+            <button class="calc-btn op" data-key="*(-1)">(-)</button>
+        </div>
+    </div>
+</div>
+
+<!-- Archivos de audio con rutas actualizadas -->
+<audio id="music-audio" loop><source src="assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
+<audio id="river-audio" loop><source src="assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
+<audio id="birds-audio" loop><source src="assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
+<audio id="rain-audio" loop><source src="assets/mp3/Lluvia.mp3" type="audio/mpeg"></audio>
+<audio id="fire-audio" loop><source src="assets/mp3/Sonido_del_Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
+<audio id="wind-audio" loop><source src="assets/mp3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
+<audio id="storm-audio" loop><source src="assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
+
+<!-- Tu archivo JavaScript personalizado (type="module" para Firebase) -->
+<script type="module" src="js/script.js"></script>
+
+</body>
+</html>
 
