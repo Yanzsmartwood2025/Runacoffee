@@ -3,25 +3,17 @@
 // =================================================================
 // --- MÓDULOS DEL JUEGO ---
 // =================================================================
-// Importa las clases de las entidades del juego
 import { Player, Projectile, Enemy, Resource } from './entities.js';
-// Importa la configuración del juego
 import { config } from './config.js';
-// Importa la lógica principal del juego
-import { handleCollisions, handleGameLogic, handleLevelProgression, startNextLevel, spawnEnemy, gameLoop } from './systems.js';
-// Importa las funciones de la interfaz de usuario
-import { setupUIElements, updateUI, showOverlay, animateResourceToBag } from './modules/ui.js';
-// Importa las funciones de audio
+import { handleCollisions, handleGameLogic, handleLevelProgression, startNextLevel, spawnEnemy, draw, gameLoop } from './systems.js';
+import { setupUIElements, updateUI, showOverlay, showWaveMessage, triggerDamageFlash, animateResourceToBag } from './modules/ui.js';
 import { sounds, playSound } from './modules/audio.js';
-// Importa las funciones de la escena 3D
 import { initThreeScene, updateTreeAppearance, updateOrbsLockState, toggleTreeMenu } from './modules/threeScene.js';
-// Importa las funciones de Firebase
 import { initializeAndLoadGame, saveGameData, loadGameData, auth, db, userId } from './modules/firebase.js';
 
 // =================================================================
 // --- VARIABLES GLOBALES DEL JUEGO ---
 // =================================================================
-// Variables globales accesibles por todos los módulos
 let cellSize, player, base;
 let projectiles = [], enemies = [], resources = [];
 let currentLevelIndex = 0, shootTimer = 0, animationFrameId;
@@ -32,7 +24,7 @@ let globalAnimationTimer = 0;
 let levelMessagesShown = [];
 let isPowerActive = false;
 
-// Exporta las variables globales para que otros módulos puedan acceder a ellas
+// Exportar variables globales
 export {
     cellSize, player, base, projectiles, enemies, resources,
     currentLevelIndex, shootTimer, animationFrameId,
@@ -42,9 +34,17 @@ export {
 };
 
 // =================================================================
-// --- FUNCIONES DE MANIPULACIÓN DEL ESTADO ---
+// --- FUNCIONES Y LÓGICA GENERAL ---
 // =================================================================
-// Función para inicializar el juego
+
+/**
+ * Inicializa o reinicia el estado del juego.
+ * @param {number} level - El nivel en el que empezar.
+ * @param {number} power - Los puntos de poder iniciales.
+ * @param {number} beans - La cantidad de granos de café inicial.
+ * @param {number} health - La salud inicial de la base.
+ * @param {boolean} isFirstLoad - Indica si es la primera carga del juego.
+ */
 function init(level = 0, power = 0, beans = 0, health = config.base.health, isFirstLoad = true) {
     if (animationFrameId) cancelAnimationFrame(animationFrameId);
     
@@ -53,8 +53,11 @@ function init(level = 0, power = 0, beans = 0, health = config.base.health, isFi
     coffeeBeanCount = beans;
     base = { health: Math.min(health, config.base.health), maxHealth: config.base.health };
     
-    levelTimer = 0; currentWaveIndex = -1;
-    enemies = []; projectiles = []; resources = [];
+    levelTimer = 0;
+    currentWaveIndex = -1;
+    enemies = [];
+    projectiles = [];
+    resources = [];
     levelMessagesShown = [];
     isPowerActive = false;
 
@@ -72,7 +75,9 @@ function init(level = 0, power = 0, beans = 0, health = config.base.health, isFi
     }
 }
 
-// Función para activar el poder especial
+/**
+ * Activa el poder especial del jugador si la barra está llena.
+ */
 function activateSpecialPower() {
     if (specialPowerPoints >= config.specialPowerMax && !isPowerActive && gameState === 'playing') {
         isPowerActive = true;
@@ -81,7 +86,9 @@ function activateSpecialPower() {
     }
 }
 
-// Lógica para redimensionar el canvas y las entidades
+/**
+ * Redimensiona el canvas y reinicia la posición del jugador.
+ */
 function resizeAll() {
     const canvas = document.getElementById('game-canvas');
     canvas.width = canvas.clientWidth;
@@ -92,9 +99,41 @@ function resizeAll() {
     if(gameState !== 'playing') draw();
 }
 
+/**
+ * Lógica para la recolección de recursos al hacer clic.
+ * @param {number} x - La coordenada X del clic.
+ * @param {number} y - La coordenada Y del clic.
+ */
+function checkResourceClick(x, y) {
+    for (let i = resources.length - 1; i >= 0; i--) {
+        const r = resources[i];
+        if (r.isFlying) continue;
+
+        const dist = Math.sqrt(Math.pow(x - (r.x + r.size/2), 2) + Math.pow(y - (r.y + r.size/2), 2));
+        
+        if (dist < r.size) { 
+            if (r.type === 'grain') {
+                r.isFlying = true;
+                animateResourceToBag(r);
+            } else {
+                specialPowerPoints = Math.min(config.specialPowerMax, specialPowerPoints + config.orbValue);
+                playSound('collect', 'G5');
+                updateUI();
+                resources.splice(i, 1);
+            }
+            break;
+        }
+    }
+}
+
+
 // =================================================================
 // --- EVENTOS Y CONTROL DE ENTRADA ---
 // =================================================================
+
+/**
+ * Configura todos los oyentes de eventos.
+ */
 function setupEventListeners() {
     const startButton = document.getElementById('start-button');
     const retryButton = document.getElementById('retry-button');
@@ -107,7 +146,11 @@ function setupEventListeners() {
     const activatePowerButton = document.getElementById('activate-power-button');
     const canvas = document.getElementById('game-canvas');
     const treeCanvasContainer = document.getElementById('tree-canvas-container');
+    const authModal = document.getElementById('auth-modal');
+    const closeAuthModalButton = document.getElementById('close-auth-modal-button');
+    const googleLoginButtonModal = document.getElementById('google-login-button-modal');
 
+    // Eventos de botones
     const handleStart = async (event) => {
         event.preventDefault();
         try { if (Tone.context.state !== 'running') await Tone.start(); } 
@@ -120,9 +163,7 @@ function setupEventListeners() {
         gameLoop();
     };
     startButton.addEventListener('click', handleStart);
-
     retryButton.addEventListener('click', (e) => { e.preventDefault(); init(currentLevelIndex, 0, 0, config.base.health, false); });
-    
     pauseButton.addEventListener('click', () => {
         if (gameState === 'playing') {
             previousGameState = gameState;
@@ -130,7 +171,6 @@ function setupEventListeners() {
             showOverlay('pause');
         }
     });
-    
     resumeButton.addEventListener('click', () => {
         if (gameState === 'paused') {
             gameState = 'playing';
@@ -139,34 +179,19 @@ function setupEventListeners() {
             gameLoop();
         }
     });
-    
-    const restartFunction = () => {
-        init(currentLevelIndex, 0, 0, config.base.health, false);
-    };
-    restartPauseButton.addEventListener('click', restartFunction);
-    
-    mainMenuButton.addEventListener('click', () => {
-        init(0, 0, 0, config.base.health, false);
-    });
-
-    howToPlayButton.addEventListener('click', () => {
-        showOverlay('how_to_play');
-    });
-
-    backToPauseButton.addEventListener('click', () => {
-        showOverlay('pause');
-    });
-
+    restartPauseButton.addEventListener('click', () => init(currentLevelIndex, 0, 0, config.base.health, false));
+    mainMenuButton.addEventListener('click', () => init(0, 0, 0, config.base.health, false));
+    howToPlayButton.addEventListener('click', () => showOverlay('how_to_play'));
+    backToPauseButton.addEventListener('click', () => showOverlay('pause'));
     activatePowerButton.addEventListener('click', activateSpecialPower);
-    window.addEventListener('keydown', e => {
-        if (e.key.toLowerCase() === 'e') {
-            activateSpecialPower();
-        }
-    });
 
-    // Control de teclado
+    // Eventos de teclado
     let keys = {};
-    window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
+    window.addEventListener('keydown', e => {
+        keys[e.key.toLowerCase()] = true;
+        if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault();
+        if (e.key.toLowerCase() === 'e') activateSpecialPower();
+    });
     window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
     
     function controlLoop() {
@@ -180,7 +205,7 @@ function setupEventListeners() {
     }
     controlLoop();
 
-    // Control táctil y con ratón
+    // Eventos de ratón y táctiles
     let isDragging = false, didDrag = false, touchYOffset = 0, touchStartY = 0;
     canvas.addEventListener('touchstart', e => {
         e.preventDefault(); 
@@ -211,12 +236,10 @@ function setupEventListeners() {
             didDrag = false;
             return;
         }
-        
         isDragging = false;
         const rect = canvas.getBoundingClientRect();
         const clickX = e.changedTouches[0].clientX - rect.left;
         const clickY = e.changedTouches[0].clientY - rect.top;
-
         if (clickX >= player.x && clickX <= player.x + player.width &&
             clickY >= player.y && clickY <= player.y + player.height) {
             player.shoot();
@@ -230,7 +253,6 @@ function setupEventListeners() {
         const rect = canvas.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const clickY = e.clientY - rect.top;
-
         if (clickX >= player.x && clickX <= player.x + player.width &&
             clickY >= player.y && clickY <= player.y + player.height) {
             player.shoot();
@@ -239,32 +261,40 @@ function setupEventListeners() {
         }
     });
     
-    treeCanvasContainer.addEventListener('click', (event) => {
+    treeCanvasContainer.addEventListener('click', () => {
         if (gameState === 'playing' || gameState === 'paused') {
             toggleTreeMenu(true);
-            return;
+        } else if (gameState === 'menu') {
+            // Lógica de selección de poderes iría aquí
+            toggleTreeMenu(false);
         }
-        
-        if (gameState !== 'menu') return;
-        toggleTreeMenu(false);
+    });
+
+    // Eventos de Firebase UI
+    closeAuthModalButton.addEventListener('click', () => authModal.classList.add('hidden'));
+    googleLoginButtonModal.addEventListener('click', () => {
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider)
+            .then(() => authModal.classList.add('hidden'))
+            .catch(error => console.error("Google Sign-In Error:", error));
+    });
+    document.getElementById('auth-container').addEventListener('click', (event) => {
+        const button = event.target.closest('button');
+        if (!button) return;
+        if (button.id === 'open-login-modal-btn') {
+            authModal.classList.remove('hidden');
+        } else if (button.id === 'logout-btn') {
+            signOut(auth).catch(error => console.error("Sign out error", error));
+        }
     });
 }
 
-// Lógica de inicialización al cargar la página
+// =================================================================
+// --- INICIALIZACIÓN ---
+// =================================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Establecer las funciones globales necesarias para otros módulos
-    window.game = {
-        init,
-        resizeAll,
-        activateSpecialPower,
-        checkResourceClick,
-        animateResourceToBag
-    };
-
-    setupUIElements();
     setupEventListeners();
     initThreeScene();
     initializeAndLoadGame();
     window.addEventListener('resize', resizeAll);
 });
-
