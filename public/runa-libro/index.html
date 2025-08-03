@@ -1,36 +1,35 @@
- <!doctype html>
+<!doctype html>
 <html lang="es" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUNA Libro</title> <!-- Título actualizado aquí -->
+    <title>Cuaderno Digital Interactivo - RUNA Coffee</title>
 
     <!-- Open Graph Meta Tags for Social Sharing -->
     <meta property="og:title" content="RUNA Coffee - Mi Cuaderno Digital Interactivo" />
     <meta property="og:description" content="¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital. Una experiencia para despertar los sentidos." />
-    <meta property="og:image" content="assets/imagenes/portada-libro.jpg" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/portada-libro.jpg" />
     <meta property="og:url" content="https://URL-DE-TU-PAGINA-AQUI.com" />
     <meta property="og:type" content="website" />
     
-    <!-- Librerías externas (CDN) -->
+    <!-- Librerías y Enlaces -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
-    <!-- Fuentes de Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Lobster&family=Pacifico&family=Caveat&family=Indie+Flower&family=Shadows+Into+Light&family=Lora&display=swap" rel="stylesheet">
     
-    <!-- Tu archivo CSS personalizado -->
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Enlace a tu archivo CSS externo -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="no-tool-active">
 
 <div id="video-background-wrapper">
     <video id="video-background" autoplay loop muted playsinline>
-        <source id="video-source" src="assets/videos/runa-fondo-video.mp4" type="video/mp4">
+        <source id="video-source" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" type="video/mp4">
     </video>
 </div>
 
@@ -50,11 +49,11 @@
             </div>
         </div>
         <div class="flex-shrink-0">
-             <a href="index.html" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
-                 <video autoplay loop muted playsinline class="w-full h-full object-contain">
-                     <source src="assets/videos/runa-logo-animado.mp4" type="video/mp4">
-                 </video>
-             </a>
+            <a href="index.html" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
+                <video autoplay loop muted playsinline class="w-full h-full object-contain">
+                    <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets/VIDEOS/runa-logo-animado.mp4" type="video/mp4">
+                </video>
+            </a>
         </div>
         <div class="flex-1 flex justify-end items-center space-x-2 sm:space-x-4">
             <button id="video-skin-toggle" class="p-2 rounded-full text-white" aria-label="Open video selector">
@@ -62,20 +61,20 @@
             </button>
             <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)]" aria-label="Open ambiance mixer">
                 <video autoplay loop muted playsinline class="w-full h-full object-cover">
-                    <source src="assets/videos/runa-equalizer-video.mp4" type="video/mp4">
+                    <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5ec8a9f9a44f0f1d347867a8b1293a1f8f5dae5e/public/assets/videos/runa-equalizer-video.mp4" type="video/mp4">
                 </video>
             </button>
             <div id="cart-icon-wrapper" class="relative">
                 <button id="open-cart-button" class="p-1 text-white">
-                   <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                   <span id="cart-counter" class="hidden">0</span>
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span id="cart-counter" class="hidden">0</span>
                 </button>
             </div>
         </div>
     </nav>
     <div id="main-menu" class="hidden absolute w-full shadow-lg border-t translucent-panel">
         <div class="container mx-auto px-6 py-4 text-white">
-             <div class="menu-section">
+            <div class="menu-section">
                 <div class="menu-section-header">
                     <span>Herramientas Creativas</span>
                     <i class="fas fa-chevron-down"></i>
@@ -111,8 +110,8 @@
                         </div>
                     </div>
                 </div>
-             </div>
-             <div class="menu-section">
+            </div>
+            <div class="menu-section">
                 <div class="menu-section-header">
                     <span>Utilidades</span>
                     <i class="fas fa-chevron-down"></i>
@@ -124,7 +123,7 @@
                         <div class="tool-button" id="tool-share" title="Compartir"><i class="fas fa-share-nodes"></i><span>Compartir</span></div>
                     </div>
                 </div>
-             </div>
+            </div>
         </div>
     </div>
     <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t translucent-panel">
@@ -188,7 +187,6 @@
                     </div>
                     <div class="page-number">3</div>
                 </div>
-                <!-- END: New RUNA Coffee History Pages -->
                 <div class="page" data-drawing-enabled="false">
                     <div class="content-wrapper">
                         <h2 class="handwriting-title">¡De la tierra, con conciencia!</h2>
@@ -205,17 +203,15 @@
                     <div class="page-number">4</div>
                 </div>
                 <div class="page" data-drawing-enabled="false">
-                     <div class="content-wrapper">
-                         <h3>Producción consciente:</h3>
-                         <p>Cada grano es cultivado en armonía con el entorno, bajo prácticas éticas y sostenibles. Producido por manos locales que trabajan con amor, respeto y dignidad.</p>
-                         <h3>Energía viva:</h3>
-                         <p>Vitalidad real, sin artificios. Nuestro café especial consciente potencia la plenitud, la conexión con tu interior, equilibrio, autenticidad, salud, vida... propósito.</p>
-                         <h3>Diseño con alma:</h3>
-                         <p>Como diseñadora, cree un lenguaje visual que une lo que somos... Místicos, naturales, vivos. Cada empaque, símbolo y detalle tiene una intención.</p>
-                           <h3>¿A quién va dirigido?</h3>
-                         <p>A personas conscientes, exploradores, espirituales, creativos, que no solo buscan sabor sino sentido. A quienes valoran el origen, la historia, y el impacto de lo que consumen.</p>
-                         <p class="signature mt-4">"Más que café, un llamado a despertar."</p>
-                     </div>
+                    <div class="content-wrapper">
+                        <h3>Producción consciente:</h3>
+                        <p>Cada grano es cultivado en armonía con el entorno, bajo prácticas éticas y sostenibles. Producido por manos locales que trabajan con amor, respeto y dignidad.</p>
+                        <h3>Energía viva:</h3>
+                        <p>Vitalidad real, sin artificios. Nuestro café especial consciente potencia la plenitud, la conexión con tu interior, equilibrio, autenticidad, salud, vida... propósito.</p>
+                        <h3>Diseño con alma:</h3>
+                        <p>Como diseñadora, cree un lenguaje visual que une lo que somos... Místicos, naturales, vivos. Cada empaque, símbolo y detalle tiene una intención.</p>
+                        <p class="signature mt-4">"Más que café, un llamado a despertar."</p>
+                    </div>
                     <div class="page-number">5</div>
                 </div>
                 <div class="page portal-page" data-drawing-enabled="false">
@@ -233,28 +229,28 @@
                 </div>
                 <div class="page portal-page" data-drawing-enabled="false">
                     <div class="content-wrapper">
-                           <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-top-view-of-a-cup-of-coffee-3445-large.mp4"></video>
-                           <div class="portal-overlay translucent-panel">
-                                <div class="portal-content">
-                                    <h2>Juego RUNA</h2>
-                                    <p>Pon a prueba tus sentidos y sumérgete en el mundo de RUNA con nuestro juego interactivo. ¿Estás listo para el desafío?</p>
-                                    <a href="juego.html" class="portal-button">Jugar Ahora</a>
-                                </div>
+                        <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-top-view-of-a-cup-of-coffee-3445-large.mp4"></video>
+                        <div class="portal-overlay translucent-panel">
+                            <div class="portal-content">
+                                <h2>Juego RUNA</h2>
+                                <p>Pon a prueba tus sentidos y sumérgete en el mundo de RUNA con nuestro juego interactivo. ¿Estás listo para el desafío?</p>
+                                <a href="RunaDefenders/index.html" class="portal-button">Jugar Ahora</a>
                             </div>
+                        </div>
                     </div>
                     <div class="page-number">7</div>
                 </div>
                 <div class="page portal-page" data-drawing-enabled="false">
-                     <div class="content-wrapper">
-                           <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-futuristic-computer-data-processing-screen-4740-large.mp4"></video>
-                           <div class="portal-overlay translucent-panel">
-                                <div class="portal-content">
-                                    <h2>Jusn38 Tech</h2>
-                                    <p>Explora la innovación y el diseño detrás de esta experiencia. Jusn38 Tech, creando el futuro de las interacciones digitales.</p>
-                                    <a href="jusn38.html" class="portal-button">Conocer Más</a>
-                                </div>
+                    <div class="content-wrapper">
+                        <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-futuristic-computer-data-processing-screen-4740-large.mp4"></video>
+                        <div class="portal-overlay translucent-panel">
+                            <div class="portal-content">
+                                <h2>Jusn38 Tech</h2>
+                                <p>Explora la innovación y el diseño detrás de esta experiencia. Jusn38 Tech, creando el futuro de las interacciones digitales.</p>
+                                <a href="jusn38.html" class="portal-button">Conocer Más</a>
                             </div>
-                     </div>
+                        </div>
+                    </div>
                     <div class="page-number">8</div>
                 </div>
                 <div class="page" data-drawing-enabled="true"><div class="page-number">9</div></div>
@@ -274,7 +270,7 @@
 
 <!-- Auth Modal -->
 <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
-   <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
+    <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
         <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
@@ -284,7 +280,7 @@
             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,34.783,44,29.865,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
             <span>Iniciar sesión con Google</span>
         </button>
-   </div>
+    </div>
 </div>
 
 
@@ -312,21 +308,21 @@
             <button class="calc-btn op" data-key="(">(</button>
             <button class="calc-btn op" data-key=")">)</button>
             <button class="calc-btn op" data-key="/">÷</button>
+            <button class="calc-btn clear" id="calc-backspace"><i class="fas fa-delete-left"></i></button>
             <button class="calc-btn num" data-key="7">7</button>
             <button class="calc-btn num" data-key="8">8</button>
             <button class="calc-btn num" data-key="9">9</button>
             <button class="calc-btn op" data-key="*">×</button>
-            <button class="calc-btn clear" id="calc-backspace"><i class="fas fa-delete-left"></i></button>
+            <button class="calc-btn clear" id="calc-clear">C</button>
             <button class="calc-btn num" data-key="4">4</button>
             <button class="calc-btn num" data-key="5">5</button>
             <button class="calc-btn num" data-key="6">6</button>
             <button class="calc-btn op" data-key="-">-</button>
-            <button class="calc-btn clear" id="calc-clear">C</button>
+            <button class="calc-btn enter" id="calc-equals" style="grid-row: span 2;">ENTER</button>
             <button class="calc-btn num" data-key="1">1</button>
             <button class="calc-btn num" data-key="2">2</button>
             <button class="calc-btn num" data-key="3">3</button>
             <button class="calc-btn op" data-key="+">+</button>
-            <button class="calc-btn enter" id="calc-equals" style="grid-row: span 2;">ENTER</button>
             <button class="calc-btn num" data-key="0" style="grid-column: span 2;">0</button>
             <button class="calc-btn num" data-key=".">.</button>
             <button class="calc-btn op" data-key="*(-1)">(-)</button>
@@ -334,18 +330,17 @@
     </div>
 </div>
 
-<!-- Archivos de audio con rutas actualizadas -->
-<audio id="music-audio" loop><source src="assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
-<audio id="river-audio" loop><source src="assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
-<audio id="birds-audio" loop><source src="assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
-<audio id="rain-audio" loop><source src="assets/mp3/Lluvia.mp3" type="audio/mpeg"></audio>
-<audio id="fire-audio" loop><source src="assets/mp3/Sonido_del_Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
-<audio id="wind-audio" loop><source src="assets/mp3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
-<audio id="storm-audio" loop><source src="assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
 
-<!-- Tu archivo JavaScript personalizado (type="module" para Firebase) -->
-<script type="module" src="js/script.js"></script>
+<audio id="music-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
+<audio id="river-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
+<audio id="birds-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
+<audio id="rain-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif" type="audio/mpeg"></audio>
+<audio id="fire-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif" type="audio/mpeg"></audio>
+<audio id="wind-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif" type="audio/mpeg"></audio>
+<audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif" type="audio/mpeg"></audio>
+
+<!-- Enlace a tu archivo JavaScript externo -->
+<script type="module" src="script.js"></script>
 
 </body>
 </html>
-                                  
