@@ -34,7 +34,7 @@ $(document).ready(function () {
 
         if (user && !user.isAnonymous) {
             // El usuario ha iniciado sesión con un proveedor (ej. Google)
-            const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
+            const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/logo-google.png';
             const photoURL = user.photoURL || fallbackImage;
 
             const userButton = $(`
@@ -52,7 +52,7 @@ $(document).ready(function () {
             // El usuario ha cerrado sesión o es anónimo
             const loginButton = $(`
                 <button id="open-auth-modal-button" class="p-1 rounded-full text-white" aria-label="Abrir modal de inicio de sesión">
-                    <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7">
+                    <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7">
                 </button>
             `);
             // Este botón ahora SÓLO abre el modal
@@ -107,7 +107,7 @@ $(document).ready(function () {
     let currentLineWidth = 5;
     let isDrawing = false;
     let lastX = 0, lastY = 0;
-    const pageFlipSound = new Audio('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/c2acd6b2dd569ae8ee33f2441eaacb2386e7490d/public/assets/mp3/pasar-hoja-de-libro.mp3');
+    const pageFlipSound = new Audio('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/mp3/pasar-hoja-de-libro.mp3'); 
     const visualTool = $('#visual-tool');
     
     const fonts = [
@@ -129,18 +129,18 @@ $(document).ready(function () {
     ];
 
     const videoSkins = [
-        { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" }
+        { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/videos/runa-fondo-video.mp4" }
     ];
     let currentVideoIndex = 0;
 
     const ambienceSounds = [
-        { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
-        { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
-        { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
-        { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif' },
-        { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif' },
-        { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif' },
-        { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
+        { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/music.gif' },
+        { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/river.gif' },
+        { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/birds.gif' },
+        { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/rain.gif' },
+        { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/fire.gif' },
+        { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/wind.gif' },
+        { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/storm.gif' },
     ];
 
     // --- Function Definitions ---
@@ -148,13 +148,12 @@ $(document).ready(function () {
     function getCanvasForPage(pageNumber) {
         let canvas = $(`#canvas-page-${pageNumber}`);
         const pageElement = flipbook.find(`.page[data-page-number=${pageNumber}]`);
-        if (!pageElement.length || pageElement.data('drawing-enabled') !== true) return null; // Ensure drawing is enabled
+        if (!pageElement.length || pageElement.data('drawing-enabled') !== true) return null;
 
         if (canvas.length === 0) {
             canvas = $('<canvas>').addClass('drawing-canvas').attr('id', `canvas-page-${pageNumber}`);
             pageElement.append(canvas);
             const canvasEl = canvas[0];
-            // Set canvas dimensions to match the page element
             canvasEl.width = pageElement.width();
             canvasEl.height = pageElement.height();
 
@@ -167,11 +166,11 @@ $(document).ready(function () {
     function getTextLayerForPage(pageNumber) {
         let textLayer = $(`#text-layer-page-${pageNumber}`);
         const pageElement = flipbook.find(`.page[data-page-number=${pageNumber}]`);
-        if (!pageElement.length || pageElement.data('drawing-enabled') !== true) return null; // Ensure drawing is enabled
+        if (!pageElement.length || pageElement.data('drawing-enabled') !== true) return null;
 
         if (textLayer.length === 0) {
             textLayer = $('<div>')
-                .addClass('text-layer-container') // Changed to match CSS
+                .addClass('text-layer-container')
                 .attr('id', `text-layer-page-${pageNumber}`)
                 .attr('contenteditable', 'true')
                 .attr('spellcheck', 'false');
@@ -266,7 +265,7 @@ $(document).ready(function () {
         const canvas = getCanvasForPage(pageNumber);
         if (canvas) {
             const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear before loading
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             try {
                 const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/notebookPages`, `page-${pageNumber}`);
@@ -311,7 +310,7 @@ $(document).ready(function () {
         }
         const textLayer = getTextLayerForPage(pageNumber);
         if (textLayer) {
-            textLayer.innerHTML = ''; // Clear before loading
+            textLayer.innerHTML = '';
             try {
                 const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/notebookPages`, `page-${pageNumber}`);
                 const docSnap = await getDoc(pageDocRef);
@@ -329,8 +328,7 @@ $(document).ready(function () {
     }
     
     async function loadInitialPageData() {
-        // Load data for the currently visible pages after auth is ready
-        const view = flipbook.turn('view'); // Get currently visible pages
+        const view = flipbook.turn('view');
         for (const p of view) {
             if (p > 0 && $(`.page[data-page-number=${p}]`).data('drawing-enabled')) {
                 await loadDrawingForPage(p);
@@ -483,7 +481,6 @@ $(document).ready(function () {
 
     // --- Initial Setup and Event Handlers ---
 
-    // This loop now handles the re-numbering correctly after new pages are added in HTML
     $('.flipbook .page').each((index, el) => $(el).attr('data-page-number', index + 1));
     
     $(window).on('mouseup touchend', stopDrawing);
@@ -496,15 +493,13 @@ $(document).ready(function () {
         gradients: true,
         autoCenter: true,
         when: {
-            turning: async (event, page, view) => { // Before the turn animation starts
-                // Save the state of the page that is about to turn away
+            turning: async (event, page, view) => {
                 if ($(`.page[data-page-number=${page}]`).data('drawing-enabled')) {
                     await saveDrawingForPage(page);
                     await saveTextForPage(page);
                 }
             },
-            turned: async (event, page, view) => { // After the turn animation completes
-                // Load the state of the newly visible pages
+            turned: async (event, page, view) => {
                 for (const p of view) {
                     if (p > 0 && $(`.page[data-page-number=${p}]`).data('drawing-enabled')) {
                         await loadDrawingForPage(p);
@@ -525,20 +520,19 @@ $(document).ready(function () {
     $('#tool-pencil').on('click', () => { setActiveTool('pencil'); closeAllPanels(); });
     $('#tool-text').on('click', () => { 
         setActiveTool('text'); 
-        // Don't close panel, let user pick font
     });
     $('#tool-eraser').on('click', () => { setActiveTool('eraser'); closeAllPanels(); });
-    $('#tool-clear').on('click', async () => { // Made async for Firestore operations
+    $('#tool-clear').on('click', async () => {
         const page = flipbook.turn('page');
         const canvas = getCanvasForPage(page);
         if (canvas) {
             canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-            await saveDrawingForPage(page); // Save cleared state
+            await saveDrawingForPage(page);
         }
         const textLayer = getTextLayerForPage(page);
         if (textLayer) {
             textLayer.innerHTML = '';
-            await saveTextForPage(page); // Save cleared state
+            await saveTextForPage(page);
         }
         closeAllPanels();
     });
@@ -547,9 +541,8 @@ $(document).ready(function () {
         const newPage = $('<div class="page" data-drawing-enabled="true"><div class="page-number"></div></div>');
         const book = $('.flipbook');
         book.turn('addPage', newPage, book.turn('pages') + 1);
-        // Re-number pages
         $('.flipbook .page').each(function(index) {
-            $(this).attr('data-page-number', index + 1); // Ensure data attribute is updated
+            $(this).attr('data-page-number', index + 1);
             $(this).find('.page-number').text(index + 1);
         });
         closeAllPanels();
@@ -573,7 +566,7 @@ $(document).ready(function () {
             if (textLayer) {
                 document.execCommand('fontName', false, $(this).data('fontFamily'));
                 $(textLayer).focus();
-                saveTextForPage(page); // Save font change
+                saveTextForPage(page);
             }
             closeAllPanels();
         });
@@ -599,9 +592,9 @@ $(document).ready(function () {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = async (event) => { // Made async for Firestore
+        reader.onload = async (event) => {
             const img = new Image();
-            img.onload = async () => { // Made async for Firestore
+            img.onload = async () => {
                 const page = flipbook.turn('page');
                 const canvas = getCanvasForPage(page);
                 if (canvas) {
@@ -611,7 +604,7 @@ $(document).ready(function () {
                     if (w > maxW) { w = maxW; h = w / ratio; }
                     if (h > maxH) { h = maxH; w = h * ratio; }
                     ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
-                    await saveDrawingForPage(page); // Save image to Firestore
+                    await saveDrawingForPage(page);
                 }
             };
             img.src = event.target.result;
@@ -699,7 +692,7 @@ $(document).ready(function () {
 
     $('#calc-close').on('click', () => calculator.fadeOut());
 
-    async function sendToPage(value) { // Made async for Firestore
+    async function sendToPage(value) {
         if (value && value !== 'Error') {
             setActiveTool('text');
             const page = flipbook.turn('page');
@@ -714,7 +707,7 @@ $(document).ready(function () {
                 selection.addRange(range);
 
                 document.execCommand('insertText', false, ` ${value} `);
-                await saveTextForPage(page); // Save text to Firestore
+                await saveTextForPage(page);
             }
         }
     }
@@ -741,14 +734,13 @@ $(document).ready(function () {
     $('#calc-equals').on('click', () => {
         try {
             let expression = calcDisplay.val();
-            // Replace common math function representations with Math object methods
             expression = expression.replace(/sin\(/g, 'Math.sin(')
                                      .replace(/cos\(/g, 'Math.cos(')
                                      .replace(/tan\(/g, 'Math.tan(')
                                      .replace(/sqrt\(/g, 'Math.sqrt(')
-                                     .replace(/log\(/g, 'Math.log10(') // Assuming log base 10
-                                     .replace(/ln\(/g, 'Math.log(') // Natural log
-                                     .replace(/\^/g, '**'); // Power operator
+                                     .replace(/log\(/g, 'Math.log10(')
+                                     .replace(/ln\(/g, 'Math.log(')
+                                     .replace(/\^/g, '**');
 
             const result = new Function('return ' + expression)();
             calcDisplay.val(result);
@@ -781,9 +773,7 @@ $(document).ready(function () {
     
     // --- Resizing ---
     $(window).on('resize', () => {
-        // Re-initialize flipbook on resize to ensure correct dimensions
         flipbook.turn('size', $('.flipbook-container').width(), $('.flipbook-container').height());
-        // Re-size canvases on pages that have them
         $('.flipbook .page').each(function() {
             const pageNumber = $(this).data('page-number');
             const canvas = getCanvasForPage(pageNumber);
@@ -791,11 +781,10 @@ $(document).ready(function () {
                 const pageElement = $(this);
                 canvas.width = pageElement.width();
                 canvas.height = pageElement.height();
-                // Reload drawing to fit new canvas size if necessary
                 loadDrawingForPage(pageNumber);
             }
         });
-    }).trigger('resize'); // Trigger resize on load to set initial state
+    }).trigger('resize');
 
     // --- Page Turn Hint ---
     const pageTurnHint = $('#page-turn-hint');
@@ -806,7 +795,6 @@ $(document).ready(function () {
 
     // --- Final Initializations ---
     setActiveTool('no-tool');
-    // Initial page data loading is now handled by onAuthStateChanged -> loadInitialPageData()
     applyTheme(localStorage.getItem('runaTheme') || 'light');
     initializeMixer();
     initializeVideoSelector();
