@@ -1,29 +1,28 @@
-
-// Import Firebase services
+// Importa todos los servicios de Firebase necesarios
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+ 
 $(document).ready(function () {
     // --- Firebase Initialization ---
-    // These variables are expected to be provided by the environment.
+    // Estas variables se esperan que sean proporcionadas por el entorno.
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" };
     const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; // Use the provided app ID
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; // Usa el ID de la app proporcionado
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app); // Initialize Firestore
+    const db = getFirestore(app); // Inicializa Firestore
 
     let currentUserId = null;
-    let isAuthReady = false; // Flag to ensure Firestore operations wait for auth
+    let isAuthReady = false; // Flag para asegurar que las operaciones de Firestore esperen a la autenticación
 
     // --- Firebase Auth UI Management ---
     const handleSignIn = () => {
-         signInWithPopup(auth, new GoogleAuthProvider()) // Use new GoogleAuthProvider()
+        signInWithPopup(auth, new GoogleAuthProvider()) // Usa GoogleAuthProvider directamente
             .then((result) => {
                 console.log("Signed in successfully with Google", result.user);
-                $('#auth-modal').addClass('hidden'); // Close modal on success
+                $('#auth-modal').addClass('hidden'); // Cierra el modal al tener éxito
             }).catch((error) => {
                 console.error("Google sign-in error", error);
             });
@@ -31,11 +30,11 @@ $(document).ready(function () {
 
     const updateAuthUI = (user) => {
         const authContainer = $('#auth-container');
-        authContainer.empty(); // Clear previous content
+        authContainer.empty(); // Limpia el contenido anterior
 
         if (user && !user.isAnonymous) {
-            // User is signed in with a provider (e.g., Google)
-            const fallbackImage = 'assets/imagenes/logo-google.png'; // Ruta actualizada
+            // El usuario ha iniciado sesión con un proveedor (ej. Google)
+            const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
             const photoURL = user.photoURL || fallbackImage;
 
             const userButton = $(`
@@ -50,13 +49,13 @@ $(document).ready(function () {
             authContainer.append(userButton);
 
         } else {
-            // User is signed out or anonymous
+            // El usuario ha cerrado sesión o es anónimo
             const loginButton = $(`
                 <button id="open-auth-modal-button" class="p-1 rounded-full text-white" aria-label="Abrir modal de inicio de sesión">
-                    <img src="assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7"> <!-- Ruta actualizada -->
+                    <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7">
                 </button>
             `);
-            // This button now ONLY opens the modal
+            // Este botón ahora SÓLO abre el modal
             loginButton.on('click', () => {
                 $('#auth-modal').removeClass('hidden');
             });
@@ -64,13 +63,13 @@ $(document).ready(function () {
         }
     };
 
-    // Attach listener to auth state changes
+    // Adjuntar el listener para los cambios en el estado de autenticación
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUserId = user.uid;
             console.log("User signed in:", user.uid);
         } else {
-            // Sign in anonymously if no user is logged in
+            // Inicia sesión de forma anónima si no hay un usuario logueado
             try {
                 const anonymousUser = await signInAnonymously(auth);
                 currentUserId = anonymousUser.user.uid;
@@ -80,34 +79,35 @@ $(document).ready(function () {
             }
         }
         isAuthReady = true;
-        // Now that auth is ready, load initial data for visible pages
+        // Ahora que la autenticación está lista, carga los datos iniciales para las páginas visibles
         loadInitialPageData();
         updateAuthUI(user);
     });
 
-    // Initial sign-in flow
+    // Flujo de inicio de sesión inicial
     if (initialAuthToken) {
         signInWithCustomToken(auth, initialAuthToken).catch(err => {
             console.error("Custom token sign-in failed, trying anonymous.", err);
-            // The onAuthStateChanged listener will handle signInAnonymously if needed
+            // El listener de onAuthStateChanged manejará signInAnonymously si es necesario
         });
     } else {
-        // The onAuthStateChanged listener will handle signInAnonymously
+        // El listener de onAuthStateChanged manejará signInAnonymously
     }
 
-    // The button inside the modal handles the actual sign-in
+    // El botón dentro del modal maneja el inicio de sesión real
     $('#google-login-button-modal').on('click', handleSignIn);
 
 
     // --- State Variables ---
     const flipbook = $('.flipbook');
+    // los estados de dibujo y texto se gestionan ahora por Firestore
     let currentTool = 'no-tool';
     let currentColor = 'rgb(0,0,0)';
     let baseColorFromWheel = { r: 0, g: 0, b: 0 };
     let currentLineWidth = 5;
     let isDrawing = false;
     let lastX = 0, lastY = 0;
-    const pageFlipSound = new Audio('assets/mp3/pasar-hoja-de-libro.mp3'); // Ruta actualizada
+    const pageFlipSound = new Audio('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/c2acd6b2dd569ae8ee33f2441eaacb2386e7490d/public/assets/mp3/pasar-hoja-de-libro.mp3');
     const visualTool = $('#visual-tool');
     
     const fonts = [
@@ -129,18 +129,18 @@ $(document).ready(function () {
     ];
 
     const videoSkins = [
-        { name: "Naturaleza y Café", url: "assets/videos/runa-fondo-video.mp4" } // Ruta actualizada
+        { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" }
     ];
     let currentVideoIndex = 0;
 
     const ambienceSounds = [
-        { id: 'music-audio', name: 'Música', gifSrc: 'assets/gif/music.gif' }, // Ruta actualizada
-        { id: 'river-audio', name: 'Río', gifSrc: 'assets/gif/river.gif' }, // Ruta actualizada
-        { id: 'birds-audio', name: 'Pájaros', gifSrc: 'assets/gif/birds.gif' }, // Ruta actualizada
-        { id: 'rain-audio', name: 'Lluvia', gifSrc: 'assets/gif/rain.gif' }, // Ruta actualizada
-        { id: 'fire-audio', name: 'Fuego', gifSrc: 'assets/gif/fire.gif' }, // Ruta actualizada
-        { id: 'wind-audio', name: 'Viento', gifSrc: 'assets/gif/wind.gif' }, // Ruta actualizada
-        { id: 'storm-audio', name: 'Tormenta', gifSrc: 'assets/gif/storm.gif' }, // Ruta actualizada
+        { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
+        { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
+        { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
+        { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif' },
+        { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif' },
+        { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif' },
+        { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
     ];
 
     // --- Function Definitions ---
@@ -327,7 +327,7 @@ $(document).ready(function () {
             }
         }
     }
-
+    
     async function loadInitialPageData() {
         // Load data for the currently visible pages after auth is ready
         const view = flipbook.turn('view'); // Get currently visible pages
@@ -362,7 +362,8 @@ $(document).ready(function () {
             $('#font-selector-container').removeClass('hidden');
             $('#color-picker-container').addClass('hidden');
             visualTool.hide();
-            const textLayer = getTextLayerForPage(flipbook.turn('page'));
+            const page = flipbook.turn('page');
+            const textLayer = getTextLayerForPage(page);
             if (textLayer) {
                 $(textLayer).focus();
                 document.execCommand('foreColor', false, currentColor);
@@ -523,8 +524,8 @@ $(document).ready(function () {
     // --- Tool Event Handlers ---
     $('#tool-pencil').on('click', () => { setActiveTool('pencil'); closeAllPanels(); });
     $('#tool-text').on('click', () => { 
-         setActiveTool('text'); 
-         // Don't close panel, let user pick font
+        setActiveTool('text'); 
+        // Don't close panel, let user pick font
     });
     $('#tool-eraser').on('click', () => { setActiveTool('eraser'); closeAllPanels(); });
     $('#tool-clear').on('click', async () => { // Made async for Firestore operations
@@ -583,7 +584,7 @@ $(document).ready(function () {
     $('#tool-print').on('click', () => { window.print(); closeAllPanels(); });
     
     $('#tool-share').on('click', async () => {
-         const shareData = {
+        const shareData = {
             title: 'RUNA Coffee - Cuaderno Digital',
             text: '¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital interactivo.',
             url: window.location.href,
@@ -669,7 +670,7 @@ $(document).ready(function () {
         currentColor = `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
         colorPreview.style.backgroundColor = currentColor;
         if (currentTool === 'text') {
-             document.execCommand('foreColor', false, currentColor);
+            document.execCommand('foreColor', false, currentColor);
         }
     }
 
@@ -742,12 +743,12 @@ $(document).ready(function () {
             let expression = calcDisplay.val();
             // Replace common math function representations with Math object methods
             expression = expression.replace(/sin\(/g, 'Math.sin(')
-                                   .replace(/cos\(/g, 'Math.cos(')
-                                   .replace(/tan\(/g, 'Math.tan(')
-                                   .replace(/sqrt\(/g, 'Math.sqrt(')
-                                   .replace(/log\(/g, 'Math.log10(') // Assuming log base 10
-                                   .replace(/ln\(/g, 'Math.log(') // Natural log
-                                   .replace(/\^/g, '**'); // Power operator
+                                     .replace(/cos\(/g, 'Math.cos(')
+                                     .replace(/tan\(/g, 'Math.tan(')
+                                     .replace(/sqrt\(/g, 'Math.sqrt(')
+                                     .replace(/log\(/g, 'Math.log10(') // Assuming log base 10
+                                     .replace(/ln\(/g, 'Math.log(') // Natural log
+                                     .replace(/\^/g, '**'); // Power operator
 
             const result = new Function('return ' + expression)();
             calcDisplay.val(result);
