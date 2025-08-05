@@ -1,28 +1,29 @@
-// Importa todos los servicios de Firebase necesarios
+// Import Firebase services
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
- 
+
 $(document).ready(function () {
     // --- Firebase Initialization ---
-    // Estas variables se esperan que sean proporcionadas por el entorno.
+    // These variables are expected to be provided by the environment.
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" };
     const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; // Usa el ID de la app proporcionado
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; // Use the provided app ID
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app); // Inicializa Firestore
+    const db = getFirestore(app); // Initialize Firestore
 
     let currentUserId = null;
-    let isAuthReady = false; // Flag para asegurar que las operaciones de Firestore esperen a la autenticación
+    let isAuthReady = false; // Flag to ensure Firestore operations wait for auth
 
     // --- Firebase Auth UI Management ---
     const handleSignIn = () => {
-        signInWithPopup(auth, new GoogleAuthProvider()) // Usa GoogleAuthProvider directamente
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider)
             .then((result) => {
                 console.log("Signed in successfully with Google", result.user);
-                $('#auth-modal').addClass('hidden'); // Cierra el modal al tener éxito
+                $('#auth-modal').addClass('hidden'); // Close modal on success
             }).catch((error) => {
                 console.error("Google sign-in error", error);
             });
@@ -30,11 +31,11 @@ $(document).ready(function () {
 
     const updateAuthUI = (user) => {
         const authContainer = $('#auth-container');
-        authContainer.empty(); // Limpia el contenido anterior
+        authContainer.empty(); // Clear previous content
 
         if (user && !user.isAnonymous) {
-            // El usuario ha iniciado sesión con un proveedor (ej. Google)
-            const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/logo-google.png';
+            // User is signed in with a provider (e.g., Google)
+            const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
             const photoURL = user.photoURL || fallbackImage;
 
             const userButton = $(`
@@ -49,13 +50,13 @@ $(document).ready(function () {
             authContainer.append(userButton);
 
         } else {
-            // El usuario ha cerrado sesión o es anónimo
+            // User is signed out or anonymous
             const loginButton = $(`
                 <button id="open-auth-modal-button" class="p-1 rounded-full text-white" aria-label="Abrir modal de inicio de sesión">
-                    <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7">
+                    <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7">
                 </button>
             `);
-            // Este botón ahora SÓLO abre el modal
+            // This button now ONLY opens the modal
             loginButton.on('click', () => {
                 $('#auth-modal').removeClass('hidden');
             });
@@ -63,13 +64,13 @@ $(document).ready(function () {
         }
     };
 
-    // Adjuntar el listener para los cambios en el estado de autenticación
+    // Attach listener to auth state changes
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUserId = user.uid;
             console.log("User signed in:", user.uid);
         } else {
-            // Inicia sesión de forma anónima si no hay un usuario logueado
+            // Sign in anonymously if no user is logged in
             try {
                 const anonymousUser = await signInAnonymously(auth);
                 currentUserId = anonymousUser.user.uid;
@@ -79,35 +80,34 @@ $(document).ready(function () {
             }
         }
         isAuthReady = true;
-        // Ahora que la autenticación está lista, carga los datos iniciales para las páginas visibles
+        // Now that auth is ready, load initial data for visible pages
         loadInitialPageData();
         updateAuthUI(user);
     });
 
-    // Flujo de inicio de sesión inicial
+    // Initial sign-in flow
     if (initialAuthToken) {
         signInWithCustomToken(auth, initialAuthToken).catch(err => {
             console.error("Custom token sign-in failed, trying anonymous.", err);
-            // El listener de onAuthStateChanged manejará signInAnonymously si es necesario
+            // The onAuthStateChanged listener will handle signInAnonymously if needed
         });
     } else {
-        // El listener de onAuthStateChanged manejará signInAnonymously
+        // The onAuthStateChanged listener will handle signInAnonymously
     }
 
-    // El botón dentro del modal maneja el inicio de sesión real
+    // The button inside the modal handles the actual sign-in
     $('#google-login-button-modal').on('click', handleSignIn);
 
 
     // --- State Variables ---
     const flipbook = $('.flipbook');
-    // los estados de dibujo y texto se gestionan ahora por Firestore
     let currentTool = 'no-tool';
     let currentColor = 'rgb(0,0,0)';
     let baseColorFromWheel = { r: 0, g: 0, b: 0 };
     let currentLineWidth = 5;
     let isDrawing = false;
     let lastX = 0, lastY = 0;
-    const pageFlipSound = new Audio('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/mp3/pasar-hoja-de-libro.mp3'); 
+    const pageFlipSound = new Audio('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/c2acd6b2dd569ae8ee33f2441eaacb2386e7490d/public/assets/mp3/pasar-hoja-de-libro.mp3');
     const visualTool = $('#visual-tool');
     
     const fonts = [
@@ -129,18 +129,18 @@ $(document).ready(function () {
     ];
 
     const videoSkins = [
-        { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/videos/runa-fondo-video.mp4" }
+        { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" }
     ];
     let currentVideoIndex = 0;
 
     const ambienceSounds = [
-        { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/music.gif' },
-        { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/river.gif' },
-        { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/birds.gif' },
-        { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/rain.gif' },
-        { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/fire.gif' },
-        { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/wind.gif' },
-        { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/storm.gif' },
+        { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
+        { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
+        { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
+        { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif' },
+        { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif' },
+        { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif' },
+        { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
     ];
 
     // --- Function Definitions ---
@@ -248,7 +248,7 @@ $(document).ready(function () {
         if (canvas) {
             const dataURL = canvas.toDataURL();
             try {
-                const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/notebookPages`, `page-${pageNumber}`);
+                const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/runaLibroPages`, `page-${pageNumber}`);
                 await setDoc(pageDocRef, { drawingData: dataURL }, { merge: true });
                 console.log(`Drawing saved for page ${pageNumber}`);
             } catch (e) {
@@ -265,10 +265,10 @@ $(document).ready(function () {
         const canvas = getCanvasForPage(pageNumber);
         if (canvas) {
             const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear before loading
 
             try {
-                const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/notebookPages`, `page-${pageNumber}`);
+                const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/runaLibroPages`, `page-${pageNumber}`);
                 const docSnap = await getDoc(pageDocRef);
                 if (docSnap.exists()) {
                     const data = docSnap.data();
@@ -294,7 +294,7 @@ $(document).ready(function () {
         if (textLayer) {
             const textContent = textLayer.innerHTML;
             try {
-                const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/notebookPages`, `page-${pageNumber}`);
+                const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/runaLibroPages`, `page-${pageNumber}`);
                 await setDoc(pageDocRef, { textData: textContent }, { merge: true });
                 console.log(`Text saved for page ${pageNumber}`);
             } catch (e) {
@@ -310,9 +310,9 @@ $(document).ready(function () {
         }
         const textLayer = getTextLayerForPage(pageNumber);
         if (textLayer) {
-            textLayer.innerHTML = '';
+            textLayer.innerHTML = ''; // Clear before loading
             try {
-                const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/notebookPages`, `page-${pageNumber}`);
+                const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/runaLibroPages`, `page-${pageNumber}`);
                 const docSnap = await getDoc(pageDocRef);
                 if (docSnap.exists()) {
                     const data = docSnap.data();
@@ -326,7 +326,7 @@ $(document).ready(function () {
             }
         }
     }
-    
+
     async function loadInitialPageData() {
         const view = flipbook.turn('view');
         for (const p of view) {
@@ -360,8 +360,7 @@ $(document).ready(function () {
             $('#font-selector-container').removeClass('hidden');
             $('#color-picker-container').addClass('hidden');
             visualTool.hide();
-            const page = flipbook.turn('page');
-            const textLayer = getTextLayerForPage(page);
+            const textLayer = getTextLayerForPage(flipbook.turn('page'));
             if (textLayer) {
                 $(textLayer).focus();
                 document.execCommand('foreColor', false, currentColor);
@@ -519,7 +518,7 @@ $(document).ready(function () {
     // --- Tool Event Handlers ---
     $('#tool-pencil').on('click', () => { setActiveTool('pencil'); closeAllPanels(); });
     $('#tool-text').on('click', () => { 
-        setActiveTool('text'); 
+         setActiveTool('text'); 
     });
     $('#tool-eraser').on('click', () => { setActiveTool('eraser'); closeAllPanels(); });
     $('#tool-clear').on('click', async () => {
@@ -577,11 +576,11 @@ $(document).ready(function () {
     $('#tool-print').on('click', () => { window.print(); closeAllPanels(); });
     
     $('#tool-share').on('click', async () => {
-        const shareData = {
-            title: 'RUNA Coffee - Cuaderno Digital',
-            text: '¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital interactivo.',
-            url: window.location.href,
-        };
+         const shareData = {
+             title: 'RUNA Coffee - Runa Libro',
+             text: '¡Bienvenido a RUNA Coffee! Te invito a explorar mi Runa Libro interactivo.',
+             url: window.location.href,
+         };
         try { await navigator.share(shareData); }
         catch (err) { console.error("Share failed:", err); }
         closeAllPanels();
@@ -663,7 +662,7 @@ $(document).ready(function () {
         currentColor = `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
         colorPreview.style.backgroundColor = currentColor;
         if (currentTool === 'text') {
-            document.execCommand('foreColor', false, currentColor);
+             document.execCommand('foreColor', false, currentColor);
         }
     }
 
@@ -735,12 +734,12 @@ $(document).ready(function () {
         try {
             let expression = calcDisplay.val();
             expression = expression.replace(/sin\(/g, 'Math.sin(')
-                                     .replace(/cos\(/g, 'Math.cos(')
-                                     .replace(/tan\(/g, 'Math.tan(')
-                                     .replace(/sqrt\(/g, 'Math.sqrt(')
-                                     .replace(/log\(/g, 'Math.log10(')
-                                     .replace(/ln\(/g, 'Math.log(')
-                                     .replace(/\^/g, '**');
+                                   .replace(/cos\(/g, 'Math.cos(')
+                                   .replace(/tan\(/g, 'Math.tan(')
+                                   .replace(/sqrt\(/g, 'Math.sqrt(')
+                                   .replace(/log\(/g, 'Math.log10(')
+                                   .replace(/ln\(/g, 'Math.log(')
+                                   .replace(/\^/g, '**');
 
             const result = new Function('return ' + expression)();
             calcDisplay.val(result);
