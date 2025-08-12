@@ -1,68 +1,78 @@
-// systems/gameLoop.js - El bucle principal del juego
-
+// systems/gameloop.js
+import { config } from '../config.js';
+import { 
+    getState, setState, getPlayer, getProjectiles, getEnemies, getResources, 
+    setShootTimer, setLevelTimer, setGlobalAnimationTimer, setIsPowerActive, 
+    setSpecialPowerPoints, getAnimationId, setAnimationId 
+} from '../main.js';
 import { handleCollisions } from './collision.js';
 import { handleLevelProgression } from './levelManager.js';
-import { updateUI } from '../modules/ui.js';
-import {
-    player, projectiles, enemies, resources, gameState,
-    isPowerActive, specialPowerPoints,
-    animationFrameId, globalAnimationTimer
-} from '../main.js';
+import { updateUI, showOverlay } from '../modules/ui.js';
+import { playSound } from './sfx.js';
 
-/**
- * Dibuja todas las entidades en el canvas.
- */
 function draw() {
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const player = getPlayer();
     if (player) player.draw();
-    projectiles.forEach(p => p.draw());
-    enemies.forEach(e => e.draw());
-    resources.forEach(r => r.draw());
+    
+    getProjectiles().forEach(p => p.draw());
+    getEnemies().forEach(e => e.draw());
+    getResources().forEach(r => r.draw());
 }
 
-/**
- * Maneja la lógica de actualización del juego.
- */
 function handleGameLogic() {
-    globalAnimationTimer += 0.02;
-    if (shootTimer > 0) shootTimer--;
-    levelTimer += 1 / 60;
+    const state = getState();
+    setGlobalAnimationTimer(state.globalAnimationTimer + 0.02);
+    if (state.shootTimer > 0) setShootTimer(state.shootTimer - 1);
+    setLevelTimer(state.levelTimer + 1/60);
 
-    if (isPowerActive) {
-        specialPowerPoints -= (config.powerDrainRate / 60);
-        if (specialPowerPoints <= 0) {
-            isPowerActive = false;
-            specialPowerPoints = 0;
+    if (state.isPowerActive) {
+        const newPower = state.specialPowerPoints - (config.powerDrainRate / 60);
+        setSpecialPowerPoints(newPower);
+        if (newPower <= 0) {
+            setIsPowerActive(false);
+            setSpecialPowerPoints(0);
             playSound('powerDown', 'G3', '4n');
-            document.getElementById('activate-power-button').classList.remove('power-ready');
         }
     }
 
-    projectiles.forEach((p, i) => { p.update(); if (p.x > canvas.width) projectiles.splice(i, 1); });
-    enemies.forEach(e => e.update());
-    resources.forEach((r, i) => { r.update(); if (r.life <= 0) resources.splice(i, 1); });
+    getProjectiles().forEach((p, i) => { p.update(); if (p.x > document.getElementById('game-canvas').width) getProjectiles().splice(i, 1); });
+    getEnemies().forEach(e => e.update());
+    getResources().forEach((r, i) => { r.update(); if (r.life <= 0) getResources().splice(i, 1); });
+    
     handleCollisions();
     handleLevelProgression();
 }
 
-/**
- * El bucle principal del juego. Se llama en cada frame.
- */
-function gameLoop() {
-    if (gameState === 'playing') {
+export function gameLoop() {
+    const state = getState();
+    
+    if (state.gameState === 'playing') {
         handleGameLogic();
         updateUI();
     }
+    
     draw();
+    
+    if (state.base.health <= 0 && state.gameState !== 'game_over') {
+        setState('game_over');
+    }
 
-    if (gameState === 'game_over') {
+    if (state.gameState === 'game_over') {
         showOverlay('game_over');
-    } else if (gameState !== 'level_complete' && gameState !== 'paused' && gameState !== 'menu') {
-        animationFrameId = requestAnimationFrame(gameLoop);
+        if (getAnimationId()) {
+            cancelAnimationFrame(getAnimationId());
+            setAnimationId(null);
+        }
+    } else if (state.gameState !== 'level_complete' && state.gameState !== 'paused' && state.gameState !== 'menu') {
+        setAnimationId(requestAnimationFrame(gameLoop));
+    } else {
+        if (getAnimationId()) {
+            cancelAnimationFrame(getAnimationId());
+            setAnimationId(null);
+        }
     }
 }
-
-export { draw, gameLoop };
-
