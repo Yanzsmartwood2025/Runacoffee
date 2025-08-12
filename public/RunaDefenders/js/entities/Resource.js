@@ -1,20 +1,28 @@
 // entities/Resource.js
 import { config } from '../config.js';
-import { globalAnimationTimer } from '../main.js';
+import { getGlobalAnimationTimer } from '../main.js';
 
-class Resource {
+const ctx = document.getElementById('game-canvas').getContext('2d');
+
+export class Resource {
     constructor(x, y, type) {
-        this.x = x; this.y = y;
+        this.x = x;
+        this.y = y;
         this.size = 45;
         this.type = type;
-        this.image = new Image(); this.image.src = type === 'grain' ? config.grainImage : config.orbImage;
-        this.life = 400;
+        this.image = new Image();
+        this.image.src = type === 'grain' ? config.grainImage : config.orbImage;
+        this.life = 400; // Time before it disappears
         this.isFlying = false;
     }
-    update() { this.life--; }
+
+    update() {
+        this.life--;
+    }
+
     draw() {
         if (this.isFlying) return;
-        const scale = 1 + Math.sin(globalAnimationTimer * 6) * 0.08;
+        const scale = 1 + Math.sin(getGlobalAnimationTimer() * 6) * 0.08;
         const newSize = this.size * scale;
         const sizeDiff = (newSize - this.size) / 2;
 
@@ -23,6 +31,3 @@ class Resource {
         ctx.globalAlpha = 1;
     }
 }
-
-export { Resource };
-
