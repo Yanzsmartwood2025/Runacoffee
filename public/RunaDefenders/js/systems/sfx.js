@@ -1,7 +1,7 @@
-// systems/sfx.js - Gestión de efectos de sonido
+// systems/sfx.js
+// Maneja la creación y reproducción de sonidos del juego.
 
-import * as Tone from 'https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js';
-
+// Asegúrate de que Tone.js esté cargado en tu HTML
 const sounds = {
     shoot: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
     collect: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 } }).toDestination(),
@@ -15,19 +15,9 @@ const sounds = {
     powerDown: new Tone.PolySynth(Tone.AMSynth, { harmonicity: 1.5, detune: 0, oscillator: { type: "square" }, envelope: { attack: 0.01, decay: 0.5, sustain: 0, release: 0.5 }, modulation: { type: "sawtooth" }, modulationEnvelope: { attack: 0.1, decay: 0.2, sustain: 0, release: 0.5 } }).toDestination()
 };
 
-/**
- * Reproduce un sonido específico si el contexto de audio está activo.
- * @param {string} sound - El nombre del sonido a reproducir.
- * @param {string} note - La nota musical para el sonido.
- * @param {string} duration - La duración de la nota.
- */
-function playSound(sound, note, duration = '8n') {
-    if (Tone.context.state !== 'running') {
-        return;
-    }
+export function playSound(sound, note, duration = '8n') {
+    if (typeof Tone === 'undefined' || Tone.context.state !== 'running') return;
     if (sounds[sound]) {
         sounds[sound].triggerAttackRelease(note, duration);
     }
 }
-
-export { sounds, playSound };
