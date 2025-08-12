@@ -1,4 +1,6 @@
 // modules/firebase.js
+// Gestiona la autenticación y el guardado/cargado de datos con Firebase.
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -52,11 +54,12 @@ export async function initializeAndLoadGame() {
 
 function updateAuthUI(user) {
     authContainer.innerHTML = '';
+    const googleLogo = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
     if (user && !user.isAnonymous) {
-        const photoURL = user.photoURL || 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
-        authContainer.innerHTML = `<button id="logout-btn" title="Cerrar sesión de ${user.displayName || 'Usuario'}"><img src="${photoURL}" alt="Foto de Usuario" style="object-fit: cover; background-color: white;" onerror="this.src='https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';"></button>`;
+        const photoURL = user.photoURL || googleLogo;
+        authContainer.innerHTML = `<button id="logout-btn" title="Cerrar sesión de ${user.displayName || 'Usuario'}"><img src="${photoURL}" alt="Foto de Usuario" style="object-fit: cover; background-color: white;" onerror="this.src='${googleLogo}';"></button>`;
     } else {
-        authContainer.innerHTML = `<button id="open-login-modal-btn" title="Iniciar Sesión"><img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Iniciar Sesión con Google"></button>`;
+        authContainer.innerHTML = `<button id="open-login-modal-btn" title="Iniciar Sesión"><img src="${googleLogo}" alt="Iniciar Sesión con Google"></button>`;
     }
 }
 
