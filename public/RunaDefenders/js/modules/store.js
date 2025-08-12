@@ -40,5 +40,6 @@ export function getState() {
 }
 
 export function setState(newState) {
+    // Merge the new state properties into the existing state
     gameState = { ...gameState, ...newState };
 }
