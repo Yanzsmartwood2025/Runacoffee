@@ -1,20 +1,27 @@
-// config.js - Configuración y datos del juego
+// config.js
+// Almacena toda la configuración del juego, como datos de niveles, enemigos y rutas de imágenes.
 
-const config = {
-    lanes: 4,
-    playerSpeed: 5,
-    projectileSpeed: 8,
+export const config = {
+    lanes: 4, 
+    playerSpeed: 5, 
+    projectileSpeed: 8, 
     shootCooldown: 40,
     fastShootCooldown: 15,
-    specialPowerMax: 100,
+    specialPowerMax: 100, 
     powerDrainRate: 20,
-    orbValue: 10,
+    orbValue: 10, 
     healingValue: 25,
-    base: { health: 1000 },
+    base: { 
+        health: 1000 
+    },
+    // --- RUTAS DE IMÁGENES ---
+    // Si el juego no carga, el problema suele estar en una de estas rutas.
+    // Asegúrate de que estas URLs son correctas y accesibles.
     grainImage: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/collectible_coffee_bean.png',
     orbImage: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/collectible_power_orb.png',
+    
     player: {
-        image: {
+        image: { 
             idle: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/player.png',
             attack: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/player.png'
         },
@@ -38,5 +45,3 @@ const config = {
         { duration: 420, waves: [ { startTime: 5, enemyType: 1, spawnInterval: 60 }, { startTime: 45, enemyType: 2, spawnInterval: 480 }, { startTime: 180, enemyType: 1, spawnInterval: 50 }, { startTime: 240, enemyType: 2, spawnInterval: 300 }, { startTime: 300, enemyType: 1, spawnInterval: 40 }, { startTime: 360, enemyType: 2, spawnInterval: 180 } ]}
     ]
 };
-
-export { config };
