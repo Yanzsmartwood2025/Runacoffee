@@ -1,7 +1,7 @@
 // modules/scene3d.js
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { getState, setState, getGlobalAnimationTimer } from '../main.js';
+import { getState, setState } from './store.js';
 import { gameLoop } from '../systems.js';
 
 let treeScene, treeCamera, treeRenderer, treeModel;
@@ -71,7 +71,7 @@ export function toggleTreeMenu(show) {
     const state = getState();
     if (show) {
         if (state.gameState !== 'playing' && state.gameState !== 'paused') return;
-        setState('menu', state.gameState);
+        setState({ gameState: 'menu', previousGameState: state.gameState });
         treeContainer.classList.add('menu-view');
         gameOverlay.classList.add('menu-mode-bg');
     } else {
@@ -79,7 +79,7 @@ export function toggleTreeMenu(show) {
         treeContainer.classList.remove('menu-view');
         gameOverlay.classList.remove('menu-mode-bg');
         const previousState = state.previousGameState;
-        setState(previousState);
+        setState({ gameState: previousState });
         if (previousState === 'playing') {
             gameLoop();
         }
