@@ -1,70 +1,44 @@
-// modules/store.js - Gestión del estado centralizado del juego
+// modules/store.js
+// Centraliza el estado del juego para que sea fácil de acceder y modificar.
 
-import { Player } from '../entities/Player.js';
-import { config } from '../config.js';
-import { updateUI } from './ui.js';
-import { updateTreeAppearance } from './scene3d.js';
-import { saveGameData } from './firebase.js';
-
-let state = {
-    player: new Player(),
-    base: { health: config.base.health, maxHealth: config.base.health },
+let gameState = {
+    // Game State
+    gameState: 'loading',
+    previousGameState: 'loading',
+    animationFrameId: null,
+    
+    // Player & Base
+    player: null,
+    base: { health: 1000, maxHealth: 1000 },
+    
+    // Entities
     projectiles: [],
     enemies: [],
     resources: [],
+    
+    // Level & Timers
     currentLevelIndex: 0,
-    shootTimer: 0,
-    animationFrameId: null,
-    specialPowerPoints: 0,
-    coffeeBeanCount: 0,
     levelTimer: 0,
     currentWaveIndex: -1,
     spawnTimer: 0,
-    gameState: 'loading',
-    previousGameState: 'loading',
+    shootTimer: 0,
     globalAnimationTimer: 0,
     levelMessagesShown: [],
+    
+    // Power & Score
+    specialPowerPoints: 0,
+    coffeeBeanCount: 0,
     isPowerActive: false,
-    
-    // UI elements
-    canvas: document.getElementById('game-canvas'),
-    ctx: document.getElementById('game-canvas').getContext('2d'),
+
+    // System
     cellSize: 0,
-    
-    // 3D scene elements
-    orbs: [],
+    userId: null
 };
 
-/**
- * Función para actualizar el estado de manera controlada.
- * @param {object} newState - Un objeto con las propiedades a actualizar.
- */
-function updateState(newState) {
-    state = { ...state, ...newState };
-    
-    if (newState.hasOwnProperty('base')) {
-        updateTreeAppearance();
-    }
-    
-    if (newState.hasOwnProperty('specialPowerPoints') || newState.hasOwnProperty('coffeeBeanCount')) {
-        updateUI();
-    }
-
-    if (newState.hasOwnProperty('gameState')) {
-        if (newState.gameState === 'game_over' || newState.gameState === 'level_complete') {
-            saveGameData();
-        }
-    }
+export function getState() {
+    return gameState;
 }
 
-/**
- * Función para obtener una parte del estado.
- * @param {string} key - La clave de la propiedad que deseas obtener.
- * @returns {*} El valor de la propiedad.
- */
-function getState(key) {
-    return state[key];
+export function setState(newState) {
+    gameState = { ...gameState, ...newState };
 }
-
-export { state, updateState, getState };
-
