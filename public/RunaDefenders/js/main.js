@@ -1,15 +1,18 @@
 // main.js - Punto de entrada principal del juego
 
 // =================================================================
-// --- MÓDULOS DEL JUEGO ---
+// --- MÓDULOS DEL JUEGO (RUTAS CORREGIDAS) ---
 // =================================================================
 import { Player, Projectile, Enemy, Resource } from './entities.js';
 import { config } from './config.js';
-import { handleCollisions, handleGameLogic, handleLevelProgression, startNextLevel, spawnEnemy, draw, gameLoop } from './systems.js';
+// 'systems' es una carpeta, así que la ruta debe incluirla.
+import { handleCollisions, handleGameLogic, handleLevelProgression, startNextLevel, spawnEnemy, draw, gameLoop } from './systems/systems.js';
+// 'modules' es una carpeta, así que las rutas deben incluirla.
 import { setupUIElements, updateUI, showOverlay, showWaveMessage, triggerDamageFlash, animateResourceToBag } from './modules/ui.js';
 import { sounds, playSound } from './modules/audio.js';
 import { initThreeScene, updateTreeAppearance, updateOrbsLockState, toggleTreeMenu } from './modules/threeScene.js';
 import { initializeAndLoadGame, saveGameData, loadGameData, auth, db, userId } from './modules/firebase.js';
+
 
 // =================================================================
 // --- VARIABLES GLOBALES DEL JUEGO ---
