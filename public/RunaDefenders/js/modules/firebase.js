@@ -1,6 +1,4 @@
 // modules/firebase.js
-// Gestiona la autenticación y el guardado/cargado de datos con Firebase.
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -12,11 +10,13 @@ const authContainer = document.getElementById('auth-container');
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
 
+export function getFirebaseAuth() { return auth; }
+
 export async function initializeAndLoadGame() {
     try {
         const firebaseConfig = JSON.parse(firebaseConfigStr);
         if (Object.keys(firebaseConfig).length === 0) {
-            console.log("Firebase config not found. Starting new game.");
+            console.warn("Firebase config not found. Starting new game.");
             init(0, 0, 0, config.base.health, true);
             updateAuthUI(null);
             return;
@@ -30,9 +30,9 @@ export async function initializeAndLoadGame() {
             updateAuthUI(user);
             if (user) {
                 setUserId(user.uid);
-                const savedData = await loadGameData();
+                const savedData = await loadGameData(user.uid);
                 if (savedData) {
-                    init(savedData.level || 0, savedData.specialPower || 0, savedData.coffeeBeans || 0, savedData.baseHealth || config.base.health, true);
+                    init(savedData.level, savedData.specialPower, savedData.coffeeBeans, savedData.baseHealth, true);
                 } else {
                     init(0, 0, 0, config.base.health, true);
                 }
@@ -43,7 +43,6 @@ export async function initializeAndLoadGame() {
                 });
             }
         });
-
     } catch (e) {
         console.error("Firebase initialization failed:", e);
         init(0, 0, 0, config.base.health, true);
@@ -55,17 +54,9 @@ function updateAuthUI(user) {
     authContainer.innerHTML = '';
     if (user && !user.isAnonymous) {
         const photoURL = user.photoURL || 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
-        authContainer.innerHTML = `
-            <button id="logout-btn" title="Cerrar sesión de ${user.displayName || 'Usuario'}">
-                <img src="${photoURL}" alt="Foto de Usuario" style="object-fit: cover; background-color: white;" onerror="this.src='https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';">
-            </button>
-        `;
+        authContainer.innerHTML = `<button id="logout-btn" title="Cerrar sesión de ${user.displayName || 'Usuario'}"><img src="${photoURL}" alt="Foto de Usuario" style="object-fit: cover; background-color: white;" onerror="this.src='https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';"></button>`;
     } else {
-        authContainer.innerHTML = `
-            <button id="open-login-modal-btn" title="Iniciar Sesión">
-                <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Iniciar Sesión con Google">
-            </button>
-        `;
+        authContainer.innerHTML = `<button id="open-login-modal-btn" title="Iniciar Sesión"><img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Iniciar Sesión con Google"></button>`;
     }
 }
 
@@ -87,8 +78,7 @@ export async function saveGameData() {
     }
 }
 
-async function loadGameData() {
-    const userId = getState().userId;
+async function loadGameData(userId) {
     if (!userId || !db) return null;
     const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
     try {
@@ -99,6 +89,3 @@ async function loadGameData() {
         return null;
     }
 }
-
-// Export auth para usarlo en los event listeners
-export { auth, GoogleAuthProvider, signInWithPopup, signOut };
