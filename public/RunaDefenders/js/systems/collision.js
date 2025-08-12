@@ -1,23 +1,20 @@
-// systems/collision.js - Lógica de detección de colisiones
-
-import { playSound } from '../modules/audio.js';
+// systems/collision.js
+import { getProjectiles, getEnemies, getResources, getPlayer, getState, setBaseHealth } from '../main.js';
+import { Resource } from '../entities.js';
+import { playSound } from './sfx.js';
 import { triggerDamageFlash } from '../modules/ui.js';
-import { Player, Projectile, Enemy, Resource } from '../entities/index.js';
-import {
-    base, enemies, projectiles, resources,
-    isPowerActive, specialPowerPoints,
-    updateState, getState
-} from '../main.js';
 
 function isColliding(a, b) {
     return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 }
 
-/**
- * Maneja todas las colisiones en el juego.
- */
-function handleCollisions() {
-    // Colisiones entre proyectiles y enemigos
+export function handleCollisions() {
+    const projectiles = getProjectiles();
+    const enemies = getEnemies();
+    const resources = getResources();
+    const player = getPlayer();
+    
+    // Proyectiles vs Enemigos
     for (let i = projectiles.length - 1; i >= 0; i--) {
         for (let j = enemies.length - 1; j >= 0; j--) {
             if (projectiles[i] && enemies[j] && isColliding(projectiles[i], enemies[j])) {
@@ -27,6 +24,7 @@ function handleCollisions() {
 
                 if (enemies[j].health <= 0) {
                     const enemy = enemies[j];
+                    const canvas = document.getElementById('game-canvas');
                     const dropX = Math.min(enemy.x, canvas.width - enemy.width);
                     const dropY = enemy.y;
 
@@ -38,26 +36,19 @@ function handleCollisions() {
                     }
                     enemies.splice(j, 1);
                 }
-                break;
+                break; 
             }
         }
     }
 
-    // Colisiones entre enemigos y la base
+    // Enemigos vs Base
     for (let i = enemies.length - 1; i >= 0; i--) {
         if (enemies[i].x < player.x + player.width) {
-            base.health -= 50;
-            updateTreeAppearance();
+            const currentBaseHealth = getState().base.health;
+            setBaseHealth(currentBaseHealth - 50);
             triggerDamageFlash();
             playSound('baseHit', 'C2', '4n');
             enemies.splice(i, 1);
-            if (base.health <= 0) {
-                gameState = 'game_over';
-                playSound('gameOver', 'C3', '1n');
-            }
         }
     }
 }
-
-export { handleCollisions };
-
