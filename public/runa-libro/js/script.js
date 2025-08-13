@@ -5,17 +5,17 @@ import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/fireb
 
 // Se asegura de que el DOM esté completamente cargado antes de ejecutar el script
 $(document).ready(function () {
-    // --- Inicialización de Firebase ---
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" };
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    // --- Inicialización de Firebase (COMENTADA PARA PRUEBAS LOCALES) ---
+    // const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" };
+    // const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+    // const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    // const app = initializeApp(firebaseConfig);
+    // const auth = getAuth(app);
+    // const db = getFirestore(app);
 
-    let currentUserId = null;
-    let isAuthReady = false;
+    let currentUserId = "test-user";
+    let isAuthReady = true;
 
     // --- Manejo de la Interfaz de Autenticación de Firebase ---
     const handleSignIn = () => {
@@ -35,7 +35,7 @@ $(document).ready(function () {
 
         if (user && !user.isAnonymous) {
             // RUTA CORREGIDA para la imagen de fallback
-            const fallbackImage = 'assets/imagenes/logo-google.png';
+            const fallbackImage = '/assets/imagenes/logo-google.png';
             const photoURL = user.photoURL || fallbackImage;
 
             const userButton = $(`
@@ -53,7 +53,7 @@ $(document).ready(function () {
             // RUTA CORREGIDA para la imagen de login
             const loginButton = $(`
                 <button id="open-auth-modal-button" class="p-1 rounded-full text-white" aria-label="Abrir modal de inicio de sesión">
-                    <img src="assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7">
+                    <img src="/assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7">
                 </button>
             `);
             loginButton.on('click', () => {
@@ -63,27 +63,29 @@ $(document).ready(function () {
         }
     };
 
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            currentUserId = user.uid;
-        } else {
-            try {
-                const anonymousUser = await signInAnonymously(auth);
-                currentUserId = anonymousUser.user.uid;
-            } catch (error) {
-                console.error("Falló el inicio de sesión anónimo:", error);
-            }
-        }
-        isAuthReady = true;
-        loadInitialPageData();
-        updateAuthUI(user);
-    });
+    // onAuthStateChanged(auth, async (user) => {
+    //     if (user) {
+    //         currentUserId = user.uid;
+    //     } else {
+    //         try {
+    //             const anonymousUser = await signInAnonymously(auth);
+    //             currentUserId = anonymousUser.user.uid;
+    //         } catch (error) {
+    //             console.error("Falló el inicio de sesión anónimo:", error);
+    //         }
+    //     }
+    //     isAuthReady = true;
+    //     loadInitialPageData();
+    //     updateAuthUI(user);
+    // });
 
-    if (initialAuthToken) {
-        signInWithCustomToken(auth, initialAuthToken).catch(err => {
-            console.error("Falló el inicio de sesión con token personalizado, intentando anónimo.", err);
-        });
-    }
+    // if (initialAuthToken) {
+    //     signInWithCustomToken(auth, initialAuthToken).catch(err => {
+    //         console.error("Falló el inicio de sesión con token personalizado, intentando anónimo.", err);
+    //     });
+    // }
+    loadInitialPageData();
+    updateAuthUI(null);
 
     $('#google-login-button-modal').on('click', handleSignIn);
 
@@ -96,7 +98,7 @@ $(document).ready(function () {
     let isDrawing = false;
     let lastX = 0, lastY = 0;
     // RUTA CORREGIDA para el sonido
-    const pageFlipSound = new Audio('assets/mp3/pasar-hoja-de-libro.mp3');
+    const pageFlipSound = new Audio('/assets/mp3/page-flip.mp3');
     const visualTool = $('#visual-tool');
     
     // --- Constantes y Datos ---
@@ -112,18 +114,17 @@ $(document).ready(function () {
     ];
     const videoSkins = [
         // RUTA CORREGIDA para el video
-        { name: "Naturaleza y Café", url: "assets/videos/runa-fondo-video.mp4" }
+        { name: "Naturaleza y Café", url: "/assets/videos/runa-fondo-video.mp4" }
     ];
     let currentVideoIndex = 0;
     const ambienceSounds = [
         // RUTAS CORREGIDAS para los GIFs
-        { id: 'music-audio', name: 'Música', gifSrc: 'assets/gif/music.gif' },
-        { id: 'river-audio', name: 'Río', gifSrc: 'assets/gif/river.gif' },
-        { id: 'birds-audio', name: 'Pájaros', gifSrc: 'assets/gif/birds.gif' },
-        { id: 'rain-audio', name: 'Lluvia', gifSrc: 'assets/gif/rain.gif' },
-        { id: 'fire-audio', name: 'Fuego', gifSrc: 'assets/gif/fire.gif' },
-        { id: 'wind-audio', name: 'Viento', gifSrc: 'assets/gif/wind.gif' },
-        { id: 'storm-audio', name: 'Tormenta', gifSrc: 'assets/gif/storm.gif' },
+        { id: 'river-audio', name: 'Río', gifSrc: '/assets/gif/river.gif' },
+        { id: 'birds-audio', name: 'Pájaros', gifSrc: '/assets/gif/birds.gif' },
+        { id: 'rain-audio', name: 'Lluvia', gifSrc: '/assets/gif/rain.gif' },
+        { id: 'fire-audio', name: 'Fuego', gifSrc: '/assets/gif/fire.gif' },
+        { id: 'wind-audio', name: 'Viento', gifSrc: '/assets/gif/wind.gif' },
+        { id: 'storm-audio', name: 'Tormenta', gifSrc: '/assets/gif/storm.gif' },
     ];
 
     // --- Definiciones de Funciones (sin cambios en la lógica interna) ---
