@@ -9,8 +9,8 @@ def run_verification():
         # Listen for console messages and print them
         page.on("console", lambda msg: print(f"CONSOLE: {msg.text}"))
 
-        # Navigate to the local server, pointing to the game's subdirectory
-        page.goto('http://localhost:8000/RunaDefenders/')
+        # Navigate to the new local server port
+        page.goto('http://localhost:8001/RunaDefenders/')
 
         # Wait for the loading screen to disappear
         loading_screen = page.locator('#loading-screen')
