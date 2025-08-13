@@ -47,16 +47,16 @@ body {
     position: relative;
     width: 100vw;
     height: 100vh;
-    overflow: hidden; 
+    overflow: hidden;
 }
 
 #background-wrapper {
     position: absolute;
-    width: 125%; 
+    width: 125%;
     height: 100%;
     top: 0;
     left: 0;
-    background: url('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/e60d103dfb61c7d07d0fe214e620173998d7c7ce/public/assets/imagenes/fondo-del-juego.jpg') no-repeat;
+    background: url('../assets/imagenes/fondo-del-juego.jpg') no-repeat;
     background-size: 100% 100%;
     transform: translateX(-20%);
     transition: transform 1.2s ease-in-out;
@@ -72,8 +72,18 @@ body {
     top: 50%;
     transform: translateY(-50%);
     width: 20%;
-    padding-top: 20%; 
+    padding-top: 20%;
     height: 0;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#tree-container.menu-view {
+    left: 50%;
+    top: 50%;
+    width: 50vmin;
+    padding-top: 50vmin;
+    transform: translate(-50%, -50%);
+    z-index: 250;
 }
 
 #tree-health-bar {
@@ -104,7 +114,7 @@ body {
     position: absolute;
     left: 25%;
     top: 22%;
-    width: 71%; 
+    width: 71%;
     height: 56%;
     background: transparent;
 }
@@ -133,6 +143,7 @@ body {
     align-items: center;
     border-radius: 15px;
     padding: 0 10px;
+    transition: opacity 0.5s ease;
 }
 #top-bar { top: 4%; justify-content: space-between; }
 #bottom-bar { bottom: 4%; justify-content: center; gap: 1vmin; }
@@ -225,7 +236,7 @@ body {
     right: 0;
     top: 0;
     height: 100%;
-    width: 0%; 
+    width: 0%;
     background-color: var(--timeline-progress-color);
     box-shadow: 0 0 5px var(--timeline-progress-color), 0 0 10px var(--timeline-progress-color);
     transition: width 0.1s linear;
@@ -284,7 +295,7 @@ body {
     color: white;
     padding: 20px;
     opacity: 1;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, background-color 0.8s ease;
     pointer-events: none;
 }
 #game-overlay.active {
@@ -293,6 +304,10 @@ body {
 #game-overlay.hidden {
     opacity: 0;
 }
+#game-overlay.menu-mode-bg {
+    background-color: rgba(0,0,0,0.85);
+}
+
 
 .overlay-screen {
     display: none;
@@ -329,7 +344,43 @@ body {
      border-bottom-color: #3a2e2a;
      font-size: 3vmin;
      padding: 12px 25px;
+     margin: 10px;
 }
+
+#how-to-play-screen {
+    font-family: 'Poppins', sans-serif;
+    text-align: left;
+    max-width: 90vmin;
+    background: var(--ui-bg);
+    padding: 4vmin;
+    border-radius: 15px;
+    border: 3px solid #6d4c35;
+}
+#how-to-play-screen h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 5vmin;
+    width: 100%;
+    text-align: center;
+}
+#how-to-play-screen ul {
+    list-style: none;
+    padding: 0;
+}
+#how-to-play-screen li {
+    font-size: 2.2vmin;
+    margin-bottom: 2vmin;
+    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+}
+#how-to-play-screen li strong {
+    font-weight: 600;
+    color: var(--accent-color);
+    margin-right: 1.5vmin;
+    display: inline-block;
+    min-width: 15vmin;
+}
+
 
 #wave-message {
     position: absolute;
