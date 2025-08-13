@@ -9,21 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-fix/game-stuck-on-loading
-
-
-    <!-- Three.js Library -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
-            }
-        }
-    </script>
-    
-    <!-- Enlace a tu archivo CSS -->
-main
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -38,7 +23,6 @@ main
         </div>
         
         <div id="top-bar">
-fix/game-stuck-on-loading
             <div class="flex items-center gap-4">
                 <button id="pause-button" class="ui-element !p-2" title="Pausar Juego">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -55,31 +39,12 @@ fix/game-stuck-on-loading
             </div>
             <div id="auth-container">
             </div>
-
-             <div class="flex items-center gap-4">
-                 <button id="pause-button" class="ui-element !p-2" title="Pausar Juego">
-                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                         <path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1-.75-.75V5.25Z" clip-rule="evenodd" />
-                     </svg>
-                 </button>
-                 <div id="level-display" class="ui-element">
-                     Nivel: <span id="level-value">1</span>
-                 </div>
-             </div>
-             <div id="timeline-container">
-                  <div id="timeline-progress"></div>
-                  <img id="timeline-worm" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png" alt="Gusano del tiempo">
-             </div>
-             <div id="auth-container">
-             </div>
- main
         </div>
 
         <canvas id="game-canvas"></canvas>
         <div id="damage-flash"></div>
 
         <div id="bottom-bar">
-fix/game-stuck-on-loading
             <div id="coffee-bag-container" class="ui-element">
                 <img id="coffee-bag-icon" src="imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
                 <span id="coffee-bean-counter">0</span>
@@ -92,20 +57,6 @@ fix/game-stuck-on-loading
             <div id="special-power-bar-container">
                 <div id="special-power-bar"></div>
             </div>
-
-             <div id="coffee-bag-container" class="ui-element">
-                  <img id="coffee-bag-icon" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
-                  <span id="coffee-bean-counter">0</span>
-             </div>
-             <button id="activate-power-button" class="ui-element" title="Activar Poder (E)" disabled>
-                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                      <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .923-.14Z" clip-rule="evenodd" />
-                 </svg>
-             </button>
-             <div id="special-power-bar-container">
-                  <div id="special-power-bar"></div>
-             </div>
-main
         </div>
 
         <div id="game-overlay" class="hidden">
@@ -126,36 +77,44 @@ main
             <div id="loading-next-level-screen" class="overlay-screen">
                 <h2>Cargando Siguiente Nivel...</h2>
             </div>
-             <div id="pause-screen" class="overlay-screen">
+            <div id="pause-screen" class="overlay-screen">
                 <h2>Pausa</h2>
-                <button id="resume-button" class="game-button">Reanudar</button>
-                <button id="restart-pause-button" class="game-button secondary">Reiniciar Nivel</button>
-                <button id="main-menu-button" class="game-button secondary">Menú Principal</button>
-             </div>
+                <div class="flex flex-col items-center">
+                    <button id="resume-button" class="game-button">Reanudar</button>
+                    <button id="how-to-play-button" class="game-button secondary">Cómo Jugar</button>
+                    <button id="restart-pause-button" class="game-button secondary">Reiniciar Nivel</button>
+                    <button id="main-menu-button" class="game-button secondary">Menú Principal</button>
+                </div>
+            </div>
+            <div id="how-to-play-screen" class="overlay-screen">
+                <h2>Cómo Jugar</h2>
+                <ul>
+                    <li><strong>Movimiento:</strong><span>Usa las teclas <b>W/S</b> o las <b>Flechas Arriba/Abajo</b>. En móvil, desliza el dedo sobre tu personaje.</span></li>
+                    <li><strong>Disparo:</strong><span>Presiona la <b>Barra Espaciadora</b> o haz clic en tu personaje para disparar.</span></li>
+                    <li><strong>Recolección:</strong><span>Haz clic en los <b>Granos de Café</b> (curan el árbol) y en los <b>Orbes de Poder</b> (cargan habilidad) que sueltan los enemigos.</span></li>
+                    <li><strong>Poder Especial:</strong><span>Cuando la barra de poder esté llena, presiona la tecla <b>E</b> para activar un disparo rápido temporal.</span></li>
+                    <li><strong>Menú de Poderes:</strong><span>Haz clic en el <b>Árbol de Café</b> para abrir el menú de poderes. Haz clic en un poder desbloqueado (iluminado) para seleccionarlo.</span></li>
+                </ul>
+                <button id="back-to-pause-button" class="game-button secondary">Volver</button>
+            </div>
         </div>
         
         <div id="wave-message"></div>
     </div>
     
     <div id="auth-modal" class="fixed inset-0 flex items-center justify-center p-4 bg-black/60 hidden">
-       <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
+        <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
             <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
-            <hEl directorio raíz del proyecto es 'public/runa-libro/'. Por favor, inicia el servidor web desde esa carpeta y luego ejecuta tu script de verificación.2 class="text-2xl font-bold text-white mb-2" style="font-family: 'Press Start 2P', cursive;">Bienvenido</h2>
+            <h2 class="text-2xl font-bold text-white mb-2" style="font-family: 'Press Start 2P', cursive;">Bienvenido</h2>
             <p class="text-gray-400 mb-6" style="font-family: 'Poppins', sans-serif;">Inicia sesión para guardar tu progreso.</p>
             <button id="google-login-button-modal" class="w-full inline-flex items-center justify-center gap-3 px-4 py-2 text-base font-semibold text-gray-700 bg-white border border-transparent rounded-lg shadow-sm hover:bg-gray-200 transition-all" style="font-family: 'Poppins', sans-serif;">
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,34.783,44,29.865,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
                 <span>Iniciar con Google</span>
             </button>
-       </div>
+        </div>
     </div>
-fix/game-stuck-on-loading
     <script src="js/main.js"></script>
-
-
-    <!-- Enlace a tu archivo JavaScript -->
-    <script type="module" src="js/main.js"></script>
-main
 </body>
 </html>
