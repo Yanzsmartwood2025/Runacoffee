@@ -9,18 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Three.js Library -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
-            }
-        }
-    </script>
-
-    <!-- Enlace a tu archivo de estilos CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -47,7 +35,7 @@
             </div>
             <div id="timeline-container">
                 <div id="timeline-progress"></div>
-                <img id="timeline-worm" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png" alt="Gusano del tiempo">
+                <img id="timeline-worm" src="imagenes/enemy_broca_1.png" alt="Gusano del tiempo">
             </div>
             <div id="auth-container">
             </div>
@@ -58,7 +46,7 @@
 
         <div id="bottom-bar">
             <div id="coffee-bag-container" class="ui-element">
-                <img id="coffee-bag-icon" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
+                <img id="coffee-bag-icon" src="imagenes/ui_coffee_bag.png" alt="Bolsa de Café">
                 <span id="coffee-bean-counter">0</span>
             </div>
             <button id="activate-power-button" class="ui-element" title="Activar Poder (E)" disabled>
@@ -127,8 +115,6 @@
             </button>
         </div>
     </div>
-
-    <!-- Enlace a tu archivo JavaScript principal -->
-    <script type="module" src="js/main.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
