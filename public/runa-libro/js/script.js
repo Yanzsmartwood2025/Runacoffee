@@ -35,7 +35,7 @@ $(document).ready(function () {
 
         if (user && !user.isAnonymous) {
             // RUTA CORREGIDA para la imagen de fallback
-            const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/logo-google.png';
+            const fallbackImage = '../../assets/imagenes/logo-google.png';
             const photoURL = user.photoURL || fallbackImage;
 
             const userButton = $(`
@@ -53,7 +53,7 @@ $(document).ready(function () {
             // RUTA CORREGIDA para la imagen de login
             const loginButton = $(`
                 <button id="open-auth-modal-button" class="p-1 rounded-full text-white" aria-label="Abrir modal de inicio de sesión">
-                    <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7">
+                    <img src="../../assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7">
                 </button>
             `);
             loginButton.on('click', () => {
@@ -98,7 +98,7 @@ $(document).ready(function () {
     let isDrawing = false;
     let lastX = 0, lastY = 0;
     // RUTA CORREGIDA para el sonido
-    const pageFlipSound = new Audio('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/mp3/page-flip.mp3');
+    const pageFlipSound = new Audio('../../assets/mp3/page-flip.mp3');
     const visualTool = $('#visual-tool');
     
     // --- Constantes y Datos ---
@@ -114,17 +114,17 @@ $(document).ready(function () {
     ];
     const videoSkins = [
         // RUTA CORREGIDA para el video
-        { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/videos/runa-fondo-video.mp4" }
+        { name: "Naturaleza y Café", url: "../../assets/videos/runa-fondo-video.mp4" }
     ];
     let currentVideoIndex = 0;
     const ambienceSounds = [
         // RUTAS CORREGIDAS para los GIFs
-        { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/river.gif' },
-        { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/birds.gif' },
-        { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/rain.gif' },
-        { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/fire.gif' },
-        { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/wind.gif' },
-        { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/storm.gif' },
+        { id: 'river-audio', name: 'Río', gifSrc: '../../assets/gif/river.gif' },
+        { id: 'birds-audio', name: 'Pájaros', gifSrc: '../../assets/gif/birds.gif' },
+        { id: 'rain-audio', name: 'Lluvia', gifSrc: '../../assets/gif/rain.gif' },
+        { id: 'fire-audio', name: 'Fuego', gifSrc: '../../assets/gif/fire.gif' },
+        { id: 'wind-audio', name: 'Viento', gifSrc: '../../assets/gif/wind.gif' },
+        { id: 'storm-audio', name: 'Tormenta', gifSrc: '../../assets/gif/storm.gif' },
     ];
 
     // --- Definiciones de Funciones (sin cambios en la lógica interna) ---
