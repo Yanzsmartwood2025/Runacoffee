@@ -542,15 +542,15 @@
                 </div>
                 <div class="page" data-drawing-enabled="false">
                      <div class="content-wrapper">
-                         <h3>Producción consciente:</h3>
-                         <p>Cada grano es cultivado en armonía con el entorno, bajo prácticas éticas y sostenibles. Producido por manos locales que trabajan con amor, respeto y dignidad.</p>
-                         <h3>Energía viva:</h3>
-                         <p>Vitalidad real, sin artificios. Nuestro café especial consciente potencia la plenitud, la conexión con tu interior, equilibrio, autenticidad, salud, vida... propósito.</p>
-                         <h3>Diseño con alma:</h3>
-                         <p>Como diseñadora, cree un lenguaje visual que une lo que somos... Místicos, naturales, vivos. Cada empaque, símbolo y detalle tiene una intención.</p>
-                           <h3>¿A quién va dirigido?</h3>
-                         <p>A personas conscientes, exploradores, espirituales, creativos, que no solo buscan sabor sino sentido. A quienes valoran el origen, la historia, y el impacto de lo que consumen.</p>
-                         <p class="signature mt-4">"Más que café, un llamado a despertar."</p>
+                          <h3>Producción consciente:</h3>
+                          <p>Cada grano es cultivado en armonía con el entorno, bajo prácticas éticas y sostenibles. Producido por manos locales que trabajan con amor, respeto y dignidad.</p>
+                          <h3>Energía viva:</h3>
+                          <p>Vitalidad real, sin artificios. Nuestro café especial consciente potencia la plenitud, la conexión con tu interior, equilibrio, autenticidad, salud, vida... propósito.</p>
+                          <h3>Diseño con alma:</h3>
+                          <p>Como diseñadora, cree un lenguaje visual que une lo que somos... Místicos, naturales, vivos. Cada empaque, símbolo y detalle tiene una intención.</p>
+                              <h3>¿A quién va dirigido?</h3>
+                          <p>A personas conscientes, exploradores, espirituales, creativos, que no solo buscan sabor sino sentido. A quienes valoran el origen, la historia, y el impacto de lo que consumen.</p>
+                          <p class="signature mt-4">"Más que café, un llamado a despertar."</p>
                      </div>
                     <div class="page-number">5</div>
                 </div>
@@ -574,9 +574,9 @@
                                 <div class="portal-content">
                                     <h2>Juego RUNA</h2>
                                     <p>Pon a prueba tus sentidos y sumérgete en el mundo de RUNA con nuestro juego interactivo. ¿Estás listo para el desafío?</p>
-                                    <a href="juego.html" class="portal-button">Jugar Ahora</a>
+                                    <a href="RunaDefenders/index.html" class="portal-button">Jugar Ahora</a>
                                 </div>
-                            </div>
+                           </div>
                     </div>
                     <div class="page-number">7</div>
                 </div>
@@ -589,7 +589,7 @@
                                     <p>Explora la innovación y el diseño detrás de esta experiencia. Jusn38 Tech, creando el futuro de las interacciones digitales.</p>
                                     <a href="jusn38.html" class="portal-button">Conocer Más</a>
                                 </div>
-                            </div>
+                           </div>
                      </div>
                     <div class="page-number">8</div>
                 </div>
@@ -701,13 +701,13 @@
 
         // --- Firebase Auth UI Management ---
         const handleSignIn = () => {
-             signInWithPopup(auth, GoogleAuthProvider) // Use GoogleAuthProvider directly
-                .then((result) => {
-                    console.log("Signed in successfully with Google", result.user);
-                    $('#auth-modal').addClass('hidden'); // Close modal on success
-                }).catch((error) => {
-                    console.error("Google sign-in error", error);
-                });
+             signInWithPopup(auth, new GoogleAuthProvider()) // Use GoogleAuthProvider directly
+                 .then((result) => {
+                     console.log("Signed in successfully with Google", result.user);
+                     $('#auth-modal').addClass('hidden'); // Close modal on success
+                 }).catch((error) => {
+                     console.error("Google sign-in error", error);
+                 });
         };
 
         const updateAuthUI = (user) => {
