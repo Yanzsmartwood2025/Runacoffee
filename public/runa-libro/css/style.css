@@ -1,11 +1,5 @@
-/* --- Global Variables & Basic Styles --- */
-:root {
-    --runa-primary: #D47500;
-    --runa-secondary: #0072CE;
-    --slider-track-color: #25D366;
-    --pencil-track-color: #8a2be2;
-}
 
+fix-asset-paths
 html { 
     scroll-behavior: smooth; 
 }
@@ -355,3 +349,5 @@ input[type="range"].styled-slider::-moz-range-track {
 .calc-btn.calc-btn-zero {
     grid-column: span 2;
 }
+
+ main
