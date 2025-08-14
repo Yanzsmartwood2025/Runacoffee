@@ -55,7 +55,7 @@
         </div>
         <!-- Logo Central -->
         <div class="flex-shrink-0">
-             <a href="index.html" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
+             <a href="../index.html" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
                  <video autoplay loop muted playsinline class="w-full h-full object-contain">
                      <!-- RUTA CORREGIDA -->
                      <source src="../assets/videos/runa-logo-animado.mp4" type="video/mp4">
@@ -82,7 +82,7 @@
         </div>
     </nav>
     <!-- Paneles Desplegables -->
-    <div id="main-menu" class="hidden absolute w-full shadow-lg border-t translucent-panel">
+    <div id="menu-panel" class="hidden absolute w-full shadow-lg border-t translucent-panel">
         <div class="container mx-auto px-6 py-4 text-white">
              <div class="menu-section">
                  <div class="menu-section-header">
@@ -251,12 +251,12 @@
                     <div class="content-wrapper">
                         <video class="portal-video" autoplay loop muted playsinline src="../assets/videos/runa_video_fondo_1.mp4"></video>
                         <div class="portal-overlay translucent-panel">
-                             <div class="portal-content">
-                                 <h2>Juego RUNA</h2>
-                                 <p>Pon a prueba tus sentidos y sumérgete en el mundo de RUNA con nuestro juego interactivo. ¿Estás listo para el desafío?</p>
-                                 <!-- RUTA DEFINITIVA CORREGIDA -->
-                                 <a href="../RunaDefenders/index.html" class="portal-button">Jugar Ahora</a>
-                             </div>
+                               <div class="portal-content">
+                                   <h2>Juego RUNA</h2>
+                                   <p>Pon a prueba tus sentidos y sumérgete en el mundo de RUNA con nuestro juego interactivo. ¿Estás listo para el desafío?</p>
+                                   <!-- RUTA DEFINITIVA CORREGIDA -->
+                                   <a href="../RunaDefenders/index.html" class="portal-button">Jugar Ahora</a>
+                               </div>
                         </div>
                     </div>
                     <div class="page-number">7</div>
@@ -266,11 +266,11 @@
                    <div class="content-wrapper">
                         <video class="portal-video" autoplay loop muted playsinline src="../assets/videos/runa-intro.mp4"></video>
                         <div class="portal-overlay translucent-panel">
-                             <div class="portal-content">
-                                 <h2>Jusn38 Tech</h2>
-                                 <p>Explora la innovación y el diseño detrás de esta experiencia. Jusn38 Tech, creando el futuro de las interacciones digitales.</p>
-                                 <a href="jusn38.html" class="portal-button">Conocer Más</a>
-                             </div>
+                               <div class="portal-content">
+                                   <h2>Jusn38 Tech</h2>
+                                   <p>Explora la innovación y el diseño detrás de esta experiencia. Jusn38 Tech, creando el futuro de las interacciones digitales.</p>
+                                   <a href="jusn38.html" class="portal-button">Conocer Más</a>
+                               </div>
                         </div>
                    </div>
                     <div class="page-number">8</div>
@@ -684,7 +684,7 @@ $(document).ready(function () {
     }
 
     function closeAllPanels() {
-        $('#main-menu, #mixer-panel, #video-skin-panel').addClass('hidden');
+        $('#menu-panel, #mixer-panel, #video-skin-panel').addClass('hidden');
     }
 
     function initializeMixer() {
@@ -991,7 +991,7 @@ $(document).ready(function () {
 
     $('#open-cart-button').on('click', () => { renderCartModal(); $('#cart-modal').removeClass('hidden'); });
     $('#cart-modal').on('click', (event) => { if (event.target === $('#cart-modal')[0]) $('#cart-modal').addClass('hidden'); });
-    $('#close-auth-modal-button').on('click', () => $('#auth-modal').addClass('hidden'));
+    $('#close-auth-modal-button').on('click', () => $('#auth-modal').addClass('hidden');
 
     $(window).on('resize', () => {
         flipbook.turn('size', $('.flipbook-container').width(), $('.flipbook-container').height());
