@@ -1,0 +1,1501 @@
+<!doctype html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuaderno Digital Interactivo - RUNA Coffee</title>
+
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="RUNA Coffee - Mi Cuaderno Digital Interactivo" />
+    <meta property="og:description" content="¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital. Una experiencia para despertar los sentidos." />
+    <meta property="og:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/portada-libro.jpg" />
+    <meta property="og:url" content="https://URL-DE-TU-PAGINA-AQUI.com" />
+    <meta property="og:type" content="website" />
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Lobster&family=Pacifico&family=Caveat&family=Indie+Flower&family=Shadows+Into+Light&family=Lora&display=swap" rel="stylesheet">
+
+    <style type="text/css">
+        :root {
+            --runa-primary: #D47500;
+            --runa-secondary: #0072CE;
+            --slider-track-color: #25D366;
+            --pencil-track-color: #8a2be2;
+        }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .translucent-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        /* --- Theme Styles --- */
+        html:not(.dark) body { background-color: #e0e0e0; color: #3a2e2a; }
+        html:not(.dark) .translucent-panel { background-color: rgba(255, 255, 255, 0.5); border-color: rgba(0,0,0,0.1); }
+        html:not(.dark) .flipbook .page { background-color: #fdfbf7; color: #333; }
+        html:not(.dark) .page .content-wrapper h2, html:not(.dark) .page .content-wrapper h3 { color: #1c1c1c; }
+        html:not(.dark) .page .content-wrapper p, html:not(.dark) .page .content-wrapper li { color: #4a4a4a; }
+        html:not(.dark) .signature { color: #585858; }
+        html:not(.dark) .page-number { color: rgba(0, 0, 0, 0.4); }
+        html:not(.dark) .page.hard .page-number { color: rgba(255, 255, 255, 0.7); }
+        html:not(.dark) .mixer-icon-button { background-color: #F4F1ED; border-color: #E2E8F0; }
+        html:not(.dark) .mixer-icon-button.active { border-color: var(--runa-primary); }
+        html:not(.dark) input[type="range"] { --track-background: #E2E8F0; }
+        html:not(.dark) .video-list-button.active { background-color: rgba(0,0,0,0.1); }
+        html:not(.dark) .font-button { background-color: rgba(0,0,0,0.05); color: #333; }
+        html:not(.dark) .font-button.active { background-color: rgba(0,0,0,0.2); }
+
+
+        html.dark body { background-color: #111; color: #E2E8F0; }
+        html.dark .translucent-panel { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.1); }
+        html.dark .flipbook .page { background-color: #2a2a2a; color: #e0e0e0; }
+        html.dark .page .content-wrapper h2, html.dark .page .content-wrapper h3 { color: #f0f0f0; }
+        html.dark .page .content-wrapper p, html.dark .page .content-wrapper li { color: #cccccc; }
+        html.dark .signature { color: #a0a0a0; }
+        html.dark .page-number { color: rgba(255, 255, 255, 0.4); }
+        html.dark .page.hard .page-number { color: rgba(255, 255, 255, 0.7); }
+        html.dark .mixer-icon-button { background-color: #2D3748; border-color: #4A5568; }
+        html.dark .mixer-icon-button.active { border-color: var(--runa-primary); }
+        html.dark input[type="range"] { --track-background: #4A5568; }
+        html.dark .video-list-button.active { background-color: rgba(255,255,255,0.15); }
+        html.dark .font-button { background-color: rgba(255,255,255,0.1); color: #fff; }
+        html.dark .font-button.active { background-color: rgba(255,255,255,0.3); }
+
+
+        .flipbook-viewport { display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; }
+        .flipbook-container { width: 90vw; height: 85vh; max-width: 500px; max-height: 700px; position: relative; }
+        .flipbook { width: 100%; height: 100%; }
+        .flipbook .page { box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s ease, color 0.3s ease; position: relative; overflow: hidden; }
+        .flipbook .hard { background-color: #101010; box-shadow: inset 0 0 5px #000; }
+        .cover-page {
+            background-color: #101010 !important;
+            background-image: url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/portada-libro.jpg);
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+        }
+
+        .page .content-wrapper { padding: 30px; height: 100%; overflow-y: auto; }
+        .page .content-wrapper h2.handwriting-title { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 1rem; }
+        .page .content-wrapper h3 { font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .page .content-wrapper p, .page .content-wrapper li { font-size: 0.95rem; line-height: 1.6; }
+        .page .content-wrapper ul { list-style-type: none; padding: 0; }
+        .page .content-wrapper li { margin-bottom: 1rem; }
+
+        .signature { font-family: 'Dancing Script', cursive; font-size: 1.8rem; text-align: right; margin-top: 2rem; }
+
+        .page-number { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-size: 0.9em; }
+
+        .drawing-canvas, .text-layer-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .drawing-canvas {
+            cursor: none;
+            touch-action: none;
+            z-index: 10;
+        }
+        .text-layer-container { z-index: 11; }
+
+        .draggable-text-box {
+            position: absolute;
+            padding: 5px;
+            min-width: 50px;
+            min-height: 20px;
+            cursor: move;
+            border: 1px dashed transparent;
+        }
+        .draggable-text-box:hover, .draggable-text-box.editing {
+            border-color: rgba(138, 43, 226, 0.5);
+        }
+        .draggable-text-box[contenteditable="true"] {
+            cursor: text;
+        }
+
+
+        /* Pointer events logic */
+        .drawing-tool-active .text-layer-container, .eraser-tool-active .text-layer-container { pointer-events: none; }
+        .drawing-tool-active .drawing-canvas, .eraser-tool-active .drawing-canvas { pointer-events: auto; }
+        .text-tool-active .drawing-canvas, .no-tool-active .drawing-canvas { pointer-events: none; }
+        .text-tool-active .text-layer-container, .no-tool-active .text-layer-container { pointer-events: auto; }
+
+        .menu-section-header { padding: 1rem 1.5rem; font-weight: 700; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .menu-section-header i { transition: transform 0.3s ease; }
+        .menu-section-header.active i { transform: rotate(180deg); }
+        .menu-section-content { display: none; padding: 1.5rem; background-color: rgba(0,0,0,0.2); }
+
+        .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 15px; }
+        .tool-button { width: 55px; height: 55px; background-color: rgba(255, 255, 255, 0.1); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; transition: background-color 0.2s; border: 1px solid transparent; color: white; }
+        .tool-button i { font-size: 20px; margin-bottom: 5px; }
+        html.dark .tool-button:hover { background-color: rgba(138, 43, 226, 0.5); }
+        html:not(.dark) .tool-button:hover { background-color: rgba(138, 43, 226, 0.3); }
+        .tool-button.active { background-color: #8a2be2; border-color: rgba(255,255,255,0.5); }
+
+        #font-palette {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #font-palette::-webkit-scrollbar { display: none; }
+
+        .font-button {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: background-color 0.2s;
+            border: 1px solid transparent;
+        }
+        .font-button.active {
+            border-color: var(--runa-primary);
+        }
+
+        /* --- Slider Styles --- */
+        input[type="range"].styled-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: transparent;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.8;
+            transition: opacity .2s;
+        }
+        input[type="range"].styled-slider:hover { opacity: 1; }
+        input[type="range"].styled-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--thumb-color, #fff);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid;
+            margin-top: -6px;
+        }
+        html:not(.dark) input[type="range"].styled-slider::-webkit-slider-thumb { border-color: #FDFBF8; }
+        html.dark input[type="range"].styled-slider::-webkit-slider-thumb { border-color: #111; }
+        input[type="range"].styled-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--thumb-color, #fff);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid;
+        }
+        html:not(.dark) input[type="range"].styled-slider::-moz-range-thumb { border-color: #FDFBF8; }
+        html.dark input[type="range"].styled-slider::-moz-range-thumb { border-color: #111; }
+        input[type="range"].styled-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            border-radius: 5px;
+            background: linear-gradient(to right, var(--track-fill-color, #ccc) var(--value-percent, 0%), var(--track-background) var(--value-percent, 0%));
+        }
+        input[type="range"].styled-slider::-moz-range-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            border-radius: 5px;
+            background: linear-gradient(to right, var(--track-fill-color, #ccc) var(--value-percent, 0%), var(--track-background) var(--value-percent, 0%));
+        }
+
+        .mixer-icon-button { border: 2px solid; transition: border-color 0.3s ease; display: flex; align-items: center; justify-content: center; }
+        .mixer-icon-button img { width: 100%; height: 100%; object-fit: cover; }
+
+        #cart-counter { position: absolute; top: 0; right: 0; transform: translate(25%, -25%); width: 1.25rem; height: 1.25rem; background-color: #DC2626; color: white; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 0.25rem; }
+
+        /* --- TI-89 Calculator Styles --- */
+        #calculator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 2px 3px rgba(255,255,255,0.2);
+            z-index: 1001;
+            display: none;
+            background-image: url(https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/fda92b2028bf402986396801d14ae0bc4bb58359/public/assets/imagenes/portada-libro.jpg);
+            background-size: cover;
+            background-position: center;
+            padding: 10px;
+        }
+        .calculator-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .calc-header { cursor: move; padding-bottom: 10px; color: white; display:flex; justify-content:space-between; align-items:center; }
+        .calc-brand { font-family: 'Arial', sans-serif; font-weight: bold; font-size: 1rem; color: #E0E0E0; text-shadow: 1px 1px 2px black;}
+        .calc-header .close-btn { cursor: pointer; font-size: 1.2rem; }
+        .calc-screen-container { background: #333; border: 3px solid #555; border-radius: 8px; padding: 5px; margin-bottom: 15px; }
+        #calc-display { width: 100%; background: #c8d4c5; color: #1a211a; border: none; border-radius: 4px; padding: 10px; text-align: right; font-family: 'Courier New', monospace; font-size: 1.8rem; min-height: 60px; resize: none; }
+        .calc-keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .calc-btn {
+            color: white;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 12px 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.4);
+        }
+        .calc-btn:active { transform: translateY(1px); box-shadow: 0 1px 1px rgba(0,0,0,0.4); }
+        .calc-btn.num { background: #4a4a4a; }
+        .calc-btn.num:hover { background: #5a5a5a; }
+        .calc-btn.op { background: #3a3a3a; }
+        .calc-btn.op:hover { background: #454545; }
+        .calc-btn.func { background: #2a2a2a; font-size: 0.8rem; }
+        .calc-btn.func:hover { background: #353535; }
+        .calc-btn.enter { background: #0072CE; }
+        .calc-btn.enter:hover { background: #0082de; }
+        .calc-btn.clear { background: var(--runa-primary); }
+        .calc-btn.clear:hover { background: #e48510; }
+
+        /* --- Color Picker Styles --- */
+        #color-picker-container { display: none; padding: 10px; background-color: rgba(0,0,0,0.3); border-radius: 10px; margin-top: 15px; }
+        .color-picker-layout { display: flex; align-items: center; gap: 15px; justify-content: center; }
+        #color-wheel { cursor: crosshair; border-radius: 50%; }
+        #color-preview { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; flex-shrink: 0; }
+        #luminosity-slider { width: 120px; }
+
+        /* --- Portal Page Styles --- */
+        .portal-page .content-wrapper { padding: 0 !important; display: flex; align-items: center; justify-content: center; }
+        .portal-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+        .portal-overlay { position: relative; z-index: 2; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); }
+        .portal-content { text-align: center; padding: 2rem; border-radius: 1rem; color: white; max-width: 90%; }
+        .portal-content h2 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; }
+        .portal-content p { font-size: 1rem; margin-bottom: 1.5rem; }
+        .portal-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .portal-button:hover { background-color: rgba(255, 255, 255, 0.25); }
+
+
+        #page-turn-hint {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+        }
+        #page-turn-hint.visible {
+            opacity: 1;
+            animation: swipe-animation 2.5s ease-in-out infinite;
+        }
+        #page-turn-hint i {
+            font-size: 45px;
+            color: rgba(255, 255, 255, 0.7);
+            text-shadow: 0 3px 5px rgba(0,0,0,0.5);
+        }
+        @keyframes swipe-animation {
+            0%, 20% { transform: translate(0, 0); opacity: 0.8; }
+            60% { transform: translate(-40px, -40px); opacity: 0.8; }
+            80%, 100% { transform: translate(-40px, -40px); opacity: 0; }
+        }
+
+        #visual-tool {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out;
+        }
+        #visual-tool i {
+            font-size: 35px;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+        #visual-tool.pencil {
+            transform: translate(-5px, -35px);
+        }
+        #visual-tool.eraser {
+            transform: translate(-20px, -20px);
+        }
+    </style>
+</head>
+<body class="no-tool-active">
+
+<div id="video-background-wrapper">
+    <video id="video-background" autoplay loop muted playsinline>
+        <source id="video-source" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" type="video/mp4">
+    </video>
+</div>
+
+<header id="main-header" class="fixed top-0 left-0 right-0 z-40">
+    <nav class="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center h-20">
+        <div class="flex-1 flex justify-start items-center space-x-2 sm:space-x-4">
+            <button class="text-white p-2" id="menu-button" aria-label="Open menu">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <button id="theme-toggle" class="p-2 rounded-full text-white" aria-label="Change color theme">
+                <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
+                <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            </button>
+            <!-- Auth Container - Content will be managed by Firebase Auth state -->
+            <div id="auth-container" class="flex items-center">
+                <!-- This will be populated by JavaScript -->
+            </div>
+        </div>
+        <div class="flex-shrink-0">
+            <a href="index.html" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
+                <video autoplay loop muted playsinline class="w-full h-full object-contain">
+                    <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets/VIDEOS/runa-logo-animado.mp4" type="video/mp4">
+                </video>
+            </a>
+        </div>
+        <div class="flex-1 flex justify-end items-center space-x-2 sm:space-x-4">
+            <button id="video-skin-toggle" class="p-2 rounded-full text-white" aria-label="Open video selector">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            </button>
+            <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)]" aria-label="Open ambiance mixer">
+                <video autoplay loop muted playsinline class="w-full h-full object-cover">
+                    <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5ec8a9f9a44f0f1d347867a8b1293a1f8f5dae5e/public/assets/videos/runa-equalizer-video.mp4" type="video/mp4">
+                </video>
+            </button>
+            <div id="cart-icon-wrapper" class="relative">
+                <button id="open-cart-button" class="p-1 text-white">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span id="cart-counter" class="hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <div id="main-menu" class="hidden absolute w-full shadow-lg border-t translucent-panel">
+        <div class="container mx-auto px-6 py-4 text-white">
+            <div class="menu-section">
+                <div class="menu-section-header">
+                    <span>Herramientas Creativas</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="menu-section-content">
+                    <div class="tool-grid">
+                        <div class="tool-button" id="tool-pencil" title="Lápiz"><i class="fas fa-pencil"></i><span>Lápiz</span></div>
+                        <div class="tool-button" id="tool-text" title="Texto"><i class="fas fa-font"></i><span>Texto</span></div>
+                        <div class="tool-button" id="tool-eraser" title="Borrador"><i class="fas fa-eraser"></i><span>Borrador</span></div>
+                        <div class="tool-button" id="tool-upload" title="Subir Imagen"><i class="fas fa-image"></i><span>Foto</span></div>
+                        <div class="tool-button" id="tool-clear" title="Limpiar Página"><i class="fas fa-trash"></i><span>Limpiar</span></div>
+                        <div class="tool-button" id="tool-color" title="Color"><i class="fas fa-palette"></i><span>Color</span></div>
+                        <div class="tool-button" id="tool-add-page" title="Añadir Hoja"><i class="fas fa-plus-circle"></i><span>Añadir</span></div>
+                    </div>
+
+                    <div id="color-picker-container">
+                        <div class="color-picker-layout">
+                            <canvas id="color-wheel" width="150" height="150"></canvas>
+                            <div class="flex flex-col items-center gap-4">
+                                <div id="color-preview"></div>
+                                <input type="range" id="luminosity-slider" min="0" max="100" value="50" class="styled-slider">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label for="line-width-slider" class="flex items-center gap-2 text-sm mb-2"><i class="fas fa-pen-nib"></i><span>Grosor</span></label>
+                        <input type="range" id="line-width-slider" min="1" max="50" value="5" class="styled-slider">
+                    </div>
+                    <div id="font-selector-container" class="hidden mt-4">
+                        <label class="flex items-center gap-2 text-sm mb-2"><i class="fas fa-font"></i><span>Tipografía</span></label>
+                        <div id="font-palette">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-section">
+                <div class="menu-section-header">
+                    <span>Utilidades</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="menu-section-content">
+                    <div class="tool-grid">
+                        <div class="tool-button" id="tool-calc" title="Calculadora"><i class="fas fa-calculator"></i><span>Calc</span></div>
+                        <div class="tool-button" id="tool-print" title="Imprimir"><i class="fas fa-print"></i><span>Imprimir</span></div>
+                        <div class="tool-button" id="tool-share" title="Compartir"><i class="fas fa-share-nodes"></i><span>Compartir</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t translucent-panel">
+        <div class="container mx-auto px-6 py-4">
+            <h3 class="font-semibold text-lg mb-4 text-white">Mezclador de Ambiente</h3>
+            <div id="sound-controls" class="space-y-4"></div>
+        </div>
+    </div>
+    <div id="video-skin-panel" class="hidden absolute w-full shadow-lg border-t translucent-panel">
+        <div class="container mx-auto px-6 py-4">
+            <h3 class="font-semibold text-lg mb-4 text-white">Selector de Video de Fondo</h3>
+            <div id="video-list" class="space-y-2"></div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="flipbook-viewport">
+        <div class="flipbook-container">
+            <div class="flipbook">
+                <div class="page hard cover-page" data-drawing-enabled="false"></div>
+                <div class="page" data-drawing-enabled="false">
+                    <div class="content-wrapper flex flex-col justify-center items-center">
+                        <h2 class="text-6xl text-center uppercase" style="font-family: 'Poppins', sans-serif; font-weight: 700;">RUNA COFFEE</h2>
+                    </div>
+                    <div class="page-number">1</div>
+                </div>
+                <!-- START: New RUNA Coffee History Pages -->
+                <div class="page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <h2 class="handwriting-title">La Historia de RUNA Coffee: Un Puente entre Mundos Sagrados ⚔️🌿</h2>
+                        <p class="mb-4">Nació de una búsqueda profunda…</p>
+                        <p class="mb-4">Desde hace ya muchos años por medio de una persona indimensionablemente trascendental en mi existencia, sentí una conexión con la fuerza ancestral de los pueblos vikingos: su sabiduría, su conexión con la naturaleza, sus símbolos sagrados grabados en piedra —las runas— que hablaban el lenguaje del alma. Esa mística me llamaba… pero algo no encajaba del todo con mi realidad: soy del corazón de Colombia, tierra de montañas y café.</p>
+                        <h3>El Llamado del Norte 🌌</h3>
+                        <ul>
+                            <li class="mb-2">Me llamó la atención su fuerza, su valentía y su conexión con lo sagrado.</li>
+                            <li class="mb-2">Me fascinaban sus runas: símbolos grabados que no solo eran letras, sino portales de sabiduría y poder espiritual.</li>
+                            <li class="mb-2">También descubrí que los vikingos consumían hongos sagrados antes de entrar en batalla, no solo por fuerza, sino para conectarse con visiones, claridad y propósito.</li>
+                            <li>Ellos no solo luchaban con el cuerpo, sino también con el alma despierta.</li>
+                        </ul>
+                    </div>
+                    <div class="page-number">2</div>
+                </div>
+                <div class="page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <h2 class="handwriting-title">La Revelación y el Nacimiento de RUNA Coffee 💡</h2>
+                        <h3>La Raíz en Colombia ⛰️☕️</h3>
+                        <p class="mb-4">Pero yo nací en Colombia, entre montañas, neblinas y cafetales.</p>
+                        <p class="mb-4">Y me preguntaba: ¿Cómo puedo unir ese legado del norte con esta tierra fértil que llevo en mi sangre para la creación de mi marca de café?</p>
+                        <h3>La Revelación: "Runa" ✨</h3>
+                        <p class="mb-4">Investigando, encontré que en el idioma quechua, que hablan los indígenas, andinos y amazónicos, “runa” significa ser humano verdadero: un ser conectado con la madre tierra, con la comunidad y con su conciencia. Eso fue un llamado. ¡Una revelación!</p>
+                        <p class="mb-4">La palabra runa estaba presente en ambos mundos:</p>
+                        <ul>
+                            <li class="mb-2">🌿 Los Andes, donde nací,</li>
+                            <li>⚔️ Y El Norte, de donde me sentía espiritualmente heredera.</li>
+                        </ul>
+                        <h3>El Nacimiento de RUNA Coffee 🍄‍🟫</h3>
+                        <p class="mb-4">Ahí nació Runa Coffee: Una marca que fusiona el café sagrado de nuestras montañas con los hongos ancestrales, como los hongos de poder que también usaban los vikingos.</p>
+                        <p class="mb-4">No como escape, sino como medicina. Como ritual de enfoque, expansión y propósito.</p>
+                        <p>Cada taza de Runa Coffee es un puente entre lo visible y lo invisible. Es un llamado al guerrero de luz que todos llevamos dentro. Es café con alma, con raíz, con visión. Un elixir para despertar, para sanar y para recordar quién eres.</p>
+                    </div>
+                    <div class="page-number">3</div>
+                </div>
+                <div class="page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <h2 class="handwriting-title">¡De la tierra, con conciencia!</h2>
+                        <p class="mb-4"><strong>Representa:</strong><br>Forma de vivir, sentir, y conectar con conciencia.</p>
+                        <p class="mb-6"><strong>Runa:</strong><br>Es una palabra ancestral que en lenguas indígenas andinas significa 'Persona', 'Ser humano en plenitud' o 'Comunidad viva'.</p>
+                        <h3>Valores que transmite la marca:</h3>
+                        <ul>
+                            <li class="mb-4"><strong>Autenticidad ancestral:</strong><br>RUNA honra nuestras raíces, es un tributo a la sabiduría de los pueblos originarios y su forma respetuosa de habitar el mundo.</li>
+                            <li class="mb-4"><strong>Corazón con la tierra:</strong><br>Café cultivado con consciencia, en armonía y equilibrio con la naturaleza.</li>
+                            <li class="mb-4"><strong>Vitalidad Pura:</strong><br>Energía natural, real, que no solo despierta el cuerpo, sino también el alma.</li>
+                            <li><strong>Comunidad:</strong><br>Cada sorbo une historias, conocimiento, manos campesinas y propósitos.</li>
+                        </ul>
+                    </div>
+                    <div class="page-number">4</div>
+                </div>
+                <div class="page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <h3>Producción consciente:</h3>
+                        <p>Cada grano es cultivado en armonía con el entorno, bajo prácticas éticas y sostenibles. Producido por manos locales que trabajan con amor, respeto y dignidad.</p>
+                        <h3>Energía viva:</h3>
+                        <p>Vitalidad real, sin artificios. Nuestro café especial consciente potencia la plenitud, la conexión con tu interior, equilibrio, autenticidad, salud, vida... propósito.</p>
+                        <h3>Diseño con alma:</h3>
+                        <p>Como diseñadora, cree un lenguaje visual que une lo que somos... Místicos, naturales, vivos. Cada empaque, símbolo y detalle tiene una intención.</p>
+                        <p class="signature mt-4">"Más que café, un llamado a despertar."</p>
+                    </div>
+                    <div class="page-number">5</div>
+                </div>
+                <div class="page portal-page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-coffee-beans-in-a-sack-3259-large.mp4"></video>
+                        <div class="portal-overlay translucent-panel">
+                            <div class="portal-content">
+                                <h2>Tienda RUNA</h2>
+                                <p>Descubre nuestra selección de cafés de especialidad, accesorios y más. Cada compra apoya a nuestras comunidades.</p>
+                                <a href="tienda.html" class="portal-button">Ir a la Tienda</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-number">6</div>
+                </div>
+                <div class="page portal-page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-top-view-of-a-cup-of-coffee-3445-large.mp4"></video>
+                        <div class="portal-overlay translucent-panel">
+                            <div class="portal-content">
+                                <h2>Juego RUNA</h2>
+                                <p>Pon a prueba tus sentidos y sumérgete en el mundo de RUNA con nuestro juego interactivo. ¿Estás listo para el desafío?</p>
+                                <a href="RunaDefenders/juego.html" class="portal-button">Jugar Ahora</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-number">7</div>
+                </div>
+                <div class="page portal-page" data-drawing-enabled="false">
+                    <div class="content-wrapper">
+                        <video class="portal-video" autoplay loop muted playsinline src="https://assets.mixkit.co/videos/preview/mixkit-futuristic-computer-data-processing-screen-4740-large.mp4"></video>
+                        <div class="portal-overlay translucent-panel">
+                            <div class="portal-content">
+                                <h2>Jusn38 Tech</h2>
+                                <p>Explora la innovación y el diseño detrás de esta experiencia. Jusn38 Tech, creando el futuro de las interacciones digitales.</p>
+                                <a href="jusn38.html" class="portal-button">Conocer Más</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-number">8</div>
+                </div>
+                <div class="page" data-drawing-enabled="true"><div class="page-number">9</div></div>
+                <div class="page" data-drawing-enabled="true"><div class="page-number">10</div></div>
+                <div class="page hard" data-drawing-enabled="false"></div>
+            </div>
+            <div id="page-turn-hint">
+                <i class="fas fa-hand-pointer"></i>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="visual-tool" class="hidden"></div>
+
+<div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-0 sm:p-4 bg-black/60 hidden"></div>
+
+<!-- Auth Modal -->
+<div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
+    <div class="translucent-panel w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col relative text-center">
+        <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <h2 class="text-2xl font-bold text-white mb-2">Bienvenido a Runa</h2>
+        <p class="text-gray-400 mb-6">Inicia sesión o crea una cuenta</p>
+        <button id="google-login-button-modal" class="w-full inline-flex items-center justify-center gap-3 px-4 py-2 text-base font-semibold text-gray-700 bg-white border border-transparent rounded-lg shadow-sm hover:bg-gray-200 transition-all">
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,34.783,44,29.865,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+            <span>Iniciar sesión con Google</span>
+        </button>
+    </div>
+</div>
+
+
+<!-- TI-89 Calculator Structure -->
+<div id="calculator">
+    <div class="calculator-overlay">
+        <div class="calc-header">
+            <span class="calc-brand">TI-89 RUNA</span>
+            <div class="flex items-center gap-4">
+                <i id="calc-send" class="fas fa-paper-plane cursor-pointer hover:text-[var(--runa-primary)] transition-colors" title="Enviar a la página"></i>
+                <i class="fas fa-xmark close-btn" id="calc-close" title="Cerrar"></i>
+            </div>
+        </div>
+        <div class="calc-screen-container">
+            <textarea id="calc-display" readonly rows="2"></textarea>
+        </div>
+        <div class="calc-keys">
+            <button class="calc-btn func" data-func="Math.sin(">sin</button>
+            <button class="calc-btn func" data-func="Math.cos(">cos</button>
+            <button class="calc-btn func" data-func="Math.tan(">tan</button>
+            <button class="calc-btn op" data-key="**">^</button>
+            <button class="calc-btn func" data-func="Math.sqrt(">√</button>
+            <button class="calc-btn func" data-func="Math.log10(">log</button>
+            <button class="calc-btn func" data-func="Math.log(">ln</button>
+            <button class="calc-btn op" data-key="(">(</button>
+            <button class="calc-btn op" data-key=")">)</button>
+            <button class="calc-btn op" data-key="/">÷</button>
+            <button class="calc-btn num" data-key="7">7</button>
+            <button class="calc-btn num" data-key="8">8</button>
+            <button class="calc-btn num" data-key="9">9</button>
+            <button class="calc-btn op" data-key="*">×</button>
+            <button class="calc-btn clear" id="calc-backspace"><i class="fas fa-delete-left"></i></button>
+            <button class="calc-btn num" data-key="4">4</button>
+            <button class="calc-btn num" data-key="5">5</button>
+            <button class="calc-btn num" data-key="6">6</button>
+            <button class="calc-btn op" data-key="-">-</button>
+            <button class="calc-btn clear" id="calc-clear">C</button>
+            <button class="calc-btn num" data-key="1">1</button>
+            <button class="calc-btn num" data-key="2">2</button>
+            <button class="calc-btn num" data-key="3">3</button>
+            <button class="calc-btn op" data-key="+">+</button>
+            <button class="calc-btn enter" id="calc-equals" style="grid-row: span 2;">ENTER</button>
+            <button class="calc-btn num" data-key="0" style="grid-column: span 2;">0</button>
+            <button class="calc-btn num" data-key=".">.</button>
+            <button class="calc-btn op" data-key="*(-1)">(-)</button>
+        </div>
+    </div>
+</div>
+
+
+<audio id="music-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
+<audio id="river-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
+<audio id="birds-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
+<audio id="rain-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif" type="audio/mpeg"></audio>
+<audio id="fire-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif" type="audio/mpeg"></audio>
+<audio id="wind-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif" type="audio/mpeg"></audio>
+<audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif" type="audio/mpeg"></audio>
+
+<script type="module">
+    // Import Firebase services
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    $(document).ready(function () {
+        // --- Firebase Initialization ---
+        // These variables are expected to be provided by the environment.
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" };
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; // Use the provided app ID
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app); // Initialize Firestore
+
+        let currentUserId = null;
+        let isAuthReady = false; // Flag to ensure Firestore operations wait for auth
+
+        // --- Firebase Auth UI Management ---
+        const handleSignIn = () => {
+            signInWithPopup(auth, GoogleAuthProvider) // Use GoogleAuthProvider directly
+                .then((result) => {
+                    console.log("Signed in successfully with Google", result.user);
+                    $('#auth-modal').addClass('hidden'); // Close modal on success
+                }).catch((error) => {
+                    console.error("Google sign-in error", error);
+                });
+        };
+
+        const updateAuthUI = (user) => {
+            const authContainer = $('#auth-container');
+            authContainer.empty(); // Clear previous content
+
+            if (user && !user.isAnonymous) {
+                // User is signed in with a provider (e.g., Google)
+                const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
+                const photoURL = user.photoURL || fallbackImage;
+
+                const userButton = $(`
+                    <button id="logout-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)] flex items-center justify-center bg-white p-1" title="Cerrar sesión: ${user.displayName || 'Usuario'}">
+                        <img src="${photoURL}" alt="${user.displayName || 'Usuario'}" class="w-full h-full ${user.photoURL ? 'object-cover' : 'object-contain'}" onerror="this.onerror=null;this.src='${fallbackImage}';">
+                    </button>
+                `);
+
+                userButton.on('click', () => {
+                    signOut(auth).catch(error => console.error("Sign out error", error));
+                });
+                authContainer.append(userButton);
+
+            } else {
+                // User is signed out or anonymous
+                const loginButton = $(`
+                    <button id="open-auth-modal-button" class="p-1 rounded-full text-white" aria-label="Abrir modal de inicio de sesión">
+                        <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Iniciar sesión" class="w-7 h-7">
+                    </button>
+                `);
+                // This button now ONLY opens the modal
+                loginButton.on('click', () => {
+                    $('#auth-modal').removeClass('hidden');
+                });
+                authContainer.append(loginButton);
+            }
+        };
+
+        // Attach listener to auth state changes
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                console.log("User signed in:", user.uid);
+            } else {
+                // Sign in anonymously if no user is logged in
+                try {
+                    const anonymousUser = await signInAnonymously(auth);
+                    currentUserId = anonymousUser.user.uid;
+                    console.log("Signed in anonymously:", currentUserId);
+                } catch (error) {
+                    console.error("Anonymous sign-in failed:", error);
+                }
+            }
+            isAuthReady = true;
+            // Now that auth is ready, load initial data for visible pages
+            loadInitialPageData();
+            updateAuthUI(user);
+        });
+
+        // Initial sign-in flow
+        if (initialAuthToken) {
+            signInWithCustomToken(auth, initialAuthToken).catch(err => {
+                console.error("Custom token sign-in failed, trying anonymous.", err);
+                // The onAuthStateChanged listener will handle signInAnonymously if needed
+            });
+        } else {
+            // The onAuthStateChanged listener will handle signInAnonymously
+        }
+
+        // The button inside the modal handles the actual sign-in
+        $('#google-login-button-modal').on('click', handleSignIn);
+
+
+        // --- State Variables ---
+        const flipbook = $('.flipbook');
+        // drawingStates and textStates are now managed by Firestore, no longer needed as in-memory caches
+        let currentTool = 'no-tool';
+        let currentColor = 'rgb(0,0,0)';
+        let baseColorFromWheel = { r: 0, g: 0, b: 0 };
+        let currentLineWidth = 5;
+        let isDrawing = false;
+        let lastX = 0, lastY = 0;
+        const pageFlipSound = new Audio('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/c2acd6b2dd569ae8ee33f2441eaacb2386e7490d/public/assets/mp3/pasar-hoja-de-libro.mp3');
+        const visualTool = $('#visual-tool');
+
+        const fonts = [
+            { name: 'Poppins', family: "'Poppins', sans-serif" },
+            { name: 'Roboto', family: "'Roboto', sans-serif" },
+            { name: 'Lato', family: "'Lato', sans-serif" },
+            { name: 'Montserrat', family: "'Montserrat', sans-serif" },
+            { name: 'Oswald', family: "'Oswald', sans-serif" },
+            { name: 'Raleway', family: "'Raleway', sans-serif" },
+            { name: 'Merriweather', family: "'Merriweather', serif" },
+            { name: 'Playfair Display', family: "'Playfair Display', serif" },
+            { name: 'Lora', family: "'Lora', serif" },
+            { name: 'Dancing Script', family: "'Dancing Script', cursive" },
+            { name: 'Lobster', family: "'Lobster', cursive" },
+            { name: 'Pacifico', family: "'Pacifico', cursive" },
+            { name: 'Caveat', family: "'Caveat', cursive" },
+            { name: 'Indie Flower', family: "'Indie Flower', cursive" },
+            { name: 'Shadows Into Light', family: "'Shadows Into Light', cursive" },
+        ];
+
+        const videoSkins = [
+            { name: "Naturaleza y Café", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/abb2e1a716439dd1ba47f48c0bba176ff72e197e/public/assets/videos/runa-fondo-video.mp4" }
+        ];
+        let currentVideoIndex = 0;
+
+        const ambienceSounds = [
+            { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
+            { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
+            { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
+            { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif' },
+            { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif' },
+            { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif' },
+            { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
+        ];
+
+        // --- Function Definitions ---
+
+        function getCanvasForPage(pageNumber) {
+            let canvas = $(`#canvas-page-${pageNumber}`);
+            const pageElement = flipbook.find(`.page[data-page-number=${pageNumber}]`);
+            if (!pageElement.length || pageElement.data('drawing-enabled') !== true) return null; // Ensure drawing is enabled
+
+            if (canvas.length === 0) {
+                canvas = $('<canvas>').addClass('drawing-canvas').attr('id', `canvas-page-${pageNumber}`);
+                pageElement.append(canvas);
+                const canvasEl = canvas[0];
+                // Set canvas dimensions to match the page element
+                canvasEl.width = pageElement.width();
+                canvasEl.height = pageElement.height();
+
+                canvas.on('mousedown touchstart', startDrawing);
+                canvas.on('mousemove touchmove', draw);
+            }
+            return canvas[0];
+        }
+
+        function getTextLayerForPage(pageNumber) {
+            let textLayer = $(`#text-layer-page-${pageNumber}`);
+            const pageElement = flipbook.find(`.page[data-page-number=${pageNumber}]`);
+            if (!pageElement.length || pageElement.data('drawing-enabled') !== true) return null; // Ensure drawing is enabled
+
+            if (textLayer.length === 0) {
+                textLayer = $('<div>')
+                    .addClass('text-layer-container') // Changed to match CSS
+                    .attr('id', `text-layer-page-${pageNumber}`)
+                    .attr('contenteditable', 'true')
+                    .attr('spellcheck', 'false');
+                pageElement.append(textLayer);
+
+                textLayer.on('input', () => saveTextForPage(pageNumber));
+
+                textLayer.on('click', function(e) {
+                    if (currentTool !== 'text') {
+                        setActiveTool('text');
+                    }
+                });
+            }
+            return textLayer[0];
+        }
+
+        function startDrawing(e) {
+            if (currentTool !== 'pencil' && currentTool !== 'eraser') return;
+            isDrawing = true;
+            visualTool.show();
+            const [x, y] = getCoords(e, $(e.target));
+            lastX = x;
+            lastY = y;
+            draw(e);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+
+            const page = flipbook.turn('page');
+            const canvas = getCanvasForPage(page);
+            if (!canvas) return;
+
+            const [x, y] = getCoords(e, $(canvas));
+            const canvasRect = canvas.getBoundingClientRect();
+            visualTool.css({ top: canvasRect.top + y, left: canvasRect.left + x });
+
+            const ctx = canvas.getContext('2d');
+            ctx.globalCompositeOperation = (currentTool === 'eraser') ? 'destination-out' : 'source-over';
+            ctx.lineWidth = (currentTool === 'eraser') ? 25 : currentLineWidth;
+            ctx.strokeStyle = currentColor;
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+            [lastX, lastY] = [x, y];
+        }
+
+        function stopDrawing() {
+            if(isDrawing) {
+                const page = flipbook.turn('page');
+                saveDrawingForPage(page);
+            }
+            isDrawing = false;
+            visualTool.hide();
+        }
+
+        function getCoords(e, target) {
+            const rect = target[0].getBoundingClientRect();
+            const event = e.originalEvent.touches ? e.originalEvent.touches[0] : e;
+            return [event.clientX - rect.left, event.clientY - rect.top];
+        }
+
+        // --- Firestore Save/Load Functions ---
+        async function saveDrawingForPage(pageNumber) {
+            if (!isAuthReady || !currentUserId) {
+                console.warn("Auth not ready or user not identified. Cannot save drawing.");
+                return;
+            }
+            const canvas = getCanvasForPage(pageNumber);
+            if (canvas) {
+                const dataURL = canvas.toDataURL();
+                try {
+                    const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/notebookPages`, `page-${pageNumber}`);
+                    await setDoc(pageDocRef, { drawingData: dataURL }, { merge: true });
+                    console.log(`Drawing saved for page ${pageNumber}`);
+                } catch (e) {
+                    console.error("Error saving drawing:", e);
+                }
+            }
+        }
+
+        async function loadDrawingForPage(pageNumber) {
+            if (!isAuthReady || !currentUserId) {
+                console.warn("Auth not ready or user not identified. Cannot load drawing.");
+                return;
+            }
+            const canvas = getCanvasForPage(pageNumber);
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear before loading
+
+                try {
+                    const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/notebookPages`, `page-${pageNumber}`);
+                    const docSnap = await getDoc(pageDocRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (data.drawingData) {
+                            const img = new Image();
+                            img.onload = () => ctx.drawImage(img, 0, 0);
+                            img.src = data.drawingData;
+                            console.log(`Drawing loaded for page ${pageNumber}`);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error loading drawing:", e);
+                }
+            }
+        }
+
+        async function saveTextForPage(pageNumber) {
+            if (!isAuthReady || !currentUserId) {
+                console.warn("Auth not ready or user not identified. Cannot save text.");
+                return;
+            }
+            const textLayer = getTextLayerForPage(pageNumber);
+            if (textLayer) {
+                const textContent = textLayer.innerHTML;
+                try {
+                    const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/notebookPages`, `page-${pageNumber}`);
+                    await setDoc(pageDocRef, { textData: textContent }, { merge: true });
+                    console.log(`Text saved for page ${pageNumber}`);
+                } catch (e) {
+                    console.error("Error saving text:", e);
+                }
+            }
+        }
+
+        async function loadTextForPage(pageNumber) {
+            if (!isAuthReady || !currentUserId) {
+                console.warn("Auth not ready or user not identified. Cannot load text.");
+                return;
+            }
+            const textLayer = getTextLayerForPage(pageNumber);
+            if (textLayer) {
+                textLayer.innerHTML = ''; // Clear before loading
+                try {
+                    const pageDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/notebookPages`, `page-${pageNumber}`);
+                    const docSnap = await getDoc(pageDocRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (data.textData) {
+                            textLayer.innerHTML = data.textData;
+                            console.log(`Text loaded for page ${pageNumber}`);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error loading text:", e);
+                }
+            }
+        }
+
+        async function loadInitialPageData() {
+            // Load data for the currently visible pages after auth is ready
+            const view = flipbook.turn('view'); // Get currently visible pages
+            for (const p of view) {
+                if (p > 0 && $(`.page[data-page-number=${p}]`).data('drawing-enabled')) {
+                    await loadDrawingForPage(p);
+                    await loadTextForPage(p);
+                }
+            }
+        }
+
+        function setActiveTool(tool) {
+            $('.tool-button').removeClass('active');
+            visualTool.removeClass('pencil eraser');
+            $('body').removeClass('drawing-tool-active text-tool-active eraser-tool-active no-tool-active');
+
+            currentTool = tool;
+
+            if (tool === 'pencil') {
+                $('body').addClass('drawing-tool-active');
+            } else if (tool === 'eraser') {
+                $('body').addClass('eraser-tool-active');
+            } else if (tool === 'text') {
+                $('body').addClass('text-tool-active');
+            } else {
+                $('body').addClass('no-tool-active');
+            }
+
+            $(`#tool-${tool}`).addClass('active');
+
+            if (tool === 'text') {
+                $('#font-selector-container').removeClass('hidden');
+                $('#color-picker-container').addClass('hidden');
+                visualTool.hide();
+                const page = flipbook.turn('page');
+                const textLayer = getTextLayerForPage(page);
+                if (textLayer) {
+                    $(textLayer).focus();
+                    document.execCommand('foreColor', false, currentColor);
+                }
+            } else {
+                $('#font-selector-container').addClass('hidden');
+                if (tool === 'pencil' || tool === 'eraser') {
+                    visualTool.html(tool === 'pencil' ? '<i class="fas fa-pencil"></i>' : '<i class="fas fa-eraser"></i>').addClass(tool);
+                } else {
+                    visualTool.hide();
+                }
+            }
+        }
+
+        function applyTheme(theme) {
+            const sunIcon = $('#theme-icon-sun');
+            const moonIcon = $('#theme-icon-moon');
+            if (theme === 'dark') {
+                $('html').removeClass('light').addClass('dark');
+                sunIcon.show();
+                moonIcon.hide();
+            } else {
+                $('html').removeClass('dark').addClass('light');
+                sunIcon.hide();
+                moonIcon.show();
+            }
+        }
+
+        function closeAllPanels() {
+            $('#main-menu, #mixer-panel, #video-skin-panel').addClass('hidden');
+        }
+
+        function initializeMixer() {
+            const soundControlsContainer = $('#sound-controls');
+            soundControlsContainer.html('');
+            ambienceSounds.forEach(sound => {
+                const audioEl = document.getElementById(sound.id);
+                if (!audioEl) return;
+
+                const controlHTML = `<div class="flex items-center gap-4 text-sm text-white"><button id="btn-${sound.id}" class="mixer-icon-button relative w-10 h-10 rounded-full shadow-md flex-shrink-0 overflow-hidden"><img src="${sound.gifSrc}" alt="${sound.name}"></button><span class="font-medium w-20 truncate">${sound.name}</span><input type="range" id="volume-${sound.id}" min="0" max="1" step="0.01" value="0" class="styled-slider" style="--thumb-color: var(--runa-primary); --track-fill-color: var(--slider-track-color);"></div>`;
+                soundControlsContainer.append(controlHTML);
+
+                const slider = $(`#volume-${sound.id}`);
+                slider.on('input', function() {
+                    const newVolume = parseFloat($(this).val());
+                    audioEl.volume = newVolume;
+                    $(`#btn-${sound.id}`).toggleClass('active', newVolume > 0);
+                    updateSliderFill(this);
+                    if (newVolume > 0 && audioEl.paused) { audioEl.play().catch(e => console.error(`Error playing ${sound.id}:`, e)); }
+                    else if (newVolume === 0 && !audioEl.paused) { audioEl.pause(); }
+                });
+
+                $(`#btn-${sound.id}`).on('click', function() {
+                    const currentVolume = parseFloat(slider.val());
+                    if (currentVolume > 0) {
+                        slider.data('lastValue', currentVolume);
+                        slider.val(0);
+                    } else {
+                        slider.val(slider.data('lastValue') || 0.5);
+                    }
+                    slider.trigger('input');
+                });
+                updateSliderFill(slider[0]);
+            });
+        }
+
+        function setVideoSkin(index) {
+            const video = $('#video-background');
+            const source = $('#video-source');
+            if(video.length && source.length){
+                video.css('opacity', 0);
+                setTimeout(() => {
+                    currentVideoIndex = index;
+                    source.attr('src', videoSkins[currentVideoIndex].url);
+                    video[0].load();
+                    video[0].play().catch(e => console.error("Video play failed:", e));
+                    video.css('opacity', 1);
+                    localStorage.setItem('runaVideoSkin', currentVideoIndex);
+                    updateVideoListUI();
+                }, 500);
+            }
+        }
+
+        function updateVideoListUI() {
+            const videoListContainer = $('#video-list');
+            if (!videoListContainer.length) return;
+            videoListContainer.find('button').each(function(index) {
+                $(this).toggleClass('active', index === currentVideoIndex);
+            });
+        }
+
+        function initializeVideoSelector() {
+            const videoListContainer = $('#video-list');
+            videoListContainer.html('');
+            videoSkins.forEach((skin, index) => {
+                const button = $(`<button class="video-list-button w-full text-left p-2 rounded-lg transition-colors duration-200 text-white">${skin.name}</button>`);
+                button.on('click', () => setVideoSkin(index));
+                videoListContainer.append(button);
+            });
+            updateVideoListUI();
+        }
+
+        function renderCartModal() {
+            const cartModal = $('#cart-modal');
+            let contentHTML = `<div class="p-8 flex-grow flex flex-col items-center justify-center text-center"><svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><h3 class="font-semibold text-lg text-white">Tu carrito está vacío</h3><p class="text-sm text-gray-400">Añade productos para verlos aquí.</p></div>`;
+            cartModal.html(`<div class="translucent-panel w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col ml-auto"><header class="p-4 border-b border-white/10 flex justify-between items-center"><h2 class="text-xl font-bold text-white">Tu Carrito</h2><button id="close-cart-button" class="p-1 rounded-full text-white hover:bg-white/10 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></header>${contentHTML}</div>`);
+            $('#close-cart-button').on('click', () => $('#cart-modal').addClass('hidden'));
+        }
+
+        function updateSliderFill(slider) {
+            const min = $(slider).attr('min') || 0;
+            const max = $(slider).attr('max') || 100;
+            const value = $(slider).val();
+            const percent = ((value - min) / (max - min)) * 100;
+            $(slider).css('--value-percent', `${percent}%`);
+        }
+
+        // --- Initial Setup and Event Handlers ---
+
+        // This loop now handles the re-numbering correctly after new pages are added in HTML
+        $('.flipbook .page').each((index, el) => $(el).attr('data-page-number', index + 1));
+
+        $(window).on('mouseup touchend', stopDrawing);
+
+        flipbook.turn({
+            width: $('.flipbook-container').width(),
+            height: $('.flipbook-container').height(),
+            display: 'single',
+            elevation: 50,
+            gradients: true,
+            autoCenter: true,
+            when: {
+                turning: async (event, page, view) => { // Before the turn animation starts
+                    // Save the state of the page that is about to turn away
+                    if ($(`.page[data-page-number=${page}]`).data('drawing-enabled')) {
+                        await saveDrawingForPage(page);
+                        await saveTextForPage(page);
+                    }
+                },
+                turned: async (event, page, view) => { // After the turn animation completes
+                    // Load the state of the newly visible pages
+                    for (const p of view) {
+                        if (p > 0 && $(`.page[data-page-number=${p}]`).data('drawing-enabled')) {
+                            await loadDrawingForPage(p);
+                            await loadTextForPage(p);
+                        }
+                    }
+                    if(currentTool === 'text') getTextLayerForPage(page)?.focus();
+                    if (page > 1) {
+                        pageFlipSound.currentTime = 2.2;
+                        pageFlipSound.play().catch(console.error);
+                        setTimeout(() => pageFlipSound.pause(), 1000);
+                    }
+                }
+            }
+        });
+
+        // --- Tool Event Handlers ---
+        $('#tool-pencil').on('click', () => { setActiveTool('pencil'); closeAllPanels(); });
+        $('#tool-text').on('click', () => {
+            setActiveTool('text');
+            // Don't close panel, let user pick font
+        });
+        $('#tool-eraser').on('click', () => { setActiveTool('eraser'); closeAllPanels(); });
+        $('#tool-clear').on('click', async () => { // Made async for Firestore operations
+            const page = flipbook.turn('page');
+            const canvas = getCanvasForPage(page);
+            if (canvas) {
+                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                await saveDrawingForPage(page); // Save cleared state
+            }
+            const textLayer = getTextLayerForPage(page);
+            if (textLayer) {
+                textLayer.innerHTML = '';
+                await saveTextForPage(page); // Save cleared state
+            }
+            closeAllPanels();
+        });
+        $('#tool-calc').on('click', () => { $('#calculator').fadeToggle(); closeAllPanels(); });
+        $('#tool-add-page').on('click', () => {
+            const newPage = $('<div class="page" data-drawing-enabled="true"><div class="page-number"></div></div>');
+            const book = $('.flipbook');
+            book.turn('addPage', newPage, book.turn('pages') + 1);
+            // Re-number pages
+            $('.flipbook .page').each(function(index) {
+                $(this).attr('data-page-number', index + 1); // Ensure data attribute is updated
+                $(this).find('.page-number').text(index + 1);
+            });
+            closeAllPanels();
+        });
+
+        $('#line-width-slider').on('input', function() {
+            currentLineWidth = $(this).val();
+            setActiveTool('pencil');
+            updateSliderFill(this);
+        });
+
+        const fontPalette = $('#font-palette');
+        fonts.forEach(font => {
+            const fontButton = $(`<button class="font-button" style="font-family: ${font.family};">${font.name}</button>`);
+            fontButton.data('fontFamily', font.family);
+            fontButton.on('click', function() {
+                $('.font-button').removeClass('active');
+                $(this).addClass('active');
+                const page = flipbook.turn('page');
+                const textLayer = getTextLayerForPage(page);
+                if (textLayer) {
+                    $(textLayer).focus();
+                    document.execCommand('fontName', false, $(this).data('fontFamily'));
+                    saveTextForPage(page); // Save font change
+                }
+                closeAllPanels();
+            });
+            fontPalette.append(fontButton);
+        });
+        fontPalette.find('button:first').addClass('active');
+
+        $('#tool-print').on('click', () => { window.print(); closeAllPanels(); });
+
+        $('#tool-share').on('click', async () => {
+            const shareData = {
+                title: 'RUNA Coffee - Cuaderno Digital',
+                text: '¡Bienvenido a RUNA Coffee! Te invito a explorar mi cuaderno digital interactivo.',
+                url: window.location.href,
+            };
+            try { await navigator.share(shareData); }
+            catch (err) { console.error("Share failed:", err); }
+            closeAllPanels();
+        });
+
+        $('#tool-upload').on('click', () => $('#image-uploader').click());
+        $('<input type="file" id="image-uploader" accept="image/*" class="hidden">').appendTo('body').on('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (event) => { // Made async for Firestore
+                const img = new Image();
+                img.onload = async () => { // Made async for Firestore
+                    const page = flipbook.turn('page');
+                    const canvas = getCanvasForPage(page);
+                    if (canvas) {
+                        const ctx = canvas.getContext('2d');
+                        const maxW = canvas.width * 0.8, maxH = canvas.height * 0.8;
+                        let w = img.width, h = img.height, ratio = w / h;
+                        if (w > maxW) { w = maxW; h = w / ratio; }
+                        if (h > maxH) { h = maxH; w = h * ratio; }
+                        ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+                        await saveDrawingForPage(page); // Save image to Firestore
+                    }
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+            $(this).val('');
+            closeAllPanels();
+        });
+
+        // --- Color Picker Logic ---
+        $('#tool-color').on('click', () => {
+            $('#color-picker-container').slideToggle();
+        });
+
+        const colorWheel = document.getElementById('color-wheel');
+        const colorPreview = document.getElementById('color-preview');
+        const luminositySlider = document.getElementById('luminosity-slider');
+        const cwCtx = colorWheel.getContext('2d');
+        const wheelRadius = colorWheel.width / 2;
+        cwCtx.translate(wheelRadius, wheelRadius);
+
+        function drawColorWheel() {
+            for (let angle = 0; angle < 360; angle++) {
+                const startAngle = (angle - 2) * Math.PI / 180;
+                const endAngle = angle * Math.PI / 180;
+                cwCtx.beginPath();
+                cwCtx.moveTo(0, 0);
+                cwCtx.arc(0, 0, wheelRadius, startAngle, endAngle);
+                cwCtx.closePath();
+                const gradient = cwCtx.createRadialGradient(0, 0, 0, 0, 0, wheelRadius);
+                gradient.addColorStop(0, "white");
+                gradient.addColorStop(1, `hsl(${angle}, 100%, 50%)`);
+                cwCtx.fillStyle = gradient;
+                cwCtx.fill();
+            }
+        }
+
+        function updateFinalColor() {
+            const lum = luminositySlider.value;
+            let {r, g, b} = baseColorFromWheel;
+
+            const lerp = (a, b, t) => a + (b - a) * t;
+
+            if (lum < 50) {
+                const t = lum / 50;
+                r = lerp(0, r, t);
+                g = lerp(0, g, t);
+                b = lerp(0, b, t);
+            } else {
+                const t = (lum - 50) / 50;
+                r = lerp(r, 255, t);
+                g = lerp(g, 255, t);
+                b = lerp(b, 255, t);
+            }
+
+            currentColor = `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+            colorPreview.style.backgroundColor = currentColor;
+            if (currentTool === 'text') {
+                document.execCommand('foreColor', false, currentColor);
+            }
+        }
+
+        function pickColorFromWheel(e) {
+            const rect = colorWheel.getBoundingClientRect();
+            const x = e.clientX - rect.left - wheelRadius;
+            const y = e.clientY - rect.top - wheelRadius;
+            const pixel = cwCtx.getImageData(x + wheelRadius, y + wheelRadius, 1, 1).data;
+            baseColorFromWheel = { r: pixel[0], g: pixel[1], b: pixel[2] };
+            luminositySlider.style.setProperty('--track-fill-color', `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`);
+            updateFinalColor();
+        }
+
+        $(colorWheel).on('mousedown', (e) => {
+            pickColorFromWheel(e);
+            $(colorWheel).on('mousemove', pickColorFromWheel);
+        }).on('mouseup mouseleave', () => {
+            $(colorWheel).off('mousemove', pickColorFromWheel);
+        });
+
+        $(luminositySlider).on('input', updateFinalColor);
+
+        // --- TI-89 Calculator Logic ---
+        const calculator = $('#calculator');
+        const calcDisplay = $('#calc-display');
+
+        $('#calc-close').on('click', () => calculator.fadeOut());
+
+        async function sendToPage(value) { // Made async for Firestore
+            if (value && value !== 'Error') {
+                setActiveTool('text');
+                const page = flipbook.turn('page');
+                const textLayer = getTextLayerForPage(page);
+                if (textLayer) {
+                    $(textLayer).focus();
+                    const selection = window.getSelection();
+                    const range = document.createRange();
+                    range.selectNodeContents(textLayer);
+                    range.collapse(false);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+
+                    document.execCommand('insertText', false, ` ${value} `);
+                    await saveTextForPage(page); // Save text to Firestore
+                }
+            }
+        }
+
+        $('#calc-send').on('click', () => {
+            sendToPage(calcDisplay.val());
+            calculator.fadeOut();
+        });
+
+        $('.calc-keys').on('click', '.calc-btn', function() {
+            const key = $(this).data('key');
+            const func = $(this).data('func');
+
+            if (key !== undefined) {
+                calcDisplay.val(calcDisplay.val() + key);
+            } else if (func !== undefined) {
+                calcDisplay.val(calcDisplay.val() + func);
+            }
+        });
+
+        $('#calc-clear').on('click', () => calcDisplay.val(''));
+        $('#calc-backspace').on('click', () => calcDisplay.val(calcDisplay.val().slice(0, -1)));
+
+        $('#calc-equals').on('click', () => {
+            try {
+                let expression = calcDisplay.val();
+                // Replace common math function representations with Math object methods
+                expression = expression.replace(/sin\(/g, 'Math.sin(')
+                                         .replace(/cos\(/g, 'Math.cos(')
+                                         .replace(/tan\(/g, 'Math.tan(')
+                                         .replace(/sqrt\(/g, 'Math.sqrt(')
+                                         .replace(/log\(/g, 'Math.log10(') // Assuming log base 10
+                                         .replace(/ln\(/g, 'Math.log(') // Natural log
+                                         .replace(/\^/g, '**'); // Power operator
+
+                const result = new Function('return ' + expression)();
+                calcDisplay.val(result);
+            } catch (e) {
+                console.error("Calculator error:", e);
+                calcDisplay.val('Error');
+            }
+        });
+
+
+        // --- UI Panel Handlers ---
+        $('#theme-toggle').on('click', () => {
+            const newTheme = $('html').hasClass('dark') ? 'light' : 'dark';
+            localStorage.setItem('runaTheme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        $('#menu-button').on('click', (e) => { e.stopPropagation(); const wasOpen = !$('#main-menu').hasClass('hidden'); closeAllPanels(); if (!wasOpen) $('#main-menu').removeClass('hidden'); });
+        $('#mixer-toggle-button').on('click', (e) => { e.stopPropagation(); const wasOpen = !$('#mixer-panel').hasClass('hidden'); closeAllPanels(); if (!wasOpen) $('#mixer-panel').removeClass('hidden'); });
+        $('#video-skin-toggle').on('click', (e) => { e.stopPropagation(); const wasOpen = !$('#video-skin-panel').hasClass('hidden'); closeAllPanels(); if (!wasOpen) $('#video-skin-panel').removeClass('hidden'); });
+        $(window).on('click', (e) => { if (!$(e.target).closest('#main-header').length) closeAllPanels(); });
+        $('.menu-section-header').on('click', function() { $(this).toggleClass('active').next('.menu-section-content').slideToggle(); });
+
+        // --- Cart ---
+        $('#open-cart-button').on('click', () => { renderCartModal(); $('#cart-modal').removeClass('hidden'); });
+        $('#cart-modal').on('click', (event) => { if (event.target === $('#cart-modal')[0]) $('#cart-modal').addClass('hidden'); });
+
+        // --- Auth Modal Handlers ---
+        $('#close-auth-modal-button').on('click', () => $('#auth-modal').addClass('hidden'));
+
+        // --- Resizing ---
+        $(window).on('resize', () => {
+            // Re-initialize flipbook on resize to ensure correct dimensions
+            flipbook.turn('size', $('.flipbook-container').width(), $('.flipbook-container').height());
+            // Re-size canvases on pages that have them
+            $('.flipbook .page').each(function() {
+                const pageNumber = $(this).data('page-number');
+                const canvas = getCanvasForPage(pageNumber);
+                if (canvas) {
+                    const pageElement = $(this);
+                    canvas.width = pageElement.width();
+                    canvas.height = pageElement.height();
+                    // Reload drawing to fit new canvas size if necessary
+                    loadDrawingForPage(pageNumber);
+                }
+            });
+        }).trigger('resize'); // Trigger resize on load to set initial state
+
+        // --- Page Turn Hint ---
+        const pageTurnHint = $('#page-turn-hint');
+        if (localStorage.getItem('runaHintSeen') !== 'true') {
+            setTimeout(() => pageTurnHint.addClass('visible'), 1500);
+            flipbook.one('turned', () => { pageTurnHint.removeClass('visible'); localStorage.setItem('runaHintSeen', 'true'); });
+        }
+
+        // --- Final Initializations ---
+        setActiveTool('no-tool');
+        // Initial page data loading is now handled by onAuthStateChanged -> loadInitialPageData()
+        applyTheme(localStorage.getItem('runaTheme') || 'light');
+        initializeMixer();
+        initializeVideoSelector();
+        setVideoSkin(parseInt(localStorage.getItem('runaVideoSkin')) || 0);
+        $('#line-width-slider').css('--thumb-color', 'var(--pencil-track-color)').css('--track-fill-color', 'var(--pencil-track-color)');
+        updateSliderFill($('#line-width-slider')[0]);
+        drawColorWheel();
+        colorPreview.style.backgroundColor = currentColor;
+    });
+</script>
+
+</body>
+</html>

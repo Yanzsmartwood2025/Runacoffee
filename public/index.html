@@ -29,7 +29,7 @@
 
     <!-- Google AdSense Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1934722168208297"
-     crossorigin="anonymous"></script>
+      crossorigin="anonymous"></script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -43,164 +43,7 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 
     <!-- Custom Styles and Theme -->
-    <style>
-        :root {
-            --runa-primary: #D47500;
-            --runa-secondary: #0072CE;
-            /* MODIFIED: Changed slider color to a bright, transparent white */
-            --slider-track-color: rgba(255, 255, 255, 0.75);
-        }
-        html { scroll-behavior: smooth; }
-        
-        /* Light Theme */
-        html:not(.dark) body { background-color: #FDFBF8; color: #3a2e2a; }
-        html:not(.dark) h1, html:not(.dark) h2, html:not(.dark) h3, html:not(.dark) h4 { color: #2c221f; }
-        html:not(.dark) .translucent-menu { background-color: rgba(255, 255, 255, 0.5); border-color: rgba(0,0,0,0.1); }
-        html:not(.dark) .section-bg { background-color: rgba(255, 255, 255, 0.5); border-color: rgba(0,0,0,0.1); }
-        html:not(.dark) footer { background-color: #F4F1ED; }
-        html:not(.dark) .mixer-icon-button { background-color: #F4F1ED; border-color: #E2E8F0; }
-        html:not(.dark) .mixer-icon-button.active { border-color: var(--runa-primary); }
-        html:not(.dark) input[type="range"] { --track-background: #E2E8F0; }
-        html:not(.dark) .cart-modal-content { background-color: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.1); }
-        html:not(.dark) .video-list-button.active { background-color: rgba(0,0,0,0.1); }
-        html:not(.dark) .ghost-button { border-color: var(--runa-primary); color: var(--runa-primary); }
-        html:not(.dark) .ghost-button:hover { background-color: var(--runa-primary); color: white; }
-        
-        /* Dark Theme */
-        html.dark body { background-color: #111; color: #E2E8F0; }
-        html.dark h1, html.dark h2, html.dark h3, html.dark h4 { color: #FFFFFF; }
-        html.dark .translucent-menu { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.1); }
-        html.dark .section-bg { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.1); }
-        html.dark footer { background-color: rgba(0, 0, 0, 0.5); }
-        html.dark .mixer-icon-button { background-color: #2D3748; border-color: #4A5568; }
-        html.dark .mixer-icon-button.active { border-color: var(--runa-primary); }
-        html.dark input[type="range"] { --track-background: #4A5568; }
-        html.dark .cart-modal-content { background-color: rgba(17, 17, 17, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
-        html.dark .video-list-button.active { background-color: rgba(255,255,255,0.15); }
-        html.dark .ghost-button { border-color: rgba(255, 255, 255, 0.8); color: white; }
-        html.dark .ghost-button:hover { background-color: rgba(255, 255, 255, 0.9); color: #111; }
-
-        body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; }
-        
-        #main-background-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -2;
-        }
-
-        #hero { position: relative; overflow: hidden; }
-        
-        #hero-video-background { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            z-index: -1;
-            transition: opacity 0.5s ease-in-out; 
-        }
-        
-        .translucent-menu, .section-bg, footer, .cart-modal-content, .whatsapp-fab, #auth-modal .modal-content-bg { 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px); 
-        }
-
-        #video-intro { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 10000; transition: opacity 0.75s ease-out, visibility 0.75s; }
-        #video-intro.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        #page-content { opacity: 0; transition: opacity 0.75s ease-in; transition-delay: 0.2s; visibility: hidden; position: relative; z-index: 10; }
-        #page-content.loaded { opacity: 1; visibility: visible; }
-        .modal-enter { animation: fadeIn 0.3s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        
-        #cart-icon-wrapper { position: relative; }
-        #cart-counter { position: absolute; top: 0; right: 0; transform: translate(25%, -25%); width: 1.25rem; height: 1.25rem; background-color: #DC2626; color: white; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 0.25rem; }
-        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 5px; outline: none; background: transparent; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--runa-primary); cursor: pointer; border-radius: 50%; border: 2px solid; border-color: #FDFBF8; margin-top: -6px; }
-        html.dark input[type="range"]::-webkit-slider-thumb { border-color: #111; }
-        input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: var(--runa-primary); cursor: pointer; border-radius: 50%; border: 2px solid; border-color: #FDFBF8; }
-        html.dark input[type="range"]::-moz-range-thumb { border-color: #111; }
-        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; border-radius: 5px; background: linear-gradient(to right, var(--slider-track-color) var(--value-percent, 0%), var(--track-background) var(--value-percent, 0%)); }
-        input[type="range"]::-moz-range-track { width: 100%; height: 8px; cursor: pointer; border-radius: 5px; background: linear-gradient(to right, var(--slider-track-color) var(--value-percent, 0%), var(--track-background) var(--value-percent, 0%)); }
-        .mixer-icon-button { border: 2px solid; transition: border-color 0.3s ease; display: flex; align-items: center; justify-content: center; }
-        .mixer-icon-button img { width: 100%; height: 100%; object-fit: cover; }
-
-        .book-viewer-container {
-            position: relative;
-            width: 100%;
-            max-width: 350px;
-            height: 500px;
-            margin: 0 auto;
-            cursor: grab;
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .book-viewer-container:hover { transform: scale(1.05); }
-        .book-viewer-container:active { cursor: grabbing; }
-        #book-viewer {
-            width: 100%;
-            height: 100%;
-            border-radius: 0.75rem;
-            background-color: transparent;
-            --poster-color: transparent;
-        }
-
-        html:not(.dark) .whatsapp-fab {
-            background-color: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-        html.dark .whatsapp-fab {
-            background-color: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .payment-logo {
-            filter: grayscale(100%);
-            transition: filter 0.3s ease;
-            opacity: 0.7;
-        }
-        .payment-logo:hover {
-            filter: grayscale(0%);
-            opacity: 1;
-        }
-
-        #ar-viewer::part(ar-button) {
-            border-width: 2px;
-            border-radius: 0.5rem;
-            background: transparent;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 1.125rem;
-            padding: 0.75rem 2rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            transition: all 0.3s ease;
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-        }
-        #ar-viewer::part(ar-button):hover {
-            transform: scale(1.05);
-        }
-        html.dark #ar-viewer::part(ar-button) {
-            border-color: rgba(255, 255, 255, 0.8);
-            color: white;
-        }
-        html.dark #ar-viewer::part(ar-button):hover {
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #111;
-        }
-        html:not(.dark) #ar-viewer::part(ar-button) {
-            border-color: var(--runa-primary);
-            color: var(--runa-primary);
-        }
-        html:not(.dark) #ar-viewer::part(ar-button):hover {
-            background-color: var(--runa-primary);
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="css/main-style.css">
 </head>
 
 <body class="antialiased">
@@ -316,6 +159,10 @@
                     </div>
 
                     <div class="mt-10">
+fix-asset-paths
+                        <!-- Link to the interactive book, path verified. -->
+
+main
                         <a href="runa-libro/index.html" class="ghost-button inline-block bg-transparent border-2 font-bold text-lg px-8 py-3 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
                             Abrir Libro
                         </a>
@@ -351,6 +198,19 @@
                 <div class="container mx-auto px-6 text-center">
                     <h3 class="text-xl font-semibold mb-4 text-inherit/80">Publicidad</h3>
                     <!--
+fix-asset-paths
+                      AQUÍ DEBES PEGAR EL CÓDIGO DE TU BLOQUE DE ANUNCIOS DE ADSENSE
+                      Suele tener este aspecto:
+                      <ins class="adsbygoogle"
+                            style="display:block"
+                            data-ad-client="ca-pub-1934722168208297"
+                            data-ad-slot="TU_ID_DE_BLOQUE_DE_ANUNCIO"
+                            data-ad-format="auto"
+                            data-full-width-responsive="true"></ins>
+                      <script>
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                      </script>
+
                         AQUÍ DEBES PEGAR EL CÓDIGO DE TU BLOQUE DE ANUNCIOS DE ADSENSE
                         Suele tener este aspecto:
                         <ins class="adsbygoogle"
@@ -362,6 +222,7 @@
                         <script>
                              (adsbygoogle = window.adsbygoogle || []).push({});
                         </script>
+ main
                     -->
                     <div class="bg-gray-200 dark:bg-gray-800 rounded-lg flex items-center justify-center min-h-[250px] text-gray-500">
                         <p>Espacio reservado para el anuncio.</p>
@@ -386,7 +247,7 @@
                         <div class="flex justify-center md:justify-start space-x-4">
                             <a href="https://www.instagram.com/_runacoffee_?igsh=MW9tMG1zcmhvM3JyeQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram de Runa Coffee">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" clip-rule="evenodd" />
+                                    <path fill-rule="evenodd" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zM12 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" clip-rule="evenodd" />
                                 </svg>
                             </a>
                         </div>
@@ -418,9 +279,9 @@
     
     <!-- WHATSAPP BUTTON -->
     <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." 
-       class="whatsapp-fab fixed bottom-6 right-6 z-50 rounded-full w-16 h-16 shadow-lg flex items-center justify-center p-4 transition-all duration-300 transform hover:scale-110" 
-       target="_blank" 
-       aria-label="Contactar por WhatsApp">
+        class="whatsapp-fab fixed bottom-6 right-6 z-50 rounded-full w-16 h-16 shadow-lg flex items-center justify-center p-4 transition-all duration-300 transform hover:scale-110"
+        target="_blank"
+        aria-label="Contactar por WhatsApp">
         <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/26548b0b3ba43b9b8337c561fd153a54b746325d/public/assets/imagenes/Icono-whatsapp.png" alt="WhatsApp" class="w-full h-full">
     </a>
     
@@ -464,10 +325,10 @@
             { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
             { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
             { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
-            { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/rain.gif' },
-            { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/fire.gif' },
-            { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/wind.gif' },
-            { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/1502311c7a2daf5ee882bb36da3e6555680fd5e8/public/assets/gif/storm.gif' },
+            { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Lluvia.mp3' },
+            { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido%20del%20Fuego_de_la_chimenea.mp3' },
+            { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/sonido_de_viento.mp3' },
+            { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3' },
         ];
         
         // --- LÓGICA DE AUTENTICACIÓN ---
