@@ -1,689 +1,683 @@
 <!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUNA COFFEE - El Alma del Café</title>
-    
-    <meta name="description" content="Descubre el café de especialidad de Colombia. Granos seleccionados que cuentan la historia de nuestra tierra.">
-    
-    <!-- PWA & Mobile App Settings -->
-    <meta name="theme-color" content="#1a1310">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="RUNA COFFEE">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUNA COFFEE - El Alma del Café</title>
+    
+    <meta name="description" content="Descubre el café de especialidad de Colombia. Granos seleccionados que cuentan la historia de nuestra tierra.">
+    
+    <!-- PWA & Mobile App Settings -->
+    <meta name="theme-color" content="#1a1310">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="RUNA COFFEE">
 
-    <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:title" content="RUNA COFFEE - Origen Colombia">
-    <meta property="og:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
-    <meta property="og:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
-    <meta property="og:url" content="https://runacoffee.vercel.app">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="RUNA COFFEE - Origen Colombia">
-    <meta name="twitter:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
-    <link rel="icon" href="https://i.ibb.co/L5TjL4q/IMG-20250620-WA0020.jpg" type="image/jpeg">
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="RUNA COFFEE - Origen Colombia">
+    <meta property="og:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
+    <meta property="og:url" content="https://runacoffee.vercel.app">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="RUNA COFFEE - Origen Colombia">
+    <meta name="twitter:description" content="Crea tu propio ambiente sonoro mientras disfrutas del mejor café de especialidad.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/176b37ec73753f00918e28f6f1e518d8ccb0b240/public/assets%20/IMAGENES/logo_de_etiqueta.jpg">
+    <link rel="icon" href="https://i.ibb.co/L5TjL4q/IMG-20250620-WA0020.jpg" type="image/jpeg">
 
-    <!-- Google AdSense Script -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1934722168208297"
-     crossorigin="anonymous"></script>
+    <!-- Google AdSense Script -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1934722168208297"
+     crossorigin="anonymous"></script>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
-    
-    <!-- Google's <model-viewer> component for 3D and AR -->
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Google's <model-viewer> component for 3D and AR -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 
-    <!-- Custom Styles and Theme -->
-    <link rel="stylesheet" href="css/main-style.css">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="antialiased">
 
-    <video id="main-background-video" autoplay loop muted playsinline>
-        <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/f40a28a85af3d13368f89856c255ae77f7f8acae/public/assets/videos/arbol2.mp4" type="video/mp4">
-    </video>
+    <video id="main-background-video" autoplay loop muted playsinline>
+        <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/f40a28a85af3d13368f89856c255ae77f7f8acae/public/assets/videos/arbol2.mp4" type="video/mp4">
+    </video>
 
-    <div id="video-intro">
-        <video id="intro-video" class="fixed inset-0 w-full h-full object-contain bg-white" autoplay muted playsinline>
-            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-intro.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
+    <div id="video-intro">
+        <video id="intro-video" class="fixed inset-0 w-full h-full object-contain bg-white" autoplay muted playsinline>
+            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-intro.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
 
-    <div id="page-content">
-        
-        <header id="main-header" class="sticky top-0 left-0 right-0 z-40 translucent-menu">
-            <nav class="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center h-20">
-                <div class="flex-1 flex justify-start items-center space-x-2 sm:space-x-4">
-                    <button class="text-inherit p-2" id="menu-button" aria-label="Open menu">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    </button>
-                    <button id="theme-toggle" class="p-2 rounded-full text-inherit" aria-label="Change color theme">
-                        <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
-                        <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                    </button>
-                    <!-- Auth container -->
-                    <div id="auth-container" class="flex items-center">
-                        <button id="user-profile-button" class="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent hover:border-[var(--runa-primary)] transition-colors flex items-center justify-center bg-white">
-                            <img id="user-profile-picture" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Iniciar sesión con Google" class="w-6 h-6 object-contain">
-                        </button>
-                    </div>
-                </div>
-                <div class="flex-shrink-0">
-                    <a href="#" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
-                        <video autoplay loop muted playsinline class="w-full h-full object-contain">
-                            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-logo-animado.mp4" type="video/mp4">
-                        </video>
-                    </a>
-                </div>
-                <div class="flex-1 flex justify-end items-center space-x-2 sm:space-x-4">
-                    <button id="video-skin-toggle" class="p-2 rounded-full text-inherit" aria-label="Open video selector">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    </button>
-                    <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)]" aria-label="Open ambiance mixer">
-                        <video autoplay loop muted playsinline class="w-full h-full object-cover">
-                            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5ec8a9f9a44f0f1d347867a8b1293a1f8f5dae5e/public/assets/videos/runa-equalizer-video.mp4" type="video/mp4">
-                        </video>
-                    </button>
-                    <div id="cart-icon-wrapper">
-                        <button id="open-cart-button" class="relative p-1 text-inherit">
-                           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                           <span id="cart-counter" class="hidden">0</span>
-                        </button>
-                    </div>
-                </div>
-            </nav>
-            
-            <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t translucent-menu">
-                <div class="container mx-auto px-6 py-4 space-y-3">
-                        <a href="#runa-book-interactive" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Libro de Origen</a>
-                        <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
-                        <a href="#contacto" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
-                </div>
-            </div>
+    <div id="page-content">
+        
+        <header id="main-header" class="sticky top-0 left-0 right-0 z-40 translucent-menu">
+            <nav class="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center h-20">
+                <div class="flex-1 flex justify-start items-center space-x-2 sm:space-x-4">
+                    <button class="text-inherit p-2" id="menu-button" aria-label="Open menu">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                    <button id="theme-toggle" class="p-2 rounded-full text-inherit" aria-label="Change color theme">
+                        <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414 8.486l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
+                        <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
+                    <!-- Auth container -->
+                    <div id="auth-container" class="flex items-center">
+                        <button id="user-profile-button" class="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent hover:border-[var(--runa-primary)] transition-colors flex items-center justify-center bg-white">
+                            <img id="user-profile-picture" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Iniciar sesión con Google" class="w-6 h-6 object-contain">
+                        </button>
+                    </div>
+                </div>
+                <div class="flex-shrink-0">
+                    <a href="#" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
+                        <video autoplay loop muted playsinline class="w-full h-full object-contain">
+                            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/ff90488b09cf62571f02c5d7893563cb48734f27/public/assets%20/VIDEOS/runa-logo-animado.mp4" type="video/mp4">
+                        </video>
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end items-center space-x-2 sm:space-x-4">
+                    <button id="video-skin-toggle" class="p-2 rounded-full text-inherit" aria-label="Open video selector">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    </button>
+                    <button id="mixer-toggle-button" class="w-9 h-9 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--runa-primary)]" aria-label="Open ambiance mixer">
+                        <video autoplay loop muted playsinline class="w-full h-full object-cover">
+                            <source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5ec8a9f9a44f0f1d347867a8b1293a1f8f5dae5e/public/assets/videos/runa-equalizer-video.mp4" type="video/mp4">
+                        </video>
+                    </button>
+                    <div id="cart-icon-wrapper">
+                        <button id="open-cart-button" class="relative p-1 text-inherit">
+                           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                           <span id="cart-counter" class="hidden">0</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+            
+            <div id="mobile-menu" class="hidden absolute w-full shadow-lg border-t translucent-menu">
+                <div class="container mx-auto px-6 py-4 space-y-3">
+                        <a href="#runa-book-interactive" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Libro de Origen</a>
+                        <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
+                        <a href="#contacto" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
+                </div>
+            </div>
 
-            <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t translucent-menu">
-                <div class="container mx-auto px-6 py-4">
-                    <h3 class="font-semibold text-lg mb-4">Mezclador de Ambiente</h3>
-                    <div id="sound-controls" class="space-y-4"></div>
-                </div>
-            </div>
-            
-            <div id="video-skin-panel" class="hidden absolute w-full shadow-lg border-t translucent-menu">
-                <div class="container mx-auto px-6 py-4">
-                    <h3 class="font-semibold text-lg mb-4">Selector de Video de Fondo</h3>
-                    <div id="video-list" class="space-y-2"></div>
-                </div>
-            </div>
-        </header>
-        
-        <main>
-            <section id="hero" class="h-screen flex items-center justify-center text-center text-white">
-                <video id="hero-video-background" autoplay loop muted playsinline>
-                    <source id="video-source" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/f40a28a85af3d13368f89856c255ae77f7f8acae/public/assets/videos/arbol2.mp4" type="video/mp4">
-                </video>
-                <div class="relative z-10">
-                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">RUNA COFFEE</h1>
-                    <p class="text-lg md:text-xl lg:text-2xl mt-4 font-light" style="text-shadow: 1px 1px 6px rgba(0,0,0,0.7);">
-                        Desde las montañas de Caldas-Colombia, despertando las almas del mundo.
-                    </p>
-                </div>
-            </section>
+            <div id="mixer-panel" class="hidden absolute w-full shadow-lg border-t translucent-menu">
+                <div class="container mx-auto px-6 py-4">
+                    <h3 class="font-semibold text-lg mb-4">Mezclador de Ambiente</h3>
+                    <div id="sound-controls" class="space-y-4"></div>
+                </div>
+            </div>
+            
+            <div id="video-skin-panel" class="hidden absolute w-full shadow-lg border-t translucent-menu">
+                <div class="container mx-auto px-6 py-4">
+                    <h3 class="font-semibold text-lg mb-4">Selector de Video de Fondo</h3>
+                    <div id="video-list" class="space-y-2"></div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+            <section id="hero" class="h-screen flex items-center justify-center text-center text-white">
+                <video id="hero-video-background" autoplay loop muted playsinline>
+                    <source id="video-source" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/f40a28a85af3d13368f89856c255ae77f7f8acae/public/assets/videos/arbol2.mp4" type="video/mp4">
+                </video>
+                <div class="relative z-10">
+                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">RUNA COFFEE</h1>
+                    <p class="text-lg md:text-xl lg:text-2xl mt-4 font-light" style="text-shadow: 1px 1px 6px rgba(0,0,0,0.7);">
+                        Desde las montañas de Caldas-Colombia, despertando las almas del mundo.
+                    </p>
+                </div>
+            </section>
 
-            <!-- INICIO: Nueva sección de Catálogo con Carrusel -->
-            <section id="catalogo" class="py-20 section-bg">
-                <div class="container mx-auto px-6 text-center">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-12">Descubre Nuestro Café</h2>
-                    <div class="relative max-w-lg mx-auto">
-                        <!-- Contenedor del Carrusel -->
-                        <div class="overflow-hidden rounded-2xl">
-                            <div id="slider-track" class="flex transition-transform duration-500 ease-in-out">
-                                <!-- Slide 1: Black Caturra -->
-                                <div class="w-full flex-shrink-0">
-                                    <div class="product-card bg-white/5 dark:bg-black/20 rounded-2xl overflow-hidden shadow-lg backdrop-blur-lg border border-white/10">
-                                        <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/Catalogo1.png" alt="Café Black Caturra" class="w-full h-auto object-cover">
-                                        <div class="p-6 text-left">
-                                            <h3 class="text-xl font-bold mb-2">Black Caturra - Black Honey. 🌱</h3>
-                                            <p class="font-semibold text-lg text-[var(--runa-primary)] mb-4">COP 77,000.00</p>
-                                            <div class="text-sm text-inherit/80 mb-4 max-h-24 overflow-y-auto pr-2">
-                                                ☕️🍒 El varietal Caturra es una mutación natural del Bourbon, conocida por su taza equilibrada y cuerpo medio. Al aplicarle un proceso Black Honey, se seca con la mayor cantidad de mucílago (miel del café), aportando un perfil afrutado e intenso, cuerpo cremoso y mayor complejidad.
-                                            </div>
-                                            <a href="productos.html" class="ghost-button inline-block bg-transparent border-2 font-bold text-md px-6 py-2 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
-                                                Ver más
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Slide 2: Blend Geisha -->
-                                <div class="w-full flex-shrink-0">
-                                    <div class="product-card bg-white/5 dark:bg-black/20 rounded-2xl overflow-hidden shadow-lg backdrop-blur-lg border border-white/10">
-                                        <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/Catalogo2.png" alt="Café Blend Geisha" class="w-full h-auto object-cover">
-                                        <div class="p-6 text-left">
-                                            <h3 class="text-xl font-bold mb-2">Blend: Black Caturra Honey + Geisha Natural 🌱</h3>
-                                            <p class="font-semibold text-lg text-[var(--runa-primary)] mb-4">COP 99,000.00</p>
-                                            <div class="text-sm text-inherit/80 mb-4 max-h-24 overflow-y-auto pr-2">
-                                                ✨☕ Fusión Sagrada. En cada sorbo, este café es un viaje profundo por la riqueza de la tierra y la alquimia de los procesos artesanales. La intensidad dulce del Black Caturra Honey se une en armonía con la elegancia etérea del Blend Geisha Natural.
-                                            </div>
-                                            <a href="productos.html" class="ghost-button inline-block bg-transparent border-2 font-bold text-md px-6 py-2 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
-                                                Ver más
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Botones de Navegación -->
-                        <button id="prev-slide" class="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 backdrop-blur-sm p-2 rounded-full text-white transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-                        </button>
-                        <button id="next-slide" class="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 backdrop-blur-sm p-2 rounded-full text-white transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                        </button>
-                    </div>
-                </div>
-            </section>
-            <!-- FIN: Nueva sección de Catálogo con Carrusel -->
-            
-            <section id="runa-book-interactive" class="py-20 section-bg">
-                <div class="container mx-auto px-6 text-center">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-8">Nuestra Historia en 3D</h2>
-                    <p class="max-w-2xl mx-auto mb-10">Interactúa con nuestro libro. Haz clic en el botón para sumergirte en el mundo de Runa.</p>
-                    
-                    <div class="book-viewer-container">
-                        <model-viewer
-                            id="book-viewer"
-                            src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/3adedbe4ef07bc660c9861b775d87dd04a0d6bbe/public/assets/3D/libro.glb"
-                            alt="Un libro 3D interactivo de Runa Coffee"
-                            camera-controls
-                            auto-rotate
-                            camera-orbit="15deg 80deg 2.5m"
-                            shadow-intensity="1"
-                            exposure="1"
-                            loading="lazy">
-                        </model-viewer>
-                    </div>
+            <!-- INICIO: Nueva sección de Catálogo con Carrusel -->
+            <section id="catalogo" class="py-20 section-bg">
+                <div class="container mx-auto px-6 text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-12">Descubre Nuestro Café</h2>
+                    <div class="relative max-w-lg mx-auto">
+                        <!-- Contenedor del Carrusel -->
+                        <div class="overflow-hidden rounded-2xl">
+                            <div id="slider-track" class="flex transition-transform duration-500 ease-in-out">
+                                <!-- Slide 1: Black Caturra -->
+                                <div class="w-full flex-shrink-0">
+                                    <div class="product-card bg-white/5 dark:bg-black/20 rounded-2xl overflow-hidden shadow-lg backdrop-blur-lg border border-white/10">
+                                        <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/Catalogo1.png" alt="Café Black Caturra" class="w-full h-auto object-cover">
+                                        <div class="p-6 text-left">
+                                            <h3 class="text-xl font-bold mb-2">Black Caturra - Black Honey. 🌱</h3>
+                                            <p class="font-semibold text-lg text-[var(--runa-primary)] mb-4">COP 77,000.00</p>
+                                            <div class="text-sm text-inherit/80 mb-4 max-h-24 overflow-y-auto pr-2">
+                                                ☕️🍒 El varietal Caturra es una mutación natural del Bourbon, conocida por su taza equilibrada y cuerpo medio. Al aplicarle un proceso Black Honey, se seca con la mayor cantidad de mucílago (miel del café), aportando un perfil afrutado e intenso, cuerpo cremoso y mayor complejidad.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Slide 2: Blend Geisha -->
+                                <div class="w-full flex-shrink-0">
+                                    <div class="product-card bg-white/5 dark:bg-black/20 rounded-2xl overflow-hidden shadow-lg backdrop-blur-lg border border-white/10">
+                                        <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/imagenes/Catalogo2.png" alt="Café Blend Geisha" class="w-full h-auto object-cover">
+                                        <div class="p-6 text-left">
+                                            <h3 class="text-xl font-bold mb-2">Blend: Black Caturra Honey + Geisha Natural 🌱</h3>
+                                            <p class="font-semibold text-lg text-[var(--runa-primary)] mb-4">COP 99,000.00</p>
+                                            <div class="text-sm text-inherit/80 mb-4 max-h-24 overflow-y-auto pr-2">
+                                                ✨☕ Fusión Sagrada. En cada sorbo, este café es un viaje profundo por la riqueza de la tierra y la alquimia de los procesos artesanales. La intensidad dulce del Black Caturra Honey se une en armonía con la elegancia etérea del Blend Geisha Natural.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Botones de Navegación -->
+                        <button id="prev-slide" class="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 backdrop-blur-sm p-2 rounded-full text-white transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                        </button>
+                        <button id="next-slide" class="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 backdrop-blur-sm p-2 rounded-full text-white transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <!-- FIN: Nueva sección de Catálogo con Carrusel -->
+            
+            <section id="runa-book-interactive" class="py-20 section-bg">
+                <div class="container mx-auto px-6 text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-8">Nuestra Historia en 3D</h2>
+                    <p class="max-w-2xl mx-auto mb-10">Interactúa con nuestro libro. Haz clic en el botón para sumergirte en el mundo de Runa.</p>
+                    
+                    <div class="book-viewer-container">
+                        <model-viewer
+                            id="book-viewer"
+                            src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/3adedbe4ef07bc660c9861b775d87dd04a0d6bbe/public/assets/3D/libro.glb"
+                            alt="Un libro 3D interactivo de Runa Coffee"
+                            camera-controls
+                            auto-rotate
+                            camera-orbit="15deg 80deg 2.5m"
+                            shadow-intensity="1"
+                            exposure="1"
+                            loading="lazy">
+                        </model-viewer>
+                    </div>
 
-                    <div class="mt-10">
-                        <a href="runa-libro/index.html" class="ghost-button inline-block bg-transparent border-2 font-bold text-lg px-8 py-3 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
-                            Abrir Libro
-                        </a>
-                    </div>
-                </div>
-            </section>
-            
-            <section id="experiencia-3d" class="py-20 section-bg">
-                <div class="container mx-auto px-6 text-center">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Vive la Experiencia 3D</h2>
-                    <p class="max-w-3xl mx-auto text-inherit mb-12">
-                        Interactúa con nuestro árbol místico. Si estás en un dispositivo móvil, presiona el botón AR para traer la magia de Runa a tu propio espacio.
-                    </p>
-                    
-                    <model-viewer id="ar-viewer"
-                        src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
-                        ios-src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/768c87e5c789459e2655ba02e09fee2922b4e4ab/public/assets/3D/arbol_final.usdz"
-                        ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto"
-                        camera-controls auto-rotate
-                        alt="A 3D model of a stylized tree"
-                        class="w-full h-96 rounded-lg"
-                        loading="lazy" reveal="auto">
-                    </model-viewer>
-                    
-                    <div id="ar-failure-message" class="hidden mt-4 text-center text-red-500 bg-red-900/50 p-3 rounded-lg">
-                        Lo sentimos, tu dispositivo no es compatible con Realidad Aumentada o el modelo 3D no pudo cargarse.
-                    </div>
-                </div>
-            </section>
+                    <div class="mt-10">
+                        <a href="runa-libro/index.html" class="ghost-button inline-block bg-transparent border-2 font-bold text-lg px-8 py-3 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                            Abrir Libro
+                        </a>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="experiencia-3d" class="py-20 section-bg">
+                <div class="container mx-auto px-6 text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Vive la Experiencia 3D</h2>
+                    <p class="max-w-3xl mx-auto text-inherit mb-12">
+                        Interactúa con nuestro árbol místico. Si estás en un dispositivo móvil, presiona el botón AR para traer la magia de Runa a tu propio espacio.
+                    </p>
+                    
+                    <model-viewer id="ar-viewer"
+                        src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/776b9c0c5a976bff5e8077da365a60a5e5c3e616/public/assets%20/3D/arbol_final.glb"
+                        ios-src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/768c87e5c789459e2655ba02e09fee2922b4e4ab/public/assets/3D/arbol_final.usdz"
+                        ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto"
+                        camera-controls auto-rotate
+                        alt="A 3D model of a stylized tree"
+                        class="w-full h-96 rounded-lg"
+                        loading="lazy" reveal="auto">
+                    </model-viewer>
+                    
+                    <div id="ar-failure-message" class="hidden mt-4 text-center text-red-500 bg-red-900/50 p-3 rounded-lg">
+                        Lo sentimos, tu dispositivo no es compatible con Realidad Aumentada o el modelo 3D no pudo cargarse.
+                    </div>
+                </div>
+            </section>
 
-            <!-- INICIO: Espacio para Anuncio de Google AdSense -->
-            <section class="py-10 section-bg">
-                <div class="container mx-auto px-6 text-center">
-                    <h3 class="text-xl font-semibold mb-4 text-inherit/80">Publicidad</h3>
-                    <div class="bg-gray-200 dark:bg-gray-800 rounded-lg flex items-center justify-center min-h-[250px] text-gray-500">
-                        <p>Espacio reservado para el anuncio.</p>
-                    </div>
-                </div>
-            </section>
-            <!-- FIN: Espacio para Anuncio de Google AdSense -->
+            <!-- INICIO: Espacio para Anuncio de Google AdSense -->
+            <section class="py-10 section-bg">
+                <div class="container mx-auto px-6 text-center">
+                    <h3 class="text-xl font-semibold mb-4 text-inherit/80">Publicidad</h3>
+                    <div class="bg-gray-200 dark:bg-gray-800 rounded-lg flex items-center justify-center min-h-[250px] text-gray-500">
+                        <p>Espacio reservado para el anuncio.</p>
+                    </div>
+                </div>
+            </section>
+            <!-- FIN: Espacio para Anuncio de Google AdSense -->
 
-        </main>
-        
-        <footer id="contacto" class="pt-16 pb-8">
-            <div class="container mx-auto px-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">
-                    <div>
-                        <h3 class="text-2xl font-bold mb-4">Contáctanos</h3>
-                        <p class="text-gray-400">Caldas, Colombia</p>
-                        <p class="mt-2"><strong>Email:</strong> <a href="mailto:runacoffee25@gmail.com" class="text-teal-400 hover:underline">runacoffee25@gmail.com</a></p>
-                        <p><strong>WhatsApp:</strong> <a href="https://wa.me/573001627532" target="_blank" class="text-teal-400 hover:underline">+57 300 162 7532</a></p>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-bold mb-4">Síguenos</h3>
-                        <div class="flex justify-center md:justify-start space-x-4">
-                            <a href="https://www.instagram.com/_runacoffee_?igsh=MW9tMG1zcmhvM3JyeQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram de Runa Coffee">
-                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-bold mb-4">Formas de Pago</h3>
-                        <div id="payment-logos" class="flex justify-center md:justify-start flex-wrap items-center gap-x-6 gap-y-4">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/visa.png" alt="Visa" class="h-5 payment-logo">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/mastercard.png" alt="Mastercard" class="h-7 payment-logo">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/paypal.png" alt="PayPal" class="h-6 payment-logo">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/nequi.png" alt="Nequi" class="h-6 payment-logo">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/bancolombia.png" alt="Bancolombia" class="h-7 payment-logo">
-                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/binancepay.png" alt="Binance Pay" class="h-8 payment-logo">
-                        </div>
-                        <p class="text-xs text-inherit/70 mt-4">Pagos seguros a través de nuestra plataforma.</p>
-                    </div>
-                </div>
-                <div class="border-t border-gray-700 py-6 mt-8 text-center text-xs text-gray-400">
-                    <p>&copy; <span id="year"></span> RUNA COFFEE. Todos los derechos reservados.</p>
-                    <div class="mt-4 space-x-4">
-                        <a href="#" class="text-teal-400 hover:underline">Políticas de Privacidad</a>
-                        <span class="text-gray-500">|</span>
-                        <a href="#" class="text-teal-400 hover:underline">Términos de Servicio</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </div>
-    
-    <!-- WHATSAPP BUTTON -->
-    <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." 
-        class="whatsapp-fab fixed bottom-6 right-6 z-50 rounded-full w-16 h-16 shadow-lg flex items-center justify-center p-4 transition-all duration-300 transform hover:scale-110"
-        target="_blank"
-        aria-label="Contactar por WhatsApp">
-        <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/26548b0b3ba43b9b8337c561fd153a54b746325d/public/assets/imagenes/Icono-whatsapp.png" alt="WhatsApp" class="w-full h-full">
-    </a>
-    
-    <!-- Audio Elements -->
-    <audio id="music-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
-    <audio id="river-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
-    <audio id="birds-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
-    <audio id="rain-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Lluvia.mp3" type="audio/mpeg"></audio>
-    <audio id="fire-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido%20del%20Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
-    <audio id="wind-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
-    <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
+        </main>
+        
+        <footer id="contacto" class="pt-16 pb-8">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4">Contáctanos</h3>
+                        <p class="text-gray-400">Caldas, Colombia</p>
+                        <p class="mt-2"><strong>Email:</strong> <a href="mailto:runacoffee25@gmail.com" class="text-teal-400 hover:underline">runacoffee25@gmail.com</a></p>
+                        <p><strong>WhatsApp:</strong> <a href="https://wa.me/573001627532" target="_blank" class="text-teal-400 hover:underline">+57 300 162 7532</a></p>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4">Síguenos</h3>
+                        <div class="flex justify-center md:justify-start space-x-4">
+                            <a href="https://www.instagram.com/_runacoffee_?igsh=MW9tMG1zcmhvM3JyeQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram de Runa Coffee">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4">Formas de Pago</h3>
+                        <div id="payment-logos" class="flex justify-center md:justify-start flex-wrap items-center gap-x-6 gap-y-4">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/visa.png" alt="Visa" class="h-5 payment-logo">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/mastercard.png" alt="Mastercard" class="h-7 payment-logo">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/paypal.png" alt="PayPal" class="h-6 payment-logo">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/nequi.png" alt="Nequi" class="h-6 payment-logo">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/bancolombia.png" alt="Bancolombia" class="h-7 payment-logo">
+                            <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/5cea4209e3639322a15c8dc4d75524770cee599b/public/assets/imagenes/binancepay.png" alt="Binance Pay" class="h-8 payment-logo">
+                        </div>
+                        <p class="text-xs text-inherit/70 mt-4">Pagos seguros a través de nuestra plataforma.</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-700 py-6 mt-8 text-center text-xs text-gray-400">
+                    <p>&copy; <span id="year"></span> RUNA COFFEE. Todos los derechos reservados.</p>
+                    <div class="mt-4 space-x-4">
+                        <a href="#" class="text-teal-400 hover:underline">Políticas de Privacidad</a>
+                        <span class="text-gray-500">|</span>
+                        <a href="#" class="text-teal-400 hover:underline">Términos de Servicio</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- WHATSAPP BUTTON -->
+    <a href="https://wa.me/573001627532?text=Hola,%20estoy%20interesado%20en%20el%20café%20de%20RUNA%20COFFEE." 
+        class="whatsapp-fab fixed bottom-6 right-6 z-50 rounded-full w-16 h-16 shadow-lg flex items-center justify-center p-4 transition-all duration-300 transform hover:scale-110"
+        target="_blank"
+        aria-label="Contactar por WhatsApp">
+        <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/26548b0b3ba43b9b8337c561fd153a54b746325d/public/assets/imagenes/Icono-whatsapp.png" alt="WhatsApp" class="w-full h-full">
+    </a>
+    
+    <!-- Audio Elements -->
+    <audio id="music-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/mp3/runa-main-audio.mp3" type="audio/mpeg"></audio>
+    <audio id="river-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido_de_rio.mp3" type="audio/mpeg"></audio>
+    <audio id="birds-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonidos_de_Pajaros.mp3" type="audio/mpeg"></audio>
+    <audio id="rain-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Lluvia.mp3" type="audio/mpeg"></audio>
+    <audio id="fire-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido%20del%20Fuego_de_la_chimenea.mp3" type="audio/mpeg"></audio>
+    <audio id="wind-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/sonido_de_viento.mp3" type="audio/mpeg"></audio>
+    <audio id="storm-audio" loop><source src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3" type="audio/mpeg"></audio>
 
-    <!-- Modals -->
-    <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-0 sm:p-4 bg-black/70 backdrop-blur-sm hidden"></div>
-    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
-       <div class="modal-content-bg w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
-            <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <h2 class="text-2xl font-bold text-white mb-2">Bienvenido a Runa</h2>
-            <p class="text-gray-400 mb-6">Inicia sesión o crea una cuenta</p>
-            <button id="google-login-button-modal" class="w-full inline-flex items-center justify-center gap-3 px-4 py-2 text-base font-semibold text-gray-700 bg-white border border-transparent rounded-lg shadow-sm hover:bg-gray-200 transition-all">
-                <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Logo de Google" class="w-6 h-6">
-                <span>Iniciar sesión con Google</span>
-            </button>
-       </div>
-    </div>
-    
-    <!-- SCRIPT DE AUTENTICACIÓN EXTERNO -->
-    <script type="module" src="./firebase-auth.js"></script>
+    <!-- Modals -->
+    <div id="cart-modal" class="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-end p-0 sm:p-4 bg-black/70 backdrop-blur-sm hidden"></div>
+    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+       <div class="modal-content-bg w-full max-w-xs rounded-2xl shadow-2xl p-8 flex flex-col modal-enter relative text-center">
+            <button id="close-auth-modal-button" class="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-white mb-2">Bienvenido a Runa</h2>
+            <p class="text-gray-400 mb-6">Inicia sesión o crea una cuenta</p>
+            <button id="google-login-button-modal" class="w-full inline-flex items-center justify-center gap-3 px-4 py-2 text-base font-semibold text-gray-700 bg-white border border-transparent rounded-lg shadow-sm hover:bg-gray-200 transition-all">
+                <img src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png" alt="Logo de Google" class="w-6 h-6">
+                <span>Iniciar sesión con Google</span>
+            </button>
+       </div>
+    </div>
+    
+    <!-- SCRIPT DE AUTENTICACIÓN EXTERNO -->
+    <script type="module" src="./firebase-auth.js"></script>
 
-    <!-- SCRIPT PRINCIPAL DE LA PÁGINA -->
-    <script type="module">
-        // --- VARIABLES GLOBALES Y CONFIGURACIÓN ---
-        let cart = [];
-        const videoSkins = [
-            { name: "Video del Árbol", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/f40a28a85af3d13368f89856c255ae77f7f8acae/public/assets/videos/arbol2.mp4" }
-        ];
-        let currentVideoIndex = 0;
-        const ambienceSounds = [
-            { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
-            { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
-            { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
-            { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Lluvia.mp3' },
-            { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido%20del%20Fuego_de_la_chimenea.mp3' },
-            { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/sonido_de_viento.mp3' },
-            { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3' },
-        ];
-        
-        // --- LÓGICA DE AUTENTICACIÓN ---
-        let isUserLoggedIn = false;
-        const placeholderAvatar = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
+    <!-- SCRIPT PRINCIPAL DE LA PÁGINA -->
+    <script type="module">
+        // --- VARIABLES GLOBALES Y CONFIGURACIÓN ---
+        let cart = [];
+        const videoSkins = [
+            { name: "Video del Árbol", url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/f40a28a85af3d13368f89856c255ae77f7f8acae/public/assets/videos/arbol2.mp4" }
+        ];
+        let currentVideoIndex = 0;
+        const ambienceSounds = [
+            { id: 'music-audio', name: 'Música', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/music.gif' },
+            { id: 'river-audio', name: 'Río', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/river.gif' },
+            { id: 'birds-audio', name: 'Pájaros', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/741d48f54473497390f1b028f4e2a2b874459088/public/assets/gif/birds.gif' },
+            { id: 'rain-audio', name: 'Lluvia', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Lluvia.mp3' },
+            { id: 'fire-audio', name: 'Fuego', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Sonido%20del%20Fuego_de_la_chimenea.mp3' },
+            { id: 'wind-audio', name: 'Viento', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/sonido_de_viento.mp3' },
+            { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/9b1ab5105236fed3644570e1a2ea37f1f1956091/public/assets/mp3/Truenos_y_tormentas.mp3' },
+        ];
+        
+        // --- LÓGICA DE AUTENTICACIÓN ---
+        let isUserLoggedIn = false;
+        const placeholderAvatar = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
 
-        // --- ELEMENTOS DEL DOM ---
-        const cartModal = document.getElementById('cart-modal');
-        const cartCounter = document.getElementById('cart-counter');
-        const authModal = document.getElementById('auth-modal');
-        const userProfileButton = document.getElementById('user-profile-button');
-        const userProfilePicture = document.getElementById('user-profile-picture');
-        const closeAuthModalButton = document.getElementById('close-auth-modal-button');
+        // --- ELEMENTOS DEL DOM ---
+        const cartModal = document.getElementById('cart-modal');
+        const cartCounter = document.getElementById('cart-counter');
+        const authModal = document.getElementById('auth-modal');
+        const userProfileButton = document.getElementById('user-profile-button');
+        const userProfilePicture = document.getElementById('user-profile-picture');
+        const closeAuthModalButton = document.getElementById('close-auth-modal-button');
 
-        window.updateUIAfterLogin = (user) => {
-            if (!user || !user.photoURL) return;
-            isUserLoggedIn = true;
-            userProfilePicture.src = user.photoURL;
-            userProfilePicture.classList.remove('w-6', 'h-6', 'object-contain');
-            userProfilePicture.classList.add('w-full', 'h-full', 'object-cover');
-            userProfileButton.classList.remove('bg-white');
-            userProfileButton.setAttribute('aria-label', `Menú de ${user.displayName}`);
-            closeAuthModal();
-        };
+        window.updateUIAfterLogin = (user) => {
+            if (!user || !user.photoURL) return;
+            isUserLoggedIn = true;
+            userProfilePicture.src = user.photoURL;
+            userProfilePicture.classList.remove('w-6', 'h-6', 'object-contain');
+            userProfilePicture.classList.add('w-full', 'h-full', 'object-cover');
+            userProfileButton.classList.remove('bg-white');
+            userProfileButton.setAttribute('aria-label', `Menú de ${user.displayName}`);
+            closeAuthModal();
+        };
 
-        window.updateUIAfterLogout = () => {
-            isUserLoggedIn = false;
-            userProfilePicture.src = placeholderAvatar;
-            userProfilePicture.classList.add('w-6', 'h-6', 'object-contain');
-            userProfilePicture.classList.remove('w-full', 'h-full', 'object-cover');
-            userProfileButton.classList.add('bg-white');
-            userProfileButton.setAttribute('aria-label', 'Iniciar sesión con Google');
-        };
+        window.updateUIAfterLogout = () => {
+            isUserLoggedIn = false;
+            userProfilePicture.src = placeholderAvatar;
+            userProfilePicture.classList.add('w-6', 'h-6', 'object-contain');
+            userProfilePicture.classList.remove('w-full', 'h-full', 'object-cover');
+            userProfileButton.classList.add('bg-white');
+            userProfileButton.setAttribute('aria-label', 'Iniciar sesión con Google');
+        };
 
-        // --- FUNCIONES DEL CARRITO ---
-        const updateCartCounter = () => {
-            if (cart.length > 0) {
-                cartCounter.textContent = cart.length;
-                cartCounter.classList.remove('hidden');
-            } else {
-                cartCounter.classList.add('hidden');
-            }
-        };
+        // --- FUNCIONES DEL CARRITO ---
+        const updateCartCounter = () => {
+            if (cart.length > 0) {
+                cartCounter.textContent = cart.length;
+                cartCounter.classList.remove('hidden');
+            } else {
+                cartCounter.classList.add('hidden');
+            }
+        };
 
-        const renderCartModal = () => {
-            if (cart.length === 0) {
-                cartModal.innerHTML = `
-                    <div class="cart-modal-content w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col modal-enter ml-auto">
-                        <header class="p-4 border-b border-white/10 flex justify-between items-center">
-                            <h2 class="text-xl font-bold">Tu Carrito</h2>
-                            <button id="close-cart-button" class="p-1 rounded-full hover:bg-white/10 transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
-                        </header>
-                        <div class="p-8 flex-grow flex flex-col items-center justify-center text-center">
-                            <svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                            <h3 class="font-semibold text-lg">Tu carrito está vacío</h3>
-                            <p class="text-sm text-gray-400">Añade productos para verlos aquí.</p>
-                        </div>
-                    </div>`;
-            } else {
-                const itemsHTML = cart.map(item => `
-                    <div class="flex items-center justify-between gap-4 py-3 border-b border-white/10">
-                        <span class="font-semibold truncate">${item.name}</span>
-                        <span class="flex-shrink-0">${item.price.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
-                    </div>
-                `).join('');
+        const renderCartModal = () => {
+            if (cart.length === 0) {
+                cartModal.innerHTML = `
+                    <div class="cart-modal-content w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col modal-enter ml-auto">
+                        <header class="p-4 border-b border-white/10 flex justify-between items-center">
+                            <h2 class="text-xl font-bold">Tu Carrito</h2>
+                            <button id="close-cart-button" class="p-1 rounded-full hover:bg-white/10 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </header>
+                        <div class="p-8 flex-grow flex flex-col items-center justify-center text-center">
+                            <svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            <h3 class="font-semibold text-lg">Tu carrito está vacío</h3>
+                            <p class="text-sm text-gray-400">Añade productos para verlos aquí.</p>
+                        </div>
+                    </div>`;
+            } else {
+                const itemsHTML = cart.map(item => `
+                    <div class="flex items-center justify-between gap-4 py-3 border-b border-white/10">
+                        <span class="font-semibold truncate">${item.name}</span>
+                        <span class="flex-shrink-0">${item.price.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                    </div>
+                `).join('');
 
-                const total = cart.reduce((sum, item) => sum + item.price, 0);
+                const total = cart.reduce((sum, item) => sum + item.price, 0);
 
-                cartModal.innerHTML = `
-                    <div class="cart-modal-content w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col modal-enter ml-auto">
-                        <header class="p-4 border-b border-white/10 flex justify-between items-center">
-                            <h2 class="text-xl font-bold">Tu Carrito</h2>
-                            <button id="close-cart-button" class="p-1 rounded-full hover:bg-white/10 transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
-                        </header>
-                        <div class="p-4 flex-grow overflow-y-auto">${itemsHTML}</div>
-                        <footer class="p-4 border-t border-white/10 space-y-4">
-                            <div class="flex justify-between font-bold text-lg">
-                                <span>Total:</span>
-                                <span>${total.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
-                            </div>
-                            <a href="productos.html" class="w-full text-center block bg-[var(--runa-primary)] text-white font-bold px-6 py-3 rounded-lg shadow-lg hover:bg-[var(--runa-secondary)] transition-colors duration-300">
-                                Proceder al Pago
-                            </a>
-                        </footer>
-                    </div>`;
-            }
-            document.getElementById('close-cart-button').addEventListener('click', closeCart);
-        };
+                cartModal.innerHTML = `
+                    <div class="cart-modal-content w-full max-w-sm h-full sm:h-auto sm:rounded-2xl shadow-2xl flex flex-col modal-enter ml-auto">
+                        <header class="p-4 border-b border-white/10 flex justify-between items-center">
+                            <h2 class="text-xl font-bold">Tu Carrito</h2>
+                            <button id="close-cart-button" class="p-1 rounded-full hover:bg-white/10 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </header>
+                        <div class="p-4 flex-grow overflow-y-auto">${itemsHTML}</div>
+                        <footer class="p-4 border-t border-white/10 space-y-4">
+                            <div class="flex justify-between font-bold text-lg">
+                                <span>Total:</span>
+                                <span>${total.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                            </div>
+                            <a href="productos.html" class="w-full text-center block bg-[var(--runa-primary)] text-white font-bold px-6 py-3 rounded-lg shadow-lg hover:bg-[var(--runa-secondary)] transition-colors duration-300">
+                                Proceder al Pago
+                            </a>
+                        </footer>
+                    </div>`;
+            }
+            document.getElementById('close-cart-button').addEventListener('click', closeCart);
+        };
 
-        const openCart = () => { renderCartModal(); cartModal.classList.remove('hidden'); };
-        const closeCart = () => { cartModal.classList.add('hidden'); };
-        const openAuthModal = () => { if (authModal) authModal.classList.remove('hidden'); };
-        const closeAuthModal = () => { if (authModal) authModal.classList.add('hidden'); };
+        const openCart = () => { renderCartModal(); cartModal.classList.remove('hidden'); };
+        const closeCart = () => { cartModal.classList.add('hidden'); };
+        const openAuthModal = () => { if (authModal) authModal.classList.remove('hidden'); };
+        const closeAuthModal = () => { if (authModal) authModal.classList.add('hidden'); };
 
-        // --- FUNCIONES DE LA INTERFAZ (MIXER, VIDEO, ETC.) ---
-        let audioElements = {};
-        
-        const initializeMixer = () => {
-            const soundControlsContainer = document.getElementById('sound-controls');
-            if(!soundControlsContainer) return;
-            soundControlsContainer.innerHTML = '';
-            
-            ambienceSounds.forEach(sound => {
-                const audioEl = document.getElementById(sound.id);
-                if (!audioEl) return;
-                audioElements[sound.id] = audioEl;
+        // --- FUNCIONES DE LA INTERFAZ (MIXER, VIDEO, ETC.) ---
+        let audioElements = {};
+        
+        const initializeMixer = () => {
+            const soundControlsContainer = document.getElementById('sound-controls');
+            if(!soundControlsContainer) return;
+            soundControlsContainer.innerHTML = '';
+            
+            ambienceSounds.forEach(sound => {
+                const audioEl = document.getElementById(sound.id);
+                if (!audioEl) return;
+                audioElements[sound.id] = audioEl;
 
-                const controlContainer = document.createElement('div');
-                controlContainer.className = "flex items-center gap-4 text-sm";
-                
-                const button = document.createElement('button');
-                button.id = `btn-${sound.id}`;
-                button.className = "mixer-icon-button relative w-10 h-10 rounded-full shadow-md flex-shrink-0 overflow-hidden";
-                button.innerHTML = `<img src="${sound.gifSrc}" alt="${sound.name}">`;
+                const controlContainer = document.createElement('div');
+                controlContainer.className = "flex items-center gap-4 text-sm";
+                
+                const button = document.createElement('button');
+                button.id = `btn-${sound.id}`;
+                button.className = "mixer-icon-button relative w-10 h-10 rounded-full shadow-md flex-shrink-0 overflow-hidden";
+                button.innerHTML = `<img src="${sound.gifSrc}" alt="${sound.name}">`;
 
-                const nameSpan = document.createElement('span');
-                nameSpan.className = "font-medium w-20 truncate";
-                nameSpan.textContent = sound.name;
+                const nameSpan = document.createElement('span');
+                nameSpan.className = "font-medium w-20 truncate";
+                nameSpan.textContent = sound.name;
 
-                const slider = document.createElement('input');
-                slider.type = "range";
-                slider.id = `volume-${sound.id}`;
-                slider.min = "0";
-                slider.max = "1";
-                slider.step = "0.01";
-                slider.value = 0;
-                slider.className = "flex-grow";
-                
-                controlContainer.append(button, nameSpan, slider);
-                soundControlsContainer.appendChild(controlContainer);
-            });
+                const slider = document.createElement('input');
+                slider.type = "range";
+                slider.id = `volume-${sound.id}`;
+                slider.min = "0";
+                slider.max = "1";
+                slider.step = "0.01";
+                slider.value = 0;
+                slider.className = "flex-grow";
+                
+                controlContainer.append(button, nameSpan, slider);
+                soundControlsContainer.appendChild(controlContainer);
+            });
 
-            Object.keys(audioElements).forEach(id => {
-                const slider = document.getElementById(`volume-${id}`);
-                const button = document.getElementById(`btn-${id}`);
-                if(!slider || !button) return;
+            Object.keys(audioElements).forEach(id => {
+                const slider = document.getElementById(`volume-${id}`);
+                const button = document.getElementById(`btn-${id}`);
+                if(!slider || !button) return;
 
-                const audio = audioElements[id];
-                const updateSliderStyle = (target) => {
-                    const percent = (target.value / target.max) * 100;
-                    target.style.setProperty('--value-percent', `${percent}%`);
-                };
+                const audio = audioElements[id];
+                const updateSliderStyle = (target) => {
+                    const percent = (target.value / target.max) * 100;
+                    target.style.setProperty('--value-percent', `${percent}%`);
+                };
 
-                slider.addEventListener('input', (e) => {
-                    const newVolume = parseFloat(e.target.value);
-                    const wasMuted = audio.paused || audio.volume === 0;
-                    audio.volume = newVolume;
-                    button.classList.toggle('active', newVolume > 0);
-                    updateSliderStyle(e.target);
-                    if (newVolume > 0 && wasMuted) {
-                        audio.play().catch(err => console.error(`Audio play failed for ${audio.id}:`, err));
-                    } else if (newVolume === 0 && !audio.paused) {
-                        audio.pause();
-                    }
-                });
-                
-                button.addEventListener('click', () => {
-                    if (slider.value > 0) {
-                        slider.dataset.lastValue = slider.value;
-                        slider.value = 0;
-                    } else {
-                        slider.value = slider.dataset.lastValue || 0.5;
-                    }
-                    slider.dispatchEvent(new Event('input'));
-                });
-                
-                updateSliderStyle(slider);
-            });
-        }
+                slider.addEventListener('input', (e) => {
+                    const newVolume = parseFloat(e.target.value);
+                    const wasMuted = audio.paused || audio.volume === 0;
+                    audio.volume = newVolume;
+                    button.classList.toggle('active', newVolume > 0);
+                    updateSliderStyle(e.target);
+                    if (newVolume > 0 && wasMuted) {
+                        audio.play().catch(err => console.error(`Audio play failed for ${audio.id}:`, err));
+                    } else if (newVolume === 0 && !audio.paused) {
+                        audio.pause();
+                    }
+                });
+                
+                button.addEventListener('click', () => {
+                    if (slider.value > 0) {
+                        slider.dataset.lastValue = slider.value;
+                        slider.value = 0;
+                    } else {
+                        slider.value = slider.dataset.lastValue || 0.5;
+                    }
+                    slider.dispatchEvent(new Event('input'));
+                });
+                
+                updateSliderStyle(slider);
+            });
+        }
 
-        const setVideoSkin = (index) => {
-            const heroVideoSource = document.getElementById('video-source');
-            const mainVideo = document.getElementById('main-background-video');
+        const setVideoSkin = (index) => {
+            const heroVideoSource = document.getElementById('video-source');
+            const mainVideo = document.getElementById('main-background-video');
 
-            if(heroVideoSource && mainVideo){
-                 const newSrc = videoSkins[index].url;
-                 heroVideoSource.src = newSrc;
-                 mainVideo.src = newSrc;
+            if(heroVideoSource && mainVideo){
+               const newSrc = videoSkins[index].url;
+               heroVideoSource.src = newSrc;
+               mainVideo.src = newSrc;
 
-                 document.getElementById('hero-video-background').load();
-                 mainVideo.load();
-                 
-                 document.getElementById('hero-video-background').play().catch(e=>console.error(e));
-                 mainVideo.play().catch(e=>console.error(e));
+               document.getElementById('hero-video-background').load();
+               mainVideo.load();
+               
+               document.getElementById('hero-video-background').play().catch(e=>console.error(e));
+               mainVideo.play().catch(e=>console.error(e));
 
-                 localStorage.setItem('runaVideoSkin', index);
-                 updateVideoListUI();
-            }
-        }
+               localStorage.setItem('runaVideoSkin', index);
+               updateVideoListUI();
+            }
+        }
 
-        const updateVideoListUI = () => {
-            const videoListContainer = document.getElementById('video-list');
-            if (!videoListContainer) return;
-            const buttons = videoListContainer.querySelectorAll('button');
-            buttons.forEach((button, index) => {
-                button.classList.toggle('active', index === currentVideoIndex);
-            });
-        }
-        
-        const initializeVideoSelector = () => {
-            const videoListContainer = document.getElementById('video-list');
-            if(!videoListContainer) return;
-            videoListContainer.innerHTML = '';
+        const updateVideoListUI = () => {
+            const videoListContainer = document.getElementById('video-list');
+            if (!videoListContainer) return;
+            const buttons = videoListContainer.querySelectorAll('button');
+            buttons.forEach((button, index) => {
+                button.classList.toggle('active', index === currentVideoIndex);
+            });
+        }
+        
+        const initializeVideoSelector = () => {
+            const videoListContainer = document.getElementById('video-list');
+            if(!videoListContainer) return;
+            videoListContainer.innerHTML = '';
 
-            videoSkins.forEach((skin, index) => {
-                const button = document.createElement('button');
-                button.textContent = skin.name;
-                button.className = 'video-list-button w-full text-left p-2 rounded-lg transition-colors duration-200';
-                button.addEventListener('click', () => { setVideoSkin(index); });
-                videoListContainer.appendChild(button);
-            });
-            updateVideoListUI();
-        }
+            videoSkins.forEach((skin, index) => {
+                const button = document.createElement('button');
+                button.textContent = skin.name;
+                button.className = 'video-list-button w-full text-left p-2 rounded-lg transition-colors duration-200';
+                button.addEventListener('click', () => { setVideoSkin(index); });
+                videoListContainer.appendChild(button);
+            });
+            updateVideoListUI();
+        }
 
-        // --- LÓGICA DEL CARRUSEL ---
-        const setupSlider = () => {
-            const sliderTrack = document.getElementById('slider-track');
-            const prevButton = document.getElementById('prev-slide');
-            const nextButton = document.getElementById('next-slide');
-            
-            if (!sliderTrack || !prevButton || !nextButton) return;
+        // --- LÓGICA DEL CARRUSEL ---
+        const setupSlider = () => {
+            const sliderTrack = document.getElementById('slider-track');
+            const prevButton = document.getElementById('prev-slide');
+            const nextButton = document.getElementById('next-slide');
+            
+            if (!sliderTrack || !prevButton || !nextButton) return;
 
-            let currentIndex = 0;
-            const slides = sliderTrack.children;
-            const totalSlides = slides.length;
+            let currentIndex = 0;
+            const slides = sliderTrack.children;
+            const totalSlides = slides.length;
 
-            const goToSlide = (index) => {
-                sliderTrack.style.transform = `translateX(-${index * 100}%)`;
-            };
+            const goToSlide = (index) => {
+                sliderTrack.style.transform = `translateX(-${index * 100}%)`;
+            };
 
-            nextButton.addEventListener('click', () => {
-                currentIndex = (currentIndex + 1) % totalSlides;
-                goToSlide(currentIndex);
-            });
+            nextButton.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                goToSlide(currentIndex);
+            });
 
-            prevButton.addEventListener('click', () => {
-                currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-                goToSlide(currentIndex);
-            });
-        }
+            prevButton.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                goToSlide(currentIndex);
+            });
+        }
 
-        // --- INICIALIZACIÓN DE LA PÁGINA ---
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            const videoIntro = document.getElementById('video-intro');
-            const introVideo = document.getElementById('intro-video');
-            const pageContent = document.getElementById('page-content');
-            let introFinished = false;
-            const endIntro = () => {
-                if (introFinished) return;
-                introFinished = true;
-                videoIntro.classList.add('hidden');
-                pageContent.classList.add('loaded');
-            };
-            introVideo.addEventListener('ended', endIntro);
-            introVideo.addEventListener('error', endIntro);
-            setTimeout(endIntro, 5500);
-            introVideo.play().catch(endIntro);
+        // --- INICIALIZACIÓN DE LA PÁGINA ---
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const videoIntro = document.getElementById('video-intro');
+            const introVideo = document.getElementById('intro-video');
+            const pageContent = document.getElementById('page-content');
+            let introFinished = false;
+            const endIntro = () => {
+                if (introFinished) return;
+                introFinished = true;
+                videoIntro.classList.add('hidden');
+                pageContent.classList.add('loaded');
+            };
+            introVideo.addEventListener('ended', endIntro);
+            introVideo.addEventListener('error', endIntro);
+            setTimeout(endIntro, 5500);
+            introVideo.play().catch(endIntro);
 
-            const menuButton = document.getElementById('menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const mixerButton = document.getElementById('mixer-toggle-button');
-            const mixerPanel = document.getElementById('mixer-panel');
-            const videoSkinButton = document.getElementById('video-skin-toggle');
-            const videoSkinPanel = document.getElementById('video-skin-panel');
+            const menuButton = document.getElementById('menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mixerButton = document.getElementById('mixer-toggle-button');
+            const mixerPanel = document.getElementById('mixer-panel');
+            const videoSkinButton = document.getElementById('video-skin-toggle');
+            const videoSkinPanel = document.getElementById('video-skin-panel');
 
-            const closeAllPanels = (e) => {
-                if (!e.target.closest('#main-header')) {
-                    mobileMenu.classList.add('hidden');
-                    mixerPanel.classList.add('hidden');
-                    videoSkinPanel.classList.add('hidden');
-                }
-            };
-            
-            menuButton.addEventListener('click', (e) => { e.stopPropagation(); mobileMenu.classList.toggle('hidden'); mixerPanel.classList.add('hidden'); videoSkinPanel.classList.add('hidden'); });
-            mixerButton.addEventListener('click', (e) => { e.stopPropagation(); mixerPanel.classList.toggle('hidden'); mobileMenu.classList.add('hidden'); videoSkinPanel.classList.add('hidden'); });
-            videoSkinButton.addEventListener('click', (e) => { e.stopPropagation(); videoSkinPanel.classList.toggle('hidden'); mobileMenu.classList.add('hidden'); mixerPanel.classList.add('hidden'); });
-            document.querySelectorAll('.mobile-nav-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
-            window.addEventListener('click', closeAllPanels);
+            const closeAllPanels = (e) => {
+                if (!e.target.closest('#main-header')) {
+                    mobileMenu.classList.add('hidden');
+                    mixerPanel.classList.add('hidden');
+                    videoSkinPanel.classList.add('hidden');
+                }
+            };
+            
+            menuButton.addEventListener('click', (e) => { e.stopPropagation(); mobileMenu.classList.toggle('hidden'); mixerPanel.classList.add('hidden'); videoSkinPanel.classList.add('hidden'); });
+            mixerButton.addEventListener('click', (e) => { e.stopPropagation(); mixerPanel.classList.toggle('hidden'); mobileMenu.classList.add('hidden'); videoSkinPanel.classList.add('hidden'); });
+            videoSkinButton.addEventListener('click', (e) => { e.stopPropagation(); videoSkinPanel.classList.toggle('hidden'); mobileMenu.classList.add('hidden'); mixerPanel.classList.add('hidden'); });
+            document.querySelectorAll('.mobile-nav-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+            window.addEventListener('click', closeAllPanels);
 
-            const themeToggle = document.getElementById('theme-toggle');
-            const sunIcon = document.getElementById('theme-icon-sun');
-            const moonIcon = document.getElementById('theme-icon-moon');
-            const applyTheme = (theme) => {
-                document.documentElement.classList.toggle('dark', theme === 'dark');
-                sunIcon.classList.toggle('hidden', theme !== 'dark');
-                moonIcon.classList.toggle('hidden', theme === 'dark');
-            };
-            themeToggle.addEventListener('click', () => {
-                const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-                localStorage.setItem('theme', newTheme);
-                applyTheme(newTheme);
-            });
-            applyTheme(localStorage.getItem('theme') || 'dark');
+            const themeToggle = document.getElementById('theme-toggle');
+            const sunIcon = document.getElementById('theme-icon-sun');
+            const moonIcon = document.getElementById('theme-icon-moon');
+            const applyTheme = (theme) => {
+                document.documentElement.classList.toggle('dark', theme === 'dark');
+                sunIcon.classList.toggle('hidden', theme !== 'dark');
+                moonIcon.classList.toggle('hidden', theme === 'dark');
+            };
+            themeToggle.addEventListener('click', () => {
+                const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+            applyTheme(localStorage.getItem('theme') || 'dark');
 
-            const savedSkinIndex = parseInt(localStorage.getItem('runaVideoSkin')) || 0;
-            currentVideoIndex = savedSkinIndex;
-            setVideoSkin(currentVideoIndex);
-            
-            document.getElementById('open-cart-button').addEventListener('click', openCart);
-            cartModal.addEventListener('click', (event) => { if (event.target === cartModal) closeCart(); });
-            
-            if(userProfileButton) {
-                userProfileButton.addEventListener('click', () => {
-                    if (isUserLoggedIn) {
-                        console.log("Acción de menú de usuario / logout.");
-                    } else {
-                        openAuthModal();
-                    }
-                });
-            }
-            if(closeAuthModalButton) closeAuthModalButton.addEventListener('click', closeAuthModal);
-            if(authModal) authModal.addEventListener('click', (event) => { if (event.target === authModal) closeAuthModal(); });
+            const savedSkinIndex = parseInt(localStorage.getItem('runaVideoSkin')) || 0;
+            currentVideoIndex = savedSkinIndex;
+            setVideoSkin(currentVideoIndex);
+            
+            document.getElementById('open-cart-button').addEventListener('click', openCart);
+            cartModal.addEventListener('click', (event) => { if (event.target === cartModal) closeCart(); });
+            
+            if(userProfileButton) {
+                userProfileButton.addEventListener('click', () => {
+                    if (isUserLoggedIn) {
+                        console.log("Acción de menú de usuario / logout.");
+                    } else {
+                        openAuthModal();
+                    }
+                });
+            }
+            if(closeAuthModalButton) closeAuthModalButton.addEventListener('click', closeAuthModal);
+            if(authModal) authModal.addEventListener('click', (event) => { if (event.target === authModal) closeAuthModal(); });
 
-            const arViewer = document.getElementById('ar-viewer');
-            if(arViewer) {
-                arViewer.addEventListener('ar-status', (event) => {
-                    if(event.detail.status === 'failed'){
-                        document.getElementById("ar-failure-message").classList.remove('hidden');
-                    }
-                });
-            }
+            const arViewer = document.getElementById('ar-viewer');
+            if(arViewer) {
+                arViewer.addEventListener('ar-status', (event) => {
+                    if(event.detail.status === 'failed'){
+                        document.getElementById("ar-failure-message").classList.remove('hidden');
+                    }
+                });
+            }
 
-            initializeMixer();
-            initializeVideoSelector();
-            setupSlider();
-            document.getElementById('year').textContent = new Date().getFullYear();
-        });
-    </script>
+            initializeMixer();
+            initializeVideoSelector();
+            setupSlider();
+            document.getElementById('year').textContent = new Date().getFullYear();
+        });
+    </script>
 </body>
 </html>
