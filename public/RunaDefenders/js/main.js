@@ -44,9 +44,7 @@ function setupEventListeners() {
         gameState = 'playing';
         const gameOverlay = document.getElementById('game-overlay');
         if (gameOverlay) {
-            gameOverlay.classList.add('hidden');
-        }
-        gameLoop();
+            gameOverlay.classList.add('hidden');         gameLoop();
     });
     window.addEventListener('resize', resizeAll);
 }
