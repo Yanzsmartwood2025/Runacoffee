@@ -1,7 +1,6 @@
 :root {
     --runa-primary: #D47500;
     --runa-secondary: #0072CE;
-    /* MODIFIED: Changed slider color to a bright, transparent white */
     --slider-track-color: rgba(255, 255, 255, 0.75);
 }
 html { scroll-behavior: smooth; }
@@ -36,41 +35,16 @@ html.dark .ghost-button:hover { background-color: rgba(255, 255, 255, 0.9); colo
 
 body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; }
 
-#main-background-video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -2;
-}
-
+#main-background-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
 #hero { position: relative; overflow: hidden; }
-
-#hero-video-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-    transition: opacity 0.5s ease-in-out;
-}
-
-.translucent-menu, .section-bg, footer, .cart-modal-content, .whatsapp-fab, #auth-modal .modal-content-bg {
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-}
-
+#hero-video-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; transition: opacity 0.5s ease-in-out; }
+.translucent-menu, .section-bg, footer, .cart-modal-content, .whatsapp-fab, #auth-modal .modal-content-bg { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 #video-intro { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 10000; transition: opacity 0.75s ease-out, visibility 0.75s; }
 #video-intro.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 #page-content { opacity: 0; transition: opacity 0.75s ease-in; transition-delay: 0.2s; visibility: hidden; position: relative; z-index: 10; }
 #page-content.loaded { opacity: 1; visibility: visible; }
 .modal-enter { animation: fadeIn 0.3s ease-out forwards; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
 #cart-icon-wrapper { position: relative; }
 #cart-counter { position: absolute; top: 0; right: 0; transform: translate(25%, -25%); width: 1.25rem; height: 1.25rem; background-color: #DC2626; color: white; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 0.25rem; }
 input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 5px; outline: none; background: transparent; }
@@ -82,75 +56,17 @@ input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 8px; c
 input[type="range"]::-moz-range-track { width: 100%; height: 8px; cursor: pointer; border-radius: 5px; background: linear-gradient(to right, var(--slider-track-color) var(--value-percent, 0%), var(--track-background) var(--value-percent, 0%)); }
 .mixer-icon-button { border: 2px solid; transition: border-color 0.3s ease; display: flex; align-items: center; justify-content: center; }
 .mixer-icon-button img { width: 100%; height: 100%; object-fit: cover; }
-
-.book-viewer-container {
-    position: relative;
-    width: 100%;
-    max-width: 350px;
-    height: 500px;
-    margin: 0 auto;
-    cursor: grab;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-}
+.book-viewer-container { position: relative; width: 100%; max-width: 350px; height: 500px; margin: 0 auto; cursor: grab; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
 .book-viewer-container:hover { transform: scale(1.05); }
 .book-viewer-container:active { cursor: grabbing; }
-#book-viewer {
-    width: 100%;
-    height: 100%;
-    border-radius: 0.75rem;
-    background-color: transparent;
-    --poster-color: transparent;
-}
-
-html:not(.dark) .whatsapp-fab {
-    background-color: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-html.dark .whatsapp-fab {
-    background-color: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.payment-logo {
-    filter: grayscale(100%);
-    transition: filter 0.3s ease;
-    opacity: 0.7;
-}
-.payment-logo:hover {
-    filter: grayscale(0%);
-    opacity: 1;
-}
-
-#ar-viewer::part(ar-button) {
-    border-width: 2px;
-    border-radius: 0.5rem;
-    background: transparent;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 1.125rem;
-    padding: 0.75rem 2rem;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    transition: all 0.3s ease;
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-}
-#ar-viewer::part(ar-button):hover {
-    transform: scale(1.05);
-}
-html.dark #ar-viewer::part(ar-button) {
-    border-color: rgba(255, 255, 255, 0.8);
-    color: white;
-}
-html.dark #ar-viewer::part(ar-button):hover {
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #111;
-}
-html:not(.dark) #ar-viewer::part(ar-button) {
-    border-color: var(--runa-primary);
-    color: var(--runa-primary);
-}
-html:not(.dark) #ar-viewer::part(ar-button):hover {
-    background-color: var(--runa-primary);
-    color: white;
-}
+#book-viewer { width: 100%; height: 100%; border-radius: 0.75rem; background-color: transparent; --poster-color: transparent; }
+html:not(.dark) .whatsapp-fab { background-color: rgba(255, 255, 255, 0.2); border: 1px solid rgba(0, 0, 0, 0.1); }
+html.dark .whatsapp-fab { background-color: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); }
+.payment-logo { filter: grayscale(100%); transition: filter 0.3s ease; opacity: 0.7; }
+.payment-logo:hover { filter: grayscale(0%); opacity: 1; }
+#ar-viewer::part(ar-button) { border-width: 2px; border-radius: 0.5rem; background: transparent; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.125rem; padding: 0.75rem 2rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); transition: all 0.3s ease; position: absolute; bottom: 1rem; right: 1rem; }
+#ar-viewer::part(ar-button):hover { transform: scale(1.05); }
+html.dark #ar-viewer::part(ar-button) { border-color: rgba(255, 255, 255, 0.8); color: white; }
+html.dark #ar-viewer::part(ar-button):hover { background-color: rgba(255, 255, 255, 0.9); color: #111; }
+html:not(.dark) #ar-viewer::part(ar-button) { border-color: var(--runa-primary); color: var(--runa-primary); }
+html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa-primary); color: white; }
