@@ -1,4 +1,4 @@
-const uiElements = {
+export const uiElements = {
     gameOverlay: document.getElementById('game-overlay'),
     startScreen: document.getElementById('start-screen'),
     gameOverScreen: document.getElementById('game-over-screen'),
