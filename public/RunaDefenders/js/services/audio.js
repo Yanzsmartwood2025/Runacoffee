@@ -4,6 +4,7 @@
 
 /**
  * Contiene todas las instancias de sintetizadores y reproductores de audio del juego.
+ * La música de fondo se inicializa en null y se carga dinámicamente.
  */
 export const sounds = {
     shoot: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
@@ -17,24 +18,49 @@ export const sounds = {
     powerUp: new Tone.PolySynth(Tone.FMSynth, { harmonicity: 2, modulationIndex: 10, detune: 0, oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.5 }, modulation: { type: "square" }, modulationEnvelope: { attack: 0.1, decay: 0.1, sustain: 0.3, release: 0.5 } }).toDestination(),
     powerDown: new Tone.PolySynth(Tone.AMSynth, { harmonicity: 1.5, detune: 0, oscillator: { type: "square" }, envelope: { attack: 0.01, decay: 0.5, sustain: 0, release: 0.5 }, modulation: { type: "sawtooth" }, modulationEnvelope: { attack: 0.1, decay: 0.2, sustain: 0, release: 0.5 } }).toDestination(),
     
-    // --- NUEVO: Música de fondo para el nivel 1 ---
-    backgroundMusic: new Tone.Player({
-        url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/RunaDefenders/assets/audio/music/nivel1_musica.mp3",
-        loop: true,
-        volume: -12 // Volumen más bajo para que no moleste
-    }).toDestination()
+    // La música se cargará aquí después de la inicialización.
+    backgroundMusic: null 
 };
 
 /**
- * Reproduce un efecto de sonido.
- * @param {string} sound - El nombre del sonido a reproducir (debe ser una clave en el objeto 'sounds').
- * @param {string} note - La nota musical a tocar (ej. 'C4').
- * @param {string} [duration='8n'] - La duración de la nota.
+ * Inicia el contexto de audio del navegador. Debe ser llamado por una interacción del usuario.
  */
-export function playSound(sound, note, duration = '8n') {
-    if (Tone.context.state !== 'running') return;
-    if (sounds[sound]) {
-        sounds[sound].triggerAttackRelease(note, duration);
+export async function startAudioContext() {
+    if (Tone.context.state !== 'running') {
+        await Tone.start();
+        console.log("Audio context started successfully.");
+    }
+}
+
+/**
+ * Carga el archivo de música de fondo. Devuelve una promesa que se resuelve cuando la música está lista.
+ * @param {string} url - La URL del archivo de música.
+ */
+export function loadMusic(url) {
+    return new Promise((resolve, reject) => {
+        const musicPlayer = new Tone.Player({
+            url: url,
+            loop: true,
+            volume: -12,
+            onload: () => {
+                console.log("Music loaded successfully!");
+                sounds.backgroundMusic = musicPlayer.toDestination();
+                resolve(); // Resuelve la promesa cuando el archivo está cargado
+            },
+            onerror: (error) => {
+                console.error("Error loading music:", error);
+                reject(error); // Rechaza la promesa si hay un error
+            }
+        });
+    });
+}
+
+/**
+ * Reproduce la música de fondo si está cargada.
+ */
+export function playMusic() {
+    if (sounds.backgroundMusic && sounds.backgroundMusic.loaded && sounds.backgroundMusic.state !== 'started') {
+        sounds.backgroundMusic.start();
     }
 }
 
@@ -42,7 +68,15 @@ export function playSound(sound, note, duration = '8n') {
  * Detiene la música de fondo si se está reproduciendo.
  */
 export function stopMusic() {
-    if (sounds.backgroundMusic.state === 'started') {
+    if (sounds.backgroundMusic && sounds.backgroundMusic.state === 'started') {
         sounds.backgroundMusic.stop();
     }
+}
+
+/**
+ * Reproduce un efecto de sonido.
+ */
+export function playSound(sound, note, duration = '8n') {
+    if (Tone.context.state !== 'running' || !sounds[sound]) return;
+    sounds[sound].triggerAttackRelease(note, duration);
 }
