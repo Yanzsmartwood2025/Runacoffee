@@ -8,21 +8,20 @@ import { initThreeScene, updateTreeAppearance, updateOrbsLockState, toggleTreeMe
 import { setupEventListeners } from './core/eventListeners.js';
 import { gameLoop, resetGameLogic, getGameState, setGameState, setPreviousGameState } from './core/gameLogic.js';
 import { showOverlay, updateUI, resizeCanvas, getCellSize } from './ui/uiManager.js';
-import { startAudioContext } from './services/audio.js';
+// ¡Importaciones de audio actualizadas!
+import { startAudioContext, loadMusic, playMusic, stopMusic } from './services/audio.js';
 
 // =================================================================
 // --- GLOBAL STATE & VARIABLES ---
 // =================================================================
 
-// Referencias a elementos del DOM
 const loadingScreen = document.getElementById('loading-screen');
 const gameContainer = document.getElementById('game-container');
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
 
-// Variables principales del estado del juego
 let player;
-let base = { ...config.base }; // Copia inicial de la configuración de la base
+let base = { ...config.base };
 let currentLevelIndex = 0;
 let specialPowerPoints = 0;
 let coffeeBeanCount = 0;
@@ -31,29 +30,17 @@ let coffeeBeanCount = 0;
 // --- INITIALIZATION & GAME FLOW ---
 // =================================================================
 
-/**
- * Función principal de inicialización o reinicio del juego.
- * Configura el estado para un nuevo nivel.
- * @param {number} level - Índice del nivel a iniciar.
- * @param {number} power - Puntos de poder especiales iniciales.
- * @param {number} beans - Contador de granos de café inicial.
- * @param {number} health - Salud inicial de la base.
- * @param {boolean} isFirstLoad - Indica si es la primera carga del juego.
- */
 function init(level = 0, power = 0, beans = 0, health = config.base.health, isFirstLoad = true) {
     console.log(`Initializing level ${level + 1}`);
     
-    // 1. Actualizar estado global del juego
     currentLevelIndex = level;
     specialPowerPoints = power;
     coffeeBeanCount = beans;
     base.health = Math.min(health, config.base.maxHealth);
     base.maxHealth = config.base.maxHealth;
 
-    // 2. Reiniciar la lógica del juego (temporizadores, enemigos, etc.)
     resetGameLogic();
 
-    // 3. Ajustar el canvas y crear al jugador
     resizeAll();
     if (!player) {
         player = new Player(canvas, getCellSize());
@@ -61,16 +48,13 @@ function init(level = 0, power = 0, beans = 0, health = config.base.health, isFi
         player.reset();
     }
 
-    // 4. Actualizar elementos visuales (UI y escena 3D)
     updateTreeAppearance(base);
     updateOrbsLockState(currentLevelIndex);
     updateUI(currentLevelIndex, coffeeBeanCount, specialPowerPoints, base);
     
-    // 5. Cambiar el estado del juego y mostrar la pantalla de inicio
     setGameState('start');
     showOverlay('start', { level: currentLevelIndex + 1 });
 
-    // 6. Ocultar pantalla de carga si es la primera vez
     if (isFirstLoad) {
         loadingScreen.style.opacity = '0';
         setTimeout(() => {
@@ -79,26 +63,20 @@ function init(level = 0, power = 0, beans = 0, health = config.base.health, isFi
     }
 }
 
-/**
- * Inicia el juego después de que el usuario hace clic en "Empezar".
- */
 async function startGame() {
-    await startAudioContext(); // Iniciar audio en la primera interacción del usuario
+    await startAudioContext();
+    playMusic(); // <-- La música empieza aquí
 
     setGameState('playing');
     gameContainer.classList.add('playing');
-    showOverlay(null); // Oculta cualquier overlay
+    showOverlay(null);
     
-    // Iniciar el bucle principal del juego
     requestAnimationFrame(mainGameLoop);
 }
 
-/**
- * Avanza al siguiente nivel.
- */
 function startNextLevel() {
     setGameState('level_complete');
-    saveCurrentGameData(); // Guardar progreso
+    saveCurrentGameData();
     showOverlay('level_complete', {
         level: currentLevelIndex + 1,
         onNext: () => {
@@ -112,19 +90,18 @@ function startNextLevel() {
     });
 }
 
-/**
- * Pausa o reanuda el juego.
- */
 function togglePause() {
     const currentState = getGameState();
     if (currentState === 'playing') {
+        stopMusic(); // <-- Detiene la música en pausa
         setPreviousGameState('playing');
         setGameState('paused');
         showOverlay('pause');
     } else if (currentState === 'paused') {
+        playMusic(); // <-- Reanuda la música
         setGameState('playing');
         showOverlay(null);
-        requestAnimationFrame(mainGameLoop); // Reanudar el bucle
+        requestAnimationFrame(mainGameLoop);
     }
 }
 
@@ -134,42 +111,37 @@ function togglePause() {
 
 function mainGameLoop(timestamp) {
     if (getGameState() !== 'playing') {
-        // Si el juego se pausa o termina, detener el bucle
         if (getGameState() === 'game_over') {
+            stopMusic(); // Detiene la música si pierdes
             showOverlay('game_over');
         }
         return;
     }
 
-    // 1. Actualizar la lógica del juego (movimiento, colisiones, etc.)
     const logicUpdates = gameLoop(player, base, currentLevelIndex);
     
-    // Actualizar estado global con los resultados de la lógica
     specialPowerPoints = logicUpdates.specialPowerPoints;
     coffeeBeanCount += logicUpdates.newCoffeeBeans;
     base.health = logicUpdates.baseHealth;
 
-    // 2. Actualizar la UI con el nuevo estado
     updateUI(currentLevelIndex, coffeeBeanCount, specialPowerPoints, base);
-    updateTreeAppearance(base); // Actualizar el árbol si la vida cambió
+    updateTreeAppearance(base);
 
-    // 3. Limpiar y dibujar el canvas 2D
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     player.draw(ctx, logicUpdates.globalAnimationTimer);
     logicUpdates.projectiles.forEach(p => p.draw(ctx));
     logicUpdates.enemies.forEach(e => e.draw(ctx, logicUpdates.globalAnimationTimer));
     logicUpdates.resources.forEach(r => r.draw(ctx, logicUpdates.globalAnimationTimer));
 
-    // 4. Comprobar condiciones de fin de nivel o de juego
     if (logicUpdates.levelOver) {
+        stopMusic(); // Detiene la música al completar el nivel
         startNextLevel();
-        return; // Detener el bucle actual
+        return;
     }
     if (base.health <= 0) {
         setGameState('game_over');
     }
 
-    // 5. Solicitar el siguiente frame
     requestAnimationFrame(mainGameLoop);
 }
 
@@ -177,24 +149,14 @@ function mainGameLoop(timestamp) {
 // --- HELPER FUNCTIONS ---
 // =================================================================
 
-/**
- * Función para ajustar el tamaño del canvas y otros elementos al cambiar el tamaño de la ventana.
- */
 function resizeAll() {
     resizeCanvas();
     if (player) {
         player.cellSize = getCellSize();
         player.reset();
     }
-    // Redibujar en caso de que el juego no esté en bucle (ej. en menú de pausa)
-    if (getGameState() !== 'playing') {
-        // Se podría añadir una función de redibujado estático si fuera necesario
-    }
 }
 
-/**
- * Guarda el estado actual del juego.
- */
 function saveCurrentGameData() {
     saveGameData({
         level: currentLevelIndex,
@@ -208,15 +170,21 @@ function saveCurrentGameData() {
 // --- SCRIPT EXECUTION ---
 // =================================================================
 
-// Se ejecuta cuando el DOM está completamente cargado
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Inicializar la escena 3D
+// ¡Listener actualizado para cargar la música!
+document.addEventListener('DOMContentLoaded', async () => {
     initThreeScene();
 
-    // 2. Conectar a Firebase y cargar datos o iniciar nuevo juego
+    // Carga la música de fondo antes de iniciar el juego
+    try {
+        const musicUrl = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/RunaDefenders/assets/audio/music/nivel1_musica.mp3';
+        console.log("Cargando música desde:", musicUrl);
+        await loadMusic(musicUrl);
+    } catch (error) {
+        console.error("No se pudo cargar la música, el juego continuará sin ella.");
+    }
+
     initializeAndLoadGame(init);
 
-    // 3. Configurar todos los event listeners de la aplicación
     setupEventListeners({
         onStart: startGame,
         onPause: togglePause,
@@ -225,14 +193,10 @@ document.addEventListener('DOMContentLoaded', () => {
         onToggleTreeMenu: (show) => toggleTreeMenu(show, mainGameLoop),
         onActivatePower: () => {
             if (getGameState() === 'playing' && specialPowerPoints >= config.specialPowerMax) {
-                // La lógica del poder se maneja dentro de gameLogic.js
-                // Aquí solo se podría emitir el evento si fuera necesario
                 console.log("Power activated from main");
             }
         }
     });
 
-    // 4. Configurar el listener para el reescalado de la ventana
     window.addEventListener('resize', resizeAll);
 });
-
