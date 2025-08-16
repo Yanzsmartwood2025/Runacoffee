@@ -1223,14 +1223,27 @@
         });
         $('#tool-calc').on('click', () => { $('#calculator').fadeToggle(); closeAllPanels(); });
         $('#tool-add-page').on('click', () => {
-            const newPage = $('<div class="page" data-drawing-enabled="true"><div class="page-number"></div></div>');
             const book = $('.flipbook');
-            book.turn('addPage', newPage, book.turn('pages') + 1);
-            // Re-number pages
+            const totalPages = book.turn('pages');
+
+            // La nueva página se debe insertar ANTES de la última página (la contraportada).
+            // Por lo tanto, la posición de inserción es el número total de páginas actual.
+            const insertPosition = totalPages;
+
+            // Creamos el elemento de la nueva página.
+            const newPage = $('<div class="page" data-drawing-enabled="true"><div class="page-number"></div></div>');
+
+            // Usamos 'addPage' para insertar el nuevo elemento en la posición correcta.
+            book.turn('addPage', newPage, insertPosition);
+
+            // Es crucial re-numerar todas las páginas después de añadir una nueva
+            // para que los números y los data-attributes sean consistentes.
             $('.flipbook .page').each(function(index) {
-                $(this).attr('data-page-number', index + 1); // Ensure data attribute is updated
-                $(this).find('.page-number').text(index + 1);
+                const pageNum = index + 1;
+                $(this).attr('data-page-number', pageNum);
+                $(this).find('.page-number').text(pageNum);
             });
+
             closeAllPanels();
         });
 
