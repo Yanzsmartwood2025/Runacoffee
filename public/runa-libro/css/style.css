@@ -79,6 +79,7 @@ html.dark .font-button.active { background-color: rgba(255,255,255,0.3); }
     background-position: center !important;
 }
 
+
 /* --- Page Content Styles --- */
 .page .content-wrapper { padding: 30px; height: 100%; overflow-y: auto; }
 .page .content-wrapper h2.handwriting-title { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 1rem; }
