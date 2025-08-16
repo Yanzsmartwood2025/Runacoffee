@@ -99,6 +99,14 @@
             background-position: center !important;
         }
 
+        .back-cover-page {
+            background-color: #101010 !important;
+            background-image: url(assets/imagenes/portada-trasera-libro.jpg);
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+        }
+
         .page .content-wrapper { padding: 30px; height: 100%; overflow-y: auto; }
         .page .content-wrapper h2.handwriting-title { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 1rem; }
         .page .content-wrapper h3 { font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; }
@@ -605,7 +613,7 @@
                 <div class="page" data-drawing-enabled="true"><div class="page-number">18</div></div>
                 <div class="page" data-drawing-enabled="true"><div class="page-number">19</div></div>
                 <div class="page" data-drawing-enabled="true"><div class="page-number">20</div></div>
-                <div class="page hard" data-drawing-enabled="false"></div>
+                <div class="page hard back-cover-page" data-drawing-enabled="false"></div>
             </div>
             <div id="page-turn-hint">
                 <i class="fas fa-hand-pointer"></i>
@@ -1237,7 +1245,7 @@
         $('#tool-add-page').on('click', () => {
             const newPage = $('<div class="page" data-drawing-enabled="true"><div class="page-number"></div></div>');
             const book = $('.flipbook');
-            book.turn('addPage', newPage, book.turn('pages') + 1);
+            book.turn('addPage', newPage, book.turn('pages'));
             // Re-number pages
             $('.flipbook .page').each(function(index) {
                 $(this).attr('data-page-number', index + 1); // Ensure data attribute is updated
