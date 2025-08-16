@@ -24,7 +24,6 @@ let base = { ...config.base };
 let currentLevelIndex = 0;
 let specialPowerPoints = 0;
 let coffeeBeanCount = 0;
-let isMusicLoaded = false; // Variable para saber si la música se cargó correctamente
 
 // =================================================================
 // --- INITIALIZATION & GAME FLOW ---
@@ -70,11 +69,14 @@ function init(level = 0, power = 0, beans = 0, health = config.base.health, isFi
  * Comienza la partida después de que el usuario hace clic en "Empezar".
  */
 async function startGame() {
-    await startAudioContext(); 
-    
-    // --- MODIFICADO: Reproduce la música solo si se cargó y es el nivel 1 ---
-    if (isMusicLoaded) {
-        playMusic();
+    await startAudioContext();
+
+    try {
+        const musicUrl = 'assets/audio/music/nivel1_musica.mp3';
+        await loadMusic(musicUrl); // Load the music
+        playMusic(); // Play it right away
+    } catch (error) {
+        console.error("La música no pudo ser cargada. El juego continuará sin ella.", error);
     }
 
     setGameState('playing');
@@ -114,10 +116,7 @@ function togglePause() {
         setGameState('paused');
         showOverlay('pause');
     } else if (currentState === 'paused') {
-        // --- MODIFICADO: Reanuda la música solo si se cargó y es el nivel 1 ---
-        if (isMusicLoaded) {
-            playMusic();
-        }
+        playMusic();
         setGameState('playing');
         showOverlay(null);
         requestAnimationFrame(mainGameLoop);
@@ -198,16 +197,6 @@ function saveCurrentGameData() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     initThreeScene();
-
-    // Intenta cargar la música de fondo
-    try {
-        const musicUrl = 'assets/audio/music/nivel1_musica.mp3';
-        await loadMusic(musicUrl);
-        isMusicLoaded = true;
-    } catch (error) {
-        console.error("La música no pudo ser cargada. El juego continuará sin ella.", error);
-        isMusicLoaded = false;
-    }
 
     // Inicializa Firebase y carga los datos del jugador
     initializeAndLoadGame(init);
