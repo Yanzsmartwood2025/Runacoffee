@@ -5,6 +5,7 @@ import { config } from './modules/config.js';
 import { Player, Projectile, Enemy, Resource } from './modules/gameClasses.js';
 import { initThreeScene, updateTreeAppearance, updateOrbsLockState, toggleTreeMenu } from './modules/scene3D.js';
 import { showOverlay, updateUI, triggerDamageFlash, showWaveMessage } from './modules/ui.js';
+import { loadMusic, playMusic, stopMusic, startAudioContext, playSound } from './modules/audio.js';
 
 // =================================================================
 // --- 2. LÓGICA PRINCIPAL DEL JUEGO ---
@@ -22,7 +23,6 @@ let levelTimer = 0, currentWaveIndex = -1, spawnTimer = 0;
 let previousGameState = 'loading', globalAnimationTimer = 0, levelMessagesShown = [], isPowerActive = false;
 
 // - Las funciones principales: gameLoop(), handleCollisions(), init(), etc.
-function playSound(sound, note, duration = '8n') { if (typeof Tone !== 'undefined' && Tone.context.state === 'running' && sounds[sound]) { sounds[sound].triggerAttackRelease(note, duration); } }
 function isColliding(a, b) { return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y; }
 function handleCollisions() { for (let i = projectiles.length - 1; i >= 0; i--) { for (let j = enemies.length - 1; j >= 0; j--) { if (projectiles[i] && enemies[j] && isColliding(projectiles[i], enemies[j])) { enemies[j].health -= projectiles[i].power; projectiles.splice(i, 1); playSound('enemyHit'); if (enemies[j].health <= 0) { const enemy = enemies[j]; const dropX = Math.min(enemy.x, canvas.width - enemy.width); const dropY = enemy.y; if (Math.random() < enemy.type.grainChance) resources.push(new Resource(dropX, dropY, 'grain', ctx)); if (Math.random() < enemy.type.orbChance) resources.push(new Resource(dropX, dropY, 'orb', ctx)); enemies.splice(j, 1); } break; } } } for (let i = enemies.length - 1; i >= 0; i--) { if (enemies[i].x < player.x + player.width) { base.health -= 50; triggerDamageFlash(); playSound('baseHit', 'C2', '4n'); enemies.splice(i, 1); } } }
 function spawnEnemy() { const currentWave = config.levels[currentLevelIndex].waves[currentWaveIndex]; enemies.push(new Enemy(Math.floor(Math.random() * config.lanes), currentWave.enemyType, canvas, ctx)); }
@@ -38,9 +38,8 @@ function init(level = 0, power = 0, beans = 0, health = config.base.health, isFi
 // - La función setupEventListeners() y la inicialización final.
 function setupEventListeners() {
     document.getElementById('start-button').addEventListener('click', () => {
-        if (typeof Tone !== 'undefined' && Tone.context.state !== 'running') {
-            Tone.start();
-        }
+        startAudioContext();
+        playMusic();
         gameState = 'playing';
         const gameOverlay = document.getElementById('game-overlay');
         if (gameOverlay) {
@@ -49,10 +48,23 @@ function setupEventListeners() {
         gameLoop();
     });
     window.addEventListener('resize', resizeAll);
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+            stopMusic();
+        } else {
+            playMusic();
+        }
+    });
 }
 
 // --- INICIALIZAR TODO ---
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await loadMusic('https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/RunaDefenders/assets/audio/music/nivel1_musica.mp3');
+    } catch (error) {
+        console.error("Could not load music:", error);
+    }
     init(0, 0, 0, config.base.health, true);
     setupEventListeners();
     initThreeScene();
