@@ -24,12 +24,15 @@ let base = { ...config.base };
 let currentLevelIndex = 0;
 let specialPowerPoints = 0;
 let coffeeBeanCount = 0;
-let isMusicLoaded = false;
+let isMusicLoaded = false; // Variable para saber si la música se cargó correctamente
 
 // =================================================================
 // --- INITIALIZATION & GAME FLOW ---
 // =================================================================
 
+/**
+ * Inicializa o resetea el estado del juego para un nivel específico.
+ */
 function init(level = 0, power = 0, beans = 0, health = config.base.health, isFirstLoad = true) {
     console.log(`Initializing level ${level + 1}`);
     
@@ -63,10 +66,16 @@ function init(level = 0, power = 0, beans = 0, health = config.base.health, isFi
     }
 }
 
+/**
+ * Comienza la partida después de que el usuario hace clic en "Empezar".
+ */
 async function startGame() {
     await startAudioContext(); 
     
-    playMusic();
+    // --- MODIFICADO: Reproduce la música solo si se cargó y es el nivel 1 ---
+    if (isMusicLoaded && currentLevelIndex === 0) {
+        playMusic();
+    }
 
     setGameState('playing');
     gameContainer.classList.add('playing');
@@ -75,6 +84,9 @@ async function startGame() {
     requestAnimationFrame(mainGameLoop);
 }
 
+/**
+ * Inicia la transición al siguiente nivel.
+ */
 function startNextLevel() {
     setGameState('level_complete');
     saveCurrentGameData();
@@ -91,15 +103,21 @@ function startNextLevel() {
     });
 }
 
+/**
+ * Pausa o reanuda el juego.
+ */
 function togglePause() {
     const currentState = getGameState();
     if (currentState === 'playing') {
-        stopMusic();
+        stopMusic(); // Detiene la música al pausar
         setPreviousGameState('playing');
         setGameState('paused');
         showOverlay('pause');
     } else if (currentState === 'paused') {
-        playMusic();
+        // --- MODIFICADO: Reanuda la música solo si se cargó y es el nivel 1 ---
+        if (isMusicLoaded && currentLevelIndex === 0) {
+            playMusic();
+        }
         setGameState('playing');
         showOverlay(null);
         requestAnimationFrame(mainGameLoop);
@@ -113,36 +131,43 @@ function togglePause() {
 function mainGameLoop(timestamp) {
     if (getGameState() !== 'playing') {
         if (getGameState() === 'game_over') {
-            stopMusic();
+            stopMusic(); // Se asegura de detener la música en Game Over
             showOverlay('game_over');
         }
         return;
     }
 
+    // Actualiza la lógica del juego y recibe el estado actual de los elementos
     const logicUpdates = gameLoop(player, base, currentLevelIndex);
     
+    // Actualiza las variables globales del main.js con los datos de la lógica
     specialPowerPoints = logicUpdates.specialPowerPoints;
     coffeeBeanCount += logicUpdates.newCoffeeBeans;
     base.health = logicUpdates.baseHealth;
 
+    // Actualiza la interfaz de usuario y la apariencia del árbol
     updateUI(currentLevelIndex, coffeeBeanCount, specialPowerPoints, base);
     updateTreeAppearance(base);
 
+    // Dibuja todos los elementos en el canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     player.draw(ctx, logicUpdates.globalAnimationTimer);
     logicUpdates.projectiles.forEach(p => p.draw(ctx));
     logicUpdates.enemies.forEach(e => e.draw(ctx, logicUpdates.globalAnimationTimer));
     logicUpdates.resources.forEach(r => r.draw(ctx, logicUpdates.globalAnimationTimer));
 
+    // Comprueba si el nivel ha terminado
     if (logicUpdates.levelOver) {
-        stopMusic();
+        stopMusic(); // Detiene la música al pasar de nivel
         startNextLevel();
-        return;
+        return; // Detiene el loop actual
     }
+    // Comprueba si el jugador ha perdido
     if (base.health <= 0) {
         setGameState('game_over');
     }
 
+    // Continúa el loop
     requestAnimationFrame(mainGameLoop);
 }
 
@@ -174,27 +199,37 @@ function saveCurrentGameData() {
 document.addEventListener('DOMContentLoaded', async () => {
     initThreeScene();
 
+    // Intenta cargar la música de fondo
     try {
         const musicUrl = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/RunaDefenders/assets/audio/music/nivel1_musica.mp3';
-        console.log("Attempting to load music from:", musicUrl);
         await loadMusic(musicUrl);
         isMusicLoaded = true;
     } catch (error) {
-        console.error("Music could not be loaded. The game will continue without it.");
+        console.error("La música no pudo ser cargada. El juego continuará sin ella.", error);
         isMusicLoaded = false;
     }
 
+    // Inicializa Firebase y carga los datos del jugador
     initializeAndLoadGame(init);
 
+    // Configura todos los event listeners de la UI
     setupEventListeners({
         onStart: startGame,
         onPause: togglePause,
-        onRestart: () => init(currentLevelIndex, 0, 0, config.base.maxHealth, false),
-        onMainMenu: () => init(0, 0, 0, config.base.maxHealth, false),
+        // --- MODIFICADO: Añade stopMusic() al reiniciar o volver al menú ---
+        onRestart: () => {
+            stopMusic();
+            init(currentLevelIndex, 0, 0, config.base.maxHealth, false);
+        },
+        onMainMenu: () => {
+            stopMusic();
+            init(0, 0, 0, config.base.maxHealth, false);
+        },
         onToggleTreeMenu: (show) => toggleTreeMenu(show, mainGameLoop),
         onActivatePower: () => {
             if (getGameState() === 'playing' && specialPowerPoints >= config.specialPowerMax) {
-                console.log("Power activated from main");
+                // Aquí puedes llamar a una función que active el poder en gameLogic.js
+                console.log("Poder activado desde main.js");
             }
         }
     });
