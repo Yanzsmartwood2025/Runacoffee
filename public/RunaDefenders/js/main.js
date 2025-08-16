@@ -8,7 +8,6 @@ import { initThreeScene, updateTreeAppearance, updateOrbsLockState, toggleTreeMe
 import { setupEventListeners } from './core/eventListeners.js';
 import { gameLoop, resetGameLogic, getGameState, setGameState, setPreviousGameState } from './core/gameLogic.js';
 import { showOverlay, updateUI, resizeCanvas, getCellSize } from './ui/uiManager.js';
-// ¡Importaciones de audio actualizadas!
 import { startAudioContext, loadMusic, playMusic, stopMusic } from './services/audio.js';
 
 // =================================================================
@@ -25,6 +24,7 @@ let base = { ...config.base };
 let currentLevelIndex = 0;
 let specialPowerPoints = 0;
 let coffeeBeanCount = 0;
+let isMusicLoaded = false;
 
 // =================================================================
 // --- INITIALIZATION & GAME FLOW ---
@@ -64,8 +64,9 @@ function init(level = 0, power = 0, beans = 0, health = config.base.health, isFi
 }
 
 async function startGame() {
-    await startAudioContext();
-    playMusic(); // <-- La música empieza aquí
+    await startAudioContext(); 
+    
+    playMusic();
 
     setGameState('playing');
     gameContainer.classList.add('playing');
@@ -93,12 +94,12 @@ function startNextLevel() {
 function togglePause() {
     const currentState = getGameState();
     if (currentState === 'playing') {
-        stopMusic(); // <-- Detiene la música en pausa
+        stopMusic();
         setPreviousGameState('playing');
         setGameState('paused');
         showOverlay('pause');
     } else if (currentState === 'paused') {
-        playMusic(); // <-- Reanuda la música
+        playMusic();
         setGameState('playing');
         showOverlay(null);
         requestAnimationFrame(mainGameLoop);
@@ -112,7 +113,7 @@ function togglePause() {
 function mainGameLoop(timestamp) {
     if (getGameState() !== 'playing') {
         if (getGameState() === 'game_over') {
-            stopMusic(); // Detiene la música si pierdes
+            stopMusic();
             showOverlay('game_over');
         }
         return;
@@ -134,7 +135,7 @@ function mainGameLoop(timestamp) {
     logicUpdates.resources.forEach(r => r.draw(ctx, logicUpdates.globalAnimationTimer));
 
     if (logicUpdates.levelOver) {
-        stopMusic(); // Detiene la música al completar el nivel
+        stopMusic();
         startNextLevel();
         return;
     }
@@ -170,17 +171,17 @@ function saveCurrentGameData() {
 // --- SCRIPT EXECUTION ---
 // =================================================================
 
-// ¡Listener actualizado para cargar la música!
 document.addEventListener('DOMContentLoaded', async () => {
     initThreeScene();
 
-    // Carga la música de fondo antes de iniciar el juego
     try {
         const musicUrl = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/RunaDefenders/assets/audio/music/nivel1_musica.mp3';
-        console.log("Cargando música desde:", musicUrl);
+        console.log("Attempting to load music from:", musicUrl);
         await loadMusic(musicUrl);
+        isMusicLoaded = true;
     } catch (error) {
-        console.error("No se pudo cargar la música, el juego continuará sin ella.");
+        console.error("Music could not be loaded. The game will continue without it.");
+        isMusicLoaded = false;
     }
 
     initializeAndLoadGame(init);
