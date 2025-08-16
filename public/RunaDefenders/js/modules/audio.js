@@ -3,6 +3,7 @@ import { config } from './config.js';
 let musicPlayer;
 
 export function loadMusic(url) {
+    console.log("Loading music...");
     return new Promise((resolve, reject) => {
         musicPlayer = new Tone.Player({
             url: url,
@@ -22,12 +23,14 @@ export function loadMusic(url) {
 
 export function playMusic() {
     if (musicPlayer && musicPlayer.loaded) {
+        console.log("Playing music");
         musicPlayer.start();
     }
 }
 
 export function stopMusic() {
     if (musicPlayer) {
+        console.log("Stopping music");
         musicPlayer.stop();
     }
 }
@@ -47,8 +50,13 @@ export function playSound(sound, note, duration = '8n') {
     }
 }
 
-export function startAudioContext() {
+export async function startAudioContext() {
     if (Tone.context.state !== 'running') {
-        Tone.start();
+        try {
+            await Tone.start();
+            console.log("Audio context started successfully");
+        } catch (error) {
+            console.error("Could not start audio context:", error);
+        }
     }
 }
