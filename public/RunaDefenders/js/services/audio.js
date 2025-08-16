@@ -4,19 +4,15 @@
 // <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
 
 let isAudioReady = false;
+let musicPlayer; // Variable para nuestro reproductor de música de fondo
 
-// --- Definición de los Sintetizadores para cada Sonido ---
-const sounds = {
-    shoot: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
-    collect: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 } }).toDestination(),
-    heal: new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0.1, release: 0.2 } }).toDestination(),
+// Objeto para los efectos de sonido (SFX)
+const sfxPlayers = {
+    shoot: new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 } }).toDestination(),
+    collect: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 } }).toDestination(),
+    enemyHit: new Tone.NoiseSynth({ noise: { type: 'pink' }, envelope: { attack: 0.01, decay: 0.05, sustain: 0, release: 0.05 } }).toDestination(),
     baseHit: new Tone.MembraneSynth({ pitchDecay: 0.1, octaves: 2, envelope: { attack: 0.01, decay: 0.3, sustain: 0.01, release: 0.4 } }).toDestination(),
-    enemyHit: new Tone.PolySynth(Tone.NoiseSynth, { noise: { type: 'pink' }, envelope: { attack: 0.01, decay: 0.05, sustain: 0, release: 0.05 } }).toDestination(),
-    gameOver: new Tone.PolySynth(Tone.Synth).toDestination(),
-    levelUp: new Tone.PolySynth(Tone.Synth).toDestination(),
-    waveWarning: new Tone.MembraneSynth({ pitchDecay: 0.2, octaves: 5, envelope: { attack: 0.01, decay: 0.5, sustain: 0.01, release: 0.8 } }).toDestination(),
-    powerUp: new Tone.PolySynth(Tone.FMSynth, { harmonicity: 2, modulationIndex: 10, oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.5 } }).toDestination(),
-    powerDown: new Tone.PolySynth(Tone.AMSynth, { harmonicity: 1.5, oscillator: { type: "square" }, envelope: { attack: 0.01, decay: 0.5, sustain: 0, release: 0.5 } }).toDestination()
+    // Puedes añadir más efectos de sonido aquí
 };
 
 /**
@@ -31,16 +27,64 @@ export async function startAudioContext() {
 }
 
 /**
- * Reproduce un sonido específico.
- * @param {string} soundName - El nombre del sonido a reproducir (ej. 'shoot', 'collect').
+ * Reproduce un EFECTO DE SONIDO específico.
+ * @param {string} soundName - El nombre del sonido a reproducir (ej. 'shoot').
  * @param {string} note - La nota musical (ej. 'C5').
  * @param {string} [duration='8n'] - La duración de la nota.
  */
 export function playSound(soundName, note, duration = '8n') {
-    if (!isAudioReady || !sounds[soundName]) return;
+    if (!isAudioReady || !sfxPlayers[soundName]) return;
     try {
-        sounds[soundName].triggerAttackRelease(note, duration);
+        // Usamos un PolySynth temporal para evitar que los sonidos se corten entre sí
+        const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        synth.set(sfxPlayers[soundName].get());
+        synth.triggerAttackRelease(note, duration);
     } catch (e) {
         console.error(`Error playing sound: ${soundName}`, e);
+    }
+}
+
+// --- FUNCIONES PARA MÚSICA DE FONDO ---
+
+/**
+ * Carga la música de fondo desde una URL.
+ * @param {string} url - La URL del archivo de música.
+ * @returns {Promise<void>} - Una promesa que se resuelve cuando la música está cargada.
+ */
+export function loadMusic(url) {
+    return new Promise((resolve, reject) => {
+        musicPlayer = new Tone.Player({
+            url: url,
+            loop: true,
+            autostart: false,
+            onload: () => {
+                console.log("Música de fondo cargada exitosamente.");
+                resolve();
+            },
+            onerror: (err) => {
+                console.error("Error al cargar la música de fondo:", err);
+                reject(err);
+            }
+        }).toDestination();
+    });
+}
+
+/**
+ * Reproduce la música de fondo que ya fue cargada.
+ */
+export function playMusic() {
+    if (isAudioReady && musicPlayer && musicPlayer.loaded && musicPlayer.state !== 'started') {
+        musicPlayer.start();
+        console.log("Reproduciendo música de fondo.");
+    }
+}
+
+/**
+ * Detiene la música de fondo.
+ */
+export function stopMusic() {
+    if (musicPlayer && musicPlayer.state === 'started') {
+        musicPlayer.stop();
+        console.log("Música de fondo detenida.");
     }
 }
