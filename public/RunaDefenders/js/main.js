@@ -73,7 +73,7 @@ async function startGame() {
     await startAudioContext(); 
     
     // --- MODIFICADO: Reproduce la música solo si se cargó y es el nivel 1 ---
-    if (isMusicLoaded && currentLevelIndex === 0) {
+    if (isMusicLoaded) {
         playMusic();
     }
 
@@ -115,7 +115,7 @@ function togglePause() {
         showOverlay('pause');
     } else if (currentState === 'paused') {
         // --- MODIFICADO: Reanuda la música solo si se cargó y es el nivel 1 ---
-        if (isMusicLoaded && currentLevelIndex === 0) {
+        if (isMusicLoaded) {
             playMusic();
         }
         setGameState('playing');
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Intenta cargar la música de fondo
     try {
-        const musicUrl = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/RunaDefenders/assets/audio/music/nivel1_musica.mp3';
+        const musicUrl = 'assets/audio/music/nivel1_musica.mp3';
         await loadMusic(musicUrl);
         isMusicLoaded = true;
     } catch (error) {
