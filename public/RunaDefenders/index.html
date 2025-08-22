@@ -881,9 +881,9 @@
         player: {
             image: {
                 idle: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/player.png',
-                attack: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/player.png'
+                attack: '/RunaDefenders/assets/sprites/juanchis-ataque.png'
             },
-            projectileImage: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iOCIgZmlsbD0iI2Q0NzUwMCIvPjwvc3ZnPg=='
+            projectileImage: '/assets/imagenes/collectible_coffee_bean.png'
         },
         enemies: [
             { name: 'Broca Débil', health: 20, speed: 0.5, grainChance: 0.8, orbChance: 0.1, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png' },
@@ -1011,9 +1011,19 @@
             this.x = x; this.y = y - 10; this.width = 20; this.height = 20;
             this.speed = config.projectileSpeed; this.power = 20;
             this.image = new Image(); this.image.src = config.player.projectileImage;
+            this.rotation = 0;
         }
-        update() { this.x += this.speed; }
-        draw() { ctx.drawImage(this.image, this.x, this.y, this.width, this.height); }
+        update() {
+            this.x += this.speed;
+            this.rotation += 0.2;
+        }
+        draw() {
+            ctx.save();
+            ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+            ctx.rotate(this.rotation);
+            ctx.drawImage(this.image, -this.width / 2, -this.height / 2, this.width, this.height);
+            ctx.restore();
+        }
     }
     class Enemy {
         constructor(lane, typeIndex) {
