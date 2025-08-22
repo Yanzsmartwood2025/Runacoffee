@@ -880,7 +880,7 @@
     Object.assign(config, {
         player: {
             image: {
-                idle: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/player.png',
+                idle: '/RunaDefenders/assets/sprites/juanchis-ataque.png',
                 attack: '/RunaDefenders/assets/sprites/juanchis-ataque.png'
             },
             projectileImage: '/assets/imagenes/collectible_coffee_bean.png'
@@ -985,25 +985,59 @@
             this.speed = config.playerSpeed;
             this.image = new Image();
             this.image.src = config.player.image.idle;
-            this.attackImage = new Image();
+            this.attackImage = new Image(); // This is not strictly needed anymore, but let's keep it for consistency
             this.attackImage.src = config.player.image.attack;
             this.isAttacking = false;
+
+            // Sprite animation properties
+            this.spriteFrames = 4;
+            this.currentFrame = 0;
+            this.animationTimer = 0;
+            // The duration of the attack animation (3 frames) should be quick.
+            // Let's make it last for 9 game frames (3 frames per sprite), which is about 150ms.
+            this.attackAnimationSpeed = 3; // Change sprite every 3 game frames
         }
         draw() {
             const bobble = Math.sin(globalAnimationTimer * 4) * (cellSize * 0.02);
-            ctx.drawImage(this.isAttacking ? this.attackImage : this.image, this.x, this.y + bobble, this.width, this.height);
+
+            // Make sure the image is loaded before trying to draw it
+            if (!this.image.width) return;
+
+            const frameWidth = this.image.width / this.spriteFrames;
+            const frameHeight = this.image.height;
+            const sourceX = this.currentFrame * frameWidth;
+            const sourceY = 0;
+
+            ctx.drawImage(this.image,
+                sourceX, sourceY, frameWidth, frameHeight, // source rect
+                this.x, this.y + bobble, this.width, this.height // destination rect
+            );
         }
         update() {
+            // Player position clamping
             if (this.y < 0) this.y = 0;
             if (this.y > canvas.height - this.height) this.y = canvas.height - this.height;
+
+            // Handle attack animation
+            if (this.isAttacking) {
+                this.animationTimer++;
+                if (this.animationTimer % this.attackAnimationSpeed === 0) {
+                    this.currentFrame++;
+                }
+                if (this.currentFrame > 3) { // The animation uses frames 1, 2, 3
+                    this.currentFrame = 0; // Return to idle frame
+                    this.isAttacking = false;
+                }
+            }
         }
         shoot() {
-            if (shootTimer > 0 || gameState !== 'playing') return;
+            if (shootTimer > 0 || gameState !== 'playing' || this.isAttacking) return;
             projectiles.push(new Projectile(this.x + this.width, this.y + this.height / 2));
             shootTimer = isPowerActive ? config.fastShootCooldown : config.shootCooldown;
             playSound('shoot', 'C5', '16n');
             this.isAttacking = true;
-            setTimeout(() => this.isAttacking = false, 100);
+            this.currentFrame = 1; // Start animation from the second frame
+            this.animationTimer = 0;
         }
     }
     class Projectile {
