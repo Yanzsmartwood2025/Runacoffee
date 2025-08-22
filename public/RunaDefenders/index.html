@@ -880,7 +880,7 @@
     Object.assign(config, {
         player: {
             image: {
-                idle: '/RunaDefenders/assets/sprites/juanchis-ataque.png',
+                idle: '../assets/imagenes/player.png',
                 attack: '/RunaDefenders/assets/sprites/juanchis-ataque.png'
             },
             projectileImage: '/assets/imagenes/collectible_coffee_bean.png'
@@ -995,23 +995,22 @@
             this.animationTimer = 0;
             // The duration of the attack animation (3 frames) should be quick.
             // Let's make it last for 9 game frames (3 frames per sprite), which is about 150ms.
-            this.attackAnimationSpeed = 3; // Change sprite every 3 game frames
+            this.attackAnimationSpeed = 20; // Change sprite every 3 game frames
         }
         draw() {
-            const bobble = Math.sin(globalAnimationTimer * 4) * (cellSize * 0.02);
-
-            // Make sure the image is loaded before trying to draw it
-            if (!this.image.width) return;
-
-            const frameWidth = this.image.width / this.spriteFrames;
-            const frameHeight = this.image.height;
-            const sourceX = this.currentFrame * frameWidth;
-            const sourceY = 0;
-
-            ctx.drawImage(this.image,
-                sourceX, sourceY, frameWidth, frameHeight, // source rect
-                this.x, this.y + bobble, this.width, this.height // destination rect
-            );
+            if (this.isAttacking) {
+                // Use attack spritesheet
+                if (!this.attackImage.width) return;
+                const frameWidth = this.attackImage.width / this.spriteFrames;
+                const frameHeight = this.attackImage.height;
+                const sourceX = this.currentFrame * frameWidth;
+                const sourceY = 0;
+                ctx.drawImage(this.attackImage, sourceX, sourceY, frameWidth, frameHeight, this.x, this.y, this.width, this.height);
+            } else {
+                // Use idle image (no frames)
+                if (!this.image.width) return;
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            }
         }
         update() {
             // Player position clamping
@@ -1365,6 +1364,14 @@
             event.preventDefault();
             try { if (Tone.context.state !== 'running') await Tone.start(); }
             catch (e) { console.error("Could not start audio context:", e); }
+
+            try {
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock('landscape');
+                }
+            } catch (err) {
+                console.warn("Could not lock screen orientation:", err);
+            }
 
             // --- Start music only on level 1 ---
             if (currentLevelIndex === 0) {
