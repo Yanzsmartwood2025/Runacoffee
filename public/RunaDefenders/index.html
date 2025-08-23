@@ -886,7 +886,7 @@
             projectileImage: '/assets/imagenes/collectible_coffee_bean.png'
         },
         enemies: [
-            { name: 'Broca Débil', health: 20, speed: 0.5, grainChance: 0.8, orbChance: 0.1, image: 'assets/sprites/Enemigo-1-caminata.png', deathImage: 'assets/sprites/enemigo-1-muerte.png', walkFrames: 4, deathFrames: 4 },
+            { name: 'Broca Débil', health: 20, speed: 0.5, grainChance: 0.8, orbChance: 0.1, image: 'assets/sprites/Enemigo-1-caminata.png', deathImage: 'assets/sprites/enemigo-1-muerte.png', walkFrames: 3, deathFrames: 3 },
             { name: 'Broca Normal', health: 60, speed: 0.4, grainChance: 0.5, orbChance: 0.2, image: 'imagenes/enemy_broca_2.png' },
             { name: 'Broca Fuerte', health: 300, speed: 0.3, grainChance: 0.2, orbChance: 0.5, image: 'imagenes/enemy_broca_3.png' },
         ],
@@ -1074,10 +1074,13 @@
 
             // Animation properties
             this.isDying = false;
+            this.isPulsating = false;
             this.isDead = false;
             this.currentFrame = 0;
             this.animationTimer = 0;
             this.animationSpeed = 10; // lower is faster
+            this.pulsateTimer = 0;
+            this.pulsateDuration = 90; // 1.5 seconds at 60fps
 
             if (this.type.deathImage) {
                 this.deathImage = new Image();
@@ -1086,14 +1089,20 @@
         }
 
         update() {
-            if (this.isDying) {
+            if (this.isPulsating) {
+                this.pulsateTimer++;
+                if (this.pulsateTimer >= this.pulsateDuration) {
+                    this.isDead = true;
+                }
+            } else if (this.isDying) {
                 // Death animation logic
                 this.animationTimer++;
                 if (this.animationTimer % this.animationSpeed === 0) {
                     this.currentFrame++;
                 }
                 if (this.type.deathFrames && this.currentFrame >= this.type.deathFrames) {
-                    this.isDead = true; // Mark for removal
+                    this.isPulsating = true;
+                    this.currentFrame = this.type.deathFrames - 1; // Stay on last frame
                 }
             } else {
                 // Walking logic
@@ -1110,6 +1119,7 @@
         }
 
         draw() {
+            ctx.save();
             const bobble = this.isDying ? 0 : Math.sin(globalAnimationTimer * 5 + this.baseY) * (cellSize * 0.05);
             let currentImage = this.image;
             let totalFrames = this.type.walkFrames || 1;
@@ -1120,12 +1130,17 @@
                 totalFrames = this.type.deathFrames || 1;
             }
 
+            if (this.isPulsating) {
+                ctx.globalAlpha = Math.abs(Math.sin(this.pulsateTimer * 0.15));
+            }
+
             if (currentImage.width > 0) {
                  frameWidth = currentImage.width / totalFrames;
                  const sourceX = this.currentFrame * frameWidth;
                  ctx.drawImage(currentImage, sourceX, 0, frameWidth, currentImage.height, this.x, this.y + bobble, this.width, this.height);
             }
 
+            ctx.restore();
 
             if (!this.isDying && this.health < this.maxHealth) {
                 ctx.fillStyle = 'red';
@@ -1178,8 +1193,8 @@
                         enemy.currentFrame = 0;
                         enemy.animationTimer = 0;
 
-                        const dropX = Math.min(enemy.x, canvas.width - enemy.width);
-                        const dropY = enemy.y;
+                        const dropX = Math.min(enemy.x + enemy.width / 4, canvas.width - enemy.width);
+                        const dropY = enemy.y + enemy.height / 4;
 
                         if (Math.random() < enemy.type.grainChance) {
                             resources.push(new Resource(dropX, dropY, 'grain'));
