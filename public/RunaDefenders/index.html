@@ -1078,7 +1078,7 @@
             this.isDead = false;
             this.currentFrame = 0;
             this.animationTimer = 0;
-            this.animationSpeed = 10; // lower is faster
+            this.animationSpeed = 20; // higher is slower
             this.pulsateTimer = 0;
             this.pulsateDuration = 90; // 1.5 seconds at 60fps
 
@@ -1135,7 +1135,7 @@
             }
 
             if (currentImage.width > 0) {
-                 frameWidth = currentImage.width / totalFrames;
+                 frameWidth = Math.floor(currentImage.width / totalFrames);
                  const sourceX = this.currentFrame * frameWidth;
                  ctx.drawImage(currentImage, sourceX, 0, frameWidth, currentImage.height, this.x, this.y + bobble, this.width, this.height);
             }
@@ -1193,8 +1193,8 @@
                         enemy.currentFrame = 0;
                         enemy.animationTimer = 0;
 
-                        const dropX = Math.min(enemy.x + enemy.width / 4, canvas.width - enemy.width);
-                        const dropY = enemy.y + enemy.height / 4;
+                        const dropX = Math.min(enemy.x + enemy.width, canvas.width - enemy.width);
+                        const dropY = enemy.y;
 
                         if (Math.random() < enemy.type.grainChance) {
                             resources.push(new Resource(dropX, dropY, 'grain'));
