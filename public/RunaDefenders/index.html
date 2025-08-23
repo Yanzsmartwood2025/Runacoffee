@@ -451,7 +451,7 @@
              </div>
              <div id="timeline-container">
                   <div id="timeline-progress"></div>
-                  <img id="timeline-worm" src="https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png" alt="Gusano del tiempo">
+                  <img id="timeline-worm" src="imagenes/enemy_broca_2.png" alt="Gusano del tiempo">
              </div>
              <div id="auth-container">
              </div>
@@ -886,9 +886,9 @@
             projectileImage: '/assets/imagenes/collectible_coffee_bean.png'
         },
         enemies: [
-            { name: 'Broca Débil', health: 20, speed: 0.5, grainChance: 0.8, orbChance: 0.1, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_1.png' },
-            { name: 'Broca Normal', health: 60, speed: 0.4, grainChance: 0.5, orbChance: 0.2, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_2.png' },
-            { name: 'Broca Fuerte', health: 300, speed: 0.3, grainChance: 0.2, orbChance: 0.5, image: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/83b2c2b337c8d090db5bc039cacfd59228f2747a/public/assets/imagenes/enemy_broca_3.png' },
+            { name: 'Broca Débil', health: 20, speed: 0.5, grainChance: 0.8, orbChance: 0.1, image: 'assets/sprites/Enemigo-1-caminata.png', deathImage: 'assets/sprites/enemigo-1-muerte.png', walkFrames: 4, deathFrames: 4 },
+            { name: 'Broca Normal', health: 60, speed: 0.4, grainChance: 0.5, orbChance: 0.2, image: 'imagenes/enemy_broca_2.png' },
+            { name: 'Broca Fuerte', health: 300, speed: 0.3, grainChance: 0.2, orbChance: 0.5, image: 'imagenes/enemy_broca_3.png' },
         ],
         levels: [
             { duration: 180, waves: [ { startTime: 5, enemyType: 0, spawnInterval: 240 }, { startTime: 40, enemyType: 0, spawnInterval: 180 }, { startTime: 90, enemyType: 0, spawnInterval: 150 }, { startTime: 120, enemyType: 0, spawnInterval: 100 } ]},
@@ -1061,22 +1061,77 @@
     class Enemy {
         constructor(lane, typeIndex) {
             this.type = config.enemies[typeIndex];
-            this.width = cellSize - 10; this.height = cellSize - 10;
-            this.x = canvas.width + 700;
+            this.width = cellSize - 10;
+            this.height = cellSize - 10;
+            this.x = canvas.width;
             this.baseY = (lane * cellSize) + 5;
             this.y = this.baseY;
-            this.speed = this.type.speed; this.health = this.type.health;
+            this.speed = this.type.speed;
+            this.health = this.type.health;
             this.maxHealth = this.health;
-            this.image = new Image(); this.image.src = this.type.image;
-        }
-        update() { this.x -= this.speed; }
-        draw() {
-            const bobble = Math.sin(globalAnimationTimer * 5 + this.baseY) * (cellSize * 0.05);
-            ctx.drawImage(this.image, this.x, this.y + bobble, this.width, this.height);
+            this.image = new Image();
+            this.image.src = this.type.image;
 
-            if (this.health < this.maxHealth) {
-                ctx.fillStyle = 'red'; ctx.fillRect(this.x, this.y - 10 + bobble, this.width, 5);
-                ctx.fillStyle = 'green'; ctx.fillRect(this.x, this.y - 10 + bobble, this.width * (this.health / this.maxHealth), 5);
+            // Animation properties
+            this.isDying = false;
+            this.isDead = false;
+            this.currentFrame = 0;
+            this.animationTimer = 0;
+            this.animationSpeed = 10; // lower is faster
+
+            if (this.type.deathImage) {
+                this.deathImage = new Image();
+                this.deathImage.src = this.type.deathImage;
+            }
+        }
+
+        update() {
+            if (this.isDying) {
+                // Death animation logic
+                this.animationTimer++;
+                if (this.animationTimer % this.animationSpeed === 0) {
+                    this.currentFrame++;
+                }
+                if (this.type.deathFrames && this.currentFrame >= this.type.deathFrames) {
+                    this.isDead = true; // Mark for removal
+                }
+            } else {
+                // Walking logic
+                this.x -= this.speed;
+
+                // Walking animation logic
+                if (this.type.walkFrames) {
+                    this.animationTimer++;
+                    if (this.animationTimer % this.animationSpeed === 0) {
+                        this.currentFrame = (this.currentFrame + 1) % this.type.walkFrames;
+                    }
+                }
+            }
+        }
+
+        draw() {
+            const bobble = this.isDying ? 0 : Math.sin(globalAnimationTimer * 5 + this.baseY) * (cellSize * 0.05);
+            let currentImage = this.image;
+            let totalFrames = this.type.walkFrames || 1;
+            let frameWidth;
+
+            if (this.isDying && this.deathImage) {
+                currentImage = this.deathImage;
+                totalFrames = this.type.deathFrames || 1;
+            }
+
+            if (currentImage.width > 0) {
+                 frameWidth = currentImage.width / totalFrames;
+                 const sourceX = this.currentFrame * frameWidth;
+                 ctx.drawImage(currentImage, sourceX, 0, frameWidth, currentImage.height, this.x, this.y + bobble, this.width, this.height);
+            }
+
+
+            if (!this.isDying && this.health < this.maxHealth) {
+                ctx.fillStyle = 'red';
+                ctx.fillRect(this.x, this.y - 10 + bobble, this.width, 5);
+                ctx.fillStyle = 'green';
+                ctx.fillRect(this.x, this.y - 10 + bobble, this.width * (this.health / this.maxHealth), 5);
             }
         }
     }
@@ -1116,8 +1171,13 @@
                     projectiles.splice(i, 1);
                     playSound('enemyHit');
 
-                    if (enemies[j].health <= 0) {
+                    if (enemies[j].health <= 0 && !enemies[j].isDying) {
                         const enemy = enemies[j];
+                        enemy.isDying = true;
+                        enemy.speed = 0;
+                        enemy.currentFrame = 0;
+                        enemy.animationTimer = 0;
+
                         const dropX = Math.min(enemy.x, canvas.width - enemy.width);
                         const dropY = enemy.y;
 
@@ -1127,7 +1187,6 @@
                         if (Math.random() < enemy.type.orbChance) {
                             resources.push(new Resource(dropX, dropY, 'orb'));
                         }
-                        enemies.splice(j, 1);
                     }
                     break;
                 }
@@ -1168,6 +1227,7 @@
 
         projectiles.forEach((p, i) => { p.update(); if (p.x > canvas.width) projectiles.splice(i, 1); });
         enemies.forEach(e => e.update());
+        enemies = enemies.filter(e => !e.isDead);
         resources.forEach((r, i) => { r.update(); if (r.life <= 0) resources.splice(i, 1); });
         handleCollisions();
         handleLevelProgression();
