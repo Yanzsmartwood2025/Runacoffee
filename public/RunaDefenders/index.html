@@ -1163,8 +1163,8 @@
             if (currentImage.width > 0) {
                  frameWidth = Math.floor(currentImage.width / totalFrames);
                  const sourceX = this.currentFrame * frameWidth;
-                 // Using Math.floor and a -1 source width reduction to prevent anti-aliasing artifacts
-                 ctx.drawImage(currentImage, sourceX, 0, frameWidth > 1 ? frameWidth - 1 : frameWidth, currentImage.height, Math.floor(this.x), Math.floor(this.y + bobble), this.width, this.height);
+                 // Applying a 0.5px source offset to prevent bleeding
+                 ctx.drawImage(currentImage, sourceX + 0.5, 0, frameWidth, currentImage.height, Math.floor(this.x), Math.floor(this.y + bobble), this.width, this.height);
             }
 
             ctx.restore();
