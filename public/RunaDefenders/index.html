@@ -956,7 +956,7 @@
         powerDown: new Tone.PolySynth(Tone.AMSynth, { harmonicity: 1.5, detune: 0, oscillator: { type: "square" }, envelope: { attack: 0.01, decay: 0.5, sustain: 0, release: 0.5 }, modulation: { type: "sawtooth" }, modulationEnvelope: { attack: 0.1, decay: 0.2, sustain: 0, release: 0.5 } }).toDestination(),
         // --- NEW: Background music for level 1 ---
         backgroundMusic: new Tone.Player({
-            url: "https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/RunaDefenders/assets/audio/music/nivel1_musica.mp3",
+            url: "assets/audio/music/nivel1_musica.mp3",
             loop: true,
             volume: -12 // Lower volume for background music
         }).toDestination()
