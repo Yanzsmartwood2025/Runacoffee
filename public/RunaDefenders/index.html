@@ -1137,7 +1137,8 @@
             if (currentImage.width > 0) {
                  frameWidth = Math.floor(currentImage.width / totalFrames);
                  const sourceX = this.currentFrame * frameWidth;
-                 ctx.drawImage(currentImage, sourceX, 0, frameWidth, currentImage.height, this.x, this.y + bobble, this.width, this.height);
+                 // Subtracting 1 from frameWidth in the source to prevent bleeding from adjacent frames
+                 ctx.drawImage(currentImage, sourceX, 0, frameWidth > 1 ? frameWidth - 1 : frameWidth, currentImage.height, this.x, this.y + bobble, this.width, this.height);
             }
 
             ctx.restore();
@@ -1193,7 +1194,7 @@
                         enemy.currentFrame = 0;
                         enemy.animationTimer = 0;
 
-                        const dropX = Math.min(enemy.x + enemy.width, canvas.width - enemy.width);
+                        const dropX = Math.max(0, enemy.x - enemy.width / 2);
                         const dropY = enemy.y;
 
                         if (Math.random() < enemy.type.grainChance) {
