@@ -425,9 +425,35 @@
         #auth-modal { z-index: 300; }
         #auth-modal .translucent-panel { background-color: rgba(0,0,0,0.8); border: 2px solid var(--accent-color); }
 
+        #orientation-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #1a1310;
+            color: var(--text-light);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 10000;
+            font-size: 4vmin;
+            padding: 20px;
+        }
+
+        @media (orientation: portrait) {
+            #orientation-overlay {
+                display: flex;
+            }
+        }
     </style>
 </head>
 <body>
+    <div id="orientation-overlay">
+        <p>Por favor, rote su dispositivo a modo horizontal para jugar.</p>
+    </div>
     <div id="loading-screen">Cargando...</div>
 
     <div id="game-container">
