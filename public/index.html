@@ -630,15 +630,23 @@
                 sliderTrack.style.transform = `translateX(-${index * 100}%)`;
             };
 
-            nextButton.addEventListener('click', () => {
+            const handleNext = (e) => {
+                e.preventDefault();
                 currentIndex = (currentIndex + 1) % totalSlides;
                 goToSlide(currentIndex);
-            });
+            };
 
-            prevButton.addEventListener('click', () => {
+            const handlePrev = (e) => {
+                e.preventDefault();
                 currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
                 goToSlide(currentIndex);
-            });
+            };
+
+            nextButton.addEventListener('click', handleNext);
+            nextButton.addEventListener('touchstart', handleNext);
+
+            prevButton.addEventListener('click', handlePrev);
+            prevButton.addEventListener('touchstart', handlePrev);
         }
 
         // --- INICIALIZACIÓN DE LA PÁGINA ---
