@@ -79,3 +79,34 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
     cursor: grabbing;
 }
 
+#text-swipe-hint {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    padding: 8px 16px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+    animation: text-swipe-animation 3s ease-in-out infinite;
+}
+
+#text-swipe-hint.text-swipe-hint-hidden {
+    opacity: 0;
+    display: none;
+}
+
+@keyframes text-swipe-animation {
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        transform: translateX(-50%) scale(1.05);
+    }
+}

@@ -145,6 +145,9 @@
                     <h2 class="text-3xl md:text-4xl font-bold mb-12">Descubre Nuestro Café</h2>
                     <div class="relative max-w-lg mx-auto">
                         <!-- Contenedor del Carrusel -->
+                        <div id="text-swipe-hint" class="text-swipe-hint-hidden">
+                            <span>&lt; Desliza &gt;</span>
+                        </div>
                         <div class="overflow-hidden rounded-2xl">
                             <div id="slider-track" class="flex transition-transform duration-500 ease-in-out">
                                 <!-- Slide 1: Black Caturra -->
@@ -612,6 +615,22 @@
         const setupSlider = () => {
             const sliderTrack = document.getElementById('slider-track');
             if (!sliderTrack) return;
+
+            const textSwipeHint = document.getElementById('text-swipe-hint');
+            if (textSwipeHint && localStorage.getItem('hasSeenTextSwipeHint') !== 'true') {
+                setTimeout(() => {
+                    textSwipeHint.classList.remove('text-swipe-hint-hidden');
+                    textSwipeHint.style.opacity = 1;
+                }, 2500);
+
+                const hideHint = () => {
+                    textSwipeHint.style.opacity = 0;
+                    localStorage.setItem('hasSeenTextSwipeHint', 'true');
+                };
+
+                sliderTrack.addEventListener('touchstart', hideHint, { once: true });
+                sliderTrack.addEventListener('mousedown', hideHint, { once: true });
+            }
 
             let currentIndex = 0;
             const slides = sliderTrack.children;
