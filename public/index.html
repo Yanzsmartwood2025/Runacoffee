@@ -709,8 +709,8 @@
                 swipeDirection = null;
             };
 
-            sliderTrack.addEventListener('touchstart', handleTouchStart);
-            sliderTrack.addEventListener('touchmove', handleTouchMove);
+            sliderTrack.addEventListener('touchstart', handleTouchStart, { passive: true });
+            sliderTrack.addEventListener('touchmove', handleTouchMove, { passive: false });
             sliderTrack.addEventListener('touchend', handleTouchEnd);
 
             // Para escritorio: simular arrastre con mouse
