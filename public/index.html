@@ -225,13 +225,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Botones de Navegación -->
-                        <button id="prev-slide" class="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 backdrop-blur-sm p-2 rounded-full text-white transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-                        </button>
-                        <button id="next-slide" class="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 backdrop-blur-sm p-2 rounded-full text-white transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                        </button>
+                        <!-- Botones de Navegación eliminados para una experiencia táctil -->
                     </div>
                 </div>
             </section>
@@ -617,36 +611,100 @@
         // --- LÓGICA DEL CARRUSEL ---
         const setupSlider = () => {
             const sliderTrack = document.getElementById('slider-track');
-            const prevButton = document.getElementById('prev-slide');
-            const nextButton = document.getElementById('next-slide');
-            
-            if (!sliderTrack || !prevButton || !nextButton) return;
+            if (!sliderTrack) return;
 
             let currentIndex = 0;
             const slides = sliderTrack.children;
             const totalSlides = slides.length;
+            let startX = 0;
+            let currentX = 0;
+            let isDragging = false;
 
             const goToSlide = (index) => {
+                sliderTrack.style.transition = 'transform 0.5s ease-in-out';
                 sliderTrack.style.transform = `translateX(-${index * 100}%)`;
+                currentIndex = index;
             };
 
-            const handleNext = (e) => {
-                e.preventDefault();
-                currentIndex = (currentIndex + 1) % totalSlides;
-                goToSlide(currentIndex);
+            const handleNext = () => {
+                const newIndex = (currentIndex + 1) % totalSlides;
+                goToSlide(newIndex);
             };
 
-            const handlePrev = (e) => {
-                e.preventDefault();
-                currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-                goToSlide(currentIndex);
+            const handlePrev = () => {
+                const newIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                goToSlide(newIndex);
             };
 
-            nextButton.addEventListener('click', handleNext);
-            nextButton.addEventListener('touchstart', handleNext);
+            const handleTouchStart = (e) => {
+                isDragging = true;
+                startX = e.touches[0].clientX;
+                sliderTrack.style.transition = 'none';
+            };
 
-            prevButton.addEventListener('click', handlePrev);
-            prevButton.addEventListener('touchstart', handlePrev);
+            const handleTouchMove = (e) => {
+                if (!isDragging) return;
+                currentX = e.touches[0].clientX;
+                const diffX = currentX - startX;
+                sliderTrack.style.transform = `translateX(calc(-${currentIndex * 100}% + ${diffX}px))`;
+            };
+
+            const handleTouchEnd = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                const diffX = currentX - startX;
+                if (Math.abs(diffX) > 50) { // Umbral de deslizamiento
+                    if (diffX < 0) {
+                        handleNext();
+                    } else {
+                        handlePrev();
+                    }
+                } else {
+                    goToSlide(currentIndex);
+                }
+            };
+
+            sliderTrack.addEventListener('touchstart', handleTouchStart);
+            sliderTrack.addEventListener('touchmove', handleTouchMove);
+            sliderTrack.addEventListener('touchend', handleTouchEnd);
+
+            // Para escritorio: simular arrastre con mouse
+            sliderTrack.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                sliderTrack.style.transition = 'none';
+                sliderTrack.style.cursor = 'grabbing';
+
+                const handleMouseMove = (e) => {
+                    if (!isDragging) return;
+                    currentX = e.clientX;
+                    const diffX = currentX - startX;
+                    sliderTrack.style.transform = `translateX(calc(-${currentIndex * 100}% + ${diffX}px))`;
+                };
+
+                const handleMouseUp = (e) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    sliderTrack.style.cursor = 'grab';
+                    const diffX = e.clientX - startX;
+
+                    if (Math.abs(diffX) > 50) {
+                        if (diffX < 0) {
+                            handleNext();
+                        } else {
+                            handlePrev();
+                        }
+                    } else {
+                        goToSlide(currentIndex);
+                    }
+
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('mouseup', handleMouseUp);
+                };
+
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+            });
         }
 
         // --- INICIALIZACIÓN DE LA PÁGINA ---
