@@ -145,6 +145,16 @@
                     <h2 class="text-3xl md:text-4xl font-bold mb-12">Descubre Nuestro Café</h2>
                     <div class="relative max-w-lg mx-auto">
                         <!-- Contenedor del Carrusel -->
+                        <div id="swipe-indicator" class="absolute top-4 right-4 z-20 pointer-events-none hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 5H9a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V9a4 4 0 0 0-4-4z" />
+                                <path d="M9 5.1L15 5" />
+                                <path d="M9 19L15 18.9" />
+                                <path d="M5.1 9L5 15" />
+                                <path d="M19 9L18.9 15" />
+                                <path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0" />
+                            </svg>
+                        </div>
                         <div class="overflow-hidden rounded-2xl">
                             <div id="slider-track" class="flex transition-transform duration-500 ease-in-out">
                                 <!-- Slide 1: Black Caturra -->
@@ -705,6 +715,29 @@
                 document.addEventListener('mousemove', handleMouseMove);
                 document.addEventListener('mouseup', handleMouseUp);
             });
+
+            const swipeIndicator = document.getElementById('swipe-indicator');
+
+            const hideIndicator = () => {
+                if (swipeIndicator) {
+                    swipeIndicator.classList.remove('animate');
+                    localStorage.setItem('hasSeenSwipeIndicator', 'true');
+                }
+            };
+
+            if (swipeIndicator && !localStorage.getItem('hasSeenSwipeIndicator')) {
+                swipeIndicator.classList.add('animate');
+
+                const timer = setTimeout(hideIndicator, 4000);
+
+                const interactionEvents = ['touchstart', 'mousedown'];
+                interactionEvents.forEach(event => {
+                    sliderTrack.addEventListener(event, () => {
+                        clearTimeout(timer);
+                        hideIndicator();
+                    }, { once: true });
+                });
+            }
         }
 
         // --- INICIALIZACIÓN DE LA PÁGINA ---
