@@ -70,3 +70,11 @@ html.dark #ar-viewer::part(ar-button) { border-color: rgba(255, 255, 255, 0.8); 
 html.dark #ar-viewer::part(ar-button):hover { background-color: rgba(255, 255, 255, 0.9); color: #111; }
 html:not(.dark) #ar-viewer::part(ar-button) { border-color: var(--runa-primary); color: var(--runa-primary); }
 html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa-primary); color: white; }
+
+#slider-track {
+    cursor: grab;
+}
+
+#slider-track:active {
+    cursor: grabbing;
+}
