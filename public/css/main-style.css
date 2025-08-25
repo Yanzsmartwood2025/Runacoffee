@@ -101,9 +101,8 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 
 #carousel-swipe-hint {
     position: absolute;
-    top: 50%;
+    bottom: 20px;
     right: 20px;
-    transform: translateY(-50%);
     z-index: 25;
     pointer-events: none;
     opacity: 0;
@@ -119,20 +118,23 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
     font-size: 45px;
     color: rgba(255, 255, 255, 0.7);
     text-shadow: 0 3px 5px rgba(0,0,0,0.5);
-    transform: scaleX(-1); /* Flip the hand icon */
 }
 
 @keyframes carousel-swipe-animation {
     0%, 100% {
-        transform: translate(0, -50%);
+        transform: translateX(0);
         opacity: 0;
     }
-    50% {
-        transform: translate(-30px, -50%);
+    25% {
+        transform: translateX(-20px);
         opacity: 1;
     }
-    80% {
-        transform: translate(-30px, -50%);
+    50% {
+        transform: translateX(20px);
+        opacity: 1;
+    }
+    75% {
+        transform: translateX(0);
         opacity: 0;
     }
 }
