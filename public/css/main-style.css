@@ -78,3 +78,23 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 #slider-track:active {
     cursor: grabbing;
 }
+
+@keyframes swipe-hand {
+    0% {
+        transform: translateX(0);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translateX(-25px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+}
+
+#swipe-indicator.animate {
+    display: block;
+    animation: swipe-hand 2s ease-in-out infinite;
+}
