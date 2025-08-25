@@ -146,7 +146,7 @@
                     <div class="relative max-w-lg mx-auto">
                         <!-- Contenedor del Carrusel -->
                         <div id="swipe-indicator" class="absolute top-4 right-4 z-20 pointer-events-none hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.7));" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M15 5H9a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V9a4 4 0 0 0-4-4z" />
                                 <path d="M9 5.1L15 5" />
                                 <path d="M9 19L15 18.9" />
@@ -646,23 +646,48 @@
                 goToSlide(newIndex);
             };
 
+            let startY = 0;
+            let swipeDirection = null;
+
             const handleTouchStart = (e) => {
-                isDragging = true;
                 startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isDragging = true;
+                swipeDirection = null;
                 sliderTrack.style.transition = 'none';
             };
 
             const handleTouchMove = (e) => {
                 if (!isDragging) return;
-                currentX = e.touches[0].clientX;
-                const diffX = currentX - startX;
-                sliderTrack.style.transform = `translateX(calc(-${currentIndex * 100}% + ${diffX}px))`;
+
+                const diffX = e.touches[0].clientX - startX;
+                const diffY = e.touches[0].clientY - startY;
+
+                if (swipeDirection === null) {
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        swipeDirection = 'horizontal';
+                    } else {
+                        swipeDirection = 'vertical';
+                    }
+                }
+
+                if (swipeDirection === 'horizontal') {
+                    e.preventDefault(); // Prevenir el scroll vertical de la página
+                    currentX = e.touches[0].clientX;
+                    const moveX = currentX - startX;
+                    sliderTrack.style.transform = `translateX(calc(-${currentIndex * 100}% + ${moveX}px))`;
+                }
             };
 
-            const handleTouchEnd = () => {
-                if (!isDragging) return;
+            const handleTouchEnd = (e) => {
+                if (!isDragging || swipeDirection !== 'horizontal') {
+                    isDragging = false;
+                    return;
+                }
+
                 isDragging = false;
                 const diffX = currentX - startX;
+
                 if (Math.abs(diffX) > 50) { // Umbral de deslizamiento
                     if (diffX < 0) {
                         handleNext();
@@ -672,6 +697,7 @@
                 } else {
                     goToSlide(currentIndex);
                 }
+                swipeDirection = null;
             };
 
             sliderTrack.addEventListener('touchstart', handleTouchStart);
