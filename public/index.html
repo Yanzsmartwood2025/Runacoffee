@@ -42,6 +42,9 @@
     <!-- Google's <model-viewer> component for 3D and AR -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/main-style.css">
 </head>
@@ -145,8 +148,8 @@
                     <h2 class="text-3xl md:text-4xl font-bold mb-12">Descubre Nuestro Café</h2>
                     <div class="relative max-w-lg mx-auto">
                         <!-- Contenedor del Carrusel -->
-                        <div id="swipe-indicator" class="absolute top-4 right-4 z-20 pointer-events-none hidden">
-                            <img src="assets/imagenes/Guante.png" alt="Deslizar" class="swipe-glove" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.7));">
+                        <div id="carousel-swipe-hint">
+                            <i class="fas fa-hand-pointer"></i>
                         </div>
                         <div class="overflow-hidden rounded-2xl">
                             <div id="slider-track" class="flex transition-transform duration-500 ease-in-out">
@@ -735,27 +738,19 @@
                 document.addEventListener('mouseup', handleMouseUp);
             });
 
-            const swipeIndicator = document.getElementById('swipe-indicator');
+            const carouselSwipeHint = document.getElementById('carousel-swipe-hint');
+            if (carouselSwipeHint && localStorage.getItem('hasSeenCarouselHint') !== 'true') {
+                setTimeout(() => {
+                    carouselSwipeHint.classList.add('visible');
+                }, 1500);
 
-            const hideIndicator = () => {
-                if (swipeIndicator) {
-                    swipeIndicator.classList.remove('animate');
-                    localStorage.setItem('hasSeenSwipeIndicator', 'true');
-                }
-            };
+                const hideHint = () => {
+                    carouselSwipeHint.classList.remove('visible');
+                    localStorage.setItem('hasSeenCarouselHint', 'true');
+                };
 
-            if (swipeIndicator && !localStorage.getItem('hasSeenSwipeIndicator')) {
-                swipeIndicator.classList.add('animate');
-
-                const timer = setTimeout(hideIndicator, 4000);
-
-                const interactionEvents = ['touchstart', 'mousedown'];
-                interactionEvents.forEach(event => {
-                    sliderTrack.addEventListener(event, () => {
-                        clearTimeout(timer);
-                        hideIndicator();
-                    }, { once: true });
-                });
+                sliderTrack.addEventListener('touchstart', hideHint, { once: true });
+                sliderTrack.addEventListener('mousedown', hideHint, { once: true });
             }
         }
 
