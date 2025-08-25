@@ -42,9 +42,6 @@
     <!-- Google's <model-viewer> component for 3D and AR -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/main-style.css">
 </head>
@@ -148,9 +145,6 @@
                     <h2 class="text-3xl md:text-4xl font-bold mb-12">Descubre Nuestro Café</h2>
                     <div class="relative max-w-lg mx-auto">
                         <!-- Contenedor del Carrusel -->
-                        <div id="carousel-swipe-hint">
-                            <i class="fas fa-hand-pointer"></i>
-                        </div>
                         <div class="overflow-hidden rounded-2xl">
                             <div id="slider-track" class="flex transition-transform duration-500 ease-in-out">
                                 <!-- Slide 1: Black Caturra -->
@@ -738,20 +732,6 @@
                 document.addEventListener('mouseup', handleMouseUp);
             });
 
-            const carouselSwipeHint = document.getElementById('carousel-swipe-hint');
-            if (carouselSwipeHint && localStorage.getItem('hasSeenCarouselHint') !== 'true') {
-                setTimeout(() => {
-                    carouselSwipeHint.classList.add('visible');
-                }, 1500);
-
-                const hideHint = () => {
-                    carouselSwipeHint.classList.remove('visible');
-                    localStorage.setItem('hasSeenCarouselHint', 'true');
-                };
-
-                sliderTrack.addEventListener('touchstart', hideHint, { once: true });
-                sliderTrack.addEventListener('mousedown', hideHint, { once: true });
-            }
         }
 
         // --- INICIALIZACIÓN DE LA PÁGINA ---
