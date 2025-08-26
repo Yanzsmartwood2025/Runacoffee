@@ -611,147 +611,149 @@
             updateVideoListUI();
         }
 
-        // --- LÓGICA DEL CARRUSEL ---
-        const setupSlider = () => {
-            const sliderTrack = document.getElementById('slider-track');
-            if (!sliderTrack) return;
+        // --- LÓGICA DEL CARRUSEL (CORREGIDA PARA IOS Y ANDROID) ---
+const setupSlider = () => {
+    const sliderTrack = document.getElementById('slider-track');
+    if (!sliderTrack) return;
 
-            const textSwipeHint = document.getElementById('text-swipe-hint');
-            if (textSwipeHint && localStorage.getItem('hasSeenTextSwipeHint') !== 'true') {
-                setTimeout(() => {
-                    textSwipeHint.classList.remove('text-swipe-hint-hidden');
-                    textSwipeHint.style.opacity = 1;
-                }, 2500);
+    const textSwipeHint = document.getElementById('text-swipe-hint');
+    if (textSwipeHint && localStorage.getItem('hasSeenTextSwipeHint') !== 'true') {
+        setTimeout(() => {
+            textSwipeHint.classList.remove('text-swipe-hint-hidden');
+            textSwipeHint.style.opacity = 1;
+        }, 2500);
 
-                const hideHint = () => {
-                    textSwipeHint.style.opacity = 0;
-                    localStorage.setItem('hasSeenTextSwipeHint', 'true');
-                };
+        const hideHint = () => {
+            textSwipeHint.style.opacity = 0;
+            localStorage.setItem('hasSeenTextSwipeHint', 'true');
+        };
 
-                sliderTrack.addEventListener('touchstart', hideHint, { once: true });
-                sliderTrack.addEventListener('mousedown', hideHint, { once: true });
+        sliderTrack.addEventListener('touchstart', hideHint, { once: true });
+        sliderTrack.addEventListener('mousedown', hideHint, { once: true });
+    }
+
+    let currentIndex = 0;
+    const slides = sliderTrack.children;
+    const totalSlides = slides.length;
+    let startX = 0;
+    let startY = 0;
+    let diffX = 0;
+    let isDragging = false;
+    let swipeDirection = null;
+
+    const goToSlide = (index) => {
+        sliderTrack.style.transition = 'transform 0.5s ease-in-out';
+        sliderTrack.style.transform = `translateX(-${index * 100}%)`;
+        currentIndex = index;
+    };
+
+    const handleNext = () => {
+        const newIndex = (currentIndex + 1) % totalSlides;
+        goToSlide(newIndex);
+    };
+
+    const handlePrev = () => {
+        const newIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+        goToSlide(newIndex);
+    };
+
+    const handleTouchStart = (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isDragging = true;
+        swipeDirection = null; // Reset direction on new touch
+        diffX = 0;
+        sliderTrack.style.transition = 'none';
+    };
+
+    const handleTouchMove = (e) => {
+        if (!isDragging) return;
+
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        diffX = currentX - startX;
+        const diffY = currentY - startY;
+
+        if (swipeDirection === null) {
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                swipeDirection = 'horizontal';
+            } else {
+                swipeDirection = 'vertical';
             }
-
-            let currentIndex = 0;
-            const slides = sliderTrack.children;
-            const totalSlides = slides.length;
-            let startX = 0;
-            let currentX = 0;
-            let isDragging = false;
-
-            const goToSlide = (index) => {
-                sliderTrack.style.transition = 'transform 0.5s ease-in-out';
-                sliderTrack.style.transform = `translateX(-${index * 100}%)`;
-                currentIndex = index;
-            };
-
-            const handleNext = () => {
-                const newIndex = (currentIndex + 1) % totalSlides;
-                goToSlide(newIndex);
-            };
-
-            const handlePrev = () => {
-                const newIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-                goToSlide(newIndex);
-            };
-
-            let startY = 0;
-            let swipeDirection = null;
-
-            const handleTouchStart = (e) => {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-                isDragging = true;
-                swipeDirection = null;
-                sliderTrack.style.transition = 'none';
-            };
-
-            const handleTouchMove = (e) => {
-                if (!isDragging) return;
-
-                const diffX = e.touches[0].clientX - startX;
-                const diffY = e.touches[0].clientY - startY;
-
-                if (swipeDirection === null) {
-                    if (Math.abs(diffX) > Math.abs(diffY)) {
-                        swipeDirection = 'horizontal';
-                    } else {
-                        swipeDirection = 'vertical';
-                    }
-                }
-
-                if (swipeDirection === 'horizontal') {
-                    e.preventDefault(); // Prevenir el scroll vertical de la página
-                    currentX = e.touches[0].clientX;
-                    const moveX = currentX - startX;
-                    sliderTrack.style.transform = `translateX(calc(-${currentIndex * 100}% + ${moveX}px))`;
-                }
-            };
-
-            const handleTouchEnd = (e) => {
-                if (!isDragging || swipeDirection !== 'horizontal') {
-                    isDragging = false;
-                    return;
-                }
-
-                isDragging = false;
-                const diffX = currentX - startX;
-
-                if (Math.abs(diffX) > 50) { // Umbral de deslizamiento
-                    if (diffX < 0) {
-                        handleNext();
-                    } else {
-                        handlePrev();
-                    }
-                } else {
-                    goToSlide(currentIndex);
-                }
-                swipeDirection = null;
-            };
-
-            sliderTrack.addEventListener('touchstart', handleTouchStart, { passive: true });
-            sliderTrack.addEventListener('touchmove', handleTouchMove, { passive: false });
-            sliderTrack.addEventListener('touchend', handleTouchEnd);
-
-            // Para escritorio: simular arrastre con mouse
-            sliderTrack.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                startX = e.clientX;
-                sliderTrack.style.transition = 'none';
-                sliderTrack.style.cursor = 'grabbing';
-
-                const handleMouseMove = (e) => {
-                    if (!isDragging) return;
-                    currentX = e.clientX;
-                    const diffX = currentX - startX;
-                    sliderTrack.style.transform = `translateX(calc(-${currentIndex * 100}% + ${diffX}px))`;
-                };
-
-                const handleMouseUp = (e) => {
-                    if (!isDragging) return;
-                    isDragging = false;
-                    sliderTrack.style.cursor = 'grab';
-                    const diffX = e.clientX - startX;
-
-                    if (Math.abs(diffX) > 50) {
-                        if (diffX < 0) {
-                            handleNext();
-                        } else {
-                            handlePrev();
-                        }
-                    } else {
-                        goToSlide(currentIndex);
-                    }
-
-                    document.removeEventListener('mousemove', handleMouseMove);
-                    document.removeEventListener('mouseup', handleMouseUp);
-                };
-
-                document.addEventListener('mousemove', handleMouseMove);
-                document.addEventListener('mouseup', handleMouseUp);
-            });
-
         }
+
+        if (swipeDirection === 'horizontal') {
+            e.preventDefault(); // Prevent vertical scroll ONLY when swiping horizontally
+            sliderTrack.style.transform = `translateX(calc(-${currentIndex * 100}% + ${diffX}px))`;
+        }
+    };
+
+    const handleTouchEnd = () => {
+        if (!isDragging) return;
+        isDragging = false;
+
+        if (swipeDirection === 'horizontal') {
+            if (Math.abs(diffX) > 50) { // Swipe threshold
+                if (diffX < 0) {
+                    handleNext();
+                } else {
+                    handlePrev();
+                }
+            } else {
+                goToSlide(currentIndex); // Snap back
+            }
+        } else {
+            // If swipe was vertical or just a tap, snap back
+            goToSlide(currentIndex);
+        }
+
+        swipeDirection = null; // Reset for next touch
+    };
+
+    // IMPORTANT: Changed passive: true to false for touchstart
+    sliderTrack.addEventListener('touchstart', handleTouchStart, { passive: false });
+    sliderTrack.addEventListener('touchmove', handleTouchMove, { passive: false });
+    sliderTrack.addEventListener('touchend', handleTouchEnd);
+
+    // --- Mouse events for desktop ---
+    let isMouseDown = false;
+    let mouseStartX = 0;
+    let mouseDiffX = 0;
+
+    sliderTrack.addEventListener('mousedown', (e) => {
+        isMouseDown = true;
+        mouseStartX = e.clientX;
+        mouseDiffX = 0;
+        sliderTrack.style.transition = 'none';
+        sliderTrack.style.cursor = 'grabbing';
+    });
+
+    const handleMouseMove = (e) => {
+        if (!isMouseDown) return;
+        mouseDiffX = e.clientX - mouseStartX;
+        sliderTrack.style.transform = `translateX(calc(-${currentIndex * 100}% + ${mouseDiffX}px))`;
+    };
+
+    const handleMouseUpOrLeave = () => {
+        if (!isMouseDown) return;
+        isMouseDown = false;
+        sliderTrack.style.cursor = 'grab';
+
+        if (Math.abs(mouseDiffX) > 50) {
+            if (mouseDiffX < 0) {
+                handleNext();
+            } else {
+                handlePrev();
+            }
+        } else {
+            goToSlide(currentIndex);
+        }
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUpOrLeave);
+    sliderTrack.addEventListener('mouseleave', handleMouseUpOrLeave);
+};
 
         // --- INICIALIZACIÓN DE LA PÁGINA ---
         document.addEventListener('DOMContentLoaded', () => {
