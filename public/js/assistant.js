@@ -2,26 +2,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
     const openAssistantBtn = document.getElementById('open-assistant-btn'); // Mobile button
     const desktopAssistantBtn = document.getElementById('desktop-assistant-button'); // Desktop button
-    const assistantModal = document.getElementById('assistant-modal');
+    const assistantBanner = document.getElementById('assistant-banner');
     const closeModalBtn = document.getElementById('close-assistant-modal-btn');
     const micButton = document.getElementById('mic-button');
     const transcriptionOutput = document.getElementById('transcription-output');
     const assistantResponse = document.getElementById('assistant-response');
 
-    if (!assistantModal || !closeModalBtn || !micButton) {
-        console.error("Assistant modal elements not found. Aborting initialization.");
+    if (!assistantBanner || !closeModalBtn || !micButton) {
+        console.error("Assistant banner elements not found. Aborting initialization.");
         return;
     }
 
-    // --- Modal Logic ---
-    const openModal = () => assistantModal.classList.remove('hidden');
-    const closeModal = () => assistantModal.classList.add('hidden');
+    // --- Banner Logic ---
+    const openBanner = () => assistantBanner.classList.remove('hidden');
+    const closeBanner = () => assistantBanner.classList.add('hidden');
 
     // Event listener for mobile menu button
     if (openAssistantBtn) {
         openAssistantBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            openModal();
+        openBanner();
             const mobileMenu = document.getElementById('mobile-menu');
             if (mobileMenu) mobileMenu.classList.add('hidden');
         });
@@ -31,14 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (desktopAssistantBtn) {
         desktopAssistantBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            openModal();
+            openBanner();
         });
     }
 
-    closeModalBtn.addEventListener('click', closeModal);
-    assistantModal.addEventListener('click', (event) => {
-        if (event.target === assistantModal) closeModal();
-    });
+    closeModalBtn.addEventListener('click', closeBanner);
 
     // --- Web Speech API Logic ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -92,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = command.toLowerCase().trim();
         let response = "No entendí ese comando. Prueba preguntando '¿qué puedes hacer?'.";
         let actionTaken = false;
-        let shouldCloseModal = false;
+        let shouldCloseBanner = false;
 
         // --- Priority 1: Specific Questions & Greetings ---
         const qaCommands = {
@@ -122,17 +119,17 @@ document.addEventListener('DOMContentLoaded', () => {
             response = "Entendido, abriendo el juego Runa Defenders en una nueva pestaña.";
             window.open('/RunaDefenders/index.html', '_blank');
             actionTaken = true;
-            shouldCloseModal = true;
+            shouldCloseBanner = true;
         } else if (externalNavCommands.libro.some(term => text.includes(term))) {
             response = "Perfecto, abriendo la experiencia completa del libro en una nueva pestaña.";
             window.open('/runa-libro/index.html', '_blank');
             actionTaken = true;
-            shouldCloseModal = true;
+            shouldCloseBanner = true;
         }
 
         if (actionTaken) {
             assistantResponse.textContent = `Aria: ${response}`;
-            if (shouldCloseModal) closeModal();
+            if (shouldCloseBanner) closeBanner();
             return;
         }
 
@@ -151,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     response = `Claro, llevándote a la sección correspondiente.`;
                     actionTaken = true;
-                    shouldCloseModal = true;
+                    shouldCloseBanner = true;
                     break;
                 }
             }
@@ -162,12 +159,12 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('#runa-book-interactive').scrollIntoView({ behavior: 'smooth', block: 'start' });
             response = `Claro, te llevo a la sección del libro en esta página. También puedes pedirme que 'abra el libro completo'.`;
             actionTaken = true;
-            shouldCloseModal = true;
+            shouldCloseBanner = true;
         }
 
         assistantResponse.textContent = `Aria: ${response}`;
-        if (actionTaken && shouldCloseModal) {
-            closeModal();
+        if (actionTaken && shouldCloseBanner) {
+            closeBanner();
         }
     };
 });
