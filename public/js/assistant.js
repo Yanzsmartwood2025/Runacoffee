@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Banner Logic ---
-    const openBanner = () => assistantBanner.classList.remove('hidden');
-    const closeBanner = () => assistantBanner.classList.add('hidden');
+    const openBanner = () => assistantBanner.classList.add('is-visible');
+    const closeBanner = () => assistantBanner.classList.remove('is-visible');
 
     // Event listener for mobile menu button
     if (openAssistantBtn) {
