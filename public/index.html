@@ -44,6 +44,7 @@
 
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/main-style.css">
+    <link rel="stylesheet" href="css/assistant.css">
 </head>
 
 <body class="antialiased">
@@ -108,6 +109,8 @@
                         <a href="#runa-book-interactive" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Libro de Origen</a>
                         <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
                         <a href="#contacto" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
+                        <div class="border-t border-white/10 my-3"></div>
+                        <a href="#" id="open-assistant-btn" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Asistente Aria</a>
                 </div>
             </div>
 
@@ -374,6 +377,24 @@
        </div>
     </div>
     
+    <!-- Modal del Asistente Aria -->
+    <div id="assistant-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+       <div class="modal-content-bg w-full max-w-lg rounded-2xl shadow-2xl p-6 flex flex-col modal-enter relative text-center">
+            <button id="close-assistant-modal-btn" class="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-white mb-4">Habla con Aria</h2>
+
+            <div id="assistant-interface" class="flex flex-col gap-4">
+                <div id="transcription-output" class="w-full p-3 rounded-lg bg-black/20 text-white/70 min-h-[40px] text-left">Tú dijiste...</div>
+                <div id="assistant-response" class="w-full p-3 rounded-lg bg-blue-900/30 text-white min-h-[40px] text-left">Aria: ...</div>
+                <button id="mic-button" class="mx-auto w-16 h-16 rounded-full bg-red-600 hover:bg-red-700 transition-colors text-white flex items-center justify-center text-3xl">
+                    🎤
+                </button>
+            </div>
+       </div>
+    </div>
+
     <!-- SCRIPT DE AUTENTICACIÓN EXTERNO -->
     <script type="module" src="./firebase-auth.js"></script>
 
@@ -843,5 +864,6 @@ const setupSlider = () => {
             document.getElementById('year').textContent = new Date().getFullYear();
         });
     </script>
+    <script type="module" src="js/assistant.js"></script>
 </body>
 </html>

@@ -1,0 +1,16 @@
+#mic-button.recording {
+    background-color: #16a34a; /* green-600 */
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(22, 163, 74, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+    }
+}
