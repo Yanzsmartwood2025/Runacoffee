@@ -1,9 +1,58 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- DOM Elements ---
+    // Navigation
+    const hamburgerMenu = document.getElementById('hamburger-menu');
+    const sideNav = document.getElementById('side-nav');
+    const closeNavBtn = document.getElementById('close-nav-btn');
+    const openAssistantBtn = document.getElementById('open-assistant-btn');
+
+    // Modal
+    const assistantModal = document.getElementById('assistant-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+
+    // Assistant Interface
     const micButton = document.getElementById('mic-button');
     const transcriptionOutput = document.getElementById('transcription-output');
     const assistantResponse = document.getElementById('assistant-response');
 
-    // Comprobar si el navegador soporta la Web Speech API
+    // Views
+    const views = {
+        home: document.getElementById('view-home'),
+        book: document.getElementById('view-book'),
+        game: document.getElementById('view-game'),
+        equalizer: document.getElementById('view-equalizer'),
+        whatsapp: document.getElementById('view-whatsapp')
+    };
+
+    // --- Navigation Logic ---
+    hamburgerMenu.addEventListener('click', () => {
+        sideNav.style.width = '250px';
+    });
+
+    closeNavBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        sideNav.style.width = '0';
+    });
+
+    // --- Modal Logic ---
+    openAssistantBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        assistantModal.style.display = 'block';
+        sideNav.style.width = '0'; // Close nav when modal opens
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        assistantModal.style.display = 'none';
+    });
+
+    // Close modal if user clicks outside of it
+    window.addEventListener('click', (event) => {
+        if (event.target == assistantModal) {
+            assistantModal.style.display = 'none';
+        }
+    });
+
+    // --- Web Speech API Logic ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
         micButton.disabled = true;
@@ -12,9 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = 'es-ES'; // Establecer el idioma a español
-    recognition.interimResults = false; // No queremos resultados provisionales
-    recognition.maxAlternatives = 1; // Solo la mejor transcripción
+    recognition.lang = 'es-ES';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
     let isRecording = false;
 
@@ -43,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
     recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         transcriptionOutput.textContent = `Tú dijiste: "${transcript}"`;
-        // Aquí llamaremos a la lógica del asistente en el futuro
         handleCommand(transcript);
     };
 
@@ -51,50 +99,37 @@ document.addEventListener('DOMContentLoaded', () => {
         transcriptionOutput.textContent = 'Error en el reconocimiento: ' + event.error;
     };
 
-    // --- Lógica de navegación y manejo de comandos (Pasos 3 y 4) ---
-    // La dejaremos lista para los siguientes pasos
-
-    const views = {
-        home: document.getElementById('view-home'),
-        book: document.getElementById('view-book'),
-        game: document.getElementById('view-game'),
-        equalizer: document.getElementById('view-equalizer'),
-        whatsapp: document.getElementById('view-whatsapp')
-    };
-
-    const navButtons = {
-        book: document.getElementById('nav-book'),
-        game: document.getElementById('nav-game'),
-        equalizer: document.getElementById('nav-equalizer'),
-        whatsapp: document.getElementById('nav-whatsapp')
-    };
-
+    // --- Assistant Command Handling ---
     function showView(viewName) {
-        // Ocultar todas las vistas
         for (const key in views) {
             views[key].style.display = 'none';
+            views[key].classList.remove('active');
         }
-        // Mostrar la vista solicitada
         if (views[viewName]) {
             views[viewName].style.display = 'block';
+            views[viewName].classList.add('active');
         }
     }
 
-    // Navegación con botones
-    navButtons.book.addEventListener('click', () => showView('book'));
-    navButtons.game.addEventListener('click', () => showView('game'));
-    navButtons.equalizer.addEventListener('click', () => showView('equalizer'));
-    navButtons.whatsapp.addEventListener('click', () => showView('whatsapp'));
-
-
-    // Función para manejar los comandos de voz (Paso 3)
     function handleCommand(command) {
         const lowerCaseCommand = command.toLowerCase();
-        let response = "No entendí ese comando. Intenta de nuevo.";
+        let response = "No entendí ese comando. Prueba preguntando '¿qué puedes hacer?'.";
 
-        if (lowerCaseCommand.includes('libro')) {
+        // Knowledge Commands FIRST, as they are more specific
+        if (lowerCaseCommand.includes('de qué trata el libro')) {
+            response = "El libro trata sobre inteligencia artificial y aprendizaje automático. ¿Quieres que te lleve a esa sección?";
+        } else if (lowerCaseCommand.includes('cómo se juega') || lowerCaseCommand.includes('aventura espacial')) {
+            response = "Aventura Espacial es un juego de exploración galáctica. ¿Quieres ir a la sección del juego?";
+        } else if (lowerCaseCommand.includes('para qué sirve el ecualizador')) {
+            response = "Sirve para ajustar las frecuencias de audio. ¿Te gustaría verlo?";
+        } else if (lowerCaseCommand.includes('qué puedes hacer')) {
+            response = "Puedo llevarte a las secciones de Libro, Juego, Ecualizador y WhatsApp. También puedo contarte de qué trata cada una. ¿Qué te gustaría hacer?";
+        }
+
+        // Navigation Commands SECOND, as they are more general
+        else if (lowerCaseCommand.includes('libro')) {
             showView('book');
-            response = "Claro, te llevo a la sección del libro.";
+            response = "Claro, aquí tienes la sección del libro.";
         } else if (lowerCaseCommand.includes('juego')) {
             showView('game');
             response = "Entendido, abriendo la sección del juego.";
@@ -109,9 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
             response = "Volviendo a la página principal.";
         }
 
-        assistantResponse.textContent = `Asistente: ${response}`;
+        assistantResponse.textContent = `Aria: ${response}`;
     }
 
-    // Iniciar en la vista de home
+    // Initialize
     showView('home');
 });
