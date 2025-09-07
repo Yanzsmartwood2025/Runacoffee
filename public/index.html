@@ -79,9 +79,11 @@
                         </button>
                     </div>
                     <!-- Desktop Assistant Button -->
+                    <!--
                     <button id="desktop-assistant-button" class="p-2 rounded-full text-inherit hidden sm:block" aria-label="Abrir Asistente Aria">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                     </button>
+                    -->
                 </div>
                 <div class="flex-shrink-0">
                     <a href="#" class="h-16 w-16 flex items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
@@ -113,8 +115,10 @@
                         <a href="#runa-book-interactive" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Libro de Origen</a>
                         <a href="#experiencia-3d" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Experiencia 3D</a>
                         <a href="#contacto" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Contacto</a>
+                        <!--
                         <div class="border-t border-white/10 my-3"></div>
                         <a href="#" id="open-assistant-btn" class="mobile-nav-link block text-sm text-inherit hover:text-[var(--runa-primary)] transition-colors">Asistente Aria</a>
+                        -->
                 </div>
             </div>
 
@@ -382,6 +386,7 @@
     </div>
     
     <!-- Banner Flotante del Asistente Aria -->
+    <!--
     <div id="assistant-banner" class="assistant-banner--hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl rounded-2xl shadow-2xl p-4 flex items-center gap-4 transition-all duration-500 ease-out">
         <button id="mic-button" class="flex-shrink-0 w-16 h-16 rounded-full bg-red-600 hover:bg-red-700 transition-colors text-white flex items-center justify-center text-3xl">
         </button>
@@ -393,6 +398,7 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
     </div>
+    -->
 
     <!-- SCRIPT DE AUTENTICACIÓN EXTERNO -->
     <script type="module" src="./firebase-auth.js"></script>
@@ -863,6 +869,6 @@ const setupSlider = () => {
             document.getElementById('year').textContent = new Date().getFullYear();
         });
     </script>
-    <script type="module" src="js/assistant.js"></script>
+    <!-- <script type="module" src="js/assistant.js"></script> -->
 </body>
 </html>
