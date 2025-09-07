@@ -3,50 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asistente de IA - Cofi Total</title>
+    <title>Asistente Aria</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Menú de Hamburguesa -->
+    <div id="hamburger-menu" class="hamburger-menu">
+        &#9776; <!-- Carácter de hamburguesa -->
+    </div>
+    <div id="side-nav" class="side-nav">
+        <a href="#" id="close-nav-btn" class="close-btn">&times;</a>
+        <a href="#" id="open-assistant-btn">Asistente Aria</a>
+    </div>
+
+    <!-- Contenedor Principal -->
     <div class="container">
         <header>
-            <h1>Asistente de IA</h1>
+            <h1>Asistente Aria</h1>
             <p>Tu panel de control centralizado</p>
         </header>
-
-        <nav class="navigation">
-            <button id="nav-book">Libro</button>
-            <button id="nav-game">Juego</button>
-            <button id="nav-equalizer">Ecualizador</button>
-            <button id="nav-whatsapp">WhatsApp</button>
-        </nav>
 
         <main class="main-content">
             <div id="view-home" class="view active">
                 <h2>Bienvenido</h2>
-                <p>Usa los botones o el control por voz para navegar.</p>
+                <p>Usa el menú superior para activar al asistente Aria y navegar por la página.</p>
             </div>
             <div id="view-book" class="view" style="display: none;">
                 <h2>Sección del Libro</h2>
-                <p>Aquí iría el contenido del libro...</p>
+                <p>Este es un libro sobre inteligencia artificial. Explora temas como el aprendizaje automático, las redes neuronales y el procesamiento del lenguaje natural.</p>
+                <p>Capítulo 1: Introducción a la IA.</p>
+                <p>Capítulo 2: Historia del aprendizaje profundo.</p>
             </div>
             <div id="view-game" class="view" style="display: none;">
                 <h2>Sección del Juego</h2>
-                <p>Aquí iría el juego...</p>
+                <p>Bienvenido al juego 'Aventura Espacial'. El objetivo es explorar la galaxia y recolectar recursos. Para jugar, usa comandos de voz como "explorar planeta" o "revisar inventario".</p>
             </div>
             <div id="view-equalizer" class="view" style="display: none;">
                 <h2>Sección del Ecualizador</h2>
-                <p>Aquí iría el ecualizador de audio/video...</p>
+                <p>El ecualizador te permite ajustar las frecuencias de audio. Puedes decir "sube los bajos" o "reduce los agudos".</p>
             </div>
              <div id="view-whatsapp" class="view" style="display: none;">
                 <h2>Sección de WhatsApp</h2>
-                <p>Aquí iría la funcionalidad de WhatsApp...</p>
+                <p>Desde aquí, podrías interactuar con tus contactos de WhatsApp. (Funcionalidad futura)</p>
             </div>
         </main>
+    </div>
 
-        <div class="assistant-bar">
-            <button id="mic-button">🎤</button>
-            <div id="transcription-output">Di un comando...</div>
-            <div id="assistant-response"></div>
+    <!-- Modal del Asistente -->
+    <div id="assistant-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal-btn" class="close-btn">&times;</span>
+            <h2>Habla con Aria</h2>
+            <div class="assistant-interface">
+                <button id="mic-button">🎤</button>
+                <div id="transcription-output">Di un comando...</div>
+                <div id="assistant-response"></div>
+            </div>
         </div>
     </div>
 
