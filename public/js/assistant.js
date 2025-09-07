@@ -1,55 +1,56 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Elements ---
-    const openAssistantBtn = document.getElementById('open-assistant-btn'); // Mobile button
-    const desktopAssistantBtn = document.getElementById('desktop-assistant-button'); // Desktop button
-    const assistantBanner = document.getElementById('assistant-banner');
-    const closeAssistantBtn = document.getElementById('close-assistant-modal-btn');
-    const micButton = document.getElementById('mic-button');
-    const transcriptionOutput = document.getElementById('transcription-output');
-    const assistantResponse = document.getElementById('assistant-response');
+// --- DOM Elements ---
+const openAssistantBtn = document.getElementById('open-assistant-btn'); // Mobile button
+const desktopAssistantBtn = document.getElementById('desktop-assistant-button'); // Desktop button
+const assistantBanner = document.getElementById('assistant-banner');
+const closeAssistantBtn = document.getElementById('close-assistant-modal-btn');
+const micButton = document.getElementById('mic-button');
+const transcriptionOutput = document.getElementById('transcription-output');
+const assistantResponse = document.getElementById('assistant-response');
 
-    if (!assistantBanner || !closeAssistantBtn || !micButton) {
-        console.error("Assistant banner elements not found. Aborting initialization.");
-        return;
-    }
+if (!assistantBanner || !micButton || !closeAssistantBtn) {
+    console.error("Assistant banner elements not found. Aborting initialization.");
+}
 
-    // --- Banner Logic (Toggles a single CSS class) ---
-    const openBanner = () => {
-        if (!assistantBanner) return;
-        assistantBanner.classList.remove('assistant-banner--hidden');
-    };
+// --- Banner Logic (Toggles a single CSS class) ---
+const openBanner = () => {
+    if (!assistantBanner) return;
+    assistantBanner.classList.remove('assistant-banner--hidden');
+};
 
-    const closeBanner = () => {
-        if (!assistantBanner) return;
-        assistantBanner.classList.add('assistant-banner--hidden');
-    };
+const closeBanner = () => {
+    if (!assistantBanner) return;
+    assistantBanner.classList.add('assistant-banner--hidden');
+};
 
-    // --- Event Listeners ---
-    if (openAssistantBtn) {
-        openAssistantBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            openBanner();
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (mobileMenu) mobileMenu.classList.add('hidden');
-        });
-    }
-    if (desktopAssistantBtn) {
-        desktopAssistantBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            openBanner();
-        });
-    }
-    // Add click listener to the 'X' button to close the banner
-    closeAssistantBtn.addEventListener('click', closeBanner);
+// --- Event Listeners ---
+if (openAssistantBtn) {
+    openAssistantBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openBanner();
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu) mobileMenu.classList.add('hidden');
+    });
+}
 
-    // --- Web Speech API Logic ---
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        micButton.disabled = true;
-        assistantResponse.textContent = "Aria: Lo siento, tu navegador no soporta el reconocimiento de voz.";
-        return;
-    }
+if (desktopAssistantBtn) {
+    desktopAssistantBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openBanner();
+    });
+}
 
+if (closeAssistantBtn) {
+    closeAssistantBtn.addEventListener('click', () => {
+        closeBanner();
+    });
+}
+
+// --- Web Speech API Logic ---
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (!SpeechRecognition) {
+    if(micButton) micButton.disabled = true;
+    if(assistantResponse) assistantResponse.textContent = "Aria: Lo siento, tu navegador no soporta el reconocimiento de voz.";
+} else {
     const recognition = new SpeechRecognition();
     recognition.lang = 'es-CO';
     recognition.interimResults = false;
@@ -57,20 +58,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isRecording = false;
 
-    micButton.addEventListener('click', () => {
-        if (isRecording) {
-            recognition.stop();
-        } else {
-            recognition.start();
-        }
-    });
+    if (micButton) {
+        micButton.addEventListener('click', () => {
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
+    }
 
     recognition.onstart = () => {
         isRecording = true;
         micButton.classList.add('recording');
         micButton.innerHTML = '';
-        transcriptionOutput.textContent = 'Escuchando...';
-        assistantResponse.textContent = 'Aria: ...';
+        if(transcriptionOutput) transcriptionOutput.textContent = 'Escuchando...';
+        if(assistantResponse) assistantResponse.textContent = 'Aria: ...';
     };
 
     recognition.onend = () => {
@@ -81,13 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
-        transcriptionOutput.textContent = `Tú dijiste: "${transcript}"`;
+        if(transcriptionOutput) transcriptionOutput.textContent = `Tú dijiste: "${transcript}"`;
         handleCommand(transcript);
     };
 
     recognition.onerror = (event) => {
-        assistantResponse.textContent = 'Aria: Error en el reconocimiento: ' + event.error;
+        if(assistantResponse) assistantResponse.textContent = 'Aria: Error en el reconocimiento: ' + event.error;
     };
+
 
     // --- Assistant Command Handling ---
     const handleCommand = (command) => {
@@ -108,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (text.includes(keyword)) {
                 response = answer;
                 actionTaken = true;
-                assistantResponse.textContent = `Aria: ${response}`;
+                if(assistantResponse) assistantResponse.textContent = `Aria: ${response}`;
                 return;
             }
         }
@@ -131,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (actionTaken) {
-            assistantResponse.textContent = `Aria: ${response}`;
+            if(assistantResponse) assistantResponse.textContent = `Aria: ${response}`;
             if (shouldCloseBanner) closeBanner();
             return;
         }
@@ -163,9 +167,9 @@ document.addEventListener('DOMContentLoaded', () => {
             shouldCloseBanner = true;
         }
 
-        assistantResponse.textContent = `Aria: ${response}`;
+        if(assistantResponse) assistantResponse.textContent = `Aria: ${response}`;
         if (actionTaken && shouldCloseBanner) {
             closeBanner();
         }
     };
-});
+}
