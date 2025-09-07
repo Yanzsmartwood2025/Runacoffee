@@ -1,14 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
-    const openAssistantBtn = document.getElementById('open-assistant-btn');
+    const openAssistantBtn = document.getElementById('open-assistant-btn'); // Mobile button
+    const desktopAssistantBtn = document.getElementById('desktop-assistant-button'); // Desktop button
     const assistantModal = document.getElementById('assistant-modal');
     const closeModalBtn = document.getElementById('close-assistant-modal-btn');
     const micButton = document.getElementById('mic-button');
     const transcriptionOutput = document.getElementById('transcription-output');
     const assistantResponse = document.getElementById('assistant-response');
 
-    if (!openAssistantBtn || !assistantModal || !closeModalBtn || !micButton) {
-        console.error("Assistant DOM elements not found. Aborting initialization.");
+    if (!assistantModal || !closeModalBtn || !micButton) {
+        console.error("Assistant modal elements not found. Aborting initialization.");
         return;
     }
 
@@ -16,20 +17,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const openModal = () => assistantModal.classList.remove('hidden');
     const closeModal = () => assistantModal.classList.add('hidden');
 
-    openAssistantBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        openModal();
-        // Also close the main mobile menu if it's open
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (mobileMenu) {
-            mobileMenu.classList.add('hidden');
-        }
-    });
+    // Event listener for mobile menu button
+    if (openAssistantBtn) {
+        openAssistantBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal();
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu) mobileMenu.classList.add('hidden');
+        });
+    }
+
+    // Event listener for desktop button
+    if (desktopAssistantBtn) {
+        desktopAssistantBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal();
+        });
+    }
+
     closeModalBtn.addEventListener('click', closeModal);
     assistantModal.addEventListener('click', (event) => {
-        if (event.target === assistantModal) {
-            closeModal();
-        }
+        if (event.target === assistantModal) closeModal();
     });
 
     // --- Web Speech API Logic ---
@@ -41,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = 'es-CO'; // Spanish (Colombia)
+    recognition.lang = 'es-CO';
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
@@ -58,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     recognition.onstart = () => {
         isRecording = true;
         micButton.classList.add('recording');
-        micButton.innerHTML = '...';
+        micButton.innerHTML = '';
         transcriptionOutput.textContent = 'Escuchando...';
         assistantResponse.textContent = 'Aria: ...';
     };
@@ -66,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     recognition.onend = () => {
         isRecording = false;
         micButton.classList.remove('recording');
-        micButton.innerHTML = '🎤';
+        micButton.innerHTML = '';
     };
 
     recognition.onresult = (event) => {
@@ -81,73 +89,85 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Assistant Command Handling ---
     const handleCommand = (command) => {
-        const lowerCaseCommand = command.toLowerCase().trim();
+        const text = command.toLowerCase().trim();
         let response = "No entendí ese comando. Prueba preguntando '¿qué puedes hacer?'.";
         let actionTaken = false;
+        let shouldCloseModal = false;
 
-        // --- Navigation Commands ---
-        const navigationCommands = {
-            'libro de origen': '#runa-book-interactive',
-            'nuestra historia': '#runa-book-interactive',
-            'experiencia 3d': '#experiencia-3d',
-            'árbol 3d': '#experiencia-3d',
-            'catálogo': '#catalogo',
-            'nuestro café': '#catalogo',
-            'contacto': '#contacto'
+        // --- Priority 1: Specific Questions & Greetings ---
+        const qaCommands = {
+            'qué puedes hacer': "Puedo llevarte a las secciones de la página como 'catálogo' o 'experiencia 3D'. También puedo abrir el 'juego' o el 'libro' en otra pestaña, y responder preguntas sobre los tipos de café.",
+            'de qué trata el black caturra': "El Black Caturra es un café de proceso Black Honey, con notas intensas a frutos rojos, miel y caramelo. Se le añaden hongos funcionales para mejorar la concentración y el ánimo.",
+            'de qué trata el blend geisha': "Es una fusión del Black Caturra con Geisha Natural. Tiene un perfil floral y complejo, con notas de jazmín, lavanda, melocotón y mandarina.",
+            'hola': "¡Hola! ¿En qué puedo ayudarte hoy?",
+            'gracias': "¡De nada! Estoy aquí para ayudarte."
         };
 
-        for (const [keyword, selector] of Object.entries(navigationCommands)) {
-            if (lowerCaseCommand.includes(keyword)) {
+        for (const [keyword, answer] of Object.entries(qaCommands)) {
+            if (text.includes(keyword)) {
+                response = answer;
+                actionTaken = true;
+                assistantResponse.textContent = `Aria: ${response}`;
+                return; // Exit, but keep modal open
+            }
+        }
+
+        // --- Priority 2: Specific Actions (Open new tabs) ---
+        const externalNavCommands = {
+            'juego': ['juego', 'defenders'],
+            'libro': ['abrir libro', 'leer libro', 'muéstrame el libro completo']
+        };
+
+        if (externalNavCommands.juego.some(term => text.includes(term))) {
+            response = "Entendido, abriendo el juego Runa Defenders en una nueva pestaña.";
+            window.open('/RunaDefenders/index.html', '_blank');
+            actionTaken = true;
+            shouldCloseModal = true;
+        } else if (externalNavCommands.libro.some(term => text.includes(term))) {
+            response = "Perfecto, abriendo la experiencia completa del libro en una nueva pestaña.";
+            window.open('/runa-libro/index.html', '_blank');
+            actionTaken = true;
+            shouldCloseModal = true;
+        }
+
+        if (actionTaken) {
+            assistantResponse.textContent = `Aria: ${response}`;
+            if (shouldCloseModal) closeModal();
+            return;
+        }
+
+        // --- Priority 3: General Navigation (Scroll on page) ---
+        const internalNavCommands = {
+            '#runa-book-interactive': ['libro de origen', 'nuestra historia', 'libro 3d'],
+            '#experiencia-3d': ['experiencia 3d', 'árbol 3d', 'ver el árbol'],
+            '#catalogo': ['catálogo', 'nuestro café', 'ver los productos'],
+            '#contacto': ['contacto', 'contactarnos']
+        };
+
+        for (const [selector, keywords] of Object.entries(internalNavCommands)) {
+            if (keywords.some(term => text.includes(term))) {
                 const element = document.querySelector(selector);
                 if (element) {
                     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    response = `Claro, llevándote a la sección ${keyword}.`;
+                    response = `Claro, llevándote a la sección correspondiente.`;
                     actionTaken = true;
+                    shouldCloseModal = true;
                     break;
                 }
             }
         }
 
-        if (actionTaken) {
-            assistantResponse.textContent = `Aria: ${response}`;
-            closeModal();
-            return;
-        }
-
-        // --- External Page Navigation ---
-        if (lowerCaseCommand.includes('juego') || lowerCaseCommand.includes('defenders')) {
-            response = "Entendido, abriendo el juego Runa Defenders en una nueva pestaña.";
-            window.open('/RunaDefenders/index.html', '_blank');
+        // --- Priority 4: Catch-all for "libro" as requested by user ---
+        if (!actionTaken && text.includes('libro')) {
+            document.querySelector('#runa-book-interactive').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            response = `Claro, te llevo a la sección del libro en esta página. También puedes pedirme que 'abra el libro completo'.`;
             actionTaken = true;
-        } else if (lowerCaseCommand.includes('abrir el libro') || lowerCaseCommand.includes('leer el libro')) {
-            response = "Perfecto, abriendo la experiencia completa del libro en una nueva pestaña.";
-            window.open('/runa-libro/index.html', '_blank');
-            actionTaken = true;
-        }
-
-        if (actionTaken) {
-            assistantResponse.textContent = `Aria: ${response}`;
-            closeModal();
-            return;
-        }
-
-        // --- Knowledge & Q&A Commands ---
-        const qaCommands = {
-            'black caturra': "El Black Caturra es un café de proceso Black Honey, con notas intensas a frutos rojos, miel y caramelo. Se le añaden hongos funcionales para mejorar la concentración y el ánimo.",
-            'blend geisha': "Es una fusión del Black Caturra con Geisha Natural. Tiene un perfil floral y complejo, con notas de jazmín, lavanda, melocotón y mandarina. Es una experiencia de taza muy elegante.",
-            'qué puedes hacer': "Puedo llevarte a las secciones de la página, como 'catálogo' o 'experiencia 3D'. También puedo abrir el 'juego' o el 'libro' en otra pestaña, y responder preguntas sobre los tipos de café.",
-            'hola aria': "¡Hola! ¿En qué puedo ayudarte hoy?",
-            'gracias': "¡De nada! Estoy aquí para ayudarte."
-        };
-
-        for (const [keyword, answer] of Object.entries(qaCommands)) {
-            if (lowerCaseCommand.includes(keyword)) {
-                response = answer;
-                actionTaken = true;
-                break;
-            }
+            shouldCloseModal = true;
         }
 
         assistantResponse.textContent = `Aria: ${response}`;
+        if (actionTaken && shouldCloseModal) {
+            closeModal();
+        }
     };
 });
