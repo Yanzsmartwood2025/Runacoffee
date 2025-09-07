@@ -3,39 +3,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const openAssistantBtn = document.getElementById('open-assistant-btn'); // Mobile button
     const desktopAssistantBtn = document.getElementById('desktop-assistant-button'); // Desktop button
     const assistantBanner = document.getElementById('assistant-banner');
-    const closeModalBtn = document.getElementById('close-assistant-modal-btn');
+    const closeAssistantBtn = document.getElementById('close-assistant-modal-btn');
     const micButton = document.getElementById('mic-button');
     const transcriptionOutput = document.getElementById('transcription-output');
     const assistantResponse = document.getElementById('assistant-response');
 
-    if (!assistantBanner || !closeModalBtn || !micButton) {
+    if (!assistantBanner || !closeAssistantBtn || !micButton) {
         console.error("Assistant banner elements not found. Aborting initialization.");
         return;
     }
 
     // --- Banner Logic ---
-    const openBanner = () => assistantBanner.classList.add('is-visible');
-    const closeBanner = () => assistantBanner.classList.remove('is-visible');
+    const openBanner = () => {
+        // First, make it part of the layout
+        assistantBanner.classList.remove('hidden');
+        // Then, in the next frame, trigger the animation
+        requestAnimationFrame(() => {
+            assistantBanner.classList.add('is-visible');
+        });
+    };
 
-    // Event listener for mobile menu button
+    const closeBanner = () => {
+        assistantBanner.classList.remove('is-visible');
+        // Add the 'hidden' class back after the transition ends
+        assistantBanner.addEventListener('transitionend', () => {
+            assistantBanner.classList.add('hidden');
+        }, { once: true }); // Important: 'once' removes the listener after it's been called
+    };
+
+    // --- Event Listeners ---
     if (openAssistantBtn) {
         openAssistantBtn.addEventListener('click', (e) => {
             e.preventDefault();
-        openBanner();
+            openBanner();
             const mobileMenu = document.getElementById('mobile-menu');
             if (mobileMenu) mobileMenu.classList.add('hidden');
         });
     }
-
-    // Event listener for desktop button
     if (desktopAssistantBtn) {
         desktopAssistantBtn.addEventListener('click', (e) => {
             e.preventDefault();
             openBanner();
         });
     }
-
-    closeModalBtn.addEventListener('click', closeBanner);
+    closeAssistantBtn.addEventListener('click', closeBanner);
 
     // --- Web Speech API Logic ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -91,10 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let actionTaken = false;
         let shouldCloseBanner = false;
 
-        // --- Priority 1: Specific Questions & Greetings ---
         const qaCommands = {
             'qué puedes hacer': "Puedo llevarte a las secciones de la página como 'catálogo' o 'experiencia 3D'. También puedo abrir el 'juego' o el 'libro' en otra pestaña, y responder preguntas sobre los tipos de café.",
-            'de qué trata el black caturra': "El Black Caturra es un café de proceso Black Honey, con notas intensas a frutos rojos, miel y caramelo. Se le añaden hongos funcionales para mejorar la concentración y el ánimo.",
+            'de qué trata el black caturra': "El Black Caturra es un café de proceso Black Honey, con notas intensas a frutos rojos, miel y caramelo.",
             'de qué trata el blend geisha': "Es una fusión del Black Caturra con Geisha Natural. Tiene un perfil floral y complejo, con notas de jazmín, lavanda, melocotón y mandarina.",
             'hola': "¡Hola! ¿En qué puedo ayudarte hoy?",
             'gracias': "¡De nada! Estoy aquí para ayudarte."
@@ -105,11 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 response = answer;
                 actionTaken = true;
                 assistantResponse.textContent = `Aria: ${response}`;
-                return; // Exit, but keep modal open
+                return;
             }
         }
 
-        // --- Priority 2: Specific Actions (Open new tabs) ---
         const externalNavCommands = {
             'juego': ['juego', 'defenders'],
             'libro': ['abrir libro', 'leer libro', 'muéstrame el libro completo']
@@ -133,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // --- Priority 3: General Navigation (Scroll on page) ---
         const internalNavCommands = {
             '#runa-book-interactive': ['libro de origen', 'nuestra historia', 'libro 3d'],
             '#experiencia-3d': ['experiencia 3d', 'árbol 3d', 'ver el árbol'],
@@ -154,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // --- Priority 4: Catch-all for "libro" as requested by user ---
         if (!actionTaken && text.includes('libro')) {
             document.querySelector('#runa-book-interactive').scrollIntoView({ behavior: 'smooth', block: 'start' });
             response = `Claro, te llevo a la sección del libro en esta página. También puedes pedirme que 'abra el libro completo'.`;
