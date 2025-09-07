@@ -6,18 +6,6 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-
-    /* Visibility & Animation */
-    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
-    transform: translateY(150%); /* Start off-screen */
-    opacity: 0;
-    pointer-events: none; /* Prevent interaction when hidden */
-}
-
-#assistant-banner.is-visible {
-    transform: translateY(0);
-    opacity: 1;
-    pointer-events: auto; /* Allow interaction when visible */
 }
 
 #mic-button.recording {
