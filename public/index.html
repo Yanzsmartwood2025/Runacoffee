@@ -382,14 +382,14 @@
     </div>
     
     <!-- Banner Flotante del Asistente Aria -->
-    <div id="assistant-banner" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl rounded-2xl shadow-2xl p-4 flex items-center gap-4 opacity-0 translate-y-full pointer-events-none transition-all duration-500 ease-out">
+    <div id="assistant-banner" class="assistant-banner--hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl rounded-2xl shadow-2xl p-4 flex items-center gap-4 transition-all duration-500 ease-out">
         <button id="mic-button" class="flex-shrink-0 w-16 h-16 rounded-full bg-red-600 hover:bg-red-700 transition-colors text-white flex items-center justify-center text-3xl">
         </button>
         <div class="flex-grow flex flex-col gap-2 text-sm">
             <div id="transcription-output" class="w-full p-2 rounded-lg bg-black/20 text-white/70 min-h-[20px]">Tú dijiste...</div>
             <div id="assistant-response" class="w-full p-2 rounded-lg bg-blue-900/30 text-white min-h-[20px]">Aria: ...</div>
         </div>
-        <button id="close-assistant-modal-btn" class="flex-shrink-0 text-gray-500 hover:text-white transition-colors">
+        <button id="close-assistant-modal-btn" class="flex-shrink-0 text-gray-500 hover:text-white transition-colors" aria-label="Cerrar asistente">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
     </div>

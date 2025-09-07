@@ -13,15 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- Banner Logic (Simplified Tailwind Toggle) ---
+    // --- Banner Logic (Toggles a single CSS class) ---
     const openBanner = () => {
         if (!assistantBanner) return;
-        assistantBanner.classList.remove('opacity-0', 'translate-y-full', 'pointer-events-none');
+        assistantBanner.classList.remove('assistant-banner--hidden');
     };
 
     const closeBanner = () => {
         if (!assistantBanner) return;
-        assistantBanner.classList.add('opacity-0', 'translate-y-full', 'pointer-events-none');
+        assistantBanner.classList.add('assistant-banner--hidden');
     };
 
     // --- Event Listeners ---
@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             openBanner();
         });
     }
+    // Add click listener to the 'X' button to close the banner
     closeAssistantBtn.addEventListener('click', closeBanner);
 
     // --- Web Speech API Logic ---
