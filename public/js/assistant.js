@@ -13,22 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- Banner Logic ---
+    // --- Banner Logic (Simplified Tailwind Toggle) ---
     const openBanner = () => {
-        // First, make it part of the layout
-        assistantBanner.classList.remove('hidden');
-        // Then, in the next frame, trigger the animation
-        requestAnimationFrame(() => {
-            assistantBanner.classList.add('is-visible');
-        });
+        if (!assistantBanner) return;
+        assistantBanner.classList.remove('opacity-0', 'translate-y-full', 'pointer-events-none');
     };
 
     const closeBanner = () => {
-        assistantBanner.classList.remove('is-visible');
-        // Add the 'hidden' class back after the transition ends
-        assistantBanner.addEventListener('transitionend', () => {
-            assistantBanner.classList.add('hidden');
-        }, { once: true }); // Important: 'once' removes the listener after it's been called
+        if (!assistantBanner) return;
+        assistantBanner.classList.add('opacity-0', 'translate-y-full', 'pointer-events-none');
     };
 
     // --- Event Listeners ---
