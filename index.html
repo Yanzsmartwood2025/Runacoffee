@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente de IA - Cofi Total</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Asistente de IA</h1>
+            <p>Tu panel de control centralizado</p>
+        </header>
+
+        <nav class="navigation">
+            <button id="nav-book">Libro</button>
+            <button id="nav-game">Juego</button>
+            <button id="nav-equalizer">Ecualizador</button>
+            <button id="nav-whatsapp">WhatsApp</button>
+        </nav>
+
+        <main class="main-content">
+            <div id="view-home" class="view active">
+                <h2>Bienvenido</h2>
+                <p>Usa los botones o el control por voz para navegar.</p>
+            </div>
+            <div id="view-book" class="view" style="display: none;">
+                <h2>Sección del Libro</h2>
+                <p>Aquí iría el contenido del libro...</p>
+            </div>
+            <div id="view-game" class="view" style="display: none;">
+                <h2>Sección del Juego</h2>
+                <p>Aquí iría el juego...</p>
+            </div>
+            <div id="view-equalizer" class="view" style="display: none;">
+                <h2>Sección del Ecualizador</h2>
+                <p>Aquí iría el ecualizador de audio/video...</p>
+            </div>
+             <div id="view-whatsapp" class="view" style="display: none;">
+                <h2>Sección de WhatsApp</h2>
+                <p>Aquí iría la funcionalidad de WhatsApp...</p>
+            </div>
+        </main>
+
+        <div class="assistant-bar">
+            <button id="mic-button">🎤</button>
+            <div id="transcription-output">Di un comando...</div>
+            <div id="assistant-response"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
