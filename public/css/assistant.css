@@ -6,6 +6,14 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    /* The transition itself is handled by Tailwind classes on the element */
+}
+
+/* This class is toggled by JS to show/hide the banner */
+.assistant-banner--hidden {
+    opacity: 0;
+    transform: translateY(100%);
+    pointer-events: none;
 }
 
 #mic-button.recording {
