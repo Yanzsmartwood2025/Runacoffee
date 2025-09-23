@@ -68,9 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Conditionally apply zoom class for the Facebook icon
     if (provider.name === 'facebook') {
+      iconImg.classList.remove('w-6', 'h-6', 'object-contain');
       iconImg.classList.add('zoom-fb-carousel');
     } else {
       iconImg.classList.remove('zoom-fb-carousel');
+      iconImg.classList.add('w-6', 'h-6', 'object-contain');
     }
 
     // Move to the next provider
