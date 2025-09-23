@@ -175,8 +175,7 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 
 /* Style to zoom the Facebook icon in the header carousel */
 #user-profile-picture.zoom-fb-carousel {
-  width: 100% !important;
-  height: 100% !important;
-  /* Esta es la propiedad clave que hace el trabajo correctamente sin transformaciones extrañas. */
+  width: 70px !important;
+  height: 70px !important;
   object-fit: cover !important;
 }
