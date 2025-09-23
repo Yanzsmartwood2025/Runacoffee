@@ -66,6 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
     ring.className = 'auth-icon-ring'; // Reset classes
     ring.classList.add(provider.ringClass);
 
+    // Conditionally apply zoom class for the Facebook icon
+    if (provider.name === 'facebook') {
+      iconImg.classList.add('zoom-fb-carousel');
+    } else {
+      iconImg.classList.remove('zoom-fb-carousel');
+    }
+
     // Move to the next provider
     currentProviderIndex = (currentProviderIndex + 1) % providers.length;
   };
