@@ -110,39 +110,3 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
         transform: translateX(-50%) scale(1.05);
     }
 }
-
-/* Styles for the dynamic auth icon ring */
-@keyframes rotate-glow {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-#user-profile-button.auth-carousel::before {
-    content: '';
-    position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
-    border-radius: 50%;
-    background-origin: border-box;
-    background-clip: content-box, border-box;
-    z-index: -1;
-    animation: rotate-glow 4s linear infinite;
-    transition: background-image 0.5s ease-in-out;
-}
-
-#user-profile-button.google-ring::before {
-    background-image: conic-gradient(from 0deg, #EA4335, #FBBC05, #34A853, #4285F4, #EA4335);
-    filter: drop-shadow(0 0 5px #4285F4) drop-shadow(0 0 5px #EA4335);
-}
-
-#user-profile-button.facebook-ring::before {
-    background-image: linear-gradient(#1877F2, #4267B2);
-    filter: drop-shadow(0 0 6px #1877F2);
-}
-
-#user-profile-button.apple-ring::before {
-    background-image: linear-gradient(#e0e0e0, #a0a0a0);
-    filter: drop-shadow(0 0 5px #ffffff);
-}
