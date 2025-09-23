@@ -177,6 +177,6 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 #user-profile-picture.zoom-fb-carousel {
   width: 100% !important;
   height: 100% !important;
-  transform: scale(1.8) !important;
+  /* Esta es la propiedad clave que hace el trabajo correctamente sin transformaciones extrañas. */
   object-fit: cover !important;
 }
