@@ -151,8 +151,8 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
   border: 4px solid transparent; /* Made thicker */
   animation: spin 8s linear infinite;
   pointer-events: none;
-  opacity: 1; /* Force visibility */
-  animation-play-state: running; /* Force animation to play */
+  opacity: 1 !important; /* Force visibility */
+  animation-play-state: running !important; /* Force animation to play */
 }
 
 .auth-icon-ring.ring-google {
@@ -171,4 +171,22 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 #auth-container > button,
 #auth-container > div > button {
     position: relative;
+}
+
+/* Styles for the Facebook login icon to "zoom in" and hide whitespace */
+.fb-icon-wrapper {
+  width: 28px;  /* Corresponds to Tailwind's w-7 */
+  height: 28px; /* Corresponds to Tailwind's h-7 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%; /* Ensures a circular crop */
+}
+
+.fb-icon-wrapper img {
+  width: 100%;
+  height: 100%;
+  transform: scale(1.8); /* Zoom factor, adjustable */
+  object-fit: cover;
 }
