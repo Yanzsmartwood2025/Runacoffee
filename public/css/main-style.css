@@ -176,7 +176,7 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 /* New style to apply the Facebook logo as a background image */
 .auth-button-facebook-bg {
     background-image: url('../assets/imagenes/Facebook.png');
-    background-size: 80%; /* Adjust as needed to get the right padding */
+    background-size: cover; /* Use cover for robustness */
     background-repeat: no-repeat;
     background-position: center;
     background-color: white; /* Fallback color */
