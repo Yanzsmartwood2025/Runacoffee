@@ -110,3 +110,48 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
         transform: translateX(-50%) scale(1.05);
     }
 }
+
+/* --- Login Icon Ring Animation --- */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+#user-profile-button {
+    position: relative;
+    overflow: visible; /* Ensure pseudo-elements are not clipped */
+}
+
+#user-profile-button::before {
+    content: '';
+    position: absolute;
+    left: -6px; /* Adjust to center the ring */
+    top: -6px; /* Adjust to center the ring */
+    width: calc(100% + 12px);
+    height: calc(100% + 12px);
+    border-radius: 50%;
+    background: var(--ring-color, transparent);
+    background-clip: padding-box;
+    border: 3px solid transparent;
+    animation: spin 4s linear infinite;
+    z-index: -1;
+    filter: drop-shadow(0 0 3px var(--shadow-color1, transparent)) drop-shadow(0 0 6px var(--shadow-color2, transparent));
+}
+
+#user-profile-button.ring-google {
+    --ring-color: conic-gradient(#4285F4, #DB4437, #F4B400, #0F9D58, #4285F4);
+    --shadow-color1: #4285F4;
+    --shadow-color2: #F4B400;
+}
+
+#user-profile-button.ring-facebook {
+    --ring-color: #1877F2;
+    --shadow-color1: #1877F2;
+    --shadow-color2: #1877F2;
+}
+
+#user-profile-button.ring-apple {
+    --ring-color: #FFF;
+    --shadow-color1: #FFF;
+    --shadow-color2: #FFF;
+}

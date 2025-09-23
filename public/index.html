@@ -410,8 +410,8 @@
     </div>
     -->
 
-    <!-- SCRIPT DE AUTENTICACIÓN EXTERNO -->
-    <script type="module" src="./firebase-auth.js"></script>
+    <!-- SCRIPT DE AUTENTICACIÓN CENTRALIZADO -->
+    <script type="module" src="/js/auth.js"></script>
 
     <!-- SCRIPT PRINCIPAL DE LA PÁGINA -->
     <script type="module">
@@ -431,37 +431,9 @@
             { id: 'storm-audio', name: 'Tormenta', gifSrc: 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/main/public/assets/gif/storm.gif' },
         ];
         
-        // --- LÓGICA DE AUTENTICACIÓN ---
-        let isUserLoggedIn = false;
-        const placeholderAvatar = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
-
         // --- ELEMENTOS DEL DOM ---
         const cartModal = document.getElementById('cart-modal');
         const cartCounter = document.getElementById('cart-counter');
-        const authModal = document.getElementById('auth-modal');
-        const userProfileButton = document.getElementById('user-profile-button');
-        const userProfilePicture = document.getElementById('user-profile-picture');
-        const closeAuthModalButton = document.getElementById('close-auth-modal-button');
-
-        window.updateUIAfterLogin = (user) => {
-            if (!user || !user.photoURL) return;
-            isUserLoggedIn = true;
-            userProfilePicture.src = user.photoURL;
-            userProfilePicture.classList.remove('w-6', 'h-6', 'object-contain');
-            userProfilePicture.classList.add('w-full', 'h-full', 'object-cover');
-            userProfileButton.classList.remove('bg-white');
-            userProfileButton.setAttribute('aria-label', `Menú de ${user.displayName}`);
-            closeAuthModal();
-        };
-
-        window.updateUIAfterLogout = () => {
-            isUserLoggedIn = false;
-            userProfilePicture.src = placeholderAvatar;
-            userProfilePicture.classList.add('w-6', 'h-6', 'object-contain');
-            userProfilePicture.classList.remove('w-full', 'h-full', 'object-cover');
-            userProfileButton.classList.add('bg-white');
-            userProfileButton.setAttribute('aria-label', 'Iniciar sesión con Google');
-        };
 
         // --- FUNCIONES DEL CARRITO ---
         const updateCartCounter = () => {
