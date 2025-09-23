@@ -173,9 +173,11 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
     position: relative;
 }
 
-/* Style to zoom the Facebook icon in the header carousel */
-#user-profile-picture.zoom-fb-carousel {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
+/* New style to apply the Facebook logo as a background image */
+.auth-button-facebook-bg {
+    background-image: url('../assets/imagenes/Facebook.png');
+    background-size: 80%; /* Adjust as needed to get the right padding */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white; /* Fallback color */
 }
