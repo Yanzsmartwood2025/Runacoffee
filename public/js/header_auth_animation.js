@@ -59,13 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const isGamePage = window.location.pathname.includes('RunaDefenders');
     iconImg.src = (isGamePage ? '../' : '') + provider.icon;
 
-    // Add a specific class for the Facebook icon to apply zoom
-    if (provider.name === 'facebook') {
-      iconImg.classList.add('facebook-icon-zoom');
-    } else {
-      iconImg.classList.remove('facebook-icon-zoom');
-    }
-
     // Update alt text
     iconImg.alt = `Iniciar sesión con ${provider.name}`;
 
