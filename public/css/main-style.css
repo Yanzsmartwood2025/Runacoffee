@@ -170,3 +170,14 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 #auth-container > div > button {
     position: relative;
 }
+
+/*
+ Specific fix for the Facebook icon to "zoom in" and hide the white border
+ This applies to the icon in the header and the login modal.
+*/
+#user-profile-picture[src*="Facebook.png"],
+#auth-modal img[src*="Facebook.png"] {
+    transform: scale(1.8);
+    /* The parent button has overflow:hidden and the JS sets object-fit:cover,
+       which makes this scale trick work as a zoom/crop. */
+}
