@@ -46,7 +46,26 @@ body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s eas
 .modal-enter { animation: fadeIn 0.3s ease-out forwards; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 #cart-icon-wrapper { position: relative; }
-#cart-counter { position: absolute; top: 0; right: 0; transform: translate(25%, -25%); width: 1.25rem; height: 1.25rem; background-color: #DC2626; color: white; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 0.25rem; }
+#cart-counter {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(25%, -25%);
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+}
 input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 5px; outline: none; background: transparent; }
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--runa-primary); cursor: pointer; border-radius: 50%; border: 2px solid; border-color: #FDFBF8; margin-top: -6px; }
 html.dark input[type="range"]::-webkit-slider-thumb { border-color: #111; }
@@ -122,20 +141,20 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 }
 
 @keyframes glow-google {
-  0%, 100% { box-shadow: 0 0 5px #4285F4, 0 0 15px #EA4335, 0 0 25px #FBBC05, 0 0 40px #34A853, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
-  25% { box-shadow: 0 0 5px #34A853, 0 0 15px #4285F4, 0 0 25px #EA4335, 0 0 40px #FBBC05, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
-  50% { box-shadow: 0 0 5px #FBBC05, 0 0 15px #34A853, 0 0 25px #4285F4, 0 0 40px #EA4335, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
-  75% { box-shadow: 0 0 5px #EA4335, 0 0 15px #FBBC05, 0 0 25px #34A853, 0 0 40px #4285F4, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
+  0%, 100% { box-shadow: 0 0 5px #4285F4, 0 0 10px #EA4335, 0 0 15px #FBBC05, 0 0 20px #34A853; }
+  25% { box-shadow: 0 0 5px #34A853, 0 0 10px #4285F4, 0 0 15px #EA4335, 0 0 20px #FBBC05; }
+  50% { box-shadow: 0 0 5px #FBBC05, 0 0 10px #34A853, 0 0 15px #4285F4, 0 0 20px #EA4335; }
+  75% { box-shadow: 0 0 5px #EA4335, 0 0 10px #FBBC05, 0 0 15px #34A853, 0 0 20px #4285F4; }
 }
 
 @keyframes glow-facebook {
-  0%, 100% { box-shadow: 0 0 10px #1877F2, 0 0 20px #1877F2, 0 0 35px #1877F2, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
-  50% { box-shadow: 0 0 15px #1877F2, 0 0 30px #1877F2, 0 0 50px #1877F2, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
+  0%, 100% { box-shadow: 0 0 10px #1877F2, 0 0 15px #1877F2; }
+  50% { box-shadow: 0 0 15px #1877F2, 0 0 25px #1877F2; }
 }
 
 @keyframes glow-apple {
-  0%, 100% { box-shadow: 0 0 10px #FFFFFF, 0 0 20px #FFFFFF, 0 0 35px #FFFFFF, 0 0 5px rgba(0, 0, 0, 0.2) inset; }
-  50% { box-shadow: 0 0 15px #FFFFFF, 0 0 30px #FFFFFF, 0 0 50px #FFFFFF, 0 0 5px rgba(0, 0, 0, 0.2) inset; }
+  0%, 100% { box-shadow: 0 0 10px #FFFFFF, 0 0 15px #FFFFFF; }
+  50% { box-shadow: 0 0 15px #FFFFFF, 0 0 25px #FFFFFF; }
 }
 
 /* --- Ring Styles --- */
