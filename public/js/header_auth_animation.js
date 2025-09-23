@@ -54,6 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const updateProviderIcon = () => {
     const provider = providers[currentProviderIndex];
 
+    // Update image source
+    // The game page (RunaDefenders) is in a subdirectory, so paths need adjustment.
+    const isGamePage = window.location.pathname.includes('RunaDefenders');
+    iconImg.src = (isGamePage ? '../' : '') + provider.icon;
+
     // Update alt text
     iconImg.alt = `Iniciar sesión con ${provider.name}`;
 
@@ -61,21 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
     ring.className = 'auth-icon-ring'; // Reset classes
     ring.classList.add(provider.ringClass);
 
-    // Logic for applying background image for Facebook or showing icon for others
+    // Conditionally apply zoom class for the Facebook icon
     if (provider.name === 'facebook') {
-      // Use background image for Facebook and hide the img tag
-      button.classList.add('auth-button-facebook-bg');
-      iconImg.style.visibility = 'hidden';
+      iconImg.classList.remove('w-6', 'h-6', 'object-contain');
+      iconImg.classList.add('zoom-fb-carousel');
     } else {
-      // Use the img tag for Google/Apple
-      button.classList.remove('auth-button-facebook-bg');
-      iconImg.style.visibility = 'visible';
-
-      // Update image source only for non-Facebook providers
-      const isGamePage = window.location.pathname.includes('RunaDefenders');
-      iconImg.src = (isGamePage ? '../' : '') + provider.icon;
-
-      iconImg.classList.remove('zoom-fb-carousel'); // Ensure old class is gone
+      iconImg.classList.remove('zoom-fb-carousel');
       iconImg.classList.add('w-6', 'h-6', 'object-contain');
     }
 
