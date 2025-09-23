@@ -122,15 +122,29 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 }
 
 @keyframes glow-google {
-  0%, 100% { box-shadow: 0 0 5px #4285F4, 0 0 10px #EA4335, 0 0 15px #FBBC05, 0 0 20px #34A853; }
-  25% { box-shadow: 0 0 5px #34A853, 0 0 10px #4285F4, 0 0 15px #EA4335, 0 0 20px #FBBC05; }
-  50% { box-shadow: 0 0 5px #FBBC05, 0 0 10px #34A853, 0 0 15px #4285F4, 0 0 20px #EA4335; }
-  75% { box-shadow: 0 0 5px #EA4335, 0 0 10px #FBBC05, 0 0 15px #34A853, 0 0 20px #4285F4; }
+  0%, 100% { box-shadow: 0 0 5px #4285F4, 0 0 15px #EA4335, 0 0 25px #FBBC05, 0 0 40px #34A853, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
+  25% { box-shadow: 0 0 5px #34A853, 0 0 15px #4285F4, 0 0 25px #EA4335, 0 0 40px #FBBC05, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
+  50% { box-shadow: 0 0 5px #FBBC05, 0 0 15px #34A853, 0 0 25px #4285F4, 0 0 40px #EA4335, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
+  75% { box-shadow: 0 0 5px #EA4335, 0 0 15px #FBBC05, 0 0 25px #34A853, 0 0 40px #4285F4, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
 }
 
 @keyframes glow-facebook {
-  0%, 100% { box-shadow: 0 0 10px #1877F2, 0 0 15px #1877F2; }
-  50% { box-shadow: 0 0 15px #1877F2, 0 0 25px #1877F2; }
+  0%, 100% { box-shadow: 0 0 10px #1877F2, 0 0 20px #1877F2, 0 0 35px #1877F2, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
+  50% { box-shadow: 0 0 15px #1877F2, 0 0 30px #1877F2, 0 0 50px #1877F2, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
+}
+
+/* --- Modal Login Button Glow --- */
+#google-login-button-modal img,
+#facebook-login-button-modal img {
+  border-radius: 50%;
+}
+
+#google-login-button-modal img {
+  animation: glow-google 4s ease-in-out infinite;
+}
+
+#facebook-login-button-modal img {
+  animation: glow-facebook 3s ease-in-out infinite;
 }
 
 @keyframes glow-apple {
