@@ -111,47 +111,62 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
     }
 }
 
-/* --- Login Icon Ring Animation --- */
+/* --- Keyframe Animations --- */
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-#user-profile-button {
+@keyframes glow-google {
+  0%, 100% { box-shadow: 0 0 5px #4285F4, 0 0 10px #EA4335, 0 0 15px #FBBC05, 0 0 20px #34A853; }
+  25% { box-shadow: 0 0 5px #34A853, 0 0 10px #4285F4, 0 0 15px #EA4335, 0 0 20px #FBBC05; }
+  50% { box-shadow: 0 0 5px #FBBC05, 0 0 10px #34A853, 0 0 15px #4285F4, 0 0 20px #EA4335; }
+  75% { box-shadow: 0 0 5px #EA4335, 0 0 10px #FBBC05, 0 0 15px #34A853, 0 0 20px #4285F4; }
+}
+
+@keyframes glow-facebook {
+  0%, 100% { box-shadow: 0 0 8px #1877F2, 0 0 12px #1877F2, 0 0 18px #FFFFFF; }
+  50% { box-shadow: 0 0 12px #1877F2, 0 0 18px #FFFFFF, 0 0 24px #1877F2; }
+}
+
+@keyframes glow-apple {
+  0%, 100% { box-shadow: 0 0 8px #FFFFFF, 0 0 12px #c0c0c0, 0 0 18px #FFFFFF; }
+  50% { box-shadow: 0 0 12px #FFFFFF, 0 0 18px #c0c0c0, 0 0 24px #FFFFFF; }
+}
+
+/* --- Ring Styles --- */
+.auth-icon-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 130%;
+  height: 130%;
+  margin-top: -65%;
+  margin-left: -65%;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  animation: spin 8s linear infinite;
+  pointer-events: none;
+}
+
+.auth-icon-ring.ring-google {
+  animation: spin 8s linear infinite, glow-google 4s ease-in-out infinite;
+}
+
+.auth-icon-ring.ring-facebook {
+  animation: spin 8s linear infinite, glow-facebook 3s ease-in-out infinite;
+}
+
+.auth-icon-ring.ring-apple {
+  animation: spin 8s linear infinite, glow-apple 3s ease-in-out infinite;
+}
+
+/* Ensure the parent container can hold the absolute positioned ring */
+#auth-container > button,
+#auth-container > div > button {
     position: relative;
-    overflow: visible; /* Ensure pseudo-elements are not clipped */
-}
-
-#user-profile-button::before {
-    content: '';
-    position: absolute;
-    left: -6px; /* Adjust to center the ring */
-    top: -6px; /* Adjust to center the ring */
-    width: calc(100% + 12px);
-    height: calc(100% + 12px);
-    border-radius: 50%;
-    background: var(--ring-color, transparent);
-    background-clip: padding-box;
-    border: 3px solid transparent;
-    animation: spin 4s linear infinite;
-    z-index: -1;
-    filter: drop-shadow(0 0 3px var(--shadow-color1, transparent)) drop-shadow(0 0 6px var(--shadow-color2, transparent));
-}
-
-#user-profile-button.ring-google {
-    --ring-color: conic-gradient(#4285F4, #DB4437, #F4B400, #0F9D58, #4285F4);
-    --shadow-color1: #4285F4;
-    --shadow-color2: #F4B400;
-}
-
-#user-profile-button.ring-facebook {
-    --ring-color: #1877F2;
-    --shadow-color1: #1877F2;
-    --shadow-color2: #1877F2;
-}
-
-#user-profile-button.ring-apple {
-    --ring-color: #FFF;
-    --shadow-color1: #FFF;
-    --shadow-color2: #FFF;
 }

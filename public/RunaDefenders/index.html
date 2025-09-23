@@ -19,6 +19,7 @@
             }
         }
     </script>
+    <link rel="stylesheet" href="../css/main-style.css">
 
     <style>
         :root {
@@ -568,13 +569,15 @@
        </div>
     </div>
 
-<script type="module" src="/js/auth.js"></script>
 <script type="module">
     // =================================================================
     // --- MODULE IMPORTS ---
     // =================================================================
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // =================================================================
     // --- 3D SCENE MODULE ---
@@ -770,6 +773,126 @@
                     // If we were paused, we don't need to restart the game loop, just set the state.
                 }
             });
+        }
+    }
+
+    // =================================================================
+    // --- FIREBASE INTEGRATION ---
+    // =================================================================
+    let auth, db, userId = null;
+    const authContainer = document.getElementById('auth-container');
+    const authModal = document.getElementById('auth-modal');
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
+
+    async function initializeAndLoadGame() {
+        try {
+            const firebaseConfig = JSON.parse(firebaseConfigStr);
+            if (Object.keys(firebaseConfig).length === 0) {
+                console.log("Firebase config not found. Starting new game.");
+                init(0, 0, 0, config.base.health, true);
+                updateAuthUI(null);
+                return;
+            }
+
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            onAuthStateChanged(auth, async (user) => {
+                updateAuthUI(user);
+                if (user) {
+                    userId = user.uid;
+                    const savedData = await loadGameData();
+                    if (savedData) {
+                        init(
+                            savedData.level || 0,
+                            savedData.specialPower || 0,
+                            savedData.coffeeBeans || 0,
+                            savedData.baseHealth || config.base.health,
+                            true
+                        );
+                    } else {
+                        init(0, 0, 0, config.base.health, true);
+                    }
+                } else {
+                    signInAnonymously(auth).catch(error => {
+                        console.error("Anonymous sign-in failed:", error);
+                        init(0, 0, 0, config.base.health, true);
+                    });
+                }
+            });
+
+        } catch (e) {
+            console.error("Firebase initialization failed:", e);
+            init(0, 0, 0, config.base.health, true);
+            updateAuthUI(null);
+        }
+    }
+
+    function updateAuthUI(user) {
+        authContainer.innerHTML = '';
+        if (user && !user.isAnonymous) {
+            const fallbackImage = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
+            const photoURL = user.photoURL || fallbackImage;
+
+            const userButton = document.createElement('button');
+            userButton.id = 'logout-btn';
+            userButton.title = `Cerrar sesión de ${user.displayName || 'Usuario'}`;
+
+            const userPhoto = document.createElement('img');
+            userPhoto.src = photoURL;
+            userPhoto.alt = "Foto de Usuario";
+            userPhoto.style.objectFit = user.photoURL ? 'cover' : 'contain';
+            if (!user.photoURL) {
+                 userPhoto.style.padding = '5px';
+                 userPhoto.style.backgroundColor = '#fff';
+            }
+            userPhoto.onerror = () => { userPhoto.src = fallbackImage; };
+
+            userButton.appendChild(userPhoto);
+            authContainer.appendChild(userButton);
+        } else {
+            const loginButton = document.createElement('button');
+            loginButton.id = 'open-login-modal-btn';
+            loginButton.title = 'Iniciar Sesión';
+
+            const loginImage = document.createElement('img');
+            loginImage.src = 'https://raw.githubusercontent.com/Yanzsmartwood2025/Runacoffee/52282681aa9e33511cedc3f7bb1281b0151528bb/public/assets/imagenes/logo-google.png';
+            loginImage.alt = "Iniciar Sesión con Google";
+
+            loginButton.appendChild(loginImage);
+            authContainer.appendChild(loginButton);
+        }
+    }
+
+    async function saveGameData() {
+        if (!userId || !db) return;
+        const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
+        const dataToSave = {
+            level: currentLevelIndex,
+            specialPower: specialPowerPoints,
+            coffeeBeans: coffeeBeanCount,
+            baseHealth: base.health,
+            timestamp: new Date()
+        };
+        try {
+            await setDoc(gameDataRef, dataToSave, { merge: true });
+        } catch (error) {
+            console.error("Error saving game:", error);
+        }
+    }
+
+    async function loadGameData() {
+        if (!userId || !db) return null;
+        const gameDataRef = doc(db, `artifacts/${appId}/users/${userId}/runa_defenders_h`, 'progress');
+        try {
+            const docSnap = await getDoc(gameDataRef);
+            return docSnap.exists() ? docSnap.data() : null;
+        } catch (error)
+        {
+            console.error("Error loading game:", error);
+            return null;
         }
     }
 
@@ -1429,6 +1552,26 @@
             }
         });
 
+        document.getElementById('close-auth-modal-button').addEventListener('click', () => authModal.classList.add('hidden'));
+
+        document.getElementById('google-login-button-modal').addEventListener('click', () => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider).then(() => {
+                authModal.classList.add('hidden');
+            }).catch(error => console.error("Google Sign-In Error:", error));
+        });
+
+        authContainer.addEventListener('click', (event) => {
+            const button = event.target.closest('button');
+            if (!button) return;
+
+            if (button.id === 'open-login-modal-btn') {
+                authModal.classList.remove('hidden');
+            } else if (button.id === 'logout-btn') {
+                signOut(auth).catch(error => console.error("Sign out error", error));
+            }
+        });
+
         let keys = {};
         window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; if (e.key === ' ' || e.key.includes('Arrow')) e.preventDefault(); });
         window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
@@ -1624,10 +1767,11 @@
     document.addEventListener('DOMContentLoaded', () => {
         setupEventListeners();
         initThreeScene();
-        init(0, 0, 0, config.base.health, true);
+        initializeAndLoadGame();
         window.addEventListener('resize', resizeAll);
     });
 </script>
 
+<script src="../js/header_auth_animation.js"></script>
 </body>
 </html>
