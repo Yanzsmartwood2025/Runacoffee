@@ -148,9 +148,10 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
   margin-top: -65%;
   margin-left: -65%;
   border-radius: 50%;
-  border: 2px solid transparent;
+  border: 4px solid transparent; /* Made thicker */
   animation: spin 8s linear infinite;
   pointer-events: none;
+  opacity: 1; /* Force visibility */
 }
 
 .auth-icon-ring.ring-google {
@@ -169,12 +170,4 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 #auth-container > button,
 #auth-container > div > button {
     position: relative;
-}
-
-/*
- Specific fix for the Facebook icon to "zoom in" and hide the white border.
- This class is added via header_auth_animation.js.
-*/
-.facebook-icon-zoom {
-    transform: scale(1.8);
 }
