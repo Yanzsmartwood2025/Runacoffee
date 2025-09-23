@@ -133,23 +133,9 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
   50% { box-shadow: 0 0 15px #1877F2, 0 0 30px #1877F2, 0 0 50px #1877F2, 0 0 5px rgba(255, 255, 255, 0.5) inset; }
 }
 
-/* --- Modal Login Button Glow --- */
-#google-login-button-modal img,
-#facebook-login-button-modal img {
-  border-radius: 50%;
-}
-
-#google-login-button-modal img {
-  animation: glow-google 4s ease-in-out infinite;
-}
-
-#facebook-login-button-modal img {
-  animation: glow-facebook 3s ease-in-out infinite;
-}
-
 @keyframes glow-apple {
-  0%, 100% { box-shadow: 0 0 10px #FFFFFF, 0 0 15px #FFFFFF; }
-  50% { box-shadow: 0 0 15px #FFFFFF, 0 0 25px #FFFFFF; }
+  0%, 100% { box-shadow: 0 0 10px #FFFFFF, 0 0 20px #FFFFFF, 0 0 35px #FFFFFF, 0 0 5px rgba(0, 0, 0, 0.2) inset; }
+  50% { box-shadow: 0 0 15px #FFFFFF, 0 0 30px #FFFFFF, 0 0 50px #FFFFFF, 0 0 5px rgba(0, 0, 0, 0.2) inset; }
 }
 
 /* --- Ring Styles --- */
