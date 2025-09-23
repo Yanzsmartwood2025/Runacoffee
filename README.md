@@ -8,27 +8,45 @@ El sitio está construido como una aplicación web estática (static web app), u
 
 ## ✨ Características Principales
 
-- **Experiencia 3D y Realidad Aumentada (AR):**
-  - Visualizador de un libro 3D interactivo que cuenta la historia de la marca.
-  - Un modelo 3D de un árbol místico que se puede ver en Realidad Aumentada en dispositivos compatibles.
-- **Mezclador de Sonido Ambiental:** Permite a los usuarios crear su propio ambiente sonoro mezclando sonidos de la naturaleza (río, pájaros, lluvia, etc.) mientras navegan por el sitio.
-- **Autenticación de Usuarios:** Integración con Firebase para permitir el inicio de sesión a través de Google, Facebook y Apple.
-- **Catálogo de Productos:** Muestra los diferentes tipos de café de especialidad ofrecidos por RUNA COFFEE.
-- **Interfaz de Carrito de Compras:** Funcionalidad para que los usuarios añadan productos a un carrito de compras.
-- **Tema Claro y Oscuro:** Selector de tema para adaptar la apariencia del sitio a las preferencias del usuario.
-- **Diseño Responsivo:** Adaptado para una correcta visualización en dispositivos móviles y de escritorio.
+- **Página Principal (`index.html`):**
+  - **Experiencia 3D/AR:** Muestra un árbol místico interactivo usando `<model-viewer>`.
+  - **Mezclador de Sonido Ambiental:** Permite a los usuarios mezclar sonidos de la naturaleza.
+  - **Catálogo de Productos:** Un carrusel que presenta los cafés de la marca.
+  - **Autenticación de Usuarios:** Integración con Firebase para inicio de sesión social.
+  - **Tema Claro/Oscuro:** Adaptación visual según la preferencia del usuario.
+
+- **Libro Interactivo (`runa-libro/index.html`):**
+  - **Efecto de Paso de Página:** Simula un libro real usando la librería `Turn.js`.
+  - **Herramientas Creativas:** Los usuarios pueden dibujar con un lápiz, escribir con diferentes fuentes, añadir imágenes, y borrar contenido en las páginas del cuaderno.
+  - **Persistencia de Datos:** Utiliza **Firestore** para guardar las creaciones de cada usuario, permitiendo que su cuaderno personalizado se conserve entre sesiones.
+  - **Utilidades Integradas:** Incluye una calculadora estilo TI-89 y herramientas para compartir e imprimir.
+
+- **Videojuego "Runa Defenders" (`RunaDefenders/index.html`):**
+  - **Género Tower Defense:** Un juego donde el jugador defiende el Árbol de Runa de oleadas de plagas.
+  - **Gráficos 2D y 3D:** Combina un juego 2D renderizado en `<canvas>` con un árbol de vida 3D renderizado con **Three.js**.
+  - **Audio Inmersivo:** Usa **Tone.js** para efectos de sonido y música de fondo.
+  - **Sistema de Progresión:** Incluye múltiples niveles, oleadas de enemigos y la capacidad de guardar el progreso del jugador a través de **Firestore**.
 
 ## 🛠️ Tecnologías Utilizadas
 
-- **Frontend:**
-  - HTML5
-  - CSS3
+- **Frontend General:**
+  - HTML5, CSS3, JavaScript (ES6 Modules)
   - [Tailwind CSS](https://tailwindcss.com/): Para un desarrollo rápido y moderno de la interfaz.
-  - JavaScript (ES6 Modules)
-- **Autenticación:**
-  - [Firebase Authentication](https://firebase.google.com/docs/auth): Para gestionar el inicio de sesión de usuarios.
-- **3D / AR:**
-  - [Google `<model-viewer>`](https://modelviewer.dev/): Para renderizar los modelos 3D y la experiencia de Realidad Aumentada.
+  - [jQuery](https://jquery.com/): Usado principalmente en la sección del libro interactivo.
+
+- **Autenticación y Base de Datos:**
+  - [Firebase](https://firebase.google.com/):
+    - **Authentication:** Para gestionar el inicio de sesión de usuarios (Google, Facebook, Apple).
+    - **Firestore:** Para guardar el progreso del juego y el contenido del cuaderno digital de cada usuario.
+
+- **Gráficos y Animación:**
+  - [Google `<model-viewer>`](https://modelviewer.dev/): Para los modelos 3D/AR en la página principal.
+  - [Three.js](https://threejs.org/): Para renderizar y animar el árbol 3D en el juego "Runa Defenders".
+  - [Turn.js](http://www.turnjs.com/): Para la animación de paso de página del libro interactivo.
+  - HTML `<canvas>`: Para la renderización del gameplay 2D en "Runa Defenders".
+
+- **Audio:**
+  - [Tone.js](https://tonejs.github.io/): Para la síntesis de audio y efectos de sonido en "Runa Defenders".
 
 ## 🚀 Cómo Empezar
 
