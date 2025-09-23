@@ -110,3 +110,40 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
         transform: translateX(-50%) scale(1.05);
     }
 }
+
+/* Styles for the dynamic auth icon ring */
+@keyframes rotate-glow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#user-profile-button {
+    position: relative;
+}
+
+.auth-ring {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    padding: 2px;
+    background-size: 200% 200%;
+    animation: rotate-glow 5s linear infinite;
+    z-index: -1;
+    opacity: 0.8;
+}
+
+.auth-ring.google-ring {
+    background-image: conic-gradient(from 0deg, #4285F4 0% 25%, #EA4335 25% 50%, #FBBC05 50% 75%, #34A853 75% 100%);
+}
+
+.auth-ring.facebook-ring {
+    background-image: linear-gradient(to right, #1877F2, #4267B2);
+}
+
+.auth-ring.apple-ring {
+    background-image: linear-gradient(to right, #ffffff, #c0c0c0);
+}
