@@ -83,15 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // User is signed out or anonymous, setup carousel
             const providers = [
-                { name: 'Google', icon: 'assets/imagenes/logo-google.png', ringClass: 'google-ring' },
-                { name: 'Facebook', icon: 'assets/imagenes/Facebook.png', ringClass: 'facebook-ring' },
-                { name: 'Apple', icon: 'assets/imagenes/Apple.png', ringClass: 'apple-ring' }
+                { name: 'Google', icon: '/assets/imagenes/logo-google.png', ringClass: 'google-ring' },
+                { name: 'Facebook', icon: '/assets/imagenes/Facebook.png', ringClass: 'facebook-ring' },
+                { name: 'Apple', icon: '/assets/imagenes/Apple.png', ringClass: 'apple-ring' }
             ];
             let currentProviderIndex = 0;
 
             const loginButtonHTML = `
-                 <button id="user-profile-button" class="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent transition-colors flex items-center justify-center bg-white">
-                    <div class="auth-ring"></div>
+                 <button id="user-profile-button" class="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent transition-colors flex items-center justify-center bg-white auth-carousel">
                     <img id="user-profile-picture" src="${providers[0].icon}" alt="Iniciar sesión con ${providers[0].name}" class="w-6 h-6 object-contain">
                 </button>
             `;
@@ -99,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const userProfileButton = document.getElementById('user-profile-button');
             const userProfilePicture = document.getElementById('user-profile-picture');
-            const authRing = userProfileButton.querySelector('.auth-ring');
 
             const updateCarousel = () => {
                 currentProviderIndex = (currentProviderIndex + 1) % providers.length;
@@ -108,12 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 userProfilePicture.src = provider.icon;
                 userProfilePicture.alt = `Iniciar sesión con ${provider.name}`;
 
-                authRing.className = 'auth-ring'; // Reset classes
-                authRing.classList.add(provider.ringClass);
+                userProfileButton.className = userProfileButton.className.replace(/google-ring|facebook-ring|apple-ring/g, '').trim();
+                userProfileButton.classList.add(provider.ringClass);
             };
 
             // Set initial state
-            authRing.classList.add(providers[0].ringClass);
+            userProfileButton.classList.add(providers[0].ringClass);
 
             // Start carousel
             authCarouselInterval = setInterval(updateCarousel, 5000);

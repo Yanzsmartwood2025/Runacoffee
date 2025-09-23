@@ -117,33 +117,32 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
     100% { transform: rotate(360deg); }
 }
 
-#user-profile-button {
-    position: relative;
-}
-
-.auth-ring {
+#user-profile-button.auth-carousel::before {
     content: '';
     position: absolute;
-    top: -4px;
-    left: -4px;
-    right: -4px;
-    bottom: -4px;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
     border-radius: 50%;
-    padding: 2px;
-    background-size: 200% 200%;
-    animation: rotate-glow 5s linear infinite;
+    background-origin: border-box;
+    background-clip: content-box, border-box;
     z-index: -1;
-    opacity: 0.8;
+    animation: rotate-glow 4s linear infinite;
+    transition: background-image 0.5s ease-in-out;
 }
 
-.auth-ring.google-ring {
-    background-image: conic-gradient(from 0deg, #4285F4 0% 25%, #EA4335 25% 50%, #FBBC05 50% 75%, #34A853 75% 100%);
+#user-profile-button.google-ring::before {
+    background-image: conic-gradient(from 0deg, #EA4335, #FBBC05, #34A853, #4285F4, #EA4335);
+    filter: drop-shadow(0 0 5px #4285F4) drop-shadow(0 0 5px #EA4335);
 }
 
-.auth-ring.facebook-ring {
-    background-image: linear-gradient(to right, #1877F2, #4267B2);
+#user-profile-button.facebook-ring::before {
+    background-image: linear-gradient(#1877F2, #4267B2);
+    filter: drop-shadow(0 0 6px #1877F2);
 }
 
-.auth-ring.apple-ring {
-    background-image: linear-gradient(to right, #ffffff, #c0c0c0);
+#user-profile-button.apple-ring::before {
+    background-image: linear-gradient(#e0e0e0, #a0a0a0);
+    filter: drop-shadow(0 0 5px #ffffff);
 }
