@@ -173,5 +173,5 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 
 /* Zoom in on the Facebook icon in the header to make it more visible */
 #user-profile-picture[src*="Facebook.png"] {
-    transform: scale(2.5);
+    transform: scale(4.0);
 }
