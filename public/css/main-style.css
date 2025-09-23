@@ -152,6 +152,7 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
   animation: spin 8s linear infinite;
   pointer-events: none;
   opacity: 1; /* Force visibility */
+  animation-play-state: running; /* Force animation to play */
 }
 
 .auth-icon-ring.ring-google {
