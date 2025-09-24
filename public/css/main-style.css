@@ -111,66 +111,74 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
     }
 }
 
-/* --- KEYFRAMES Y ESTILOS DEL ARO DE NEÓN 3D --- */
-@keyframes spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-
-@keyframes glow-neon-blue {
-    0%, 100% { box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.4), 0 0 5px #00d5ff, 0 0 10px #1877F2, 0 0 18px #1877F2; }
-    50% { box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5), 0 0 8px #00d5ff, 0 0 18px #1877F2, 0 0 30px #1877F2; }
-}
-
-@keyframes glow-white-halo {
-    0%, 100% { box-shadow: 0 0 10px rgba(200, 200, 200, 0.7), 0 0 18px rgba(200, 200, 200, 0.5); }
-    50% { box-shadow: 0 0 15px rgba(200, 200, 200, 0.8), 0 0 25px rgba(200, 200, 200, 0.6); }
-}
-
+/* --- ESTILOS DEL ARO DE LUZ EXTERIOR (VERSIÓN FINAL) --- */
 #user-profile-button {
     position: relative;
-    background-color: #fff !important; /* Mantiene el fondo blanco original */
-    border: none !important;
+    /* Aseguramos que el brillo no se corte */
+    overflow: visible;
+    border: none !important; /* Quitamos bordes previos */
 }
 
-/* El pseudo-elemento ::before crea el aro brillante */
-#user-profile-button::before {
+.auth-icon-ring {
     content: '';
     position: absolute;
-    top: 50%; left: 50%;
-    width: 100%; height: 100%;
-    transform: translate(-50%, -50%); /* Centrado inicial */
-    border-radius: 50%;
-    box-sizing: border-box;
-}
-
-#user-profile-button.ring-google::before {
-    background: conic-gradient(#4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
-    animation: spin 4s linear infinite;
-}
-
-#user-profile-button.ring-facebook::before {
-    border: 4px solid #1877F2;
-    animation: glow-neon-blue 3s ease-in-out infinite;
-}
-
-#user-profile-button.ring-apple::before {
-    border: 4px solid white;
-    animation: glow-white-halo 3s ease-in-out infinite;
-}
-
-/* Máscara interior para crear el aro y mantener el fondo blanco */
-#user-profile-button::after {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    width: calc(100% - 8px); /* Grosor del aro: 4px por lado */
-    height: calc(100% - 8px);
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    background: #fff; /* Coincide con el fondo original del botón */
     border-radius: 50%;
+    /* El aro es más grande que el botón para que se vea por fuera */
+    width: 140%;
+    height: 140%;
+    /* Se coloca detrás de la imagen */
+    z-index: -1;
 }
 
-#user-profile-picture {
-    position: relative;
-    z-index: 2; /* Imagen encima de la máscara */
+/* Animación de rotación para Google */
+@keyframes rotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Animación de brillo intenso para Facebook */
+@keyframes glow-neon-blue {
+    0%, 100% {
+        box-shadow: 0 0 4px #1877F2, 0 0 8px #1877F2, 0 0 12px #00d5ff, 0 0 16px #00d5ff;
+    }
+    50% {
+        box-shadow: 0 0 6px #00d5ff, 0 0 12px #00d5ff, 0 0 18px #1877F2, 0 0 24px #1877F2;
+    }
+}
+
+/* Animación de brillo intenso para Apple */
+@keyframes glow-white-halo {
+    0%, 100% {
+        box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eee;
+    }
+    50% {
+        box-shadow: 0 0 8px #fff, 0 0 16px #fff, 0 0 24px #eee;
+    }
+}
+
+/* Google: Aro con gradiente de colores, desenfocado y en rotación */
+.auth-icon-ring.ring-google {
+    background: conic-gradient(from 0deg, #EA4335, #FBBC05, #34A853, #4285F4, #EA4335);
+    animation: rotate 3s linear infinite;
+    filter: blur(6px); /* ESTA es la clave para el brillo de neón */
+    box-shadow: none; /* No necesita sombra adicional */
+}
+
+/* Facebook: Aro transparente con sombra azul animada */
+.auth-icon-ring.ring-facebook {
+    background: transparent;
+    animation: glow-neon-blue 2s ease-in-out infinite;
+    filter: none;
+}
+
+/* Apple: Aro transparente con sombra blanca animada */
+.auth-icon-ring.ring-apple {
+    background: transparent;
+    animation: glow-white-halo 2s ease-in-out infinite;
+    filter: none;
 }
 
 #user-profile-picture.zoom-fb-carousel {
