@@ -445,23 +445,45 @@
         const closeAuthModalButton = document.getElementById('close-auth-modal-button');
 
         window.updateUIAfterLogin = (user) => {
-            if (!user || !user.photoURL) return;
+            if (!user) return;
             isUserLoggedIn = true;
-            userProfilePicture.src = user.photoURL;
-            userProfilePicture.classList.remove('w-6', 'h-6', 'object-contain');
+
+            // Update profile picture
+            userProfilePicture.src = user.photoURL || placeholderAvatar;
+            userProfilePicture.classList.remove('w-6', 'h-6', 'object-contain', 'zoom-fb-carousel');
             userProfilePicture.classList.add('w-full', 'h-full', 'object-cover');
             userProfileButton.classList.remove('bg-white');
             userProfileButton.setAttribute('aria-label', `Menú de ${user.displayName}`);
+
+            // --- NEW: Stop carousel and set provider ring ---
+            const providerId = user.providerData[0]?.providerId || '';
+            let providerName = null;
+            if (providerId.includes('google')) {
+                providerName = 'google';
+            } else if (providerId.includes('facebook')) {
+                providerName = 'facebook';
+            } else if (providerId.includes('apple')) {
+                providerName = 'apple';
+            }
+            window.authAnimation.stopLoginCarousel(providerName);
+            // --- END NEW ---
+
             closeAuthModal();
         };
 
         window.updateUIAfterLogout = () => {
             isUserLoggedIn = false;
+
+            // Restore placeholder visuals
             userProfilePicture.src = placeholderAvatar;
             userProfilePicture.classList.add('w-6', 'h-6', 'object-contain');
             userProfilePicture.classList.remove('w-full', 'h-full', 'object-cover');
             userProfileButton.classList.add('bg-white');
             userProfileButton.setAttribute('aria-label', 'Iniciar sesión con Google');
+
+            // --- NEW: Start carousel on logout ---
+            window.authAnimation.startLoginCarousel();
+            // --- END NEW ---
         };
 
         // --- FUNCIONES DEL CARRITO ---
