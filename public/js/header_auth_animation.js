@@ -30,14 +30,11 @@ window.authAnimation = {
         this.iconImg.src = provider.icon;
         this.iconImg.alt = `Iniciar sesión con ${provider.name}`;
 
-        this.iconImg.classList.remove('w-full', 'h-full', 'object-cover', 'zoom-fb-carousel');
-        this.iconImg.classList.add('w-6', 'h-6', 'object-contain');
-
+    this.iconImg.classList.remove('w-6', 'h-6', 'object-contain', 'zoom-fb-carousel', 'w-full', 'h-full', 'object-cover');
 
         if (provider.name === 'facebook') {
             this.iconImg.classList.add('zoom-fb-carousel');
         } else {
-            // Ensure non-facebook icons are standard size
             this.iconImg.classList.add('w-6', 'h-6', 'object-contain');
         }
 
