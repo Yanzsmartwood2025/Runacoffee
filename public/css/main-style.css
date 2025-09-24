@@ -112,6 +112,7 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 }
 
 /* --- ESTILOS DEL ARO DE LUZ EXTERIOR (VERSIÓN FINAL) --- */
+/* Auth animation styles verified and present. */
 #user-profile-button {
     position: relative;
     /* Aseguramos que el brillo no se corte */
@@ -175,6 +176,73 @@ html:not(.dark) #ar-viewer::part(ar-button):hover { background-color: var(--runa
 }
 
 /* Apple: Aro transparente con sombra blanca animada */
+.auth-icon-ring.ring-apple {
+    background: transparent;
+    animation: glow-white-halo 2s ease-in-out infinite;
+    filter: none;
+}
+
+#user-profile-picture.zoom-fb-carousel {
+  width: 80px !important;
+  height: 80px !important;
+  object-fit: cover !important;
+}
+
+/* --- ESTILOS DEL ARO DE LUZ EXTERIOR (TU VERSIÓN FINAL) --- */
+#user-profile-button {
+    position: relative;
+    overflow: visible;
+    border: none !important;
+}
+
+.auth-icon-ring {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    width: 140%;
+    height: 140%;
+    z-index: -1;
+}
+
+@keyframes rotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes glow-neon-blue {
+    0%, 100% {
+        box-shadow: 0 0 4px #1877F2, 0 0 8px #1877F2, 0 0 12px #00d5ff, 0 0 16px #00d5ff;
+    }
+    50% {
+        box-shadow: 0 0 6px #00d5ff, 0 0 12px #00d5ff, 0 0 18px #1877F2, 0 0 24px #1877F2;
+    }
+}
+
+@keyframes glow-white-halo {
+    0%, 100% {
+        box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eee;
+    }
+    50% {
+        box-shadow: 0 0 8px #fff, 0 0 16px #fff, 0 0 24px #eee;
+    }
+}
+
+.auth-icon-ring.ring-google {
+    background: conic-gradient(from 0deg, #EA4335, #FBBC05, #34A853, #4285F4, #EA4335);
+    animation: rotate 3s linear infinite;
+    filter: blur(6px);
+    box-shadow: none;
+}
+
+.auth-icon-ring.ring-facebook {
+    background: transparent;
+    animation: glow-neon-blue 2s ease-in-out infinite;
+    filter: none;
+}
+
 .auth-icon-ring.ring-apple {
     background: transparent;
     animation: glow-white-halo 2s ease-in-out infinite;
