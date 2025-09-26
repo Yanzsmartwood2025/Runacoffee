@@ -30,7 +30,7 @@ window.authAnimation = {
         this.iconImg.src = provider.icon;
         this.iconImg.alt = `Iniciar sesión con ${provider.name}`;
 
-    this.iconImg.classList.remove('w-6', 'h-6', 'object-contain', 'zoom-fb-carousel', 'w-full', 'h-full', 'object-cover');
+        this.iconImg.classList.remove('w-6', 'h-6', 'object-contain', 'zoom-fb-carousel', 'w-full', 'h-full', 'object-cover');
 
         if (provider.name === 'facebook') {
             this.iconImg.classList.add('zoom-fb-carousel');
